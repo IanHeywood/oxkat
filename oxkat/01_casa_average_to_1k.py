@@ -6,7 +6,7 @@ myms = glob.glob('*.ms')[0]
 opms = myms.replace('.ms','_wtspec.ms')
 
 tb.open(myms+'/SPECTRAL_WINDOW')
-tb.getcol('NUM_CHAN')[0]
+nchan = tb.getcol('NUM_CHAN')[0]
 tb.done()
 
 mychanbin = int(nchan/1024)

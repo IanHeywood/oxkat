@@ -5,7 +5,7 @@ import glob
 myms = glob.glob('*.ms')[0]
 opms = myms.replace('.ms','_wtspec.ms')
 
-tb.open(myms+'/SPECTRAL_WINDOW',ack=False)
+tb.open(myms+'/SPECTRAL_WINDOW')
 tb.getcol('NUM_CHAN')[0]
 tb.done()
 

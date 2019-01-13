@@ -5,9 +5,9 @@ import glob
 myms = glob.glob('*.ms')[0]
 opms = myms.replace('.ms','_wtspec.ms')
 
-spw_table = table(myms+'/SPECTRAL_WINDOW',ack=False)
-nchan = spw_table.getcol('NUM_CHAN')[0]
-spw_table.close()
+tb.open(myms+'/SPECTRAL_WINDOW',ack=False)
+tb.getcol('NUM_CHAN')[0]
+tb.done()
 
 mychanbin = int(nchan/1024)
 

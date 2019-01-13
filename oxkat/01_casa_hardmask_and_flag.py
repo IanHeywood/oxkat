@@ -75,12 +75,5 @@ flagdata(vis=myms,mode='tfcrop')
 flagdata(vis=myms,mode='extend',growaround=True,flagneartime=True,flagnearfreq=True,growtime=90.0,growfreq=90.0)
 
 
-mstransform(vis=myms,
-	outputvis=opms,
-	datacolumn='data',
-	chanaverage=False,
-	timeaverage=False,
-	realmodelcol=True,
-	usewtspectrum=True)
 
 

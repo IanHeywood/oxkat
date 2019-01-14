@@ -42,11 +42,11 @@ def get_code(myms):
     myms = myms.split('/')[-1]
 
     if 'HI' in myms:
-        band = 'HI'
+        band = 'H'
     elif 'LO' in myms:
-        band = 'LO'
+        band = 'L'
     else:
-        band = ''
+        band = '-'
 
     code = myms.split('_')[0][-3:]
 
@@ -215,7 +215,7 @@ for myms in mslist:
     slurmfile = SCRIPTS+'/slurm_avg_'+code+'.sh'
     logfile = slurmfile.replace('.sh','.log')
     job_id_avg = 'AVG_'+code
-    write_slurm(code+'avg',logfile,CASA_CONTAINER,cmd,slurmfile)
+    write_slurm(code+'avrg',logfile,CASA_CONTAINER,cmd,slurmfile)
 
     syscall = job_id_avg+"=`sbatch "
     syscall += slurmfile+" | awk '{print $4}'`"
@@ -225,7 +225,7 @@ for myms in mslist:
     slurmfile = SCRIPTS+'/slurm_info_'+code+'.sh'
     logfile = slurmfile.replace('.sh','.log')
     job_id_info = 'INFO_'+code
-    write_slurm(code+'inf',logfile,CUBICAL_CONTAINER,cmd,slurmfile)
+    write_slurm(code+'info',logfile,CUBICAL_CONTAINER,cmd,slurmfile)
 
     syscall = job_id_info+"=`sbatch "
     syscall += "-d afterok:${"+job_id_avg+"} "
@@ -236,7 +236,7 @@ for myms in mslist:
     slurmfile = SCRIPTS+'/slurm_flag_'+code+'.sh'
     logfile = slurmfile.replace('.sh','.log')
     job_id_flag = 'FLAG_'+code
-    write_slurm(code+'flg',logfile,CASA_CONTAINER,cmd,slurmfile)
+    write_slurm(code+'flag',logfile,CASA_CONTAINER,cmd,slurmfile)
 
     syscall = job_id_flag+"=`sbatch "
     syscall += "-d afterok:${"+job_id_info+"} "
@@ -247,7 +247,7 @@ for myms in mslist:
     slurmfile = SCRIPTS+'/slurm_refcal_'+code+'.sh'
     logfile = slurmfile.replace('.sh','.log')
     job_id_refcal = 'REFCAL_'+code
-    write_slurm(code+'cal',logfile,CASA_CONTAINER,cmd,slurmfile)
+    write_slurm(code+'rcal',logfile,CASA_CONTAINER,cmd,slurmfile)
 
     syscall = job_id_refcal+"=`sbatch "
     syscall += "-d afterok:${"+job_id_flag+"} "
@@ -264,7 +264,7 @@ for myms in mslist:
 #     slurmfile = SCRIPTS+'/slurm_info_'+code+'.sh'
 #     logfile = slurmfile.replace('.sh','.log')
 #     job_id_info = 'INFO_'+code
-#     write_slurm(code+'inf',logfile,CUBICAL_CONTAINER,cmd,slurmfile)
+#     write_slurm(code+'info',logfile,CUBICAL_CONTAINER,cmd,slurmfile)
 
 #     syscall = job_id_info+"=`sbatch "
 #     syscall += slurmfile+" | awk '{print $4}'`"
@@ -274,7 +274,7 @@ for myms in mslist:
 #     slurmfile = SCRIPTS+'/slurm_flag_'+code+'.sh'
 #     logfile = slurmfile.replace('.sh','.log')
 #     job_id_flag = 'FLAG_'+code
-#     write_slurm(code+'flg',logfile,CASA_CONTAINER,cmd,slurmfile)
+#     write_slurm(code+'flag',logfile,CASA_CONTAINER,cmd,slurmfile)
 
 #     syscall = job_id_flag+"=`sbatch "
 #     syscall += "-d afterok:${"+job_id_info+"} "
@@ -285,7 +285,7 @@ for myms in mslist:
 #     slurmfile = SCRIPTS+'/slurm_refcal_'+code+'.sh'
 #     logfile = slurmfile.replace('.sh','.log')
 #     job_id_refcal = 'REFCAL_'+code
-#     write_slurm(code+'cal',logfile,CASA_CONTAINER,cmd,slurmfile)
+#     write_slurm(code+'rcal',logfile,CASA_CONTAINER,cmd,slurmfile)
 
 #     syscall = job_id_refcal+"=`sbatch "
 #     syscall += "-d afterok:${"+job_id_flag+"} "
@@ -306,7 +306,7 @@ for myms in mslist:
 #     slurmfile = SCRIPTS+'/slurm_predict_'+code+'.sh'
 #     logfile = slurmfile.replace('.sh','.log')
 #     write_runfile_predict(myms,'img_COSMOS_databda',runfile)
-#     write_slurm(code+'prdct',logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
+#     write_slurm(code+'pdct',logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
 
 #     job_id_predict = 'PREDICT_'+code
 
@@ -314,7 +314,7 @@ for myms in mslist:
 #     syscall += slurmfile+" | awk '{print $4}'`"
 #     print syscall
 
-#     jobname = code+'cubcl'
+#     jobname = code+'cbcl'
 #     runfile = SCRIPTS+'/run_cubical_'+code+'.sh'
 #     slurmfile = SCRIPTS+'/slurm_cubical_'+code+'.sh'
 #     logfile = slurmfile.replace('.sh','.log')
@@ -358,7 +358,7 @@ for myms in mslist:
 #   runfile = SCRIPTS+'/run_wsclean_'+code+'.sh'
 #   slurmfile = SCRIPTS+'/slurm_wsclean_'+code+'.sh'
 #   write_runfile_wsclean([myms],imgname,'DATA',runfile,multiscale=False,bda=False,mask=False)
-#   write_slurm(code+'wsc',WSCLEAN_CONTAINER,runfile,slurmfile)
+#   write_slurm(code+'wscl',WSCLEAN_CONTAINER,runfile,slurmfile)
 #   print 'sbatch '+slurmfile
 
 # ------------------------------------------------------------------------

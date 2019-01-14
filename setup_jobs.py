@@ -294,8 +294,26 @@ for myms in mslist:
 
 # ------------------------------------------------------------------------
 
+# IMAGE DATA WITH BDA, PARALLEL PREDICT, PARALLEL SELFCAL, IMAGE CORR WITH BDA
 
-# PREDICT AND CUBICAL LOOP for multiple MS
+# mslist = glob.glob(CWD+'/*.ms')
+
+# jobname = '059_252d'
+# runfile = SCRIPTS+'/run_wsclean_data.sh'
+# slurmfile = SCRIPTS+'/slurm_wsclean_data.sh'
+# logfile = slurmfile.replace('.sh','.log')
+
+# job_id_imgdata = 'WS_D_059_252'
+
+# write_runfile_wsclean(mslist=mslist,imgname='img_COSMOS_pcalbda',datacol='DATA',opfile=runfile,bda=True)
+# write_slurm(jobname,logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
+
+# syscall = job_id_imgdata+"=`sbatch"
+# syscall += ' '+slurmfile+" | awk '{print $4}'`"
+# print syscall
+
+
+# # PREDICT AND CUBICAL LOOP for multiple MS
 
 # cubical_dependencies = []
 
@@ -311,6 +329,7 @@ for myms in mslist:
 #     job_id_predict = 'PREDICT_'+code
 
 #     syscall = job_id_predict+"=`sbatch "
+#     syscall += "-d afterok:${"+job_id_imgdata+"} "
 #     syscall += slurmfile+" | awk '{print $4}'`"
 #     print syscall
 
@@ -321,32 +340,31 @@ for myms in mslist:
 #     job_id_cubical = 'CUBICAL_'+code
 
 #     cubical_dependencies.append(':$'+job_id_cubical)
-    
+
 #     write_runfile_cubical('phasecal.parset',myms,'pcal',runfile)
 #     write_slurm(jobname,logfile,CUBICAL_CONTAINER,runfile,slurmfile)
 
 #     syscall = job_id_cubical+"=`sbatch "
 #     syscall += "-d afterok:${"+job_id_predict+"} "
 #     syscall += slurmfile+" | awk '{print $4}'`"
-#     print syscall 
+#     print syscall
 
-
-
-# jobname = 'COSMOS_p'
+# jobname = '059_252p'
 # runfile = SCRIPTS+'/run_wsclean_pcal.sh'
 # slurmfile = SCRIPTS+'/slurm_wsclean_pcal.sh'
 # logfile = slurmfile.replace('.sh','.log')
 
-# write_runfile_wsclean(mslist=mslist,imgname='img_COSMOS_pcalbda',datacol='CORRECTED_DATA',opfile=runfile,bda=True,mask='COSMOS_MASK_8192.fits')
+# write_runfile_wsclean(mslist=mslist,imgname='img_XMM12_pcalbda',datacol='CORRECTED_DATA',opfile=runfile,bda=True)
 # write_slurm(jobname,logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
 
-# job_id = 'WSCLEAN_P'
+# job_id = 'WS_P_059_252'
 
 # syscall = job_id+"=`sbatch -d afterok"
 # for cubical_id in cubical_dependencies:
 #     syscall += cubical_id
 # syscall += ' '+slurmfile+" | awk '{print $4}'`"
-# print syscall 
+# print syscall
+
 
 # ------------------------------------------------------------------------
 

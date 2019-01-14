@@ -46,7 +46,7 @@ def get_code(myms):
     elif 'LO' in myms:
         band = 'L'
     else:
-        band = '-'
+        band = 'F'
 
     code = myms.split('_')[0][-3:]
 

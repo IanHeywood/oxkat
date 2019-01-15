@@ -49,6 +49,8 @@ if 1 in dosteps:
 			field=bpcal,
                 	standard='Perley-Butler 2010',
                		usescratch=True)
+		
+		
 	elif primary_name == '0408':
 		bpcal_mod = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
 		setjy(vis=myms,

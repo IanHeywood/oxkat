@@ -203,11 +203,11 @@ def write_runfile_predict(msname,imgbase,opfile):
 # mslist = glob.glob(globdir+'/1*/*/*COSMOS.ms')
 
 
-myms = glob.glob(CWD+'/*wtspec.ms')[0]
-
 # AVERAGE UP FRONT, FLAG, REFCAL
 
+myms = glob.glob('*.ms')[0]
 code = get_code(myms)
+myms = myms.replace('.ms','_wtspec.ms')
 
 cmd = 'casa -c '+OXKAT+'/01_casa_average_to_1k.py --nologger --log2term --nogui'
 slurmfile = SCRIPTS+'/slurm_avg_'+code+'.sh'

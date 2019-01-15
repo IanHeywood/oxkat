@@ -203,7 +203,7 @@ def write_runfile_predict(msname,imgbase,opfile):
 # mslist = glob.glob(globdir+'/1*/*/*COSMOS.ms')
 
 
-mslist = glob.glob(CWD+'/*wtspec.ms')
+myms = glob.glob(CWD+'/*wtspec.ms')[0]
 
 # AVERAGE UP FRONT, FLAG, REFCAL
 

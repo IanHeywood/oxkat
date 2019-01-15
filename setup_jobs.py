@@ -203,56 +203,54 @@ def write_runfile_predict(msname,imgbase,opfile):
 # mslist = glob.glob(globdir+'/1*/*/*COSMOS.ms')
 
 
-mslist = glob.glob(CWD+'/*.ms')
+mslist = glob.glob(CWD+'/*wtspec.ms')
 
 # AVERAGE UP FRONT, FLAG, REFCAL
 
-for myms in mslist:
+code = get_code(myms)
 
-    code = get_code(myms)
+cmd = 'casa -c '+OXKAT+'/01_casa_average_to_1k.py --nologger --log2term --nogui'
+slurmfile = SCRIPTS+'/slurm_avg_'+code+'.sh'
+logfile = slurmfile.replace('.sh','.log')
+job_id_avg = 'AVG_'+code
+write_slurm(code+'avrg',logfile,CASA_CONTAINER,cmd,slurmfile)
 
-    cmd = 'casa -c '+OXKAT+'/01_casa_average_to_1k.py --nologger --log2term --nogui'
-    slurmfile = SCRIPTS+'/slurm_avg_'+code+'.sh'
-    logfile = slurmfile.replace('.sh','.log')
-    job_id_avg = 'AVG_'+code
-    write_slurm(code+'avrg',logfile,CASA_CONTAINER,cmd,slurmfile)
+syscall = job_id_avg+"=`sbatch "
+syscall += slurmfile+" | awk '{print $4}'`"
+print syscall 
 
-    syscall = job_id_avg+"=`sbatch "
-    syscall += slurmfile+" | awk '{print $4}'`"
-    print syscall 
+cmd = 'python '+OXKAT+'/00_setup.py '+myms
+slurmfile = SCRIPTS+'/slurm_info_'+code+'.sh'
+logfile = slurmfile.replace('.sh','.log')
+job_id_info = 'INFO_'+code
+write_slurm(code+'info',logfile,CUBICAL_CONTAINER,cmd,slurmfile)
 
-    cmd = 'python '+OXKAT+'/00_setup.py '+myms
-    slurmfile = SCRIPTS+'/slurm_info_'+code+'.sh'
-    logfile = slurmfile.replace('.sh','.log')
-    job_id_info = 'INFO_'+code
-    write_slurm(code+'info',logfile,CUBICAL_CONTAINER,cmd,slurmfile)
+syscall = job_id_info+"=`sbatch "
+syscall += "-d afterok:${"+job_id_avg+"} "
+syscall += slurmfile+" | awk '{print $4}'`"
+print syscall 
 
-    syscall = job_id_info+"=`sbatch "
-    syscall += "-d afterok:${"+job_id_avg+"} "
-    syscall += slurmfile+" | awk '{print $4}'`"
-    print syscall 
+cmd = 'casa -c '+OXKAT+'/01_casa_hardmask_and_flag.py --nologger --log2term --nogui'
+slurmfile = SCRIPTS+'/slurm_flag_'+code+'.sh'
+logfile = slurmfile.replace('.sh','.log')
+job_id_flag = 'FLAG_'+code
+write_slurm(code+'flag',logfile,CASA_CONTAINER,cmd,slurmfile)
 
-    cmd = 'casa -c '+OXKAT+'/01_casa_hardmask_and_flag.py --nologger --log2term --nogui'
-    slurmfile = SCRIPTS+'/slurm_flag_'+code+'.sh'
-    logfile = slurmfile.replace('.sh','.log')
-    job_id_flag = 'FLAG_'+code
-    write_slurm(code+'flag',logfile,CASA_CONTAINER,cmd,slurmfile)
+syscall = job_id_flag+"=`sbatch "
+syscall += "-d afterok:${"+job_id_info+"} "
+syscall += slurmfile+" | awk '{print $4}'`"
+print syscall 
 
-    syscall = job_id_flag+"=`sbatch "
-    syscall += "-d afterok:${"+job_id_info+"} "
-    syscall += slurmfile+" | awk '{print $4}'`"
-    print syscall 
+cmd = 'casa -c '+OXKAT+'/02_casa_refcal.py --nologger --log2term --nogui'
+slurmfile = SCRIPTS+'/slurm_refcal_'+code+'.sh'
+logfile = slurmfile.replace('.sh','.log')
+job_id_refcal = 'REFCAL_'+code
+write_slurm(code+'rcal',logfile,CASA_CONTAINER,cmd,slurmfile)
 
-    cmd = 'casa -c '+OXKAT+'/02_casa_refcal.py --nologger --log2term --nogui'
-    slurmfile = SCRIPTS+'/slurm_refcal_'+code+'.sh'
-    logfile = slurmfile.replace('.sh','.log')
-    job_id_refcal = 'REFCAL_'+code
-    write_slurm(code+'rcal',logfile,CASA_CONTAINER,cmd,slurmfile)
-
-    syscall = job_id_refcal+"=`sbatch "
-    syscall += "-d afterok:${"+job_id_flag+"} "
-    syscall += slurmfile+" | awk '{print $4}'`"
-    print syscall 
+syscall = job_id_refcal+"=`sbatch "
+syscall += "-d afterok:${"+job_id_flag+"} "
+syscall += slurmfile+" | awk '{print $4}'`"
+print syscall 
 
 # INFO, FLAG, REFCAL 
 

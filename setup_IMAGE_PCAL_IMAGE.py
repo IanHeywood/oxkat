@@ -103,15 +103,15 @@ def main():
     gen.write_slurm(jobname,logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
 
 
-    job_id = 'WS_P_059_252'
-
+    job_id = 'WS_P_'+prefix
+    
 
     syscall = job_id+"=`sbatch -d afterok"
     for cubical_id in cubical_dependencies:
         syscall += cubical_id
     syscall += ' '+slurmfile+" | awk '{print $4}'`"
     f.write(syscall)
-    
+
 
     f.close()
 

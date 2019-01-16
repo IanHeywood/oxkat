@@ -13,18 +13,22 @@ CWD = os.getcwd()
 OXKAT = CWD+'/oxkat'
 SCRIPTS = CWD+'/scripts'
 LOGS = CWD+'/logs'
+PARSETS = CWD+'/oxkat'
 CASA_CONTAINER = '/users/ianh/containers/casa-5.1.1-wsclean.img'
 WSCLEAN_CONTAINER = '/users/ianh/containers/casa-5.1.1-wsclean.img'
 CUBICAL_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 
 
 
-if not os.path.isdir(SCRIPTS):
-    os.mkdir(SCRIPTS)
-
-
-
 # ------------------------------------------------------------------------
+
+def setup_scripts_dir():
+
+    # Make scripts folder if it doesn't exist
+
+    if not os.path.isdir(SCRIPTS):
+        os.mkdir(SCRIPTS)
+
 
 
 def timenow():

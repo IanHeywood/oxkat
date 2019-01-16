@@ -3,6 +3,7 @@
 
 
 import sys
+import glob
 from oxkat import generate_jobs as gen
 
 
@@ -32,7 +33,7 @@ def main():
 
     syscall = job_id_avg+"=`sbatch "
     syscall += slurmfile+" | awk '{print $4}'`"
-    f.write(syscall)
+    f.write(syscall+'\n')
 
 
     cmd = 'python '+OXKAT+'/00_setup.py '+myms
@@ -45,7 +46,7 @@ def main():
     syscall = job_id_info+"=`sbatch "
     syscall += "-d afterok:${"+job_id_avg+"} "
     syscall += slurmfile+" | awk '{print $4}'`"
-    f.write(syscall)
+    f.write(syscall+'\n')
 
 
     cmd = 'casa -c '+OXKAT+'/01_casa_hardmask_and_flag.py --nologger --log2term --nogui'
@@ -58,7 +59,7 @@ def main():
     syscall = job_id_flag+"=`sbatch "
     syscall += "-d afterok:${"+job_id_info+"} "
     syscall += slurmfile+" | awk '{print $4}'`"
-    f.write(syscall)
+    f.write(syscall+'\n')
 
 
     cmd = 'casa -c '+OXKAT+'/02_casa_refcal.py --nologger --log2term --nogui'
@@ -71,7 +72,7 @@ def main():
     syscall = job_id_refcal+"=`sbatch "
     syscall += "-d afterok:${"+job_id_flag+"} "
     syscall += slurmfile+" | awk '{print $4}'`"
-    f.write(syscall)
+    f.write(syscall+'\n')
 
 
     f.close()

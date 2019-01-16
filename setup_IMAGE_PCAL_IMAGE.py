@@ -111,3 +111,12 @@ def main():
         syscall += cubical_id
     syscall += ' '+slurmfile+" | awk '{print $4}'`"
     f.write(syscall)
+    
+
+    f.close()
+
+
+if __name__ == "__main__":
+
+
+    main()

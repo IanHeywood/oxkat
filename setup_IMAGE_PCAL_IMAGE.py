@@ -7,8 +7,18 @@ from oxkat import generate_jobs as gen
 
 
 def main():
+    
+    
+    CWD = gen.CWD
+    OXKAT = gen.OXKAT
+    SCRIPTS = gen.SCRIPTS
+    LOGS = gen.LOGS
+    PARSETS = gen.PARSETS
+    CASA_CONTAINER = gen.CASA_CONTAINER
+    WSCLEAN_CONTAINER = gen.WSCLEAN_CONTAINER
+    CUBICAL_CONTAINER = gen.CUBICAL_CONTAINER
 
-
+    
     submit_file = sys.argv[1]
     prefix = sys.argv[2]
 

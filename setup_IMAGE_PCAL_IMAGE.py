@@ -43,8 +43,8 @@ def main():
     job_id_imgdata = 'WS_D_'+prefix
 
 
-    write_runfile_wsclean(mslist=mslist,imgname='img_'+prefix+'_databda',datacol='DATA',opfile=runfile,bda=True)
-    write_slurm(jobname,logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
+    gen.write_runfile_wsclean(mslist=mslist,imgname='img_'+prefix+'_databda',datacol='DATA',opfile=runfile,bda=True)
+    gen.write_slurm(jobname,logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
 
 
     syscall = job_id_imgdata+"=`sbatch"

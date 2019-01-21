@@ -77,7 +77,7 @@ def main():
         syscall = job_id_predict+"=`sbatch "
         syscall += "-d afterok:${"+job_id_imgdata+"} "
         syscall += slurmfile+" | awk '{print $4}'`"
-        f.write(syscall)
+        f.write(syscall+'\n')
 
 
         jobname = code+'cbcl'
@@ -97,7 +97,7 @@ def main():
         syscall = job_id_cubical+"=`sbatch "
         syscall += "-d afterok:${"+job_id_predict+"} "
         syscall += slurmfile+" | awk '{print $4}'`"
-        f.write(syscall)
+        f.write(syscall+'\n')
 
 
     # ---------------------------------------------------------
@@ -120,7 +120,7 @@ def main():
     for cubical_id in cubical_dependencies:
         syscall += cubical_id
     syscall += ' '+slurmfile+" | awk '{print $4}'`"
-    f.write(syscall)
+    f.write(syscall+'\n')
 
 
     f.close()

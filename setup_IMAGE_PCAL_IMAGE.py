@@ -90,7 +90,7 @@ def main():
         cubical_dependencies.append(':$'+job_id_cubical)
 
 
-        gen.write_runfile_cubical('phasecal.parset',myms,'pcal',runfile)
+        gen.write_runfile_cubical(PARSETS+'/phasecal.parset',myms,'pcal',runfile)
         gen.write_slurm(jobname,logfile,CUBICAL_CONTAINER,runfile,slurmfile)
 
 

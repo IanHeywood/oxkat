@@ -95,9 +95,9 @@ for i in range(0,len(names)):
         project_info['primary'] = [names[i],str(i)]
         primary_dir = dirs[i][0,:]*180.0/numpy.pi
         for cal in cals:
-            project_info['primary'] = [names[i],str(i)]
             sep = calcsep(primary_dir[0],primary_dir[1],cal[1],cal[2])
             if sep < 1e-4 and project_info['primary_name'] == 'UNKNOWN':
+                project_info['primary'] = [names[i],str(i)]
                 project_info['primary_name'] = cal[0]
     if state == secondary_state:
         project_info['secondary'] = [names[i],str(i)]

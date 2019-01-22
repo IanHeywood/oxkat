@@ -50,7 +50,7 @@ def main():
 
     syscall = job_id_imgdata+"=`sbatch"
     syscall += ' '+slurmfile+" | awk '{print $4}'`"
-    f.write(syscall)
+    f.write(syscall+'\n')
 
 
     # ---------------------------------------------------------

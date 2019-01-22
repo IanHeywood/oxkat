@@ -95,6 +95,7 @@ for i in range(0,len(names)):
         project_info['primary'] = [names[i],str(i)]
         primary_dir = dirs[i][0,:]*180.0/numpy.pi
         for cal in cals:
+            project_info['primary'] = [names[i],str(i)]
             sep = calcsep(primary_dir[0],primary_dir[1],cal[1],cal[2])
             if sep < 1e-4 and project_info['primary_name'] == 'UNKNOWN':
                 project_info['primary_name'] = cal[0]
@@ -104,10 +105,10 @@ for i in range(0,len(names)):
         project_info['target'] = [names[i],str(i)]
 
 
-dx = abs(numpy.array((cals[0][1],cals[1][1])) - primary_dir[0])
-dy = abs(numpy.array((cals[0][2],cals[1][2])) - primary_dir[1])
-idx = numpy.where(dx==numpy.min(dx))[0][0]
-project_info['primary_name'] = cals[idx][0]
+# dx = abs(numpy.array((cals[0][1],cals[1][1])) - primary_dir[0])
+# dy = abs(numpy.array((cals[0][2],cals[1][2])) - primary_dir[1])
+# idx = numpy.where(dx==numpy.min(dx))[0][0]
+# project_info['primary_name'] = cals[idx][0]
 
 
 ant_tab = table(myms+'/ANTENNA',ack=False)

@@ -3,6 +3,7 @@
 
 
 import sys
+import glob
 from oxkat import generate_jobs as gen
 
 

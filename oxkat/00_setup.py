@@ -92,7 +92,6 @@ for i in range(0,len(names)):
     sub_tab = main_tab.query(query='FIELD_ID=='+str(i))
     state = numpy.unique(sub_tab.getcol('STATE_ID'))
     if state == primary_state:
-        project_info['primary'] = [names[i],str(i)]
         primary_dir = dirs[i][0,:]*180.0/numpy.pi
         for cal in cals:
             sep = calcsep(primary_dir[0],primary_dir[1],cal[1],cal[2])

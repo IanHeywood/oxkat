@@ -88,7 +88,7 @@ if 1 in dosteps:
 		caltable=bptab0,
 		solint='inf',
 		combine='scan',
-		solnorm=False,
+		solnorm=True,
 		gainfield=[bpcal,bpcal],
 		interp = ['nearest','nearest'],
 		gaintable=[ktab0,gtab0])

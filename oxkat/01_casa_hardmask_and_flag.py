@@ -67,6 +67,9 @@ mid_chan = int(len(ms_freqs)/2.0)
 end_chan = int(len(ms_freqs))-edge_flags
 
 
+spwstr = '0:944~947MHz;0:1160~1310MHz;0:476~1611MHz;0;1670~1700MHz'
+
+
 flagdata(vis=myms,mode='manual',spw=spwstr)
 flagdata(vis=myms,mode='manual',autocorr=True)
 flagdata(vis=myms,mode='clip',clipzeros=True)

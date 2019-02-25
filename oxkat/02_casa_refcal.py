@@ -48,8 +48,8 @@ if 1 in dosteps:
 		setjy(vis=myms,
 			field=bpcal,
 			standard='Perley-Butler 2010',
-			scalebychan=True,
-			usescratch=True)
+			scalebychan=True)
+#			usescratch=True)
 		
 		
 	elif primary_name == '0408':
@@ -60,8 +60,8 @@ if 1 in dosteps:
 			fluxdensity=bpcal_mod[0],
 			spix=bpcal_mod[1],
 			reffreq=bpcal_mod[2],
-			scalebychan=True,
-			usescratch=True)
+			scalebychan=True)
+#			usescratch=True)
 
 
 	# gaincal(vis=myms,
@@ -80,6 +80,7 @@ if 1 in dosteps:
 #		spw = delayspw,
 		gaintype = 'K',
 		solint = 'inf',
+		combine='scan',
 		parang=False,
 		combine = '')
 

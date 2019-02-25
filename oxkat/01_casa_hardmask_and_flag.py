@@ -66,11 +66,13 @@ for i in range(0,len(chanranges)):
 mid_chan = int(len(ms_freqs)/2.0)
 end_chan = int(len(ms_freqs))-edge_flags
 
+badfreqs = [ '944~947MHz','1160~1310MHz','1476~1611MHz','1670~1700MHz']
 
-spwstr = '0:944~947MHz;0:1160~1310MHz;0:476~1611MHz;0;1670~1700MHz'
+for badfreq in badfreqranges:
+	badspw = '0:' + badfreq
+	flagdata(vis=visname, mode='manual', spw=badspw)
 
 
-flagdata(vis=myms,mode='manual',spw=spwstr)
 flagdata(vis=myms,mode='manual',autocorr=True)
 flagdata(vis=myms,mode='clip',clipzeros=True)
 flagdata(vis=myms,mode='clip',clipminmax=[0.0,50.0])

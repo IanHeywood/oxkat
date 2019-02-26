@@ -80,9 +80,8 @@ if 1 in dosteps:
 #		spw = delayspw,
 		gaintype = 'K',
 		solint = 'inf',
-		combine='scan',
 		parang=False,
-		combine = '')
+		combine = 'scan')
 
 
 	bandpass(vis=myms,

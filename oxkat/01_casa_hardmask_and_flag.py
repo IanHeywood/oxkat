@@ -70,7 +70,7 @@ badfreqs = [ '944~947MHz','1160~1310MHz','1476~1611MHz','1670~1700MHz']
 
 for badfreq in badfreqs:
 	badspw = '0:' + badfreq
-	flagdata(vis=visname, mode='manual', spw=badspw)
+	flagdata(vis=myms, mode='manual', spw=badspw)
 
 
 flagdata(vis=myms,mode='manual',autocorr=True)

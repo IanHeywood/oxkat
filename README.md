@@ -1,5 +1,5 @@
 # oxkat
-Lightweight MeerKAT reduction scripts
+A lightweight set of scripts for processing MeerKAT data
 
 ![](https://i.imgur.com/tmukMGk.jpg)
 

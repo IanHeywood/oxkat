@@ -90,7 +90,7 @@ if 1 in dosteps:
 		refant = str(ref_ant),
 		solint='inf',
 		combine='scan',
-		solnorm=True,
+		solnorm=False,
 		minblperant=4,
 		bandtype='B',
 		fillgaps=8,
@@ -107,7 +107,7 @@ if 2 in dosteps:
 		field=bpcal,
 		caltable=gtab1,
 		refant = str(ref_ant),
-		solint='5min',
+		solint='inf',
 		solnorm=False,
 		combine='',
 		minsnr=3,
@@ -118,6 +118,7 @@ if 2 in dosteps:
 		interp=['nearest','nearest'],
 		append=False)
 
+	
 	gaincal(vis=myms,
 		field=pcal,
 		caltable=gtab1,		
@@ -135,7 +136,6 @@ if 2 in dosteps:
 		gainfield=[bpcal,bpcal],
 		interp=['nearest','nearest'],
 		append=True)
-
 
 
 	fluxscale(vis=myms,

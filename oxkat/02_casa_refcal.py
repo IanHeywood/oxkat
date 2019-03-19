@@ -90,7 +90,7 @@ if 1 in dosteps:
 		refant = str(ref_ant),
 		solint='inf',
 		combine='scan',
-		solnorm=False,
+		solnorm=True,
 		minblperant=4,
 		bandtype='B',
 		fillgaps=8,

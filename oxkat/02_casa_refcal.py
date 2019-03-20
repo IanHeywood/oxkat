@@ -173,7 +173,7 @@ if 3 in dosteps:
 	applycal(vis=myms,
 		gaintable=[gtab0,ktab0,bptab0,ftab0],
 		field=target,
-		calwt=False	,
+		calwt=False,
 		parang=False,
 		gainfield=[bpcal,bpcal,bpcal,pcal],
 		interp=['nearest','nearest','nearest','linear'])

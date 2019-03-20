@@ -64,13 +64,13 @@ if 1 in dosteps:
 #			usescratch=True)
 
 
-	# gaincal(vis=myms,
-	# 	field=bpcal,
-	# 	caltable=gtab0,
-	# 	gaintype='G',
-	# 	solint='int',
-	# 	calmode='p',
-	# 	minsnr=5)
+	gaincal(vis=myms,
+		field=bpcal,
+		caltable=gtab0,
+		gaintype='G',
+		solint='int',
+		calmode='ap',
+		minsnr=5)
 
 
 	gaincal(vis=myms,
@@ -81,6 +81,9 @@ if 1 in dosteps:
 		gaintype = 'K',
 		solint = 'inf',
 		parang=False,
+		gaintable=[gtab0],
+		gainfield=[bpcal],
+		interp=['nearest'],
 		combine = 'scan')
 
 
@@ -90,14 +93,14 @@ if 1 in dosteps:
 		refant = str(ref_ant),
 		solint='inf',
 		combine='scan',
-		solnorm=True,
+		solnorm=False,
 		minblperant=4,
 		bandtype='B',
 		fillgaps=8,
 		parang=False,
-		gainfield=[bpcal],
-		interp = ['nearest'],
-		gaintable=[ktab0])
+		gainfield=[bpcal,bpcal],
+		interp = ['nearest','nearest'],
+		gaintable=[gtab0,ktab0])
 
 
 if 2 in dosteps:
@@ -113,9 +116,9 @@ if 2 in dosteps:
 		minsnr=3,
 		calmode='ap',
 		parang=False,
-		gaintable=[ktab0,bptab0],
-		gainfield=[bpcal,bpcal],
-		interp=['nearest','nearest'],
+		gaintable=[gtab0,ktab0,bptab0],
+		gainfield=[bpcal,bpcal,bpcal],
+		interp=['nearest','nearest','nearest'],
 		append=False)
 
 	
@@ -132,9 +135,9 @@ if 2 in dosteps:
 		combine='',
 		calmode='ap',
 		parang=False,
-		gaintable=[ktab0,bptab0],
-		gainfield=[bpcal,bpcal],
-		interp=['nearest','nearest'],
+		gaintable=[gtab0,ktab0,bptab0],
+		gainfield=[bpcal,bpcal,bpcal],
+		interp=['nearest','nearest','nearest'],
 		append=True)
 
 
@@ -150,30 +153,30 @@ if 3 in dosteps:
 
 
 	applycal(vis=myms,
-		gaintable=[ktab0,bptab0,ftab0],
+		gaintable=[gtab0,ktab0,bptab0,ftab0],
 		field=bpcal,
 		calwt=False,
 		parang=False,
-		gainfield=[bpcal,bpcal,bpcal],
-		interp = ['nearest','nearest','linear'])
+		gainfield=[bpcal,bpcal,bpcal,bpcal],
+		interp = ['nearest','nearest','nearest','linear'])
 
 
 	applycal(vis=myms,
-		gaintable=[ktab0,bptab0,ftab0],
+		gaintable=[gtab0,ktab0,bptab0,ftab0],
 		field=pcal,
 		calwt=False,
 		parang=False,
-		gainfield=[bpcal,bpcal,pcal],
-		interp = ['nearest','nearest','linear'])
+		gainfield=[bpcal,bpcal,bpcal,pcal],
+		interp = ['nearest','nearest','nearest','linear'])
 
 
 	applycal(vis=myms,
-		gaintable=[ktab0,bptab0,ftab0],
+		gaintable=[gtab0,ktab0,bptab0,ftab0],
 		field=target,
 		calwt=False	,
 		parang=False,
-		gainfield=[bpcal,bpcal,pcal],
-		interp=['nearest','nearest','linear'])
+		gainfield=[bpcal,bpcal,bpcal,pcal],
+		interp=['nearest','nearest','nearest','linear'])
 
 
 if 4 in dosteps:

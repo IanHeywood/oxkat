@@ -135,6 +135,7 @@ def cubical_jobs(mslist,opfile,dependency=None):
 def write_runfile_wsclean(mslist,
                           imgname,datacol,opfile,
                           briggs=-0.3,niter=100000,multiscale=False,
+                          scales='0,5,15',
                           bda=False,nomodel=False,mask=False):
 
     # Generate shell script to run wsclean, to be invoked by slurm script
@@ -150,7 +151,7 @@ def write_runfile_wsclean(mslist,
         syscall += '-no-update-model-required '
     if multiscale:
         syscall += '-multiscale '
-        syscall += '-multiscale-scales 0,5,15 '
+        syscall += '-multiscale-scales '+scales+' '
     syscall += '-niter '+str(niter)+' '
     syscall += '-gain 0.1 '
     syscall += '-mgain 0.85 '

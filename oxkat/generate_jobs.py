@@ -133,7 +133,7 @@ def cubical_jobs(mslist,opfile,dependency=None):
 
 
 def write_runfile_wsclean(mslist,
-                          imgname,datacol,opfile,
+                          imgname,datacol,opfile,imsize=8192,cellsize='1.5asec',
                           briggs=-0.3,niter=100000,multiscale=False,
                           scales='0,5,15',
                           bda=False,nomodel=False,mask=False):
@@ -142,8 +142,8 @@ def write_runfile_wsclean(mslist,
 
     syscall = 'wsclean '
     syscall += '-log-time '
-    syscall += '-size 8192 8192 '
-    syscall += '-scale 1.5asec '
+    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
+    syscall += '-scale '+cellsize+' '
     if bda:
         syscall += '-baseline-averaging 24 '
         syscall += '-no-update-model-required '

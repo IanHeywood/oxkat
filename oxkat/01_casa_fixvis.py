@@ -13,4 +13,4 @@ project_info = pickle.load(open('project_info.p','rb'))
 myms = glob.glob('*wtspec.ms')[0]
 
 
-fixvis(vis=myms,outputvis=myms)
+fixvis(vis=myms,outputvis=myms,reuse=False)

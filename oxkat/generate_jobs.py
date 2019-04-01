@@ -183,7 +183,6 @@ def write_runfile_wsclean(mslist,
 def write_runfile_predict(msname,imgbase,opfile):
     syscall = 'wsclean -log-time -predict -channelsout 8 -size 8192 8192 '
     syscall+= '-scale 1.5asec -name '+imgbase+' -mem 90 '
-    syscall+= '-no-reorder ' # TEST THE SPEED OF THIS
     syscall+= '-predict-channels 64 '+msname
 
     f = open(opfile,'w')

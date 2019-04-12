@@ -158,7 +158,11 @@ def write_runfile_wsclean(mslist,
     syscall += '-weight briggs '+str(briggs)+' '
     syscall += '-datacolumn '+datacol+' '
     if mask:
-        syscall += '-fitsmask '+mask+' '
+        if mask == 'fits':
+            mymask = glob.glob('*mask.fits')[0]
+            syscall += '-fitsmask '+mymask+' '
+        else:
+            syscall += '-fitsmask '+mask+' '
     else:
         syscall += '-local-rms '
         syscall += '-auto-threshold 0.3 '

@@ -49,6 +49,7 @@ def main():
 
 
     inp_fits = glob.glob('*-MFS-image.fits')[0]
+    op_mask = inp_fits.replace('.fits','_mask.fits')
 
 
     runfile = 'python '+OXKAT+'/make_threshold_mask.py '+inp_fits+' '+thresh
@@ -76,7 +77,7 @@ def main():
     job_id_imgmask = 'WS_DM_'+prefix
 
 
-    gen.write_runfile_wsclean(mslist=mslist,imgname='img_'+prefix+'_databdamask',datacol='DATA',opfile=runfile,bda=True,multiscale=True,imsize=12000,scales='0,3,9,27',niter=100000,mask='fits')
+    gen.write_runfile_wsclean(mslist=mslist,imgname='img_'+prefix+'_databdamask',datacol='DATA',opfile=runfile,bda=True,multiscale=True,imsize=12000,scales='0,3,9,27',niter=100000,mask=op_mask)
     gen.write_slurm(jobname,logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
 
 
@@ -137,7 +138,7 @@ def main():
     logfile = slurmfile.replace('.sh','.log')
 
 
-    gen.write_runfile_wsclean(mslist=mslist,imgname='img_'+prefix+'_pcalbda',datacol='CORRECTED_DATA',opfile=runfile,bda=True,multiscale=True,imsize=12000,scales='0,3,9,27',niter=100000,mask='fits')
+    gen.write_runfile_wsclean(mslist=mslist,imgname='img_'+prefix+'_pcalbda',datacol='CORRECTED_DATA',opfile=runfile,bda=True,multiscale=True,imsize=12000,scales='0,3,9,27',niter=100000,mask=op_mask)
     gen.write_slurm(jobname,logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
 
 

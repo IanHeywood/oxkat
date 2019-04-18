@@ -146,7 +146,7 @@ def main():
     job_id = 'WS_P_'+prefix
     
 
-    syscall = job_id+"=`sbatch -d afterok"
+    syscall = job_id+"=`sbatch "
     syscall += "-d afterok:${"+job_id_cubical+"} "
     syscall += ' '+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')

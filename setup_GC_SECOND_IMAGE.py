@@ -80,7 +80,7 @@ def main():
     gen.write_slurm(jobname,logfile,WSCLEAN_CONTAINER,runfile,slurmfile)
 
 
-    syscall = job_id_imgmask+"=`sbatch"
+    syscall = job_id_imgmask+"=`sbatch "
     syscall += "-d afterok:${"+job_id_threshmask+"} "
     syscall += ' '+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')

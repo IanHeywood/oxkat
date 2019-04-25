@@ -16,7 +16,7 @@ LOGS = CWD+'/logs'
 PARSETS = CWD+'/oxkat'
 #CASA_CONTAINER = '/users/ianh/containers/casa-5.1.1-wsclean.img'
 CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'
-WSCLEAN_CONTAINER = '/users/ianh/containers/casa-5.1.1-wsclean.img'
+WSCLEAN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 CUBICAL_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 
 

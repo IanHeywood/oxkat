@@ -84,7 +84,7 @@ def write_runfile_cubical(parset,myms,prefix,opfile):
 
     f = open(opfile,'w')
     f.writelines(['#!/bin/bash\n',
-        'source ~/venv/meerkat/bin/activate\n',
+        'source ~/venv/cubical/bin/activate\n',
         'export PATH=/users/ianh/.local/bin:$PATH\n',
         syscall+'\n'])
     f.close()

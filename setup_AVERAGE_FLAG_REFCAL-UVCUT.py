@@ -72,7 +72,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    cmd = 'casa -c '+OXKAT+'/02_casa_refcal_uvcut.py --nologger --log2term --nogui'
+    cmd = 'casa -c '+OXKAT+'/casa_refcal_uvcut.py --nologger --log2term --nogui'
     slurmfile = SCRIPTS+'/slurm_refcal_'+code+'.sh'
     logfile = slurmfile.replace('.sh','.log')
     job_id_refcal = 'REFCAL_'+code

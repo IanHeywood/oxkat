@@ -20,6 +20,7 @@ WSCLEAN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 CUBICAL_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 SOURCEFINDER_CONTAINER = '/data/exp_soft/containers/sourcefinding_050418.img'
 
+CUBICAL_EXEC = '/users/ianh/venv/cubical/bin/python2.7 /users/ianh/venv/cubical/bin/gocubical'
 
 
 # ------------------------------------------------------------------------
@@ -78,7 +79,7 @@ def write_runfile_cubical(parset,myms,prefix,opfile):
     now = timenow()
     outname = 'cube_'+prefix+'_'+myms.split('/')[-1]+'_'+now
 
-    syscall = 'gocubical '+parset+' '
+    syscall = CUBICAL_EXEC+' '+parset+' '
     syscall += '--data-ms='+myms+' '
     syscall += '--out-name='+outname
 

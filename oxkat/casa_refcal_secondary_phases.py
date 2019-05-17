@@ -92,7 +92,7 @@ if 1 in dosteps:
 		caltable=bptab0,
 		refant = str(ref_ant),
 		solint='inf',
-		combine='scan',
+		combine='',
 		solnorm=False,
 		minblperant=4,
 		bandtype='B',
@@ -145,7 +145,7 @@ if 3 in dosteps:
 		calwt=False,
 		parang=False,
 		gainfield=[bpcal,bpcal,bpcal,pcal],
-		interp = ['nearest','nearest','nearest','linear'])
+		interp = ['nearest','nearest','linear','linear'])
 
 
 	applycal(vis=myms,
@@ -153,8 +153,9 @@ if 3 in dosteps:
 		field=target,
 		calwt=False,
 		parang=False,
+		applymode='calonly',
 		gainfield=[bpcal,bpcal,bpcal,pcal],
-		interp=['nearest','nearest','nearest','linear'])
+		interp=['nearest','nearest','linear','linear'])
 
 
 if 4 in dosteps:

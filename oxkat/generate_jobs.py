@@ -18,7 +18,7 @@ PARSETS = CWD+'/oxkat'
 CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'
 WSCLEAN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 CUBICAL_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
-SOURCEFINDER_CONTAINER = '/data/exp_soft/containers/sourcefinding_050418.img'
+SOURCEFINDER_CONTAINER = '/data/exp_soft/containers/SF-PY3-bionic.simg'
 
 CUBICAL_EXEC = '/users/ianh/venv/cubical/bin/python2.7 /users/ianh/venv/cubical/bin/gocubical'
 

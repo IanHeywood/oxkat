@@ -64,11 +64,11 @@ for i in range(0,len(fld_names)):
     state = numpy.unique(sub_tab.getcol('STATE_ID'))
     if state == target_state:
         opms = myms.rstrip('/').replace('.ms',fld_names[i]+'.ms')
-		targets.append((str(i),fld_names[i],opms)) 
-	elif state == primary_state:
-		bpcal = str(i)
-	elif state == secondary_state:
-		pcal = str(i)
+        targets.append((str(i),fld_names[i],opms)) 
+    elif state == primary_state:
+        bpcal = str(i)
+    elif state == secondary_state:
+        pcal = str(i)
 tb.done()
 
 

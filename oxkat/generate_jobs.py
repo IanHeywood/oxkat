@@ -25,13 +25,13 @@ CUBICAL_EXEC = '/users/ianh/venv/cubical/bin/python2.7 /users/ianh/venv/cubical/
 
 # ------------------------------------------------------------------------
 
+
 def setup_scripts_dir():
 
     # Make scripts folder if it doesn't exist
 
     if not os.path.isdir(SCRIPTS):
         os.mkdir(SCRIPTS)
-
 
 
 def timenow():

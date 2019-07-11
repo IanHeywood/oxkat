@@ -141,6 +141,7 @@ def generate_syscall_wsclean(mslist,
                           niter=100000,
                           multiscale=False,
                           scales='0,5,15',
+                          sourcelist=True,
                           bda=False,
                           nomodel=False,
                           mask=False):
@@ -149,6 +150,8 @@ def generate_syscall_wsclean(mslist,
 
     syscall = 'wsclean '
     syscall += '-log-time '
+    if sourcelist:
+        syscall += '-save-source-list '
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
     if bda:

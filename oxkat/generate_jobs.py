@@ -207,5 +207,25 @@ def generate_syscall_predict(msname,imgbase):
     return syscall 
 
 
+
+def generate_syscall_crystalball(myms,
+                        model,
+                        outcol,
+                        region,
+                        num_workers=32,
+                        mem_fraction=90):
+
+    syscall = 'crystalball '
+    syscall += '-sm '+model+' '
+    syscall += '-o '+outcol+' '
+    syscall += '-w '+region+' '
+    syscall += '--spectra '
+    syscall += '-j '+num_workers+' '
+    syscall += '-mf '+mem_fraction+' '
+    syscall += myms
+
+    return syscall
+
+
 # ------------------------------------------------------------------------
 

@@ -76,13 +76,13 @@ def make_executable(infile):
 
 def write_slurm(opfile,
                 jobname,
+                logfile,
+                container,
+                syscall,
                 ntasks='1',
                 nodes='1',
                 cpus='32',
-                mem='230GB',
-                logfile,
-                container,
-                syscall):
+                mem='230GB')
 
     # Generate slurm script 
 

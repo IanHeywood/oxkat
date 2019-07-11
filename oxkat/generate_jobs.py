@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# ianh@astro.ox.ac.uk
+# ian.heywood@physics.ox.ac.uk
 
 
 import glob
@@ -8,20 +8,28 @@ import time
 import os
 
 
-
 CWD = os.getcwd()
 OXKAT = CWD+'/oxkat'
 SCRIPTS = CWD+'/scripts'
 LOGS = CWD+'/logs'
-PARSETS = CWD+'/oxkat'
-#CASA_CONTAINER = '/users/ianh/containers/casa-5.1.1-wsclean.img'
+PARSETS = CWD+'/parsets'
+
+
 CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'
 WSCLEAN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 CUBICAL_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
+DDFACET_CONTAINER = '/users/ianh/containers/ddf/...'
+KILLMS_CONTAINER = '/users/ianh/containers/ddf/...'
+CODEX_CONTAINER = '...'
 SOURCEFINDER_CONTAINER = '/data/exp_soft/containers/SF-PY3-bionic.simg'
 
-CUBICAL_EXEC = '/users/ianh/venv/cubical/bin/python2.7 /users/ianh/venv/cubical/bin/gocubical'
 
+#CUBICAL_EXEC = '/users/ianh/venv/cubical/bin/python2.7 /users/ianh/venv/cubical/bin/gocubical'
+CUBICAL_EXEC = 'gocubical'
+
+TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
+
+#DOT_LOCAL_BIN = '/users/ianh/.local/bin'
 
 # ------------------------------------------------------------------------
 
@@ -72,9 +80,37 @@ def make_executable(infile):
 # ------------------------------------------------------------------------
 
 
-def write_runfile_cubical(parset,myms,prefix,opfile):
+def write_slurm(opfile,
+                jobname,
+                ntasks='1',
+                nodes='1',
+                cpus='32',
+                mem='230GB',
+                logfile,
+                container,
+                syscall):
 
-    # Generate shell script to run CubiCal, to be invoked by slurm script
+    # Generate slurm script 
+
+    f = open(opfile,'w')
+    f.writelines(['#!/bin/bash\n',
+        '#file: '+opfile+':\n',
+        '#SBATCH --job-name='+jobname+'\n',
+        '#SBATCH --ntasks='+ntasks+'\n',
+        '#SBATCH --nodes='+nodes+'\n',
+        '#SBATCH --cpus-per-task='+cpus+'\n',
+        '#SBATCH --mem='+mem+'\n',
+        '#SBATCH --output='+logfile+'\n',
+        'singularity exec '+container+' '+syscall+'\n',
+        'sleep 10\n'])
+    f.close()
+
+    make_executable(opfile)
+
+
+def generate_syscall_cubical(parset,myms,prefix):
+
+    # Generate system call to run CubiCal
 
     now = timenow()
     outname = 'cube_'+prefix+'_'+myms.split('/')[-1]+'_'+now
@@ -83,64 +119,43 @@ def write_runfile_cubical(parset,myms,prefix,opfile):
     syscall += '--data-ms='+myms+' '
     syscall += '--out-name='+outname
 
-    f = open(opfile,'w')
-    f.writelines(['#!/bin/bash\n',
-        'source ~/venv/cubical/bin/activate\n',
-        'export PATH=/users/ianh/.local/bin:$PATH\n',
-        syscall+'\n'])
-    f.close()
-
-    make_executable(opfile)
+    return syscall
 
 
-def write_slurm(jobname,logfile,container,runfile,opfile):
+def generate_syscall_tricolour(myms,datacol='DATA',fields=''):
 
-    # Generate slurm script for running CubiCal
+    # Generate system call to run Tricolour 
+    # -dc DATA_COLUMN, --data-column DATA_COLUMN
+    #                       Name of visibility data column to flag (default: DATA)
+    # -fn FIELD_NAMES, --field-names FIELD_NAMES
+    #                       Name(s) of fields to flag. Defaults to flagging all
+    #                       (default: [])
 
-    f = open(opfile,'w')
-    f.writelines(['#!/bin/bash\n',
-        '#file: '+opfile+':\n',
-        '#SBATCH --job-name='+jobname+'\n',
-        '#SBATCH --ntasks=1\n',
-        '#SBATCH --nodes=1\n',
-        '#SBATCH --cpus-per-task=32\n',
-        '#SBATCH --mem=230GB\n',
-        '#SBATCH --output='+logfile+'\n',
-        'singularity exec '+container+' '+runfile+'\n',
-        'sleep 10\n'])
-    f.close()
+    syscall = 'source '+TRICOLOUR_VENV+' && '
 
-    make_executable(opfile)
+    syscall += 'tricolour '
+    syscall += '--data-column '+datacol+' '
+    syscall += '--field-names '+fields+' '
 
-def cubical_jobs(mslist,opfile,dependency=None):
+    syscall += '&& deactivate'
 
-    # CubiCal job submission commands with depdencies
-
-    for i in range(0,len(mslist)):
-
-        myms = mslist[i]
-        jobname = get_code(myms)+'cal'
-        runfile = 'run_cubical_'+str(i)+'.sh'
-        slurmfile = 'slurm_cubical_'+str(i)+'.sh'
-        job_id = 'CUBICAL_ID_'+str(i)
-        
-        write_runfile_cubical('test.parset',myms,'pcal',runfile)
-        write_slurm(jobname,'mycontainer.img',runfile,slurmfile)
-
-        syscall = job_id+"=`sbatch "
-        if dependency:
-            syscall += "-d afterok:${"+dependency+"} "
-        syscall += slurmfile+" | awk '{print $4}'`"
-        print syscall 
+    return syscall
 
 
-def write_runfile_wsclean(mslist,
-                          imgname,datacol,opfile,imsize=8192,cellsize='1.5asec',
-                          briggs=-0.3,niter=100000,multiscale=False,
+def generate_syscall_wsclean(mslist,
+                          imgname,datacol,
+                          opfile,
+                          imsize=8192,
+                          cellsize='1.5asec',
+                          briggs=-0.3,
+                          niter=100000,
+                          multiscale=False,
                           scales='0,5,15',
-                          bda=False,nomodel=False,mask=False):
+                          bda=False,
+                          nomodel=False,
+                          mask=False):
 
-    # Generate shell script to run wsclean, to be invoked by slurm script
+    # Generate system call to run wsclean
 
     syscall = 'wsclean '
     syscall += '-log-time '
@@ -178,33 +193,26 @@ def write_runfile_wsclean(mslist,
     for myms in mslist:
         syscall += myms+' '
 
-    f = open(opfile,'w')
-    f.writelines(['#!/bin/bash\n',
-        syscall+'\n'])
-    f.close()
-
-    make_executable(opfile)
+    return syscall
 
 
-def write_runfile_predict(msname,imgbase,opfile):
-    syscall = 'wsclean -log-time -predict -channelsout 8 -size 8192 8192 '
-    syscall+= '-scale 1.5asec -name '+imgbase+' -mem 90 '
-    syscall+= '-predict-channels 64 '+msname
+def generate_syscall_predict(msname,imgbase,opfile):
 
-    f = open(opfile,'w')
-    f.writelines(['#!/bin/bash\n',
-        syscall+'\n'])
-    f.close()
+    # Generate system call to run wsclean in predict mode
 
-    make_executable(opfile)
+    syscall = 'wsclean '
+    syscall += '-log-time '
+    syscall += '-predict '
+    syscall += '-channelsout 8 '
+    syscall += ' -size 8192 8192 '
+    syscall += '-scale 1.5asec '
+    syscall += '-name '+imgbase+' '
+    syscall += '-mem 90 '
+    syscall += '-predict-channels 64 '
+    syscall += msname
 
+    return syscall 
 
-    f = open(opfile,'w')
-    f.writelines(['#!/bin/bash\n',
-        syscall+'\n'])
-    f.close()
-
-    make_executable(opfile)
 
 # ------------------------------------------------------------------------
 

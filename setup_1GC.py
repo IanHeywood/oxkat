@@ -102,7 +102,7 @@ def main():
 
 
     gen.write_slurm(opfile=slurmfile,
-                jobname=code+'_ref1',
+                jobname=code+'rcal1',
                 logfile=logfile,
                 container=CASA_CONTAINER,
                 syscall='casa -c '+OXKAT+'/casa_reference_cal_calzone.py --nologger --log2term --nogui')
@@ -142,7 +142,7 @@ def main():
 
 
     gen.write_slurm(opfile=slurmfile,
-                jobname=code+'_ref2',
+                jobname=code+'rcal2',
                 logfile=logfile,
                 container=CASA_CONTAINER,
                 syscall='casa -c '+OXKAT+'/casa_reference_cal_full.py --nologger --log2term --nogui')

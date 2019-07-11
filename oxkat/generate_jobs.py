@@ -19,18 +19,14 @@ CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'
 KERN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 WSCLEAN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 CUBICAL_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
-DDFACET_CONTAINER = '/users/ianh/containers/ddf/...'
-KILLMS_CONTAINER = '/users/ianh/containers/ddf/...'
-CODEX_CONTAINER = '...'
+DDFACET_CONTAINER = '/users/ianh/containers/ddfacet-0.4.1.simg'
+KILLMS_CONTAINER = '/users/ianh/containers/killms-2.7.0.simg'
+CODEX_CONTAINER = '/users/ianh/containers/codex-africanus-1.1.1.simg'
 SOURCEFINDER_CONTAINER = '/data/exp_soft/containers/SF-PY3-bionic.simg'
 
 
-#CUBICAL_EXEC = '/users/ianh/venv/cubical/bin/python2.7 /users/ianh/venv/cubical/bin/gocubical'
-CUBICAL_EXEC = 'gocubical'
-
 TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
 
-#DOT_LOCAL_BIN = '/users/ianh/.local/bin'
 
 # ------------------------------------------------------------------------
 
@@ -139,7 +135,7 @@ def generate_syscall_tricolour(myms,datacol='DATA',fields=''):
 def generate_syscall_wsclean(mslist,
                           imgname,datacol,
                           opfile,
-                          imsize=8192,
+                          imsize=8125,
                           cellsize='1.5asec',
                           briggs=-0.3,
                           niter=100000,
@@ -190,7 +186,7 @@ def generate_syscall_wsclean(mslist,
     return syscall
 
 
-def generate_syscall_predict(msname,imgbase,opfile):
+def generate_syscall_predict(msname,imgbase):
 
     # Generate system call to run wsclean in predict mode
 
@@ -198,7 +194,7 @@ def generate_syscall_predict(msname,imgbase,opfile):
     syscall += '-log-time '
     syscall += '-predict '
     syscall += '-channelsout 8 '
-    syscall += ' -size 8192 8192 '
+    syscall += ' -size 8125 8125 '
     syscall += '-scale 1.5asec '
     syscall += '-name '+imgbase+' '
     syscall += '-mem 90 '

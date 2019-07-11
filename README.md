@@ -1,6 +1,6 @@
 # oxkat
 
-![](https://i.imgur.com/9T1BRg7.jpg)
+![](https://i.imgur.com/pVP4edt.jpg)
 
 A lightweight set of scripts for processing MeerKAT data.
 

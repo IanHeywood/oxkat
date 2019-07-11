@@ -35,9 +35,10 @@ ftab0 = 'cal_'+myms+'_'+stamp()+'.flux0'
 # 1 = setup models, solve for B and K
 # 2 = solve for G
 # 3 = apply solutions to cals and target(s)
+# 4 = split each target into a single MS
 
 
-dosteps = [1,2,3]
+dosteps = [1,2,3,4]
 
 
 
@@ -188,6 +189,10 @@ if 3 in dosteps:
             interp=['nearest','nearest','nearest','linear'])
 
 
-flagmanager(vis=opms,mode='save',versionname='refcal-full')
+if 4 in dosteps:
 
+    for targ in targets:
+        target = targ[1]
+        opms = targ[2]
 
+        mstransform(vis=myms,outputvis=opms,field=target,usewtspectrum=True,datacolumn='corrected')

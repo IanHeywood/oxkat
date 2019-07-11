@@ -10,13 +10,12 @@ import os
 
 CWD = os.getcwd()
 OXKAT = CWD+'/oxkat'
-PARSETS = CWD+'/parsets'
 SCRIPTS = CWD+'/scripts'
 LOGS = CWD+'/logs'
+PARSETS = CWD+'/parsets'
 
 
 CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'
-KERN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 WSCLEAN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 CUBICAL_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 DDFACET_CONTAINER = '/users/ianh/containers/ddf/...'
@@ -35,12 +34,12 @@ TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
 # ------------------------------------------------------------------------
 
 
-def setup_dir(DIR):
+def setup_scripts_dir():
 
     # Make scripts folder if it doesn't exist
 
-    if not os.path.isdir(DIR):
-        os.mkdir(DIR)
+    if not os.path.isdir(SCRIPTS):
+        os.mkdir(SCRIPTS)
 
 
 def timenow():
@@ -53,13 +52,20 @@ def timenow():
 
 def get_code(myms):
 
-    # Last three digits of the data set ID
+    # Last three digits of the data set ID, plus the sub-band
 
     myms = myms.split('/')[-1]
 
+    if 'HI' in myms:
+        band = 'H'
+    elif 'LO' in myms:
+        band = 'L'
+    else:
+        band = 'F'
+
     code = myms.split('_')[0][-3:]
 
-    return code
+    return code+band
 
 
 def make_executable(infile):
@@ -93,7 +99,7 @@ def write_slurm(opfile,
         '#SBATCH --ntasks='+ntasks+'\n',
         '#SBATCH --nodes='+nodes+'\n',
         '#SBATCH --cpus-per-task='+cpus+'\n',
-        '#SBATCH --mem='+make_executablem+'\n',
+        '#SBATCH --mem='+mem+'\n',
         '#SBATCH --output='+logfile+'\n',
         'singularity exec '+container+' '+syscall+'\n',
         'sleep 10\n'])

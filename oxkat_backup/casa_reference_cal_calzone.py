@@ -3,13 +3,16 @@
 
 import pickle
 import time
+import shutil
 
 
 def stamp():
     return str(time.time()).replace('.','')
 
 
-myuvrange = '>150m's
+myuvrange = '>150m'
+
+remove_cal_tables = False
 
 
 project_info = pickle.load(open('project_info.p','rb'))
@@ -19,7 +22,6 @@ myms = project_info['master_ms']
 bpcal = project_info['primary']
 primary_tag = project_info['primary_tag']
 pcal = project_info['secondary']
-targets = project_info['target_list'] 
 ref_ant = project_info['ref_ant'] = str(ref_ant)
 k0 = project_info['k0'] = k0
 k1 = project_info['k1'] = k1
@@ -34,7 +36,7 @@ ftab0 = 'cal_'+myms+'_'+stamp()+'.flux0'
 
 # 1 = setup models, solve for B and K
 # 2 = solve for G
-# 3 = apply solutions to cals and target(s)
+# 3 = apply solutions to cals 
 
 
 dosteps = [1,2,3]
@@ -175,19 +177,9 @@ if 3 in dosteps:
         interp = ['nearest','nearest','nearest','linear'])
 
 
-    for targ in targets:
-
-        target = targ[0]
-
-        applycal(vis=myms,
-            gaintable=[gtab0,ktab0,bptab0,ftab0],
-            field=target,
-            calwt=False,
-            parang=False,
-            gainfield=[bpcal,bpcal,bpcal,pcal],
-            interp=['nearest','nearest','nearest','linear'])
-
-
-flagmanager(vis=opms,mode='save',versionname='refcal-full')
-
-
+if remove_cal_tables:
+    shutil.rmtree(gtab0)
+    shutil.rmtree(ktab0)
+    shutil.rmtree(bptab0)
+    shutil.rmtree(gtab1)
+    shutil.rmtree(ftab0)

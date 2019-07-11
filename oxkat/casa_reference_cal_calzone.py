@@ -176,6 +176,7 @@ if 3 in dosteps:
         gainfield=[bpcal,bpcal,bpcal,pcal],
         interp = ['nearest','nearest','nearest','linear'])
 
+flagmanager(vis=opms,mode='save',versionname='refcal-cals')
 
 if remove_cal_tables:
     shutil.rmtree(gtab0)

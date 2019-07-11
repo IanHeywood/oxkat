@@ -25,5 +25,3 @@ mstransform(vis=myms,
 	timebin='8s',
 	realmodelcol=True,
 	usewtspectrum=True)
-
-flagmanager(vis=opms,mode='save',versionname='observatory')

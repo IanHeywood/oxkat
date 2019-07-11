@@ -52,20 +52,13 @@ def timenow():
 
 def get_code(myms):
 
-    # Last three digits of the data set ID, plus the sub-band
+    # Last three digits of the data set ID
 
     myms = myms.split('/')[-1]
 
-    if 'HI' in myms:
-        band = 'H'
-    elif 'LO' in myms:
-        band = 'L'
-    else:
-        band = 'F'
-
     code = myms.split('_')[0][-3:]
 
-    return code+band
+    return code
 
 
 def make_executable(infile):
@@ -99,7 +92,7 @@ def write_slurm(opfile,
         '#SBATCH --ntasks='+ntasks+'\n',
         '#SBATCH --nodes='+nodes+'\n',
         '#SBATCH --cpus-per-task='+cpus+'\n',
-        '#SBATCH --mem='+mem+'\n',
+        '#SBATCH --mem='+make_executablem+'\n',
         '#SBATCH --output='+logfile+'\n',
         'singularity exec '+container+' '+syscall+'\n',
         'sleep 10\n'])

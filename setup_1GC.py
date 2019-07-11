@@ -19,6 +19,7 @@ def main():
  
 
     submit_file = 'submit_1GC_jobs.sh'
+    kill_file = 'kill_1GC_jobs.sh'
 
 
     gen.setup_dir(SCRIPTS)
@@ -195,6 +196,7 @@ def main():
 
     # ------------------------------------------------------------------------------
 
+    kill = 'echo "scancel $"'+job_id_avg+'" "$'+job_id_info'" "$'+job_id_basic'" "$'+job_id_refcal1'" "$'+job_id_flag1+'" "$'+job_id_refcal2+'" "$'+job_id_flag2+'" "$'+job_id_split+' >> '+kill_file
 
     f.close()
 

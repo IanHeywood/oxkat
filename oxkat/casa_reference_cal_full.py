@@ -24,6 +24,7 @@ ref_ant = project_info['ref_ant'] = str(ref_ant)
 k0 = project_info['k0'] = k0
 k1 = project_info['k1'] = k1
 
+delayspw = '0~'+k0+':'+k1
 
 gtab0 = 'cal_'+myms+'_'+stamp()+'.G0'
 ktab0 = 'cal_'+myms+'_'+stamp()+'.K0'

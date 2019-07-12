@@ -9,7 +9,7 @@ def stamp():
     return str(time.time()).replace('.','')
 
 
-myuvrange = '>150m's
+myuvrange = '>150m'
 
 
 project_info = pickle.load(open('project_info.p','rb'))

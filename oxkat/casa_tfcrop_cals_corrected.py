@@ -16,4 +16,4 @@ flagdata(vis=myms,mode='tfcrop',datacolumn='corrected',field=bpcal[1])
 flagdata(vis=myms,mode='tfcrop',datacolumn='corrected',field=pcal[1])
 
 
-flagmanager(vis=opms,mode='save',versionname='tfcrop_cals')
+flagmanager(vis=myms,mode='save',versionname='tfcrop_cals')

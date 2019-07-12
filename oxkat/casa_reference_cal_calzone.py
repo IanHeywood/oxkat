@@ -22,7 +22,7 @@ myms = project_info['master_ms']
 bpcal = project_info['primary']
 primary_tag = project_info['primary_tag']
 pcal = project_info['secondary']
-ref_ant = project_info['ref_ant'] = str(ref_ant)
+ref_ant = project_info['ref_ant']
 k0 = project_info['k0'] = k0
 k1 = project_info['k1'] = k1
 

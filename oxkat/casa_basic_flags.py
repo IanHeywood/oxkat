@@ -27,4 +27,4 @@ flagdata(vis=myms,mode='manual',autocorr=True)
 flagdata(vis=myms,mode='clip',clipzeros=True)
 #flagdata(vis=myms,mode='clip',clipminmax=[0.0,50.0])
 
-flagmanager(vis=opms,mode='save',versionname='basic')
+flagmanager(vis=myms,mode='save',versionname='basic')

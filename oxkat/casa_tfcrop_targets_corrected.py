@@ -15,4 +15,4 @@ for target in targets:
 	flagdata(vis=myms,mode='tfcrop',datacolumn='corrected',field=target[1])
 
 
-flagmanager(vis=opms,mode='save',versionname='tfcrop_targets')
+flagmanager(vis=myms,mode='save',versionname='tfcrop_targets')

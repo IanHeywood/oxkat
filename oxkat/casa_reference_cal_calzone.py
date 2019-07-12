@@ -19,14 +19,14 @@ project_info = pickle.load(open('project_info.p','rb'))
 
 
 myms = project_info['master_ms']
-bpcal = project_info['primary']
+bpcal = project_info['primary'][1]
 primary_tag = project_info['primary_tag']
-pcal = project_info['secondary']
+pcal = project_info['secondary'][1]
 ref_ant = project_info['ref_ant']
 k0 = project_info['k0']
 k1 = project_info['k1']
 
-delayspw = '0~'+str(k0)+':'+str(k1)
+delayspw = '0:'+str(k0)+'~'+str(k1)
 
 gtab0 = 'cal_'+myms+'_'+stamp()+'.G0'
 ktab0 = 'cal_'+myms+'_'+stamp()+'.K0'

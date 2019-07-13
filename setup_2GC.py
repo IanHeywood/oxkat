@@ -19,6 +19,7 @@ def main():
 
 
     submit_file = 'submit_2GC_jobs.sh'
+    kill_file = 'kill_2GC_jobs.sh'
 
 
     gen.setup_dir(SCRIPTS)
@@ -93,7 +94,7 @@ def main():
                     syscall=makemask)
 
 
-        job_id_makemask1 = 'MASK1_'+code
+        job_id_makemask1 = 'MAKEMASK1_'+code
         syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_blind+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
@@ -120,7 +121,7 @@ def main():
                     syscall=wsclean)
 
 
-        job_id_wsmask1 = 'MASK1_'+code
+        job_id_wsmask1 = 'IMGMASK1_'+code
         syscall = job_id_wsmask1+"=`sbatch -d afterok:${"+job_id_makemask1+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
@@ -133,7 +134,7 @@ def main():
         logfile = LOGS+'/slurm_predict1_'+code+'.log'
 
 
-        predict = gen.generate_syscall_predict(msname=myms,imgname=masked_prefix)
+        predict = gen.generate_syscall_predict(msname=myms,imgbase=masked_prefix)
 
 
         gen.write_slurm(opfile=slurmfile,
@@ -168,7 +169,7 @@ def main():
                     syscall=cubical)
 
 
-        job_id_cubical1 = 'PREDICT1_'+code
+        job_id_cubical1 = 'CUBICAL1_'+code
         syscall = job_id_cubical1+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
@@ -195,8 +196,8 @@ def main():
                     syscall=wsclean)
 
 
-        job_id_wsmask2 = 'MASK2_'+code
-        syscall = job_id_wsmask2+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
+        job_id_wsmask2 = 'IMGMASK2_'+code
+        syscall = job_id_wsmask2+"=`sbatch -d afterok:${"+job_id_cubical1+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
 
@@ -218,13 +219,16 @@ def main():
                     syscall=makemask)
 
 
-        job_id_makemask2 = 'MASK2_'+code
+        job_id_makemask2 = 'MAKEMASK2_'+code
         syscall = job_id_makemask2+"=`sbatch -d afterok:${"+job_id_wsmask2+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
 
+    kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_makemask1+'" "$'+job_id_wsmask1+'" "$'+job_id_predict1+'" "$'+job_id_cubical1+'" "$'+job_id_wsmask2+'" "$'+job_id_makemask2+' > '+kill_file
+
+    f.write(kill+'\n')
 
     f.close()
 

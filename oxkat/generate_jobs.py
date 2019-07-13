@@ -133,8 +133,8 @@ def generate_syscall_tricolour(myms,datacol='DATA',fields=''):
 
 
 def generate_syscall_wsclean(mslist,
-                          imgname,datacol,
-                          opfile,
+                          imgname,
+                          datacol,
                           imsize=8125,
                           cellsize='1.5asec',
                           briggs=-0.3,

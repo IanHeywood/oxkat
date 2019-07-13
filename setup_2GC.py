@@ -2,7 +2,7 @@
 # ian.heywood@astro.ox.ac.uk
 
 
-import glob
+import pickle
 from oxkat import generate_jobs as gen
 
 

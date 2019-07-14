@@ -11,6 +11,8 @@ def stamp():
 
 myuvrange = '>150m'
 
+remove_cal_tables = False
+
 
 project_info = pickle.load(open('project_info.p','rb'))
 
@@ -20,7 +22,7 @@ bpcal = project_info['primary'][1]
 primary_tag = project_info['primary_tag']
 pcal = project_info['secondary'][1]
 targets = project_info['target_list'] 
-ref_ant = project_info['ref_ant'] = str(ref_ant)
+ref_ant = project_info['ref_ant'] 
 k0 = project_info['k0'] = k0
 k1 = project_info['k1'] = k1
 
@@ -192,3 +194,9 @@ if 3 in dosteps:
 flagmanager(vis=opms,mode='save',versionname='refcal-full')
 
 
+if remove_cal_tables:
+    shutil.rmtree(gtab0)
+    shutil.rmtree(ktab0)
+    shutil.rmtree(bptab0)
+    shutil.rmtree(gtab1)
+    shutil.rmtree(ftab0)

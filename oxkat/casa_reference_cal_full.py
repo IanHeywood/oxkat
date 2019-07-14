@@ -23,8 +23,8 @@ primary_tag = project_info['primary_tag']
 pcal = project_info['secondary'][1]
 targets = project_info['target_list'] 
 ref_ant = project_info['ref_ant'] 
-k0 = project_info['k0'] = k0
-k1 = project_info['k1'] = k1
+k0 = project_info['k0']
+k1 = project_info['k1']
 
 delayspw = '0:'+str(k0)+'~'+str(k1)
 

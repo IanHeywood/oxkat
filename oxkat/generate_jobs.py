@@ -18,7 +18,7 @@ LOGS = CWD+'/logs'
 CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'
 KERN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 WSCLEAN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
-CUBICAL_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
+CUBICAL_CONTAINER = '/users/ianh/containers/cubical-1.1.2.simg'
 DDFACET_CONTAINER = '/users/ianh/containers/ddfacet-0.4.1.simg'
 KILLMS_CONTAINER = '/users/ianh/containers/killms-2.7.0.simg'
 CODEX_CONTAINER = '/users/ianh/containers/codex-africanus-1.1.1.simg'
@@ -105,7 +105,7 @@ def generate_syscall_cubical(parset,myms,prefix):
     now = timenow()
     outname = 'cube_'+prefix+'_'+myms.split('/')[-1]+'_'+now
 
-    syscall = CUBICAL_EXEC+' '+parset+' '
+    syscall = 'gocubical '+parset+' '
     syscall += '--data-ms='+myms+' '
     syscall += '--out-name='+outname
 

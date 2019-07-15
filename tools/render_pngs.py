@@ -33,7 +33,8 @@ def generate_syscall_mviewer(infits):
     syscall += '-grid Equatorial J2000 '
     syscall += '-ct 0 '
     syscall += '-gray '+infits+' '
-    syscall += '-3s max gaussian-log '
+#    syscall += '-3s max gaussian-log '
+    syscall += '-1e-5 5e-5 '
     syscall += '-png '+outpng+' '
     syscall += '; '
     return syscall

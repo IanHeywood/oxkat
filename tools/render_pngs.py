@@ -42,6 +42,9 @@ def generate_syscall_mviewer(infits):
 def main():
 
 
+    KERN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
+
+
     pattern = sys.argv[1]
 
 

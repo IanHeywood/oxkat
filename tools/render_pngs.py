@@ -27,7 +27,7 @@ def write_slurm(opfile,
 
 
 def generate_syscall_mviewer(infits):
-    outpng = PNGS+'/infits'+'.png'
+    outpng = infits+'.png'
     syscall = 'mViewer '
     syscall += '-color yellow '
     syscall += '-grid Equatorial J2000 '

@@ -48,6 +48,8 @@ def main():
     pattern = sys.argv[1]
 
 
+    print pattern
+
     fitslist = glob.glob(pattern)
 
     slurmfile = 'slurm_render_pngs.sh'

@@ -170,7 +170,7 @@ def generate_syscall_wsclean(mslist,
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fitsmask '+mymask+' '
-    elif mask.lower() == 'none'
+    elif mask.lower() == 'none':
         syscall += ''
     elif mask.lower() == 'auto':
         syscall += '-local-rms '

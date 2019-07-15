@@ -47,8 +47,8 @@ def main():
 
     fitslist = glob.glob(pattern)
 
-    slurmfile = SCRIPTS+'/slurm_render_pngs.sh'
-    logfile = LOGS+'/slurm_render_pngs.log'
+    slurmfile = 'slurm_render_pngs.sh'
+    logfile = 'slurm_render_pngs.log'
 
     syscall = ''
 

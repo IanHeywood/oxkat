@@ -13,7 +13,6 @@ OXKAT = CWD+'/oxkat'
 PARSETS = CWD+'/parsets'
 SCRIPTS = CWD+'/scripts'
 LOGS = CWD+'/logs'
-PNGS = CWD+'/pngs'
 
 
 CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'

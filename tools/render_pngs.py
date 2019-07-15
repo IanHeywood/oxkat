@@ -1,7 +1,42 @@
 import sys
 import glob
-from ..oxkat.generate_jobs import *
 
+
+def write_slurm(opfile,
+                jobname,
+                logfile,
+                container,
+                syscall,
+                ntasks='1',
+                nodes='1',
+                cpus='32',
+                mem='230GB'):
+
+    f = open(opfile,'w')
+    f.writelines(['#!/bin/bash\n',
+        '#file: '+opfile+':\n',
+        '#SBATCH --job-name='+jobname+'\n',
+        '#SBATCH --ntasks='+ntasks+'\n',
+        '#SBATCH --nodes='+nodes+'\n',
+        '#SBATCH --cpus-per-task='+cpus+'\n',
+        '#SBATCH --mem='+mem+'\n',
+        '#SBATCH --output='+logfile+'\n',
+        'singularity exec '+container+' '+syscall+'\n',
+        'sleep 10\n'])
+    f.close()
+
+
+def generate_syscall_mviewer(infits):
+    outpng = PNGS+'/infits'+'.png'
+    syscall = 'mViewer '
+    syscall += '-color yellow '
+    syscall += '-grid Equatorial J2000 '
+    syscall += '-ct 0 '
+    syscall += '-gray '+infits+' '
+    syscall += '-3s max gaussian-log '
+    syscall += '-png '+outpng+' '
+    syscall += '&&'
+    return syscall
 
 
 def main():
@@ -9,8 +44,6 @@ def main():
 
     pattern = sys.argv[1]
 
-    gen.setup_dir(SCRIPTS)
-    gen.setup_dir(PNGS)
 
     fitslist = glob.glob(pattern)
 
@@ -22,7 +55,7 @@ def main():
     for infits in fitslist:
         syscall += generate_syscall_mviewer(infits)
 
-    gen.write_slurm(opfile=slurmfile,
+    write_slurm(opfile=slurmfile,
             jobname='makepngs',
             logfile=logfile,
             container=KERN_CONTAINER,

@@ -55,7 +55,10 @@ def main():
 
     syscall = ''
 
+    print(fitslist)
+
     for infits in fitslist:
+        print(infits)
         syscall += generate_syscall_mviewer(infits)
 
     write_slurm(opfile=slurmfile,

@@ -1,6 +1,6 @@
 import sys
 import glob
-from oxkat.generate_jobs import *
+from ..oxkat.generate_jobs import *
 
 
 

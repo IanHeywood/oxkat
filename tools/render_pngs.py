@@ -48,7 +48,7 @@ def main():
     pattern = sys.argv[1]
 
 
-    print pattern
+    print(pattern)
 
     fitslist = glob.glob(pattern)
 

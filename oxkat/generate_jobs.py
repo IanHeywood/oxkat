@@ -13,6 +13,7 @@ OXKAT = CWD+'/oxkat'
 PARSETS = CWD+'/parsets'
 SCRIPTS = CWD+'/scripts'
 LOGS = CWD+'/logs'
+PNGS = CWD+'/pngs'
 
 
 CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'
@@ -80,8 +81,6 @@ def write_slurm(opfile,
                 cpus='32',
                 mem='230GB'):
 
-    # Generate slurm script 
-
     f = open(opfile,'w')
     f.writelines(['#!/bin/bash\n',
         '#file: '+opfile+':\n',
@@ -100,8 +99,6 @@ def write_slurm(opfile,
 
 def generate_syscall_cubical(parset,myms,prefix):
 
-    # Generate system call to run CubiCal
-
     now = timenow()
     outname = 'cube_'+prefix+'_'+myms.split('/')[-1]+'_'+now
 
@@ -109,17 +106,13 @@ def generate_syscall_cubical(parset,myms,prefix):
     syscall += '--data-ms='+myms+' '
     syscall += '--out-name='+outname
 
+    # Move output to logs...
+    # syscall += ' && mv '
+
     return syscall
 
 
 def generate_syscall_tricolour(myms,datacol='DATA',fields=''):
-
-    # Generate system call to run Tricolour 
-    # -dc DATA_COLUMN, --data-column DATA_COLUMN
-    #                       Name of visibility data column to flag (default: DATA)
-    # -fn FIELD_NAMES, --field-names FIELD_NAMES
-    #                       Name(s) of fields to flag. Defaults to flagging all
-    #                       (default: [])
 
     syscall = 'source '+TRICOLOUR_VENV+' && '
 
@@ -170,7 +163,7 @@ def generate_syscall_wsclean(mslist,
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fitsmask '+mymask+' '
-    elif mask.lower() == 'none':
+    elif mask.lower() == 'none':    
         syscall += ''
     elif mask.lower() == 'auto':
         syscall += '-local-rms '
@@ -208,7 +201,6 @@ def generate_syscall_predict(msname,imgbase):
     return syscall 
 
 
-
 def generate_syscall_crystalball(myms,
                         model,
                         outcol,
@@ -225,6 +217,19 @@ def generate_syscall_crystalball(myms,
     syscall += '-mf '+mem_fraction+' '
     syscall += myms
 
+    return syscall
+
+
+def generate_syscall_mviewer(infits):
+    outpng = PNGS+'/infits'+'.png'
+    syscall = 'mViewer '
+    syscall += '-color yellow '
+    syscall += '-grid Equatorial J2000 '
+    syscall += '-ct 0 '
+    syscall += '-gray '+infits+' '
+    syscall += '-3s max gaussian-log '
+    syscall += '-png '+outpng+' '
+    syscall += '&&'
     return syscall
 
 

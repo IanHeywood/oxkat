@@ -144,7 +144,7 @@ def generate_syscall_wsclean(mslist,
                           sourcelist=True,
                           bda=False,
                           nomodel=False,
-                          mask=False):
+                          mask='auto'):
 
     # Generate system call to run wsclean
 
@@ -167,16 +167,17 @@ def generate_syscall_wsclean(mslist,
     syscall += '-mgain 0.85 '
     syscall += '-weight briggs '+str(briggs)+' '
     syscall += '-datacolumn '+datacol+' '
-    if mask:
-        if mask == 'fits':
-            mymask = glob.glob('*mask.fits')[0]
-            syscall += '-fitsmask '+mymask+' '
-        else:
-            syscall += '-fitsmask '+mask+' '
-    else:
+    if mask.lower() == 'fits':
+        mymask = glob.glob('*mask.fits')[0]
+        syscall += '-fitsmask '+mymask+' '
+    elif mask.lower() == 'none'
+        syscall += ''
+    elif mask.lower() == 'auto':
         syscall += '-local-rms '
         syscall += '-auto-threshold 0.3 '
         syscall += '-auto-mask 5.5 '
+    else:
+        syscall += '-fitsmask '+mask+' '
     syscall += '-name '+imgname+' '
     syscall += '-channelsout 8 '
     syscall += '-fit-spectral-pol 4 '

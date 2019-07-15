@@ -35,7 +35,7 @@ def generate_syscall_mviewer(infits):
     syscall += '-gray '+infits+' '
     syscall += '-3s max gaussian-log '
     syscall += '-png '+outpng+' '
-    syscall += '&&'
+    syscall += '; '
     return syscall
 
 

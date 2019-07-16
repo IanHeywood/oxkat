@@ -158,10 +158,10 @@ def generate_syscall_wsclean(mslist,
     syscall += '-gain 0.1 '
     syscall += '-mgain 0.85 '
     syscall += '-weight briggs '+str(briggs)+' '
-    syscall += '-datacolumn '+datacol+' '
+    syscall += '-data-column '+datacol+' '
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
-        syscall += '-fitsmask '+mymask+' '
+        syscall += '-fits-mask '+mymask+' '
     elif mask.lower() == 'none':    
         syscall += ''
     elif mask.lower() == 'auto':
@@ -169,11 +169,11 @@ def generate_syscall_wsclean(mslist,
         syscall += '-auto-threshold 0.3 '
         syscall += '-auto-mask 5.5 '
     else:
-        syscall += '-fitsmask '+mask+' '
+        syscall += '-fits-mask '+mask+' '
     syscall += '-name '+imgname+' '
-    syscall += '-channelsout 8 '
+    syscall += '-channels-out 8 '
     syscall += '-fit-spectral-pol 4 '
-    syscall += '-joinchannels '
+    syscall += '-join-channels '
     syscall += '-mem 90 '
 
     for myms in mslist:

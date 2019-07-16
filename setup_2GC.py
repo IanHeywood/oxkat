@@ -61,7 +61,7 @@ def main():
                                 imgname=blind_prefix,
                                 datacol='DATA',
                                 bda=True,
-                                mask='none')
+                                mask='auto')
 
 
         gen.write_slurm(opfile=slurmfile,

@@ -149,7 +149,7 @@ def main():
                 syscall='casa -c '+OXKAT+'/casa_reference_cal_full.py --nologger --log2term --nogui')
 
 
-    job_id_refcal2 = 'REFCAL1_'+code
+    job_id_refcal2 = 'REFCAL2_'+code
     syscall = job_id_refcal2+"=`sbatch -d afterok:${"+job_id_flag1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 

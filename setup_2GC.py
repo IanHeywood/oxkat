@@ -153,7 +153,7 @@ def main():
         # Self-calibrate phases 
 
 
-        slurmfile = SCRIPTS+'/slurm_wsclean_cubical1_'+code+'.sh'
+        slurmfile = SCRIPTS+'/slurm_cubical1_'+code+'.sh'
         logfile = LOGS+'/slurm_cubical1_'+code+'.log'
 
 

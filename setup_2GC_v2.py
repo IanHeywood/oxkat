@@ -146,7 +146,7 @@ def main():
 
 
         job_id_pcal = 'IMGMASK2_'+code
-        syscall = job_id_pcal+"=`sbatch -d afterok:${"+job_id_cubical1+"} "+slurmfile+" | awk '{print $4}'`"
+        syscall = job_id_pcal+"=`sbatch -d afterok:${"+job_id_cubical+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
 

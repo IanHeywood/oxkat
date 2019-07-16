@@ -119,7 +119,7 @@ def main():
 
 
         job_id_cubical = 'CUBICAL_'+code
-        syscall = job_id_cubical1+"=`sbatch -d afterok:${"+job_id_predict+"} "+slurmfile+" | awk '{print $4}'`"
+        syscall = job_id_cubical+"=`sbatch -d afterok:${"+job_id_predict+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
 

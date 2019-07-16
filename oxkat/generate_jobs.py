@@ -171,7 +171,7 @@ def generate_syscall_wsclean(mslist,
     elif mask.lower() == 'auto':
         syscall += '-local-rms '
         syscall += '-auto-threshold 0.3 '
-        syscall += '-auto-mask 6.0 '
+        syscall += '-auto-mask 5.0 '
     else:
         syscall += '-fits-mask '+mask+' '
     syscall += '-name '+imgname+' '

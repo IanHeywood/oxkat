@@ -106,7 +106,7 @@ def generate_syscall_cubical(parset,myms,prefix):
     syscall += '--out-name='+outname
 
     # Move output to logs...
-    # syscall += ' && mv '
+    syscall += ' && mv '+outname+'* '+LOGS
 
     return syscall
 
@@ -130,7 +130,7 @@ def generate_syscall_wsclean(mslist,
                           imsize=8125,
                           cellsize='1.5asec',
                           briggs=-0.3,
-                          niter=100000,
+                          niter=60000,
                           multiscale=False,
                           scales='0,5,15',
                           sourcelist=True,
@@ -219,17 +219,6 @@ def generate_syscall_crystalball(myms,
     return syscall
 
 
-def generate_syscall_mviewer(infits):
-    outpng = PNGS+'/infits'+'.png'
-    syscall = 'mViewer '
-    syscall += '-color yellow '
-    syscall += '-grid Equatorial J2000 '
-    syscall += '-ct 0 '
-    syscall += '-gray '+infits+' '
-    syscall += '-3s max gaussian-log '
-    syscall += '-png '+outpng+' '
-    syscall += '&&'
-    return syscall
 
 
 # ------------------------------------------------------------------------

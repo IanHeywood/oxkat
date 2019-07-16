@@ -15,4 +15,4 @@ for targ in targets:
     target = targ[1]
     opms = targ[2]
 
-    mstransform(vis=myms,outputvis=opms,field=target,usewtspectrum=True,datacolumn='corrected')
+    mstransform(vis=myms,outputvis=opms,field=target,usewtspectrum=True,realmodelcol=True,datacolumn='corrected')

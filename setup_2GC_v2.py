@@ -47,7 +47,7 @@ def main():
 
 
         # ------------------------------------------------------------------------------
-        # Blind wsclean 
+        # Automask wsclean 
 
 
         slurmfile = SCRIPTS+'/slurm_wsclean_data_'+code+'.sh'

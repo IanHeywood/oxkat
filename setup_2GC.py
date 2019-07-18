@@ -50,7 +50,7 @@ def main():
 
 
         # ------------------------------------------------------------------------------
-        # Blind wsclean 
+        # Automask wsclean 
 
 
         slurmfile = SCRIPTS+'/slurm_wsclean_blind_'+code+'.sh'
@@ -61,6 +61,7 @@ def main():
                                 imgname=blind_prefix,
                                 datacol='DATA',
                                 bda=True,
+                                niter=30000,
                                 mask='auto')
 
 

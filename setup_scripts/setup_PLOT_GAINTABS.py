@@ -3,7 +3,8 @@
 
 
 import sys
-sys.path.append("..")
+import os.path as o
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 import glob
 import pickle
 from oxkat import generate_jobs as gen

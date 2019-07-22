@@ -57,8 +57,6 @@ def main():
             container=KERN_CONTAINER,
             syscall=syscall)
 
-    gen.write_slurm('gainplot',logfile,CUBICAL_CONTAINER,runfile,slurmfile)
-
 
 if __name__ == "__main__":
 

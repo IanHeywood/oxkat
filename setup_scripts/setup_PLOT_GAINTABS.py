@@ -3,6 +3,7 @@
 
 
 import sys
+sys.path.append('../')
 import glob
 import pickle
 from oxkat import generate_jobs as gen
@@ -16,18 +17,14 @@ def main():
     SCRIPTS = gen.SCRIPTS
     LOGS = gen.LOGS
     PARSETS = gen.PARSETS
-    CASA_CONTAINER = gen.CASA_CONTAINER
-    WSCLEAN_CONTAINER = gen.WSCLEAN_CONTAINER
-    CUBICAL_CONTAINER = gen.CUBICAL_CONTAINER
+    KERN_CONTAINER = gen.KERN_CONTAINER
+    PLOT_SCRIPTS = gen.PLOT_SCRIPTS
 
 
-    PLOT_SCRIPTS = '/users/ianh/Software/plot_utils'
+    gen.setup_dir(SCRIPTS)
+    get.setup_dir(LOGS)
 
 
-    gen.setup_scripts_dir()
-
-
-    runfile = SCRIPTS+'/run_plots.sh'
     slurmfile = SCRIPTS+'/slurm_plots.sh'
     logfile = slurmfile.replace('.sh','.log')
 
@@ -42,19 +39,24 @@ def main():
     bptab = glob.glob('cal_*.B0')[0]
 
 
-    f = open(runfile,'w')
-    for corr in ['0','1']:
-        syscall = 'python '+PLOT_SCRIPTS+'/plot_bandpass.py -f '+primary+' -c '+corr+' '+CWD+'/'+bptab+'\n'
-        f.write(syscall)
-        syscall = 'python '+PLOT_SCRIPTS+'/plot_bandpass.py -f '+primary+' -c '+corr+' '+CWD+'/'+gaintab0+'\n'
-        f.write(syscall)
-        syscall = 'python '+PLOT_SCRIPTS+'/plot_gaintab.py -f '+primary+' -c '+corr+' '+CWD+'/'+gaintab1+'\n'
-        f.write(syscall)
-        syscall = 'python '+PLOT_SCRIPTS+'/plot_gaintab.py -f '+secondary+' -c '+corr+' '+CWD+'/'+gaintab1+'\n'
-        f.write(syscall)
-    f.close()   
+    syscall = 'bash -c "'
 
-    gen.make_executable(runfile)
+
+    for corr in ['0','1']:
+        syscall += 'python '+PLOT_SCRIPTS+'/plot_bandpass.py -f '+primary+' -c '+corr+' '+CWD+'/'+bptab+'; '
+        syscall += 'python '+PLOT_SCRIPTS+'/plot_bandpass.py -f '+primary+' -c '+corr+' '+CWD+'/'+gaintab0+'; '
+        syscall += 'python '+PLOT_SCRIPTS+'/plot_gaintab.py -f '+primary+' -c '+corr+' '+CWD+'/'+gaintab1+'; '
+        syscall += 'python '+PLOT_SCRIPTS+'/plot_gaintab.py -f '+secondary+' -c '+corr+' '+CWD+'/'+gaintab1+'; '
+
+
+    syscall += ' ; mv plot_cal*.png '+LOGS+'"'
+
+
+    gen.write_slurm(opfile=slurmfile,
+            jobname='plots',
+            logfile=logfile,
+            container=KERN_CONTAINER,
+            syscall=syscall)
 
     gen.write_slurm('gainplot',logfile,CUBICAL_CONTAINER,runfile,slurmfile)
 

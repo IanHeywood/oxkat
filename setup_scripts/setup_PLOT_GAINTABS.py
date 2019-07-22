@@ -5,7 +5,7 @@
 import sys
 import glob
 import pickle
-from oxkat import generate_jobs as gen
+from ..oxkat import generate_jobs as gen
 
 
 def main():
@@ -24,7 +24,7 @@ def main():
     gen.setup_dir(LOGS)
 
 
-    slurmfile = SCRIPTS+'/slurm_plots.sh'
+    slurmfile = SCRIPTS+'/slurm_plot_gaintabs.sh'
     logfile = slurmfile.replace('.sh','.log')
 
 
@@ -52,7 +52,7 @@ def main():
 
 
     gen.write_slurm(opfile=slurmfile,
-            jobname='plots',
+            jobname='gainplot',
             logfile=logfile,
             container=KERN_CONTAINER,
             syscall=syscall)

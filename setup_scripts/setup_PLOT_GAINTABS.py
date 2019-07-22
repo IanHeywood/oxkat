@@ -3,7 +3,6 @@
 
 
 import sys
-sys.path.append('../')
 import glob
 import pickle
 from oxkat import generate_jobs as gen
@@ -22,7 +21,7 @@ def main():
 
 
     gen.setup_dir(SCRIPTS)
-    get.setup_dir(LOGS)
+    gen.setup_dir(LOGS)
 
 
     slurmfile = SCRIPTS+'/slurm_plots.sh'

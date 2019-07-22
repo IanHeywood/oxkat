@@ -8,6 +8,9 @@ import time
 import os
 
 
+# ------------------------------------------------------------------------
+
+
 CWD = os.getcwd()
 OXKAT = CWD+'/oxkat'
 PARSETS = CWD+'/parsets'
@@ -26,6 +29,8 @@ SOURCEFINDER_CONTAINER = '/data/exp_soft/containers/SF-PY3-bionic.simg'
 
 
 TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
+
+PLOT_SCRIPTS = '/users/ianh/Software/plot_utils'
 
 
 # ------------------------------------------------------------------------

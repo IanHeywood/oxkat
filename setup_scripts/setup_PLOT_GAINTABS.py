@@ -3,9 +3,10 @@
 
 
 import sys
+sys.path.append("..")
 import glob
 import pickle
-from ..oxkat import generate_jobs as gen
+from oxkat import generate_jobs as gen
 
 
 def main():

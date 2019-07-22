@@ -180,7 +180,7 @@ def main():
 
 
         slurmfile = SCRIPTS+'/slurm_wsclean_pcal1_'+code+'.sh'
-        logfile = LOGS+'/slurm_pcal1_'+code+'.log'
+        logfile = LOGS+'/slurm_wsclean_pcal1_'+code+'.log'
 
 
         wsclean = gen.generate_syscall_wsclean(mslist=[myms],

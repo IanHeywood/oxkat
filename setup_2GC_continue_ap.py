@@ -121,14 +121,14 @@ def main():
                     syscall=wsclean)
 
 
-        job_id_wsmask1 = 'IMGMASK2_'+code
-        syscall = job_id_wsmask1+"=`sbatch -d afterok:${"+job_id_cubical2+"} "+slurmfile+" | awk '{print $4}'`"
+        job_id_wsmask2 = 'IMGMASK2_'+code
+        syscall = job_id_wsmask2+"=`sbatch -d afterok:${"+job_id_cubical2+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
 
-    kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_makemask1+'" "$'+job_id_wsmask1+'" "$'+job_id_predict1+'" "$'+job_id_cubical1+'" "$'+job_id_wsmask2+'" "$'+job_id_makemask2+' > '+kill_file
+    kill = 'echo "scancel "$'+job_id_predict2+'" "$'+job_id_cubical2+'" "$'+job_id_wsmask2+' > '+kill_file
 
     f.write(kill+'\n')
 

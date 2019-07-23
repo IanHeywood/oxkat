@@ -2,11 +2,13 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-import sys
-import os.path as o
-sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 import glob
+import os.path as o
 import pickle
+import sys
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
+
+
 from oxkat import generate_jobs as gen
 
 

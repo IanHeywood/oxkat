@@ -1,8 +1,13 @@
 #!/usr/bin/env python
-# ian.heywood@astro.ox.ac.uk
+# ian.heywood@physics.ox.ac.uk
 
 
+import os.path as o
 import pickle
+import sys
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
+
+
 from oxkat import generate_jobs as gen
 
 
@@ -105,7 +110,7 @@ def main():
 
 
         slurmfile = SCRIPTS+'/slurm_wsclean_mask1_'+code+'.sh'
-        logfile = LOGS+'/slurm_mask1_'+code+'.log'
+        logfile = LOGS+'/slurm_wsclean_mask1_'+code+'.log'
 
 
         wsclean = gen.generate_syscall_wsclean(mslist=[myms],
@@ -132,7 +137,7 @@ def main():
 
 
         slurmfile = SCRIPTS+'/slurm_wsclean_predict1_'+code+'.sh'
-        logfile = LOGS+'/slurm_predict1_'+code+'.log'
+        logfile = LOGS+'/slurm_wsclean_predict1_'+code+'.log'
 
 
         predict = gen.generate_syscall_predict(msname=myms,imgbase=masked_prefix)

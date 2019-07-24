@@ -9,15 +9,19 @@ import os
 
 
 # ------------------------------------------------------------------------
+#
+# GENERAL CONFIGURATION
+#
 
 
+# Directories
 CWD = os.getcwd()
 OXKAT = CWD+'/oxkat'
 PARSETS = CWD+'/parsets'
 SCRIPTS = CWD+'/scripts'
 LOGS = CWD+'/logs'
 
-
+# Containers
 CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'
 KERN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
 WSCLEAN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
@@ -27,12 +31,13 @@ KILLMS_CONTAINER = '/users/ianh/containers/killms-2.7.0.simg'
 CODEX_CONTAINER = '/users/ianh/containers/codex-africanus-1.1.1.simg'
 SOURCEFINDER_CONTAINER = '/data/exp_soft/containers/SF-PY3-bionic.simg'
 
-
+# Miscellaneous
 TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
-
 PLOT_SCRIPTS = '/users/ianh/Software/plot_utils'
 
 
+#
+#
 # ------------------------------------------------------------------------
 
 
@@ -120,15 +125,16 @@ def generate_syscall_cubical(parset,myms,prefix):
     return syscall
 
 
-def generate_syscall_tricolour(myms,datacol='DATA',fields=''):
+def generate_syscall_tricolour(myms='',datacol='DATA',fields='all'):
 
-    syscall = 'source '+TRICOLOUR_VENV+' && '
+    syscall = 'source '+TRICOLOUR_VENV+' ; '
 
-    syscall += 'tricolour '
-    syscall += '--data-column '+datacol+' '
-    syscall += '--field-names '+fields+' '
+    syscall = 'python '+OXKAT+'/run_tricolour.py '
+    syscall += '--col='+datacol+' '
+    syscall += '--fields='+fields+' '
+    syscall += myms
 
-    syscall += '&& deactivate'
+    syscall += '; deactivate'
 
     return syscall
 

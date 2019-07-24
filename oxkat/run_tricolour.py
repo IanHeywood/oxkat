@@ -14,34 +14,35 @@ fields = options.fields
 
 
 project_info = pickle.load(open('project_info.p','rb'))
-myms = project_info['master_ms']
 bpcal = project_info['primary']
 pcal = project_info['secondary']
 targets = project_info['target_list'] 
 
+
+if len(args) != 1:
+        myms = project_info['master_ms']
+else:
+        myms = args[0].rstrip('/')
+
+
 cal_ids = bpcal[1]+','+pcal[1]
 target_ids = []
 for target in targets:
-	target_ids.append(target[1])
+    target_ids.append(target[1])
 target_ids = ','.join(target_ids)
+
+if fields == 'cals':
+    field_selection = cal_ids
+elif fields == 'targets':
+    field_selection = target_ids
+elif field_selection == 'all'
+    field_selection = cal_ids+','+target_ids
+
 
 syscall = 'tricolour '
 syscall += '--data-column '+coloumn_selection+' '
-
-if fields == 'cals':
-elif fields == 'targets':
-elif field_selection == 'all'
+syscall += '--field-names '+field_selection+' '
+syscall += myms
 
 
-def generate_syscall_tricolour(myms,datacol='DATA',fields=''):
-
-    syscall = 'source '+TRICOLOUR_VENV+' && '
-
-    syscall += 'tricolour '
-    syscall += '--data-column '+datacol+' '
-    syscall += '--field-names '+fields+' '
-
-    syscall += '&& deactivate'
-
-    return syscall
-
+os.system(sysall)

@@ -5,8 +5,6 @@ import pickle
 
 
 project_info = pickle.load(open('project_info.p','rb'))
-
-
 myms = project_info['master_ms']
 targets = project_info['target_list'] 
 

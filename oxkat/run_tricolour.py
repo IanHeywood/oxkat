@@ -2,6 +2,7 @@
 
 
 import pickle
+import os
 from optparse import OptionParser
 
 
@@ -45,4 +46,4 @@ syscall += '--field-names '+field_selection+' '
 syscall += myms
 
 
-os.system(sysall)
+os.system(syscall)

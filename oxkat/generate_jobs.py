@@ -129,7 +129,7 @@ def generate_syscall_tricolour(myms='',datacol='DATA',fields='all'):
 
     syscall = 'source '+TRICOLOUR_VENV+' ; '
 
-    syscall = 'python '+OXKAT+'/run_tricolour.py '
+    syscall += 'python '+OXKAT+'/run_tricolour.py '
     syscall += '--col='+datacol+' '
     syscall += '--fields='+fields+' '
     syscall += myms

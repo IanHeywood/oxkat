@@ -9,7 +9,7 @@ parser = OptionParser(usage='%prog [options] rms_map')
 parser.add_option('--col',dest='column_selection',help='Data column',default='DATA')
 parser.add_option('--fields',dest='fields',help='Select "cals", "targets" or "all"',default='all')
 (options,args) = parser.parse_args()
-coloumn_selection = options.coloumn_selection
+column_selection = options.column_selection
 fields = options.fields
 
 

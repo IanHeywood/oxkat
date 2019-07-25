@@ -40,7 +40,7 @@ elif field_selection == 'all':
 
 
 syscall = 'tricolour '
-syscall += '--data-column '+coloumn_selection+' '
+syscall += '--data-column '+column_selection+' '
 syscall += '--field-names '+field_selection+' '
 syscall += myms
 

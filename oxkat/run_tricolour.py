@@ -43,6 +43,7 @@ elif field_selection == 'all':
 syscall = 'tricolour '
 syscall += '--data-column '+column_selection+' '
 syscall += '--field-names '+field_selection+' '
+syscall += '-fs polarisation '
 syscall += myms
 
 

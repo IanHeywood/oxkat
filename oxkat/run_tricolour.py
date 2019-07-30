@@ -36,7 +36,7 @@ if fields == 'cals':
     field_selection = cal_ids
 elif fields == 'targets':
     field_selection = target_ids
-elif field_selection == 'all':
+elif fields == 'all':
     field_selection = cal_ids+','+target_ids
 
 

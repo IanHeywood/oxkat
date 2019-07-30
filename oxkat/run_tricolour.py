@@ -6,7 +6,7 @@ import os
 from optparse import OptionParser
 
 
-parser = OptionParser(usage='%prog [options] rms_map')
+parser = OptionParser(usage='%prog [options] ms')
 parser.add_option('--col',dest='column_selection',help='Data column',default='DATA')
 parser.add_option('--fields',dest='fields',help='Select "cals", "targets" or "all"',default='all')
 (options,args) = parser.parse_args()

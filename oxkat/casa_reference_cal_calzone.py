@@ -12,6 +12,7 @@ def stamp():
 
 myuvrange = '>150m'
 
+
 remove_cal_tables = False
 
 
@@ -26,7 +27,9 @@ ref_ant = project_info['ref_ant']
 k0 = project_info['k0']
 k1 = project_info['k1']
 
+
 delayspw = '0:'+str(k0)+'~'+str(k1)
+
 
 gtab0 = 'cal_'+myms+'_'+stamp()+'.G0'
 ktab0 = 'cal_'+myms+'_'+stamp()+'.K0'
@@ -100,9 +103,10 @@ if 1 in dosteps:
         solint='inf',
         combine='scan',
         solnorm=False,
-        minblperant=4,
+        minblperant=3,
+        minsnr=2.0,
         bandtype='B',
-        fillgaps=8,
+        fillgaps=64,
         parang=False,
         gainfield=[bpcal,bpcal],
         interp = ['nearest','nearest'],
@@ -165,6 +169,7 @@ if 3 in dosteps:
         field=bpcal,
         calwt=False,
         parang=False,
+        applymode='calonly',
         gainfield=[bpcal,bpcal,bpcal,bpcal],
         interp = ['nearest','nearest','nearest','linear'])
 
@@ -174,10 +179,13 @@ if 3 in dosteps:
         field=pcal,
         calwt=False,
         parang=False,
+        applymode='calonly',
         gainfield=[bpcal,bpcal,bpcal,pcal],
         interp = ['nearest','nearest','nearest','linear'])
 
+
 flagmanager(vis=myms,mode='save',versionname='refcal-cals')
+
 
 if remove_cal_tables:
     shutil.rmtree(gtab0)

@@ -101,7 +101,7 @@ if 1 in dosteps:
         caltable=bptab0,
         refant = str(ref_ant),
         solint='inf',
-        combine='scan',
+        combine='',
         solnorm=False,
         minblperant=3,
         minsnr=2.0,

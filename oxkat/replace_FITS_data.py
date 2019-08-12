@@ -3,6 +3,7 @@
 
 
 from astropy.io import fits
+import numpy
 import random
 import shutil
 import sys

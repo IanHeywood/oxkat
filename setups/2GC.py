@@ -90,7 +90,7 @@ def main():
         logfile = LOGS+'/slurm_makemask1_'+code+'.log'
 
 
-        makemask = 'MakeMask.py --Th=6.0 --RestoredIm='+blind_prefix+'-MFS-image.fits' # --OutName='+fits_mask1
+        makemask = gen.generate_syscall_makemask(blind_prefix+'-MFS-image.fits')
 
 
         gen.write_slurm(opfile=slurmfile,
@@ -215,7 +215,7 @@ def main():
         logfile = LOGS+'/slurm_makemask2_'+code+'.log'
 
 
-        makemask = 'MakeMask.py --Th=6.0 --RestoredIm='+pcal_prefix+'-MFS-image.fits'# --OutName='+fits_mask2
+        makemask = gen.generate_syscall_makemask(pcal_prefix+'-MFS-image.fits')
 
 
         gen.write_slurm(opfile=slurmfile,

@@ -225,6 +225,7 @@ def generate_syscall_makemask(restoredim='',thresh=6.0,fixheader=True):
     syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+restoredim+' '
     if fixheader:
         syscall += '; python '+OXKAT+'/replace_FITS_data.py '+restoredim+' '+restoredim+'.mask.fits '
+    syscall += '"'
 
     return syscall
 

@@ -8,7 +8,7 @@ import shutil
 import sys
 
 
-def genhex()
+def genhex():
     ran = random.randrange(10**80)
     myhex = "%064x" % ran
     myhex = myhex[:32]

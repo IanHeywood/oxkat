@@ -128,25 +128,7 @@ if 2 in dosteps:
         interp=['nearest','nearest','nearest'],
         append=False)
 
-    
-    gaincal(vis=myms,
-        field=pcal,
-        uvrange=myuvrange,
-        caltable=gtab1,     
-        refant = str(ref_ant),
-        smodel=[1,0,0,0],
-        minblperant=4,
-        minsnr=3,
-        solint='inf',
-        solnorm=False,
-        gaintype='G',
-        combine='',
-        calmode='p',
-        parang=False,
-        gaintable=[gtab0,ktab0,bptab0],
-        gainfield=[bpcal,bpcal,bpcal],
-        interp=['nearest','nearest','nearest'],
-        append=True)
+
 
 
 
@@ -154,21 +136,14 @@ if 3 in dosteps:
 
 
     applycal(vis=myms,
-        gaintable=[gtab0,ktab0,bptab0,gtab1],
+        gaintable=[gtab0,ktab0,bptab0],
         field=bpcal,
         calwt=False,
         parang=False,
-        gainfield=[bpcal,bpcal,bpcal,bpcal],
-        interp = ['nearest','nearest','nearest','linear'])
+        gainfield=[bpcal,bpcal,bpcal],
+        interp = ['linear','nearest','nearest'])
 
 
-    applycal(vis=myms,
-        gaintable=[gtab0,ktab0,bptab0,gtab1],
-        field=pcal,
-        calwt=False,
-        parang=False,
-        gainfield=[bpcal,bpcal,bpcal,pcal],
-        interp = ['nearest','nearest','nearest','linear'])
 
 
     for targ in targets:
@@ -176,12 +151,12 @@ if 3 in dosteps:
         target = targ[0]
 
         applycal(vis=myms,
-            gaintable=[gtab0,ktab0,bptab0,gtab1],
+            gaintable=[gtab0,ktab0,bptab0],
             field=target,
             calwt=False,
             parang=False,
-            gainfield=[bpcal,bpcal,bpcal,pcal],
-            interp=['nearest','nearest','nearest','linear'])
+            gainfield=[bpcal,bpcal,bpcal],
+            interp=['linear','nearest','nearest'])
 
 
 flagmanager(vis=opms,mode='save',versionname='refcal-full')

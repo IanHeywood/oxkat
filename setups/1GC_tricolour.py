@@ -22,6 +22,7 @@ def main():
     LOGS = gen.LOGS
     CASA_CONTAINER = gen.CASA_CONTAINER
     KERN_CONTAINER = gen.KERN_CONTAINER
+    TRICOLOUR_CONTAINER = gen.TRICOLOUR_CONTAINER
  
 
     submit_file = 'submit_1GC_jobs.sh'
@@ -134,7 +135,7 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'tric1',
                 logfile=logfile,
-                container=KERN_CONTAINER,
+                container=TRICOLOUR_CONTAINER,
                 syscall=syscall)
 
 
@@ -178,7 +179,7 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'tric2',
                 logfile=logfile,
-                container=KERN_CONTAINER,
+                container=TRICOLOUR_CONTAINER,
                 syscall=syscall)
 
 

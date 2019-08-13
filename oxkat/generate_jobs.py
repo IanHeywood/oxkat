@@ -21,15 +21,18 @@ PARSETS = CWD+'/parsets'
 SCRIPTS = CWD+'/scripts'
 LOGS = CWD+'/logs'
 
+
 # Containers
-CASA_CONTAINER = '/data/exp_soft/containers/casa-stable-5.4.1-31.simg'
-KERN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
-WSCLEAN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
+CASA_CONTAINER = '/idia/software/containers/casa-stable-5.4.1-31.simg'
+CODEX_CONTAINER = '/users/ianh/containers/codex-africanus-1.1.1.simg'
 CUBICAL_CONTAINER = '/users/ianh/containers/cubical-1.1.2.simg'
 DDFACET_CONTAINER = '/users/ianh/containers/ddfacet-0.4.1.simg'
+KERN_CONTAINER = '/idia/software/containers/kern4-2018-11-28.simg'
 KILLMS_CONTAINER = '/users/ianh/containers/killms-2.7.0.simg'
-CODEX_CONTAINER = '/users/ianh/containers/codex-africanus-1.1.1.simg'
-SOURCEFINDER_CONTAINER = '/data/exp_soft/containers/SF-PY3-bionic.simg'
+SOURCEFINDER_CONTAINER = '/idia/software/containers/SF-PY3-bionic.simg'
+TRICOLOUR_CONTAINER = '/users/ianh/containers/'
+WSCLEAN_CONTAINER = '/idia/software/containers/kern5-dev.simg'
+
 
 # Miscellaneous
 TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
@@ -128,14 +131,14 @@ def generate_syscall_cubical(parset,myms,prefix):
 def generate_syscall_tricolour(myms='',datacol='DATA',fields='all'):
 
 
-    syscall = 'bash -c "source '+TRICOLOUR_VENV+' ; '
+#    syscall = 'bash -c "source '+TRICOLOUR_VENV+' ; '
 
     syscall += 'python '+OXKAT+'/run_tricolour.py '
     syscall += '--col='+datacol+' '
     syscall += '--fields='+fields+' '
     syscall += myms
 
-    syscall += '; deactivate"'
+#   syscall += '; deactivate"'
 
     return syscall
 

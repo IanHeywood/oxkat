@@ -216,16 +216,14 @@ def generate_syscall_predict(msname,imgbase):
     return syscall 
 
 
-def generate_syscall_makemask(restoredim='',thresh=6.0,fixheader=True):
+def generate_syscall_makemask(prefix='',opfits,thresh=6.0):
 
     # Generate call to MakeMask.py and an optional call to replace_FITS_data.py to make the
     # resulting header consistent with wsclean
 
     syscall = 'bash -c " '
-    syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+restoredim+' '
-    if fixheader:
-        syscall += '; python '+OXKAT+'/replace_FITS_data.py '+restoredim+' '+restoredim+'.mask.fits '
-    syscall += '"'
+    syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+prefix+'-MFS-image.fits '
+    syscall += '; python '+OXKAT+'/merge_FITS_masks.py '+prefix+' '+opfits+' "'
 
     return syscall
 

@@ -48,10 +48,10 @@ def main():
 
 
         blind_prefix = 'img_'+myms+'_datablind'
-        fits_mask1 = blind_prefix+'-MFS-image.fits.mask.fits'
+        fits_mask1 = blind_prefix+'-combined1.mask.fits'
         masked_prefix = 'img_'+myms+'_datamask'
         pcal_prefix = 'img_'+myms+'_pcalmask'
-        fits_mask2 = pcal_prefix+'-MFS-image.fits.mask.fits'
+        fits_mask2 = pcal_prefix+'-combined2.mask.fits'
 
 
         # ------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ def main():
         logfile = LOGS+'/slurm_makemask1_'+code+'.log'
 
 
-        makemask = gen.generate_syscall_makemask(blind_prefix+'-MFS-image.fits')
+        makemask = gen.generate_syscall_makemask(blind_prefix,fits_mask1)
 
 
         gen.write_slurm(opfile=slurmfile,
@@ -215,7 +215,7 @@ def main():
         logfile = LOGS+'/slurm_makemask2_'+code+'.log'
 
 
-        makemask = gen.generate_syscall_makemask(pcal_prefix+'-MFS-image.fits')
+        makemask = gen.generate_syscall_makemask(pcal_prefix,fits_mask2)
 
 
         gen.write_slurm(opfile=slurmfile,

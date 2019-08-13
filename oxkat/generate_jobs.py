@@ -219,7 +219,7 @@ def generate_syscall_predict(msname,imgbase):
     return syscall 
 
 
-def generate_syscall_makemask(prefix='',opfits,thresh=6.0):
+def generate_syscall_makemask(opfits,prefix='',thresh=6.0):
 
     # Generate call to MakeMask.py and an optional call to replace_FITS_data.py to make the
     # resulting header consistent with wsclean

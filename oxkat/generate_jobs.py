@@ -22,19 +22,32 @@ SCRIPTS = CWD+'/scripts'
 LOGS = CWD+'/logs'
 
 
-# Containers
-CASA_CONTAINER = '/idia/software/containers/casa-stable-5.4.1-31.simg'
+# Containers for IDIA
+#CASA_CONTAINER = '/idia/software/containers/casa-stable-5.4.1-31.simg'
+CASA_CONTAINER = '/idia/software/containers/casa-stable-4.7.2.simg'
 CODEX_CONTAINER = '/users/ianh/containers/codex-africanus-1.1.1.simg'
 CUBICAL_CONTAINER = '/users/ianh/containers/cubical-1.1.2.simg'
 DDFACET_CONTAINER = '/users/ianh/containers/ddfacet-0.4.1.simg'
-KERN_CONTAINER = '/idia/software/containers/kern4-2018-11-28.simg'
 KILLMS_CONTAINER = '/users/ianh/containers/killms-2.7.0.simg'
 SOURCEFINDER_CONTAINER = '/idia/software/containers/SF-PY3-bionic.simg'
-TRICOLOUR_CONTAINER = '/users/ianh/containers/'
+TRICOLOUR_CONTAINER = '/users/ianh/containers/tricolour-1.1.3.simg'
 WSCLEAN_CONTAINER = '/idia/software/containers/kern5-dev.simg'
 
 
+# Containers for standalone servers
+SERVER_CONTAINER_PATH = '/home/ianh/containers/'
+XCASA_CONTAINER = SERVER_CONTAINER_PATH+'casa-stable-5.4.1-31.simg'
+XCODEX_CONTAINER = SERVER_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
+XCUBICAL_CONTAINER = SERVER_CONTAINER_PATH+'cubical-1.1.5.simg'
+XDDFACET_CONTAINER = SERVER_CONTAINER_PATH+'ddfacet-0.4.1.simg'
+XKILLMS_CONTAINER = SERVER_CONTAINER_PATH+'killms-2.7.0.simg'
+XSOURCEFINDER_CONTAINER = SERVER_CONTAINER_PATH+'SF-PY3-bionic.simg'
+XTRICOLOUR_CONTAINER = SERVER_CONTAINER_PATH+'tricolour-1.1.3.simg'
+XWSCLEAN_CONTAINER = SERVER_CONTAINER_PATH+'wsclean-1.1.5.simg'
+
+
 # Miscellaneous
+XCASA_EXEC = '/home/ianh/Software/casa-release-4.7.2-el7/bin/casa'
 TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
 PLOT_SCRIPTS = '/users/ianh/Software/plot_utils'
 

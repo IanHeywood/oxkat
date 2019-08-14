@@ -21,7 +21,7 @@ def main():
     SCRIPTS = gen.SCRIPTS
     LOGS = gen.LOGS
     CASA_CONTAINER = gen.CASA_CONTAINER
-    KERN_CONTAINER = gen.KERN_CONTAINER
+    CUBICAL_CONTAINER = gen.CUBICAL_CONTAINER
     TRICOLOUR_CONTAINER = gen.TRICOLOUR_CONTAINER
  
 
@@ -72,7 +72,7 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'setup',
                 logfile=logfile,
-                container=KERN_CONTAINER,
+                container=CUBICAL_CONTAINER,
                 syscall='python '+OXKAT+'/00_setup.py '+myms)
 
 
@@ -129,7 +129,7 @@ def main():
     logfile = LOGS+'/slurm_tricolour_cals_'+code+'.log'
 
 
-    syscall = gen.generate_syscall_tricolour(myms='',datacol='DATA',fields='cals')
+    syscall = gen.generate_syscall_tricolour(myms=myms,datacol='DATA',fields='cals')
 
 
     gen.write_slurm(opfile=slurmfile,
@@ -173,7 +173,7 @@ def main():
     logfile = LOGS+'/slurm_tricolour_targets_'+code+'.log'
 
 
-    syscall = gen.generate_syscall_tricolour(myms='',datacol='CORRECTED_DATA',fields='targets')
+    syscall = gen.generate_syscall_tricolour(myms=myms,datacol='CORRECTED_DATA',fields='targets')
 
 
     gen.write_slurm(opfile=slurmfile,

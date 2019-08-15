@@ -72,6 +72,16 @@ def main():
 
 
     # ------------------------------------------------------------------------------
+    # Autoflagger on calibrators
+
+
+    syscall = gen.generate_syscall_tricolour(myms=myms,datacol='DATA',fields='cals')
+
+
+    f.write('singularity exec '+TRICOLOUR_CONTAINER+' '+syscall+'\n')
+
+
+    # ------------------------------------------------------------------------------
     # Reference calibration cals only
 
 

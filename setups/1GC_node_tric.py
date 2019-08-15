@@ -65,7 +65,7 @@ def main():
     # Run basic flags
 
 
-    syscall = CASA_EXEC+' -c '+OXKAT+'/casa_basic_flags_for_tric.py --nologger --log2term --nogui'
+    syscall = CASA_EXEC+' -c '+OXKAT+'/casa_basic_flags.py --nologger --log2term --nogui'
 
 
     f.write(syscall+'\n')

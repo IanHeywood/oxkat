@@ -14,7 +14,7 @@ import os
 #
 
 
-# Directories
+# Folders
 CWD = os.getcwd()
 OXKAT = CWD+'/oxkat'
 PARSETS = CWD+'/parsets'
@@ -242,6 +242,7 @@ def generate_syscall_makemask(opfits,prefix='',thresh=6.0):
     syscall += '; python '+OXKAT+'/merge_FITS_masks.py '+prefix+' '+opfits+' "'
 
     return syscall
+
 
 def generate_syscall_crystalball(myms,
                         model,

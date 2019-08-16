@@ -10,6 +10,7 @@ from pyrap.tables import table
 from astropy.coordinates import SkyCoord
 
 
+
 def calcsep(ra0,dec0,ra1,dec1):
     c1 = SkyCoord(str(ra0)+'deg',str(dec0)+'deg',frame='fk5')
     c2 = SkyCoord(str(ra1)+'deg',str(dec0)+'deg',frame='fk5')
@@ -128,9 +129,6 @@ def main():
     myms = sys.argv[1].rstrip('/')
 
 
-    outpick = 'project_info.p'
-
-
     # Setup template dictionary populated with dummy values
 
     project_info = {'primary':['0','0'],
@@ -164,6 +162,7 @@ def main():
 
 
     pickle.dump(project_info,open(outpick,'wb'))
+    
 
     print(project_info)
 

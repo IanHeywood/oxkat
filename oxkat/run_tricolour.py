@@ -59,7 +59,7 @@ syscall += '--field-names '+field_selection+' '
 syscall += '-fs '+fs+' '
 syscall += myms
 
-f = open(runfile)
+f = open(runfile,'w')
 f.write('#!/bin/bash\n')
 f.write(syscall)
 f.close()

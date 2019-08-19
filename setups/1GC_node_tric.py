@@ -80,7 +80,7 @@ def main():
 
     syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
     syscall += gen.generate_syscall_tricolour(myms=myms,config='',datacol='DATA',fields='cals',fs='polarisation',runfile=runfile)+'\n'
-    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
+    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile
 
 
     f.write(syscall+'\n')
@@ -105,7 +105,7 @@ def main():
 
     syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
     syscall += gen.generate_syscall_tricolour(myms=myms,config='',datacol='DATA',fields='cals',fs='polarisation',runfile=runfile)+'\n'
-    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
+    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile
 
 
     f.write(syscall+'\n')
@@ -130,7 +130,7 @@ def main():
 
     syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
     syscall += gen.generate_syscall_tricolour(myms=myms,config='',datacol='DATA',fields='all',fs='polarisation',runfile=runfile)+'\n'
-    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
+    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile
 
 
     f.write(syscall+'\n')

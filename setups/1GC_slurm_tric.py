@@ -49,11 +49,14 @@ def main():
     logfile = LOGS+'/slurm_avg_'+code+'.log'
 
 
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
+
+
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'avrge',
                 logfile=logfile,
-                container=CASA_CONTAINER,
-                syscall='casa -c '+OXKAT+'/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui')
+                syscall=syscall)
 
 
     job_id_avg = 'AVG_'+code
@@ -69,11 +72,14 @@ def main():
     logfile = LOGS+'/slurm_setup_'+code+'.log'
 
 
+    syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+    syscall += 'python '+OXKAT+'/00_setup.py '+myms+'\n'
+
+
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'setup',
                 logfile=logfile,
-                container=CUBICAL_CONTAINER,
-                syscall='python '+OXKAT+'/00_setup.py '+myms)
+                syscall=syscall)
 
 
     job_id_info = 'INFO_'+code
@@ -89,11 +95,14 @@ def main():
     logfile = LOGS+'/slurm_basicflags_'+code+'.log'
 
 
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_basic_flags.py --nologger --log2term --nogui\n'
+
+
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'basic',
                 logfile=logfile,
-                container=CASA_CONTAINER,
-                syscall='casa -c '+OXKAT+'/casa_basic_flags.py --nologger --log2term --nogui')
+                syscall=syscall)
 
 
     job_id_basic = 'BASIC_'+code
@@ -109,11 +118,14 @@ def main():
     logfile = LOGS+'/slurm_refcal-cals_'+code+'.log'
 
 
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_reference_cal_calzone.py --nologger --log2term --nogui\n'
+
+
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'rcal1',
                 logfile=logfile,
-                container=CASA_CONTAINER,
-                syscall='casa -c '+OXKAT+'/casa_reference_cal_calzone.py --nologger --log2term --nogui')
+                syscall=syscall)
 
 
     job_id_refcal1 = 'REFCAL1_'+code
@@ -128,14 +140,15 @@ def main():
     slurmfile = SCRIPTS+'/slurm_tricolour_cals_'+code+'.sh'
     logfile = LOGS+'/slurm_tricolour_cals_'+code+'.log'
 
+    runfile = SCRIPTS+'/run_tricolour_1.sh'
 
-    syscall = gen.generate_syscall_tricolour(myms=myms,datacol='DATA',fields='cals')
-
+    syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+    syscall += gen.generate_syscall_tricolour(myms=myms,datacol='DATA',fields='cals',fs='polarisation',runfile=runfile)+'\n'
+    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
 
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'tric1',
                 logfile=logfile,
-                container=TRICOLOUR_CONTAINER,
                 syscall=syscall)
 
 

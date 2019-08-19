@@ -16,11 +16,13 @@ def make_executable(infile):
 
 
 parser = OptionParser(usage='%prog [options] ms')
+parser.add_option('--config',dest='config',help='Configuration file',default='')
 parser.add_option('--col',dest='column_selection',help='Data column',default='DATA')
 parser.add_option('--fields',dest='fields',help='Select "cals", "targets" or "all"',default='all')
 parser.add_option('--fs',dest='fs',help='Flagging strategy (default = polarisation)',default='polarisation')
 parser.add_option('--runfile',dest='runfile',help='Run file with tricolour command',default='run_tricolour.sh')
 (options,args) = parser.parse_args()
+config = options.config
 column_selection = options.column_selection
 fields = options.fields
 runfile = options.runfile
@@ -54,9 +56,11 @@ elif fields == 'all':
 
 
 syscall = 'tricolour '
+if config != '':
+	syscall += '--config '+config+' '
 syscall += '--data-column '+column_selection+' '
 syscall += '--field-names '+field_selection+' '
-syscall += '-fs '+fs+' '
+syscall += '--flagging-strategy '+fs+' '
 syscall += myms
 
 f = open(runfile,'w')

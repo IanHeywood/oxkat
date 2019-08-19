@@ -72,13 +72,18 @@ def main():
 
 
     # ------------------------------------------------------------------------------
-    # Autoflagger on calibrators
+    # Autoflagger on calibrators 1
 
 
-    syscall = gen.generate_syscall_tricolour(myms=myms,datacol='DATA',fields='cals')
+    runfile = SCRIPTS+'/run_tricolour_1.sh'
 
 
-    f.write('singularity exec '+TRICOLOUR_CONTAINER+' '+syscall+'\n')
+    syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+    syscall += gen.generate_syscall_tricolour(myms=myms,config='',datacol='DATA',fields='cals',fs='polarisation',runfile=runfile)+'\n'
+    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
+
+
+    f.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -92,14 +97,18 @@ def main():
 
 
     # ------------------------------------------------------------------------------
-    # Autoflagger on calibrators
+    # Autoflagger on calibrators 2
 
 
-    runfile = SCRIPTS+'/run_tricolour_1'
-    syscall = gen.generate_syscall_tricolour(myms=myms,datacol='DATA',fields='cals',fs='polarisation',runfile=runfile)
+    runfile = SCRIPTS+'/run_tricolour_2.sh'
 
 
-    f.write('singularity exec '+TRICOLOUR_CONTAINER+' '+syscall+'\n')
+    syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+    syscall += gen.generate_syscall_tricolour(myms=myms,config='',datacol='DATA',fields='cals',fs='polarisation',runfile=runfile)+'\n'
+    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
+
+
+    f.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -116,10 +125,16 @@ def main():
     # Autoflagger on targets
 
 
-    syscall = gen.generate_syscall_tricolour(myms=myms,datacol='CORRECTED_DATA',fields='targets')
+    runfile = SCRIPTS+'/run_tricolour_3.sh'
 
 
-    f.write('singularity exec '+TRICOLOUR_CONTAINER+' '+syscall+'\n')
+    syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+    syscall += gen.generate_syscall_tricolour(myms=myms,config='',datacol='DATA',fields='all',fs='polarisation',runfile=runfile)+'\n'
+    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
+
+
+    f.write(syscall+'\n')
+
 
 
     # ------------------------------------------------------------------------------

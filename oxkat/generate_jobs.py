@@ -141,14 +141,19 @@ def generate_syscall_cubical(parset,myms,prefix):
     return syscall
 
 
-def generate_syscall_tricolour(myms='',datacol='DATA',fields='all'):
-
+def generate_syscall_tricolour(myms='',
+                          datacol='DATA',
+                          fields='all',
+                          fs='polarisation',
+                          runfile='run_tricolour.sh'):
 
 #    syscall = 'bash -c "source '+TRICOLOUR_VENV+' ; '
 
     syscall = 'python '+OXKAT+'/run_tricolour.py '
     syscall += '--col='+datacol+' '
     syscall += '--fields='+fields+' '
+    syscall += '--fs='+fs+' '
+    syscall += '--runfile='+runfile+' '
     syscall += myms
 
 #   syscall += '; deactivate"'

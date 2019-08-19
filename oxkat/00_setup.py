@@ -129,6 +129,9 @@ def main():
     myms = sys.argv[1].rstrip('/')
 
 
+    outpick = 'project_info.p'
+
+
     # Setup template dictionary populated with dummy values
 
     project_info = {'primary':['0','0'],

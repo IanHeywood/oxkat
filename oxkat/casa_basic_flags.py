@@ -16,7 +16,7 @@ end_chan = int(nchan-edge_flags)
 
 # First two are band-edges
 #badfreqs = ['850~980MHz','1658~1800MHz','944~947MHz','1160~1310MHz','1476~1611MHz','1670~1700MHz']
-badfreqs = ['850~980MHz','1658~1800MHz']:
+badfreqs = ['850~980MHz','1658~1800MHz']
 for badfreq in badfreqs:
 	badspw = '0:' + badfreq
 	flagdata(vis=myms, mode='manual', spw=badspw)

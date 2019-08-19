@@ -142,6 +142,7 @@ def generate_syscall_cubical(parset,myms,prefix):
 
 
 def generate_syscall_tricolour(myms='',
+                          config='',
                           datacol='DATA',
                           fields='all',
                           fs='polarisation',
@@ -150,6 +151,8 @@ def generate_syscall_tricolour(myms='',
 #    syscall = 'bash -c "source '+TRICOLOUR_VENV+' ; '
 
     syscall = 'python '+OXKAT+'/run_tricolour.py '
+    if config != '':
+        syscall += '--config='+config+' '
     syscall += '--col='+datacol+' '
     syscall += '--fields='+fields+' '
     syscall += '--fs='+fs+' '

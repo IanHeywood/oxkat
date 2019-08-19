@@ -37,7 +37,7 @@ def main():
     f = open(submit_file,'w')
 
 
-    myms = glob.glob('*.ms')[0]
+    myms = glob.glob('*pol.ms')[0]
     code = gen.get_code(myms)
     myms = myms.replace('.ms','_wtspec.ms')
 

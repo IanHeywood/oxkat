@@ -130,7 +130,7 @@ def main():
 
 
     job_id_flag1 = 'FLAG1_'+code
-    syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
+    syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_basic+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 
@@ -153,7 +153,7 @@ def main():
 
 
     job_id_refcal1 = 'REFCAL1_'+code
-    syscall = job_id_refcal1+"=`sbatch -d afterok:${"+job_id_basic+"} "+slurmfile+" | awk '{print $4}'`"
+    syscall = job_id_refcal1+"=`sbatch -d afterok:${"+job_id_flag1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 
@@ -176,8 +176,8 @@ def main():
                 syscall=syscall)
 
 
-    job_id_flag1 = 'FLAG2_'+code
-    syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
+    job_id_flag2 = 'FLAG2_'+code
+    syscall = job_id_flag2+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 
@@ -197,7 +197,7 @@ def main():
 
 
     job_id_refcal2 = 'REFCAL2_'+code
-    syscall = job_id_refcal2+"=`sbatch -d afterok:${"+job_id_flag1+"} "+slurmfile+" | awk '{print $4}'`"
+    syscall = job_id_refcal2+"=`sbatch -d afterok:${"+job_id_flag2+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 
@@ -221,7 +221,7 @@ def main():
 
 
     job_id_flag1 = 'FLAG_'+code
-    syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
+    syscall = job_id_flag3+"=`sbatch -d afterok:${"+job_id_refcal2+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 
@@ -241,7 +241,7 @@ def main():
 
 
     job_id_split = 'SPLIT_'+code
-    syscall = job_id_split+"=`sbatch -d afterok:${"+job_id_flag2+"} "+slurmfile+" | awk '{print $4}'`"
+    syscall = job_id_split+"=`sbatch -d afterok:${"+job_id_flag3+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 

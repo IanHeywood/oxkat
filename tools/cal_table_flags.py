@@ -7,11 +7,11 @@ import sys
 from pyrap.tables import table
 
 
-def main()
+def main():
 
 	pat = sys.argv[1]
 
-	tabs = glob.glob(pat)
+	tabs = glob.glob('*'+pat+'*')
 
 	for tab in tabs:
 

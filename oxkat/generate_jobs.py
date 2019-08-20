@@ -23,15 +23,16 @@ LOGS = CWD+'/logs'
 
 
 # Containers for IDIA
+IDIA_CONTAINER_PATH = '/users/ianh/containers/'
 CASA_CONTAINER = '/idia/software/containers/casa-stable-5.4.1-31.simg'
 #CASA_CONTAINER = '/idia/software/containers/casa-stable-4.7.2.simg'
-CODEX_CONTAINER = '/users/ianh/containers/codex-africanus-1.1.1.simg'
-CUBICAL_CONTAINER = '/users/ianh/containers/cubical-1.1.2.simg'
-DDFACET_CONTAINER = '/users/ianh/containers/ddfacet-0.4.1.simg'
-KILLMS_CONTAINER = '/users/ianh/containers/killms-2.7.0.simg'
+CODEX_CONTAINER = IDIA_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
+CUBICAL_CONTAINER = IDIA_CONTAINER_PATH+'cubical-1.1.5.simg'
+DDFACET_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-0.4.1.simg'
+KILLMS_CONTAINER = IDIA_CONTAINER_PATH+'killms-2.7.0.simg'
 SOURCEFINDER_CONTAINER = '/idia/software/containers/SF-PY3-bionic.simg'
-TRICOLOUR_CONTAINER = '/users/ianh/containers/tricolour-1.1.3.simg'
-WSCLEAN_CONTAINER = '/idia/software/containers/kern5-dev.simg'
+TRICOLOUR_CONTAINER = IDIA_CONTAINER_PATH+'tricolour-1.1.3.simg'
+WSCLEAN_CONTAINER = IDIA_CONTAINER_PATH+'wsclean-1.1.5.simg'
 
 
 # Containers for standalone servers
@@ -92,9 +93,6 @@ def make_executable(infile):
     mode = os.stat(infile).st_mode
     mode |= (mode & 0o444) >> 2
     os.chmod(infile, mode)
-
-
-# ------------------------------------------------------------------------
 
 
 def write_slurm(opfile,

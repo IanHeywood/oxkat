@@ -219,7 +219,7 @@ def main():
                 syscall=syscall)
 
 
-    job_id_flag1 = 'FLAG_'+code
+    job_id_flag3 = 'FLAG_'+code
     syscall = job_id_flag3+"=`sbatch -d afterok:${"+job_id_refcal2+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 

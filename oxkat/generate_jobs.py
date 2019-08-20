@@ -115,7 +115,8 @@ def write_slurm(opfile,
         '#SBATCH --cpus-per-task='+cpus+'\n',
         '#SBATCH --mem='+mem+'\n',
         '#SBATCH --output='+logfile+'\n',
-        'singularity exec '+container+' '+syscall+'\n',
+        syscall+'\n',
+#        'singularity exec '+container+' '+syscall+'\n',
         'sleep 10\n'])
     f.close()
 

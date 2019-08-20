@@ -192,8 +192,7 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'rcal2',
                 logfile=logfile,
-                container=CASA_CONTAINER,
-                syscall='casa -c '+OXKAT+'/casa_reference_cal_full.py --nologger --log2term --nogui')
+                syscall='singularity exec '+CASA_CONTAINER+' casa -c '+OXKAT+'/casa_reference_cal_full.py --nologger --log2term --nogui')
 
 
     job_id_refcal2 = 'REFCAL2_'+code
@@ -236,8 +235,7 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'split',
                 logfile=logfile,
-                container=CASA_CONTAINER,
-                syscall='casa -c '+OXKAT+'/casa_split_targets.py --nologger --log2term --nogui')
+                syscall='singularity exec '+CASA_CONTAINER+' casa -c '+OXKAT+'/casa_split_targets.py --nologger --log2term --nogui')
 
 
     job_id_split = 'SPLIT_'+code

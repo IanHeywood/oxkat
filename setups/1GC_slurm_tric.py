@@ -111,11 +111,11 @@ def main():
 
 
     # ------------------------------------------------------------------------------
-    # Autoflagger on calibrators
+    # Autoflagger on calibrators 1
 
 
-    slurmfile = SCRIPTS+'/slurm_tricolour_cals_'+code+'.sh'
-    logfile = LOGS+'/slurm_tricolour_cals_'+code+'.log'
+    slurmfile = SCRIPTS+'/slurm_tricolour_cals_1_'+code+'.sh'
+    logfile = LOGS+'/slurm_tricolour_cals_1_'+code+'.log'
 
     runfile = SCRIPTS+'/run_tricolour_1.sh'
 
@@ -158,11 +158,11 @@ def main():
 
 
     # ------------------------------------------------------------------------------
-    # Autoflagger on calibrators
+    # Autoflagger on calibrators 2
 
 
-    slurmfile = SCRIPTS+'/slurm_tricolour_cals_'+code+'.sh'
-    logfile = LOGS+'/slurm_tricolour_cals_'+code+'.log'
+    slurmfile = SCRIPTS+'/slurm_tricolour_cals_2_'+code+'.sh'
+    logfile = LOGS+'/slurm_tricolour_cals_2_'+code+'.log'
 
     runfile = SCRIPTS+'/run_tricolour_2.sh'
 
@@ -204,8 +204,8 @@ def main():
     # Autoflagger on targets
 
 
-    slurmfile = SCRIPTS+'/slurm_tricolour_cals_'+code+'.sh'
-    logfile = LOGS+'/slurm_tricolour_cals_'+code+'.log'
+    slurmfile = SCRIPTS+'/slurm_tricolour_targets_'+code+'.sh'
+    logfile = LOGS+'/slurm_tricolour_targets_'+code+'.log'
 
     runfile = SCRIPTS+'/run_tricolour_3.sh'
 

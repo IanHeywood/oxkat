@@ -61,8 +61,8 @@ def main():
         slurmfile = SCRIPTS+'/slurm_wsclean_blind_'+code+'.sh'
         logfile = LOGS+'/slurm_wsclean_blind_'+code+'.log'
 
-
-        wsclean = gen.generate_syscall_wsclean(mslist=[myms],
+        syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+        syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=blind_prefix,
                                 datacol='DATA',
                                 bda=True,
@@ -73,8 +73,7 @@ def main():
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'blind',
                     logfile=logfile,
-                    container=WSCLEAN_CONTAINER,
-                    syscall=wsclean)
+                    syscall=syscall)
 
 
         job_id_blind = 'BLIND_'+code
@@ -90,14 +89,14 @@ def main():
         logfile = LOGS+'/slurm_makemask1_'+code+'.log'
 
 
-        makemask = gen.generate_syscall_makemask(blind_prefix,fits_mask1)
+        syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+        syscall += gen.generate_syscall_makemask(blind_prefix,fits_mask1)
 
 
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'mask1',
                     logfile=logfile,
-                    container=DDFACET_CONTAINER,
-                    syscall=makemask)
+                    syscall=syscall)
 
 
         job_id_makemask1 = 'MAKEMASK1_'+code
@@ -113,7 +112,8 @@ def main():
         logfile = LOGS+'/slurm_wsclean_mask1_'+code+'.log'
 
 
-        wsclean = gen.generate_syscall_wsclean(mslist=[myms],
+        syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+        syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=masked_prefix,
                                 datacol='DATA',
                                 bda=True,
@@ -123,8 +123,7 @@ def main():
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'dmask',
                     logfile=logfile,
-                    container=WSCLEAN_CONTAINER,
-                    syscall=wsclean)
+                    syscall=syscall)
 
 
         job_id_wsmask1 = 'IMGMASK1_'+code
@@ -140,14 +139,14 @@ def main():
         logfile = LOGS+'/slurm_wsclean_predict1_'+code+'.log'
 
 
-        predict = gen.generate_syscall_predict(msname=myms,imgbase=masked_prefix)
+        syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+        syscall += gen.generate_syscall_predict(msname=myms,imgbase=masked_prefix)
 
 
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'pdct1',
                     logfile=logfile,
-                    container=WSCLEAN_CONTAINER,
-                    syscall=predict)
+                    syscall=syscall)
 
 
         job_id_predict1 = 'PREDICT1_'+code
@@ -163,7 +162,8 @@ def main():
         logfile = LOGS+'/slurm_cubical1_'+code+'.log'
 
 
-        cubical = gen.generate_syscall_cubical(parset=PARSETS+'/phasecal.parset',
+        syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+        syscall += gen.generate_syscall_cubical(parset=PARSETS+'/phasecal.parset',
                     myms=myms,
                     prefix='pcal')
 
@@ -171,8 +171,7 @@ def main():
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'pcal1',
                     logfile=logfile,
-                    container=CUBICAL_CONTAINER,
-                    syscall=cubical)
+                    syscall=syscall)
 
 
         job_id_cubical1 = 'CUBICAL1_'+code
@@ -188,7 +187,8 @@ def main():
         logfile = LOGS+'/slurm_wsclean_pcal1_'+code+'.log'
 
 
-        wsclean = gen.generate_syscall_wsclean(mslist=[myms],
+        syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+        syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=pcal_prefix,
                                 datacol='CORRECTED_DATA',
                                 bda=True,
@@ -198,8 +198,7 @@ def main():
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'cmask',
                     logfile=logfile,
-                    container=WSCLEAN_CONTAINER,
-                    syscall=wsclean)
+                    syscall=syscall)
 
 
         job_id_wsmask2 = 'IMGMASK2_'+code
@@ -215,14 +214,14 @@ def main():
         logfile = LOGS+'/slurm_makemask2_'+code+'.log'
 
 
-        makemask = gen.generate_syscall_makemask(pcal_prefix,fits_mask2)
+        syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+        syscall += gen.generate_syscall_makemask(pcal_prefix,fits_mask2)
 
 
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'mask2',
                     logfile=logfile,
-                    container=DDFACET_CONTAINER,
-                    syscall=makemask)
+                    syscall=syscall)
 
 
         job_id_makemask2 = 'MAKEMASK2_'+code

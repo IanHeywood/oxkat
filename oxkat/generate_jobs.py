@@ -47,7 +47,8 @@ XWSCLEAN_CONTAINER = SERVER_CONTAINER_PATH+'wsclean-1.1.5.simg'
 
 
 # Miscellaneous
-XCASA_EXEC = '/home/ianh/Software/casa-release-4.7.2-el7/bin/casa'
+#XCASA_EXEC = '/home/ianh/Software/casa-release-4.7.2-el7/bin/casa'
+XCASA_EXEC = 'casa'
 TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
 PLOT_SCRIPTS = '/users/ianh/Software/plot_utils'
 

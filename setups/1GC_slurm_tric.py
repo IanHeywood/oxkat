@@ -111,6 +111,30 @@ def main():
 
 
     # ------------------------------------------------------------------------------
+    # Autoflagger on calibrators
+
+
+    slurmfile = SCRIPTS+'/slurm_tricolour_cals_'+code+'.sh'
+    logfile = LOGS+'/slurm_tricolour_cals_'+code+'.log'
+
+    runfile = SCRIPTS+'/run_tricolour_1.sh'
+
+    syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+    syscall += gen.generate_syscall_tricolour(myms=myms,datacol='DATA',fields='cals',fs='polarisation',runfile=runfile)+'\n'
+    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
+
+    gen.write_slurm(opfile=slurmfile,
+                jobname=code+'tric1',
+                logfile=logfile,
+                syscall=syscall)
+
+
+    job_id_flag1 = 'FLAG1_'+code
+    syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
+    f.write(syscall+'\n')
+
+
+    # ------------------------------------------------------------------------------
     # Reference calibration cals only
 
 
@@ -140,19 +164,19 @@ def main():
     slurmfile = SCRIPTS+'/slurm_tricolour_cals_'+code+'.sh'
     logfile = LOGS+'/slurm_tricolour_cals_'+code+'.log'
 
-    runfile = SCRIPTS+'/run_tricolour_1.sh'
+    runfile = SCRIPTS+'/run_tricolour_2.sh'
 
     syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
     syscall += gen.generate_syscall_tricolour(myms=myms,datacol='DATA',fields='cals',fs='polarisation',runfile=runfile)+'\n'
     syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
 
     gen.write_slurm(opfile=slurmfile,
-                jobname=code+'tric1',
+                jobname=code+'tric2',
                 logfile=logfile,
                 syscall=syscall)
 
 
-    job_id_flag1 = 'FLAG1_'+code
+    job_id_flag1 = 'FLAG2_'+code
     syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
@@ -181,23 +205,23 @@ def main():
     # Autoflagger on targets
 
 
+    slurmfile = SCRIPTS+'/slurm_tricolour_cals_'+code+'.sh'
+    logfile = LOGS+'/slurm_tricolour_cals_'+code+'.log'
 
-    slurmfile = SCRIPTS+'/slurm_tricolour_targets_'+code+'.sh'
-    logfile = LOGS+'/slurm_tricolour_targets_'+code+'.log'
+    runfile = SCRIPTS+'/run_tricolour_3.sh'
 
-
-    syscall = gen.generate_syscall_tricolour(myms=myms,datacol='CORRECTED_DATA',fields='targets')
-
+    syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+    syscall += gen.generate_syscall_tricolour(myms=myms,datacol='CORRECTED_DATA',fields='targets',fs='polarisation',runfile=runfile)+'\n'
+    syscall += 'singularity exec '+TRICOLOUR_CONTAINER+' '+runfile+'\n'
 
     gen.write_slurm(opfile=slurmfile,
-                jobname=code+'tric2',
+                jobname=code+'tric3',
                 logfile=logfile,
-                container=TRICOLOUR_CONTAINER,
                 syscall=syscall)
 
 
-    job_id_flag2 = 'FLAG2_'+code
-    syscall = job_id_flag2+"=`sbatch -d afterok:${"+job_id_refcal2+"} "+slurmfile+" | awk '{print $4}'`"
+    job_id_flag1 = 'FLAG_'+code
+    syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 

@@ -85,7 +85,7 @@ if 1 in dosteps:
         uvrange=myuvrange,
         caltable=ktab0,
         refant = str(ref_ant),
-        spw = delayspw,
+#        spw = delayspw,
         gaintype = 'K',
         solint = 'inf',
         parang=False,

@@ -23,8 +23,8 @@ LOGS = CWD+'/logs'
 
 
 # Containers for IDIA
-#CASA_CONTAINER = '/idia/software/containers/casa-stable-5.4.1-31.simg'
-CASA_CONTAINER = '/idia/software/containers/casa-stable-4.7.2.simg'
+CASA_CONTAINER = '/idia/software/containers/casa-stable-5.4.1-31.simg'
+#CASA_CONTAINER = '/idia/software/containers/casa-stable-4.7.2.simg'
 CODEX_CONTAINER = '/users/ianh/containers/codex-africanus-1.1.1.simg'
 CUBICAL_CONTAINER = '/users/ianh/containers/cubical-1.1.2.simg'
 DDFACET_CONTAINER = '/users/ianh/containers/ddfacet-0.4.1.simg'

@@ -89,8 +89,11 @@ def main():
         logfile = LOGS+'/slurm_makemask1_'+code+'.log'
 
 
-        syscall = 'singularity exec '+DDFACET_CONTAINER+' '
-        syscall += gen.generate_syscall_makemask(blind_prefix,fits_mask1)
+        syscall1,syscall2 = gen.generate_syscall_makemask(blind_prefix,fits_mask1)
+
+
+        syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall1
+        syscall += 'singularity exec '+CUBICAL_CONTAINER+' '+syscall2
 
 
         gen.write_slurm(opfile=slurmfile,

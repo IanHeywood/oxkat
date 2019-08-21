@@ -53,7 +53,7 @@ def main():
     modeldata = getImage(modelfits)
     makemaskdata = getImage(makemaskfits)
 
-    finalmaskdata = modeldata+makemaskfits
+    finalmaskdata = modeldata+makemaskdata
 
     flushFits(finalmaskdata,opfits)
 

@@ -191,7 +191,7 @@ if 3 in dosteps:
             interp=['nearest','nearest','nearest','linear'])
 
 
-flagmanager(vis=opms,mode='save',versionname='refcal-full')
+flagmanager(vis=myms,mode='save',versionname='refcal-full')
 
 
 if remove_cal_tables:

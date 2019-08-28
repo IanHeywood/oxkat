@@ -45,7 +45,8 @@ ftab0 = 'cal_'+myms+'_'+stamp()+'.flux0'
 
 dosteps = [1,2,3]
 
-
+clearstat()
+clearstat()
 
 if 1 in dosteps:
 
@@ -185,6 +186,10 @@ if 3 in dosteps:
 
 
 flagmanager(vis=myms,mode='save',versionname='refcal-cals')
+
+
+clearstat()
+clearstat()
 
 
 if remove_cal_tables:

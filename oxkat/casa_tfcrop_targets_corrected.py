@@ -9,8 +9,16 @@ myms = project_info['master_ms']
 targets = project_info['target_list'] 
 
 
+clearstat()
+clearstat()
+
+
 for target in targets:
 	flagdata(vis=myms,mode='tfcrop',datacolumn='corrected',field=target[1])
 
 
 flagmanager(vis=myms,mode='save',versionname='tfcrop_targets')
+
+
+clearstat()
+clearstat()

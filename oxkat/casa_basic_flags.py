@@ -14,6 +14,10 @@ nchan = project_info['nchan']
 end_chan = int(nchan-edge_flags)
 
 
+clearstat()
+clearstat()
+
+
 # First two are band-edges
 badfreqs = ['850~980MHz','1658~1800MHz','944~947MHz','1160~1310MHz','1476~1611MHz','1670~1700MHz']
 #badfreqs = ['850~980MHz','1658~1800MHz']
@@ -29,4 +33,9 @@ flagdata(vis=myms,mode='manual',autocorr=True)
 flagdata(vis=myms,mode='clip',clipzeros=True)
 flagdata(vis=myms,mode='clip',clipminmax=[0.0,100.0])
 
+
 flagmanager(vis=myms,mode='save',versionname='basic')
+
+
+clearstat()
+clearstat()

@@ -5,7 +5,7 @@
 from astropy.io import fits
 import numpy
 import random
-from scipy import ndimage
+from scipy.ndimage.morphology import binary_dilation
 import shutil
 import sys
 
@@ -54,6 +54,8 @@ def main():
     makemaskdata = getImage(makemaskfits)
 
     finalmaskdata = modeldata+makemaskdata
+
+    finalmaskdata = binary_dilation(finalmaskdata,iterations=4)
 
     flushFits(finalmaskdata,opfits)
 

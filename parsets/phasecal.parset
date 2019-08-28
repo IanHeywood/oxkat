@@ -2,7 +2,7 @@
 _Help = Visibility data options
 ms = 
 column = DATA
-time-chunk = 72
+time-chunk = 72	
 freq-chunk = 1024
 rebin-time = 1
 rebin-freq = 1
@@ -41,7 +41,7 @@ ddes = auto
 beam-pattern = None
 beam-l-axis = None
 beam-m-axis = None
-feed-rotate = auto
+feed-rotate = 0
 pa-rotate = 0
 
 [montblanc]

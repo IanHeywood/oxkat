@@ -114,8 +114,8 @@ def main():
     # Autoflagger on calibrators (DATA)
 
 
-    slurmfile = SCRIPTS+'/slurm_autoflag_cals_'+code+'.sh'
-    logfile = LOGS+'/slurm_autoflag_cals_'+code+'.log'
+    slurmfile = SCRIPTS+'/slurm_autoflag_cals_data_'+code+'.sh'
+    logfile = LOGS+'/slurm_autoflag_cals_data_'+code+'.log'
 
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
@@ -161,8 +161,8 @@ def main():
     # Autoflagger on calibrators (CORRECTED_DATA)
 
 
-    slurmfile = SCRIPTS+'/slurm_autoflag_cals_'+code+'.sh'
-    logfile = LOGS+'/slurm_autoflag_cals_'+code+'.log'
+    slurmfile = SCRIPTS+'/slurm_autoflag_cals_corr_'+code+'.sh'
+    logfile = LOGS+'/slurm_autoflag_cals_corr_'+code+'.log'
 
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '

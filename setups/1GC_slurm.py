@@ -101,6 +101,27 @@ def main():
 
 
     # ------------------------------------------------------------------------------
+    # Autoflagger on calibrators (DATA)
+
+
+    slurmfile = SCRIPTS+'/slurm_autoflag_cals_'+code+'.sh'
+    logfile = LOGS+'/slurm_autoflag_cals_'+code+'.log'
+
+
+    gen.write_slurm(opfile=slurmfile,
+                jobname=code+'flag1',
+                logfile=logfile,
+                container=CASA_CONTAINER,
+                syscall='casa -c '+OXKAT+'/casa_tfcrop_cals_data.py --nologger --log2term --nogui')
+
+
+    job_id_flag1 = 'FLAG1_'+code
+    syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_basic+"} "+slurmfile+" | awk '{print $4}'`"
+    f.write(syscall+'\n')
+
+
+
+    # ------------------------------------------------------------------------------
     # Reference calibration cals only
 
 
@@ -116,12 +137,12 @@ def main():
 
 
     job_id_refcal1 = 'REFCAL1_'+code
-    syscall = job_id_refcal1+"=`sbatch -d afterok:${"+job_id_basic+"} "+slurmfile+" | awk '{print $4}'`"
+    syscall = job_id_refcal1+"=`sbatch -d afterok:${"+job_id_flag1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
-    # Autoflagger on calibrators
+    # Autoflagger on calibrators (CORRECTED_DATA)
 
 
     slurmfile = SCRIPTS+'/slurm_autoflag_cals_'+code+'.sh'
@@ -129,14 +150,14 @@ def main():
 
 
     gen.write_slurm(opfile=slurmfile,
-                jobname=code+'flag1',
+                jobname=code+'flag2',
                 logfile=logfile,
                 container=CASA_CONTAINER,
                 syscall='casa -c '+OXKAT+'/casa_tfcrop_cals_corrected.py --nologger --log2term --nogui')
 
 
-    job_id_flag1 = 'FLAG1_'+code
-    syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
+    job_id_flag2 = 'FLAG2_'+code
+    syscall = job_id_flag2+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 
@@ -169,14 +190,14 @@ def main():
 
 
     gen.write_slurm(opfile=slurmfile,
-                jobname=code+'flag2',
+                jobname=code+'flag3',
                 logfile=logfile,
                 container=CASA_CONTAINER,
                 syscall='casa -c '+OXKAT+'/casa_tfcrop_targets_corrected.py --nologger --log2term --nogui')
 
 
-    job_id_flag2 = 'FLAG2_'+code
-    syscall = job_id_flag2+"=`sbatch -d afterok:${"+job_id_refcal2+"} "+slurmfile+" | awk '{print $4}'`"
+    job_id_flag3 = 'FLAG3_'+code
+    syscall = job_id_flag3+"=`sbatch -d afterok:${"+job_id_refcal2+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 

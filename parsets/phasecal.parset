@@ -2,7 +2,7 @@
 _Help = Visibility data options
 ms = 
 column = DATA
-time-chunk = 108
+time-chunk = 32
 freq-chunk = 1024
 rebin-time = 1
 rebin-freq = 1
@@ -118,10 +118,10 @@ plot = True
 
 [dist]
 _Help = Parallelization and distribution options
-ncpu = 12
+ncpu = 0
 nworker = 0
 nthread = 0
-max-chunks = 1
+max-chunks = 0
 min-chunks = 0
 pin = 0
 pin-io = False

@@ -23,7 +23,7 @@ diag = False
 _Help = Options for output products
 name = cubical
 overwrite = False
-mode = sc
+mode = so
 column = CORRECTED_DATA
 derotate = 0
 model-column = 
@@ -32,7 +32,7 @@ reinit-column = False
 subtract-model = 0
 subtract-dirs = :
 plots = 1
-casa-gaintables = True
+casa-gaintables = False
 
 [model]
 _Help = Calibration model options

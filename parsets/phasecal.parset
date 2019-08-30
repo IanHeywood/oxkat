@@ -7,9 +7,8 @@ freq-chunk = 1024
 rebin-time = 1
 rebin-freq = 1
 chunk-by = SCAN_NUMBER
-chunk-by-jump = 1
+chunk-by-jump = 1.0
 single-chunk = 
-single-tile = -1
 
 [sel]
 _Help = Data selection options
@@ -17,47 +16,27 @@ field = 0
 ddid = None
 taql = 
 chan = 
-diag = False
-
-[out]
-_Help = Options for output products
-name = cubical
-overwrite = False
-mode = sc
-column = CORRECTED_DATA
-derotate = 0
-model-column = 
-weight-column = 
-reinit-column = False
-subtract-model = 0
-subtract-dirs = :
-plots = 1
-casa-gaintables = False
 
 [model]
 _Help = Calibration model options
-list = MODEL_DATA
+list = MODEL_DATA 
 ddes = auto
 beam-pattern = None
 beam-l-axis = None
 beam-m-axis = None
-feed-rotate = 0
-pa-rotate = 0
 
 [montblanc]
 _Help = Montblanc simulation options
 device-type = CPU
 dtype = float
+feed-type = linear
 mem-budget = 1024
 verbosity = WARNING
 threads = 0
-pa-rotate = None
 
 [weight]
 _Help = Weighting options
 column = WEIGHT_SPECTRUM
-fill-offdiag = False
-legacy-v1-2 = False
 
 [flags]
 _Help = General flagging options
@@ -67,7 +46,7 @@ save = cubical
 save-legacy = auto
 reinit-bitflags = False
 warn-thr = 0.3
-see-no-evil = 0
+see-no-evil = False
 
 [postmortem]
 _Help = Options for "postmortem" flagging based on solution statistics
@@ -81,11 +60,10 @@ ddid-density = 0.5
 [madmax]
 _Help = Options for the "Mad Max" flagger
 enable = trial
-residuals = 0
 estimate = corr
 diag = True
 offdiag = True
-threshold = [0, 20]
+threshold = [0, 10]
 global-threshold = [0, 12]
 plot = 1
 plot-frac-above = 0.01
@@ -102,9 +80,10 @@ delta-chi = 1e-06
 chi-int = 5
 last-rites = True
 stall-quorum = 0.99
-term-iters = 
-min-bl = 150.0
-max-bl = 1000000000.0
+diag-diag = False
+term-iters = 50
+min-bl = 0.0
+max-bl = 0.0
 subset = 
 
 [bbc]
@@ -112,7 +91,7 @@ _Help = Options for baseline-based corrections (a.k.a. BBCs, a.k.a. interferomet
 load-from = 
 compute-2x2 = False
 apply-2x2 = False
-save-to = {out[name]}-BBC-field_{sel[field]}-ddid_{sel[ddid]}.parmdb
+save-to = {data[ms]}/BBC-field_{sel[field]}-ddid_{sel[ddid]}.parmdb
 per-chan = True
 plot = True
 
@@ -127,11 +106,22 @@ pin = 0
 pin-io = False
 pin-main = io
 
+[out]
+_Help = Options for output products
+name = cubical
+mode = sc
+column = CORRECTED_DATA
+model-column = 
+weight-column = 
+reinit-column = False
+subtract-model = 0
+subtract-dirs = :
+plots = 1
+casa-gaintables = False
+
 [log]
 _Help = Options related to logging
 memory = True
-stats = chi2:.3f
-stats-warn = chi2:10
 boring = False
 append = False
 verbose = 0
@@ -155,13 +145,14 @@ _NameTemplate = {LABEL}
 _ExpandedFrom = --sol-jones
 _OtherTemplates = _Help:label
 label = {LABEL}
-solvable = 1
+solvable = True
 type = complex-2x2
 load-from = 
 xfer-from = 
-save-to = {out[name]}-{JONES}-field_{sel[field]}-ddid_{sel[ddid]}.parmdb
+save-to = {data[ms]}/{JONES}-field_{sel[field]}-ddid_{sel[ddid]}.parmdb
 dd-term = False
 fix-dirs = 
+diag-diag = False
 update-type = full
 time-int = 1
 freq-int = 1
@@ -171,56 +162,46 @@ clip-low = 0.1
 clip-high = 10.0
 clip-after = 5
 max-iter = 20
-epsilon = 1e-06
-delta-chi = 1e-06
 conv-quorum = 0.99
 ref-ant = None
 prop-flags = default
-estimate-pzd = False
-diag-only = 0
-offdiag-only = False
-robust-cov = compute
+robust-cov = hybrid
 robust-npol = 2
-robust-int = 1
-robust-save-weights = 0
+robust-int = 5
+robust-save-weights = False
 
 [g]
 _Help = Options for G-Jones term
 label = G
-solvable = 1
+solvable = True
 type = phase-diag
 load-from = 
 xfer-from = 
-save-to = {out[name]}-{JONES}-field_{sel[field]}-ddid_{sel[ddid]}.parmdb
+save-to = {data[ms]}/{JONES}-field_{sel[field]}-ddid_{sel[ddid]}.parmdb
 dd-term = 0
 fix-dirs = 
+diag-diag = False
 update-type = full
 time-int = 8
 freq-int = 256
 max-prior-error = 1000000
 max-post-error = 1000000
 clip-low = 0.1
-clip-high = 10
+clip-high = 10.0
 clip-after = 5
-max-iter = 20
-epsilon = 1e-06
-delta-chi = 1e-06
+max-iter = 50
 conv-quorum = 0.99
 ref-ant = None
 prop-flags = default
-estimate-pzd = False
-diag-only = 0
-offdiag-only = False
-robust-cov = compute
+robust-cov = hybrid
 robust-npol = 2
-robust-int = 1
-robust-save-weights = 0
+robust-int = 5
+robust-save-weights = False
 _Templated = True
 
 [de]
 _Templated = 1
 dd-term = 1
 clip-low = 0.0
-clip-high = 0
-delta-chi = 1e-05
+clip-high = 0.0
 

@@ -4,7 +4,7 @@ import glob
 
 myms = glob.glob('*.ms')[0]
 opms = myms.replace('.MS','.ms')
-opms = myms.replace('.ms','_wtspec.ms')
+opms = myms.replace('.ms','_SPW_wtspec.ms')
 
 tb.open(myms+'/SPECTRAL_WINDOW')
 nchan = tb.getcol('NUM_CHAN')[0]
@@ -21,6 +21,8 @@ mstransform(vis=myms,
 	datacolumn='data',
 	chanaverage=mychanave,
 	chanbin=mychanbin,
+	regridms=True,
+	mode='channel_b',
 	nspw=8,
 	timeaverage=True,
 	timebin='8s',

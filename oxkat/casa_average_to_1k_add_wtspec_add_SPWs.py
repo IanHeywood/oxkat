@@ -4,7 +4,7 @@ import glob
 
 myms = glob.glob('*.ms')[0]
 opms = myms.replace('.MS','.ms')
-opms = myms.replace('.ms','_SPW_wtspec.ms')
+opms = myms.replace('.ms','_wtspec.ms')
 
 tb.open(myms+'/SPECTRAL_WINDOW')
 nchan = tb.getcol('NUM_CHAN')[0]

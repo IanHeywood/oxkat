@@ -43,6 +43,9 @@ ftab0 = 'cal_'+myms+'_'+stamp()+'.flux0'
 dosteps = [1,2,3]
 
 
+clearstat()
+clearstat()
+
 
 if 1 in dosteps:
 
@@ -51,8 +54,8 @@ if 1 in dosteps:
         setjy(vis=myms,
             field=bpcal,
             standard='Perley-Butler 2010',
-            scalebychan=True)
-#           usescratch=True)
+            scalebychan=True,
+            usescratch=True)
         
         
     elif primary_tag == '0408':
@@ -63,8 +66,8 @@ if 1 in dosteps:
             fluxdensity=bpcal_mod[0],
             spix=bpcal_mod[1],
             reffreq=bpcal_mod[2],
-            scalebychan=True)
-#           usescratch=True)
+            scalebychan=True,
+            usescratch=True)
 
 
     gaincal(vis=myms,
@@ -82,7 +85,7 @@ if 1 in dosteps:
         uvrange=myuvrange,
         caltable=ktab0,
         refant = str(ref_ant),
-        spw = delayspw,
+#        spw = delayspw,
         gaintype = 'K',
         solint = 'inf',
         parang=False,
@@ -160,6 +163,10 @@ if 3 in dosteps:
 
 
 flagmanager(vis=opms,mode='save',versionname='refcal-full')
+
+
+clearstat()
+clearstat()
 
 
 if remove_cal_tables:

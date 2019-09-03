@@ -46,8 +46,8 @@ def main():
         myms = target[2].rstrip('/')
 
 
-        blind_prefix = 'img_'+myms+'_datablind'
-        pcal_prefix = 'img_'+myms+'_pcalmask'
+        blind_prefix = 'img_'+myms+'_data'
+        pcal_prefix = 'img_'+myms+'_pcal'
 
 
         # ------------------------------------------------------------------------------

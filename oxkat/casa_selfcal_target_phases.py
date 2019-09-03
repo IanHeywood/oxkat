@@ -22,7 +22,6 @@ myms = sys.argv[3]
 for target in targets:
     if target[2] == myms:
         target_name = target[0]
-        target_id = target[1]
 
 
 clearstat()
@@ -36,7 +35,7 @@ gtab = 'cal_'+myms+'_'+target_name+'_'+stamp()+'.GP0'
 
 
 gaincal(vis=myms,
-    field=target_id,
+    field='0',
     uvrange=myuvrange,
     caltable=gtab,
     refant = str(ref_ant),
@@ -54,16 +53,16 @@ gaincal(vis=myms,
 
 applycal(vis=myms,
     gaintable=[gtab],
-    field=target_id,
+    field='0',
     calwt=False,
     parang=False,
     applymode='calonly',
-    gainfield=[target[1]],
+    gainfield='0',
     interp = ['nearest'])
 
 
 statwt(vis=myms,
-    field=target_id)
+    field='0')
 
 
 clearstat()

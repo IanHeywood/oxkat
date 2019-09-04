@@ -249,6 +249,91 @@ def generate_syscall_makemask(prefix,opfits,thresh=6.0):
     return syscall1,syscall2
 
 
+
+def generate_syscall_ddfacet(mspattern,
+                          imgname,
+                          ddid='D*',
+                          field='F0',
+                          chunkhours=2,
+                          colname='CORRECTED_DATA',
+                          ncpu=32,
+                          maxmajoriter=3,
+                          robust=-0.3,
+                          npix=8125,
+                          cell=1.5,
+                          nfacets=12,
+                          ndegridband=8,
+                          beam='',
+                          beamnband=16,
+                          nband=4,
+                          mask='auto',
+                          masksigma=5.5,
+                          cachereset=0,
+                          ddsols='',
+                          initdicomodel=''):
+
+    # Generate system call to run DDFacet
+
+    syscall = 'DDF.py '
+    syscall += '--Output-Name='+imgname+' '
+    syscall += '--Data-MS '+mspattern+'//'+ddid+'//'+field+' '
+    syscall += '--Data-ChunkHours '+str(chunkhours)+' '
+    syscall += '--Deconv-PeakFactor 0.001000 '
+    syscall += '--Data-ColName '+colname+' '
+    syscall += '--Predict-ColName MODEL_DATA '
+    syscall += '--Parallel-NCPU='+str(ncpu)+' '
+    syscall += '--Output-Mode=Clean '
+    syscall += '--Deconv-CycleFactor=0 '
+    syscall += '--Deconv-MaxMajorIter='+str(maxmajoriter)+' '
+    syscall += '--Deconv-MaxMinorIter=80000 '
+    syscall += '--Deconv-Mode SSD '
+    syscall += '--Weight-Robust '+str(robust)+' '
+    syscall += '--Image-NPix='+str(npix)+' '
+    syscall += '--CF-wmax 8000 '
+    syscall += '--CF-Nw 100 '
+    syscall += '--Output-Also onNeds '
+    syscall += '--Image-Cell '+str(cell)+' '
+    syscall += '--Facets-NFacets='+str(nfacets)+' '
+    syscall += '--Facets-PSFOversize=1.5 '
+    syscall += '--SSDClean-NEnlargeData 0 '
+    syscall += '--Freq-NDegridBand '+str(ndegridband)+' '
+    if beam == '':
+        syscall += '--Beam-Model=None '
+    else:
+        syscall += '--Beam-Model=FITS '
+        syscall += "--Beam-FITSFile=\'"+str(beam)+"\' "
+        syscall += '--Beam-NBand '+str(beamnband)+' '
+    syscall += '--Deconv-RMSFactor=3.000000 '
+    syscall += '--Data-Sort 1 '
+    syscall += '--Cache-Dir=. '
+    syscall += '--Cache-HMP 1 '
+    syscall += '--Freq-NBand='+str(nband)+' '
+    if mask.lower() == 'fits':
+        mymask = glob.glob('*mask.fits')[0]
+        syscall += '--Mask-Auto=0 '
+        syscall += '--Mask-External='+mymask+' '
+    elif mask.lower() == 'auto':
+        syscall += '--Mask-Auto=1 '
+        syscall += '--Mask-SigTh='+masksigma+' '
+    else:
+        syscall += '--Mask-Auto=0 '
+        syscall += '--Mask-External='+mask+' '
+    syscall += '--Cache-Reset '+str(cachereset)+' '
+    syscall += '--Comp-GridDecorr=0.01 '
+    syscall += '--Comp-DegridDecorr=0.01 '
+    #syscall += '--SSDClean-MinSizeInit=10 '
+    syscall += '--Facets-DiamMax .25 '
+    syscall += '--Facets-DiamMin 0.05 '
+    syscall += '--Misc-ConserveMemory 1 '
+    syscall += '--Log-Memory 1 '
+    if initdicomodel != '':
+        syscall += '--Predict-InitDicoModel '+initdicomodel+' '
+    if ddsols != '':
+        syscall += '--DDESolutions-DDSols '+ddsols
+
+    return syscall
+    
+
 def generate_syscall_crystalball(myms,
                         model,
                         outcol,

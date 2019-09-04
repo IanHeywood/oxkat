@@ -26,7 +26,7 @@ $ git clone https://github.com/IanHeywood/oxkat.git
 3. Go to a scratch data area:
 
 ```
-$ cd /scratch/users/ianh/XMM12`
+$ cd /scratch/users/ianh/XMM12
 ```
 
 4. Make a symlink to the scripts and the data you want to process:
@@ -49,14 +49,14 @@ $ source submit_1GC_jobs.sh
 $ source kill_1GC_jobs.sh
 ```
 
-7. If that completes successfully you can set up and submit the 2GC jobs, which does an imaging with an iteration of phase-only self-cal:
+7. (a) If that completes successfully you can set up and submit the 2GC jobs, which does an imaging with an iteration of phase-only self-cal:
 
 ```
 $ python setups/2GC_slurm.py
 $ source submit_2GC_jobs.sh
 ```
 
-Note that CubiCal currently does not run on the IDIA slurm worker nodes, so a temporary alternative 2GC script using CASA's `gaincal` task is:
+7. (b) Note that CubiCal currently does not run on the IDIA slurm worker nodes, so use this temporary alternative 2GC script using CASA's `gaincal` task:
 
 ```
 $ python waterhole/2GC_slurm_CASA-selfcal.py

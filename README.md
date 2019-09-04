@@ -49,7 +49,7 @@ $ source submit_1GC_jobs.sh
 $ source kill_1GC_jobs.sh
 ```
 
-7. (a) If that completes successfully you can set up and submit the 2GC jobs, which does an imaging with an iteration of phase-only self-cal:
+7. (a) If that completes successfully you can set up and submit the 2GC jobs, which does imaging with an iteration of phase-only self-cal:
 
 ```
 $ python setups/2GC_slurm.py

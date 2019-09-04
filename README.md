@@ -13,7 +13,7 @@ Example for usage on the IDIA slurm cluster:
 1. Log in to the slurm head node:
 
 ```
-$ssh ianh@slurm.ilifu.ac.za`
+$ ssh ianh@slurm.ilifu.ac.za
 ```
 
 2. Clone this repo somewhere:

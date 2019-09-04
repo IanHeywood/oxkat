@@ -73,7 +73,7 @@ $ source kill_2GC_jobs.sh
 
 Notes:
 
-* You might not have permission to use the containers that I store in my home area, in which case you'll have to pull your own. [@SpheMakh](https://github.com/sphemakh)'s [stimela](https://hub.docker.com/u/stimela) repo is a life saver here. You can build the usual suspects with `tools/pull_containers.sh`, and then you'll just have to edit [line 26](https://github.com/IanHeywood/oxkat/blob/master/oxkat/generate_jobs.py#L26) in `oxkat/generate_jobs.py` to reflect wherever it is you've built them.
+* You might not have permission to use the containers that I store in my home area, in which case you'll have to pull your own. [@SpheMakh](https://github.com/sphemakh)'s [stimela](https://hub.docker.com/u/stimela) repo is a life saver here. You can build the usual suspects with [`tools/pull_containers.sh`](https://github.com/IanHeywood/oxkat/blob/master/tools/pull_containers.sh), and then you'll just have to edit [line 26](https://github.com/IanHeywood/oxkat/blob/master/oxkat/generate_jobs.py#L26) in `oxkat/generate_jobs.py` to reflect wherever it is you've built them.
 
 * Direction-dependent calibration is not yet automated.
 
@@ -81,5 +81,5 @@ Notes:
 
 * If your observation has multiple fields then they will all be calibrated, but at present only one phase calibrator will be chosen. The `tools/casa_find_source-cal_pairs.py` script will match targets with their nearest calibrator and then split these into individual Measurement Sets along with the primary, and these can then be processed individually as above.
 
-* This repo is just a place for me to keep my scripts. I hope you find it useful but please don't mail me if your data vanishes or your computer melts.
+* This repo is just a place for me to keep my scripts. I hope you find it useful but please don't mail me if your data vanishes or your computer melts. 
 

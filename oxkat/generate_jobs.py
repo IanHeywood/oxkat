@@ -314,7 +314,7 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--Mask-External='+mymask+' '
     elif mask.lower() == 'auto':
         syscall += '--Mask-Auto=1 '
-        syscall += '--Mask-SigTh='+masksigma+' '
+        syscall += '--Mask-SigTh='+str(masksigma)+' '
     else:
         syscall += '--Mask-Auto=0 '
         syscall += '--Mask-External='+mask+' '
@@ -332,7 +332,7 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--DDESolutions-DDSols '+ddsols
 
     return syscall
-    
+
 
 def generate_syscall_crystalball(myms,
                         model,

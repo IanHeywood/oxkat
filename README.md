@@ -73,7 +73,7 @@ $ source kill_2GC_jobs.sh
 
 Notes:
 
-* You might not have permission to use the containers that I store in my home area, in which case you'll have to pull your own. [@SpheMakh](https://github.com/sphemakh)'s [stimela](https://hub.docker.com/u/stimela) repo is a life saver here. You can build the usual suspects with [`tools/pull_containers.sh`](https://github.com/IanHeywood/oxkat/blob/master/tools/pull_containers.sh), and then you'll just have to edit [line 26](https://github.com/IanHeywood/oxkat/blob/master/oxkat/generate_jobs.py#L26) in `oxkat/generate_jobs.py` to reflect wherever it is you've built them.
+* You might not have permission to use the containers that I store in my home area, in which case you'll have to pull your own. [@SpheMakh](https://github.com/sphemakh)'s [stimela](https://hub.docker.com/u/stimela) repo is a life saver here. You can build the usual suspects with [`tools/pull_containers.sh`](https://github.com/IanHeywood/oxkat/blob/master/tools/pull_containers.sh), and then you'll just have to edit [line 26](https://github.com/IanHeywood/oxkat/blob/master/oxkat/generate_jobs.py#L26) in [`oxkat/generate_jobs.py`](https://github.com/IanHeywood/oxkat/blob/master/oxkat/generate_jobs.py) to reflect wherever it is you've built them.
 
 * Direction-dependent calibration is not yet automated.
 

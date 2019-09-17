@@ -19,7 +19,7 @@ chan =
 
 [model]
 _Help = Calibration model options
-list = MODEL_DATA-DIR1:DIR1 
+list = (sMODEL_DATA-DIR1):DIR1 
 ddes = auto
 beam-pattern = None
 beam-l-axis = None

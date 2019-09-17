@@ -36,10 +36,13 @@ def main():
     gen.setup_dir(LOGS)
 
 
-    project_info = pickle.load(open('project_info.p','rb'))
+#    project_info = pickle.load(open('project_info.p','rb'))
 
 
-    targets = project_info['target_list'] 
+ #   targets = project_info['target_list'] 
+
+
+
 
 
     f = open(submit_file,'w')
@@ -47,12 +50,13 @@ def main():
 
     for target in targets:
 
+        code = 'X12'
 
-        code = target[0][-3:]
-        myms = target[2].rstrip('/')
+#        code = target[0][-3:]
+#        myms = target[2].rstrip('/')
 
 
-        ddf1_prefix = 'img_'+myms+'_DDF_corr'
+        ddf1_prefix = 'img_XMM12_DDFbeamHVfix'
 
 
         # ------------------------------------------------------------------------------
@@ -64,7 +68,7 @@ def main():
 
 
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '
-        syscall += gen.generate_syscall_ddfacet(mspattern=myms,
+        syscall += gen.generate_syscall_ddfacet(mspattern='*.ms',
                     imgname=ddf1_prefix,
                     chunkhours=2,
                     beam=BEAM,

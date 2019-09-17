@@ -97,10 +97,10 @@ plot = True
 
 [dist]
 _Help = Parallelization and distribution options
-ncpu = 0
+ncpu = 72
 nworker = 0
 nthread = 0
-max-chunks = 0
+max-chunks = 2
 min-chunks = 0
 pin = 0
 pin-io = False

@@ -48,7 +48,7 @@ def main():
     f = open(submit_file,'w')
 
 
-    for target in targets:
+    for target in ['']:
 
         code = 'X12'
 

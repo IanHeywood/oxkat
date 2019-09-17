@@ -19,7 +19,7 @@ chan =
 
 [model]
 _Help = Calibration model options
-list = (MODEL_DATA-DIR1):DIR1 
+list = MODEL_DATA+-DIR1:DIR1 
 ddes = auto
 beam-pattern = None
 beam-l-axis = None
@@ -215,8 +215,8 @@ time-int = 96
 freq-int = 64
 max-prior-error = 1000000
 max-post-error = 1000000
-clip-low = 0.1
-clip-high = 10.0
+clip-low = 0.0
+clip-high = 10000000.0
 clip-after = 5
 max-iter = 50
 conv-quorum = 0.99

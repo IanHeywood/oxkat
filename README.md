@@ -83,3 +83,6 @@ Notes:
 
 * This repo is just a place for me to keep my scripts. I hope you find it useful but please don't mail me if your data vanishes or your computer melts. 
 
+* Please file bugs, questions, comments as issues on this page.
+
+Thanks.

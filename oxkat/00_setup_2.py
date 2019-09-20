@@ -58,6 +58,11 @@ def get_field_info(myms,
             secondary_state = i
 
 
+    print 'Target state:',target_state
+    print 'Primary state:',primary_state
+    print 'Secondary state:',secondary_state
+
+    
     field_tab = table(myms+'/FIELD',ack=False)
     names = field_tab.getcol('NAME')
     dirs = field_tab.getcol('REFERENCE_DIR')
@@ -73,6 +78,7 @@ def get_field_info(myms,
     for i in range(0,len(names)):
         sub_tab = main_tab.query(query='FIELD_ID=='+str(i))
         state = numpy.unique(sub_tab.getcol('STATE_ID'))
+        print i,names[i],state
         if state == primary_state:
             primary_dir = dirs[i][0,:]*180.0/numpy.pi
             primary_fields.append((names[i],str(i),primary_dir))

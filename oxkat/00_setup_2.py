@@ -206,7 +206,7 @@ def main():
     print('')
     for i in range(0,len(target_list)):
         print('Target '+str(i)+':            '+target_list[i][0])
-        print('Associated with: '+secondary_fields[target_list[i][3]][0])
+        print('Associated with: '+secondary_field[target_list[i][3]][0])
         print('')
 
 if __name__ == "__main__":

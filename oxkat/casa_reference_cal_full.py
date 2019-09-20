@@ -20,7 +20,7 @@ project_info = pickle.load(open('project_info.p','rb'))
 myms = project_info['master_ms']
 bpcal = project_info['primary'][1]
 primary_tag = project_info['primary_tag']
-pcal = project_info['secondary'][1]
+pcals = project_info['secondary'][1]
 targets = project_info['target_list'] 
 ref_ant = project_info['ref_ant'] 
 k0 = project_info['k0']
@@ -131,25 +131,26 @@ if 2 in dosteps:
         interp=['nearest','nearest','nearest'],
         append=False)
 
-    
-    gaincal(vis=myms,
-        field=pcal,
-        uvrange=myuvrange,
-        caltable=gtab1,     
-        refant = str(ref_ant),
-        smodel=[1,0,0,0],
-        minblperant=4,
-        minsnr=3,
-        solint='inf',
-        solnorm=False,
-        gaintype='G',
-        combine='',
-        calmode='ap',
-        parang=False,
-        gaintable=[gtab0,ktab0,bptab0],
-        gainfield=[bpcal,bpcal,bpcal],
-        interp=['nearest','nearest','nearest'],
-        append=True)
+    for i in range(0,len(pcals)):
+        pcal = pcals[i][1]
+        gaincal(vis=myms,
+            field=pcal,
+            uvrange=myuvrange,
+            caltable=gtab1,     
+            refant = str(ref_ant),
+            smodel=[1,0,0,0],
+            minblperant=4,
+            minsnr=3,
+            solint='inf',
+            solnorm=False,
+            gaintype='G',
+            combine='',
+            calmode='ap',
+            parang=False,
+            gaintable=[gtab0,ktab0,bptab0],
+            gainfield=[bpcal,bpcal,bpcal],
+            interp=['nearest','nearest','nearest'],
+            append=True)
 
 
     fluxscale(vis=myms,
@@ -171,26 +172,28 @@ if 3 in dosteps:
         gainfield=[bpcal,bpcal,bpcal,bpcal],
         interp = ['nearest','nearest','nearest','linear'])
 
-
-    applycal(vis=myms,
-        gaintable=[gtab0,ktab0,bptab0,ftab0],
-        field=pcal,
-        calwt=False,
-        parang=False,
-        gainfield=[bpcal,bpcal,bpcal,pcal],
-        interp = ['nearest','nearest','nearest','linear'])
+    for i in range(0,len(pcals)):
+        pcal = pcals[i][1]
+        applycal(vis=myms,
+            gaintable=[gtab0,ktab0,bptab0,ftab0],
+            field=pcal,
+            calwt=False,
+            parang=False,
+            gainfield=[bpcal,bpcal,bpcal,pcal],
+            interp = ['nearest','nearest','nearest','linear'])
 
 
     for targ in targets:
 
-        target = targ[0]
+        target = targ[1]
+        related_pcal = pcals[target][3][1]
 
         applycal(vis=myms,
             gaintable=[gtab0,ktab0,bptab0,ftab0],
             field=target,
             calwt=False,
             parang=False,
-            gainfield=[bpcal,bpcal,bpcal,pcal],
+            gainfield=[bpcal,bpcal,bpcal,related_pcal],
             interp=['nearest','nearest','nearest','linear'])
 
 

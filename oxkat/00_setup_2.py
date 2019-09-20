@@ -56,20 +56,22 @@ def get_field_info(myms,
             primary_state = i
         if secondary in modes[i]:
             secondary_state = i
+        if modes[i] == 'UNKNOWN':
+            unknown_state = i
 
 
     print 'Target state:',target_state
     print 'Primary state:',primary_state
     print 'Secondary state:',secondary_state
 
-    
+
     field_tab = table(myms+'/FIELD',ack=False)
     names = field_tab.getcol('NAME')
     dirs = field_tab.getcol('REFERENCE_DIR')
     field_tab.close()
 
 
-    primary_fields = []
+    primary_candidates = []
     secondary_fields = []
     target_list = []
 
@@ -79,16 +81,16 @@ def get_field_info(myms,
         sub_tab = main_tab.query(query='FIELD_ID=='+str(i))
         state = numpy.unique(sub_tab.getcol('STATE_ID'))
         print i,names[i],state
-        if state == primary_state:
+        if state == primary_state or state == unknown_state:
             primary_dir = dirs[i][0,:]*180.0/numpy.pi
-            primary_fields.append((names[i],str(i),primary_dir))
+            primary_candidates.append((names[i],str(i),primary_dir))
         if state == secondary_state:
             secondary_dir = dirs[i][0,:]*180.0/numpy.pi
             secondary_fields.append((names[i],str(i),secondary_dir))
 
     print('primary_fields:',primary_fields)
 
-    for primary_candidate in primary_fields:
+    for primary_candidate in primary_candidates:
         primary_dir = primary_candidate[2]
         for cal in cals:
             sep = calcsep(primary_dir[0],primary_dir[1],cal[1],cal[2])

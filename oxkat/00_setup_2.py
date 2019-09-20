@@ -117,10 +117,6 @@ def get_field_info(myms,
             target_list.append((names[i],str(i),target_ms,secondary_idx))
 #            project_info['target'] = [names[i],str(i)]
 
-    print primary_field
-    print primary_tag
-    print secondary_fields
-    print target_list
 
     return primary_field,primary_tag,secondary_fields,target_list
 
@@ -203,6 +199,15 @@ def main():
 
     print(project_info)
 
+    print('')
+    print('Here is what I have assumed about your fields:')
+    print('')
+    print('Primary calibrator:  '+primary_field[0])
+    print('')
+    for i in range(0,len(target_list)):
+        print('Target '+str(i)+':            '+target_list[i][0])
+        print('Associated with: '+secondary_fields[target_list[i][3]][0])
+        print('')
 
 if __name__ == "__main__":
 

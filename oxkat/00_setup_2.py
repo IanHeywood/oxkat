@@ -88,7 +88,7 @@ def get_field_info(myms,
             secondary_dir = dirs[i][0,:]*180.0/numpy.pi
             secondary_fields.append((names[i],str(i),secondary_dir))
 
-    print('primary_fields:',primary_fields)
+    print('primary_fields:',primary_candidates)
 
     for primary_candidate in primary_candidates:
         primary_dir = primary_candidate[2]

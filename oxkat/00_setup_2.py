@@ -65,6 +65,7 @@ def get_field_info(myms,
 
 
     target_list = []
+    secondary_fields = []
 
 
     main_tab = table(myms,ack=False)
@@ -81,14 +82,34 @@ def get_field_info(myms,
                     # project_info['primary'] = [names[i],str(i)]
                     # project_info['primary_name'] = cal[0]
         if state == secondary_state:
-            secondary_field = (names[i],str(i))
+            secondary_dir = dirs[i][0,:]*180.0/numpy.pi
+            secondary_fields.append((names[i],str(i),secondary_dir))
 #            project_info['secondary'] = [names[i],str(i)]
+
+    for i in range(0,len(names)):
+        sub_tab = main_tab.query(query='FIELD_ID=='+str(i))
+        state = numpy.unique(sub_tab.getcol('STATE_ID'))
         if state == target_state:
             target_ms = myms.replace('.ms','_'+names[i].replace('+','p')+'.ms')
-            target_list.append((names[i],str(i),target_ms))
+            target_dir =  dirs[i][0,:]*180.0/numpy.pi
+            seps = []
+            for secondary_field in secondary_fields:
+                secondary_dir = secondary_field[2]
+                sep = calcsep(target_dir[0],target_dir[1],secondary_dir[0],secondary_dir[1])
+                seps.append(sep)
+            seps = numpy.array(seps)
+            secondary_idx = numpy.where(seps==numpy.min(seps))[0][0]
+
+
+            target_list.append((names[i],str(i),target_ms,secondary_idx))
 #            project_info['target'] = [names[i],str(i)]
 
-    return primary_field,primary_tag,secondary_field,target_list
+    print primary_field
+    print primary_tag
+    print secondary_fields
+    print target_list
+
+    return primary_field,primary_tag,secondary_fields,target_list
 
 
 def get_refant(myms,field_id):

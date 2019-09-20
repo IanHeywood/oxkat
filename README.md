@@ -79,7 +79,7 @@ Notes:
 
 * Joint imaging and self-calibration of multiple epochs is not yet automated.
 
-* If your observation has multiple fields then they will all be calibrated, but at present only one phase calibrator will be chosen. The `tools/casa_find_source-cal_pairs.py` script will match targets with their nearest calibrator and then split these into individual Measurement Sets along with the primary, and these can then be processed individually as above.
+* ~~If your observation has multiple fields then they will all be calibrated, but at present only one phase calibrator will be chosen. The `tools/casa_find_source-cal_pairs.py` script will match targets with their nearest calibrator and then split these into individual Measurement Sets along with the primary, and these can then be processed individually as above.~~ This is ostensibly fixed but undoubtedly has some bugs and is being tested.
 
 * This repo is just a place for me to keep my scripts. I hope you find it useful but please don't mail me if your data vanishes or your computer melts. 
 

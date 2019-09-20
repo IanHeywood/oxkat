@@ -64,8 +64,9 @@ def get_field_info(myms,
     field_tab.close()
 
 
-    target_list = []
+    primary_fields = []
     secondary_fields = []
+    target_list = []
 
 
     main_tab = table(myms,ack=False)
@@ -74,17 +75,20 @@ def get_field_info(myms,
         state = numpy.unique(sub_tab.getcol('STATE_ID'))
         if state == primary_state:
             primary_dir = dirs[i][0,:]*180.0/numpy.pi
-            for cal in cals:
-                sep = calcsep(primary_dir[0],primary_dir[1],cal[1],cal[2])
-                if sep < 1e-4: # and project_info['primary_name'] == 'UNKNOWN':
-                    primary_field = (names[i],str(i))
-                    primary_tag = cal[0]
-                    # project_info['primary'] = [names[i],str(i)]
-                    # project_info['primary_name'] = cal[0]
+            primary_fields.append((names[i],str(i),primary_dir))
         if state == secondary_state:
             secondary_dir = dirs[i][0,:]*180.0/numpy.pi
             secondary_fields.append((names[i],str(i),secondary_dir))
-#            project_info['secondary'] = [names[i],str(i)]
+
+
+    for primary_candidate in primary_fields:
+        primary_dir = primary_candidate[2]
+        for cal in cals:
+            sep = calcsep(primary_dir[0],primary_dir[1],cal[1],cal[2])
+            if sep < 1e-4: # and project_info['primary_name'] == 'UNKNOWN':
+                primary_field = (primary_candidate[0],primary_candidate[1])
+                primary_tag = cal[0]
+
 
     for i in range(0,len(names)):
         sub_tab = main_tab.query(query='FIELD_ID=='+str(i))

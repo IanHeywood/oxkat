@@ -59,11 +59,12 @@ def get_field_info(myms,
         if modes[i] == 'UNKNOWN':
             unknown_state = i
 
-
-    print 'Target state:',target_state
-    print 'Primary state:',primary_state
-    print 'Secondary state:',secondary_state
-
+    print('')
+    print('Target state:',target_state)
+    print('Primary state:',primary_state)
+    print('Secondary state:',secondary_state)
+    print('Unknown state:',unknown_state)
+    print('')
 
     field_tab = table(myms+'/FIELD',ack=False)
     names = field_tab.getcol('NAME')
@@ -80,7 +81,6 @@ def get_field_info(myms,
     for i in range(0,len(names)):
         sub_tab = main_tab.query(query='FIELD_ID=='+str(i))
         state = numpy.unique(sub_tab.getcol('STATE_ID'))
-        print i,names[i],state
         if state == primary_state or state == unknown_state:
             primary_dir = dirs[i][0,:]*180.0/numpy.pi
             primary_candidates.append((names[i],str(i),primary_dir))
@@ -88,8 +88,7 @@ def get_field_info(myms,
             secondary_dir = dirs[i][0,:]*180.0/numpy.pi
             secondary_fields.append((names[i],str(i),secondary_dir))
 
-    print('primary_fields:',primary_candidates)
-
+   
     for primary_candidate in primary_candidates:
         primary_dir = primary_candidate[2]
         for cal in cals:
@@ -202,12 +201,12 @@ def main():
     print('')
     print('Here is what I have assumed about your fields:')
     print('')
-    print('Primary calibrator:  '+primary_field[0])
+    print('    Primary calibrator:  '+primary_field[0])
     print('')
     for i in range(0,len(target_list)):
-        print('Target '+str(i)+':            '+target_list[i][0])
-        print('Associated with: '+secondary_field[target_list[i][3]][0])
-        print('')
+        print('    Target:              '+target_list[i][0])
+        print('    Associated with cal: '+secondary_field[target_list[i][3]][0])
+        print('    ')
 
 if __name__ == "__main__":
 

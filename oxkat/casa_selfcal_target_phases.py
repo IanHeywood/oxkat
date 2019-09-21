@@ -61,8 +61,8 @@ applycal(vis=myms,
     interp = ['nearest'])
 
 
-statwt(vis=myms,
-    field='0')
+# statwt(vis=myms,
+#     field='0')
 
 
 clearstat()

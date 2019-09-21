@@ -14,7 +14,7 @@ clearstat()
 
 
 for target in targets:
-	flagdata(vis=myms,mode='tfcrop',datacolumn='corrected',field=target[1])
+    flagdata(vis=myms,mode='tfcrop',datacolumn='corrected',field=target[1])
 
 
 flagmanager(vis=myms,mode='save',versionname='tfcrop_targets')

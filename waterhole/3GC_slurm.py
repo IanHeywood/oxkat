@@ -29,7 +29,8 @@ def main():
     gen.setup_dir(LOGS)
 
 
-    project_info = pickle.load(open('project_info.p','rb'))
+    with open('project_info.p','rb') as f:
+        project_info = pickle.load(f,encoding='latin1')
 
 
     targets = project_info['target_list'] 
@@ -61,7 +62,7 @@ def main():
 
 
         gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'ddfct',
+                    jobname=code+'ddfac',
                     logfile=logfile,
                     syscall=syscall)
 

@@ -30,7 +30,9 @@ def main():
     gen.setup_dir(LOGS)
 
 
-    project_info = pickle.load(open('project_info.p','rb'))
+#    project_info = pickle.load(open('project_info.p','rb'))
+    with open('project_info.p','rb') as f:
+        project_info = pickle.load(f,encoding='latin1')
 
 
     targets = project_info['target_list'] 

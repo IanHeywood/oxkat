@@ -158,7 +158,8 @@ def main():
     myms = sys.argv[1].rstrip('/')
 
 
-    outpick = 'project_info.p'
+#    outpick = 'project_info.p'
+    outfile = 'project_info.npy'
 
 
     # Setup template dictionary populated with dummy values
@@ -193,8 +194,8 @@ def main():
     project_info['k1'] = k1
 
 
-    pickle.dump(project_info,open(outpick,'wb'))
-    
+#    pickle.dump(project_info,open(outpick,'wb'))
+    numpy.save(file=outfile,arr=project_info)    
 
     print(project_info)
 

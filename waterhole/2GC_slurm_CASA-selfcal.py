@@ -3,8 +3,7 @@
 
 
 import os.path as o
-#import pickle
-import numpy
+import pickle
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
@@ -31,8 +30,8 @@ def main():
     gen.setup_dir(LOGS)
 
 
-#    project_info = pickle.load(open('project_info.p','rb'))
-    project_info = numpy.load('project_info.npy').item()
+    project_info = pickle.load(open('project_info.p','rb'))
+
 
     targets = project_info['target_list'] 
 

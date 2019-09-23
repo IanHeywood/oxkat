@@ -52,7 +52,7 @@ $ source kill_1GC_jobs.sh
 7. If that completes successfully you can set up and submit the 2GC jobs, which does imaging with an iteration of phase-only self-cal:
 
 ```
-$ python waterhole/2GC_slurm_CASA-selfcal.py
+$ python setups/2GC_slurm.py
 $ source submit_2GC_jobs.sh
 ```
 

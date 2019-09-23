@@ -83,11 +83,15 @@ def main():
 
 
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '
-        syscall += gen.generate_syscall_ddfacet(mspattern=myms,imgname=ddf1_prefix,mask=fitsmask)
+        syscall += gen.generate_syscall_ddfacet(mspattern=myms,
+                    imgname=ddf1_prefix,
+                    chunkhours=2,
+                    mask=fitsmask)
 
 
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'ddfac',
+                    partition='HighMem',
                     logfile=logfile,
                     syscall=syscall)
 

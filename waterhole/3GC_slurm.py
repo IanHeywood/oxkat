@@ -42,11 +42,36 @@ def main():
     for target in targets:
 
 
-        code = target[0][-3:]
+        fieldname = target[0]
+        code = fieldname[-3:]
         myms = target[2].rstrip('/')
 
 
+        pcal_prefix = 'img_'+myms+'_pcal'
         ddf1_prefix = 'img_'+myms+'_DDF_corr'
+
+
+
+        # ------------------------------------------------------------------------------
+        # Make FITS mask 
+
+
+        slurmfile = SCRIPTS+'/slurm_makemask1_'+code+'.sh'
+        logfile = LOGS+'/slurm_makemask1_'+code+'.log'
+
+        syscall,fitsmask = gen.generate_syscall_makemask(blind_prefix)
+        syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall
+
+
+        gen.write_slurm(opfile=slurmfile,
+                    jobname=code+'mask1',
+                    logfile=logfile,
+                    syscall=syscall)
+
+
+        job_id_makemask1 = 'MAKEMASK1_'+code
+        syscall = job_id_makemask1+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
+        f.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -58,7 +83,7 @@ def main():
 
 
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '
-        syscall += gen.generate_syscall_ddfacet(mspattern=myms,imgname=ddf1_prefix)
+        syscall += gen.generate_syscall_ddfacet(mspattern=myms,imgname=ddf1_prefix,mask=fitsmask)
 
 
         gen.write_slurm(opfile=slurmfile,
@@ -72,30 +97,6 @@ def main():
         f.write(syscall+'\n')
 
 
-        # # ------------------------------------------------------------------------------
-        # # Make FITS mask 
-
-
-        # slurmfile = SCRIPTS+'/slurm_makemask1_'+code+'.sh'
-        # logfile = LOGS+'/slurm_makemask1_'+code+'.log'
-
-
-        # syscall1,syscall2 = gen.generate_syscall_makemask(blind_prefix,fits_mask1)
-
-
-        # syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall1
-        # syscall += 'singularity exec '+CUBICAL_CONTAINER+' '+syscall2
-
-
-        # gen.write_slurm(opfile=slurmfile,
-        #             jobname=code+'mask1',
-        #             logfile=logfile,
-        #             syscall=syscall)
-
-
-        # job_id_makemask1 = 'MAKEMASK1_'+code
-        # syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_blind+"} "+slurmfile+" | awk '{print $4}'`"
-        # f.write(syscall+'\n')
 
 
 

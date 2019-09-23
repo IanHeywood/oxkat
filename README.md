@@ -49,14 +49,7 @@ $ source submit_1GC_jobs.sh
 $ source kill_1GC_jobs.sh
 ```
 
-7. (a) If that completes successfully you can set up and submit the 2GC jobs, which does imaging with an iteration of phase-only self-cal:
-
-```
-$ python setups/2GC_slurm.py
-$ source submit_2GC_jobs.sh
-```
-
-7. (b) Note that CubiCal currently does not run on the IDIA slurm worker nodes, so use this temporary alternative 2GC script using CASA's `gaincal` task:
+7. If that completes successfully you can set up and submit the 2GC jobs, which does imaging with an iteration of phase-only self-cal:
 
 ```
 $ python waterhole/2GC_slurm_CASA-selfcal.py
@@ -78,8 +71,6 @@ Notes:
 * Direction-dependent calibration is not yet automated.
 
 * Joint imaging and self-calibration of multiple epochs is not yet automated.
-
-* ~~If your observation has multiple fields then they will all be calibrated, but at present only one phase calibrator will be chosen. The `tools/casa_find_source-cal_pairs.py` script will match targets with their nearest calibrator and then split these into individual Measurement Sets along with the primary, and these can then be processed individually as above.~~ This is ostensibly fixed but undoubtedly has some bugs and is being tested.
 
 * This repo is just a place for me to keep my scripts. I hope you find it useful but please don't mail me if your data vanishes or your computer melts. 
 

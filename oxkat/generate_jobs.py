@@ -245,7 +245,7 @@ def generate_syscall_makemask(prefix,thresh=6.0):
 
     # Generate call to MakeMask.py and merge result with wsclean automasking model
 
-    syscall1 = 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+prefix+'-MFS-image.fits \n'
+    syscall = 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+prefix+'-MFS-image.fits \n'
     fitsmask = prefix+'-MFS-image.fits.mask.fits'
 #    syscall2 = 'python '+OXKAT+'/merge_FITS_masks.py '+prefix+' '+opfits+'\n'
 

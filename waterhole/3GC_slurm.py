@@ -97,7 +97,7 @@ def main():
 
 
         job_id_ddf1 = 'DDF1_'+code
-        syscall = job_id_ddf1+"=`sbatch -d afterok:${"+job_id_makemask1+"}"+slurmfile+" | awk '{print $4}'`"
+        syscall = job_id_ddf1+"=`sbatch -d afterok:${"+job_id_makemask1+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
 

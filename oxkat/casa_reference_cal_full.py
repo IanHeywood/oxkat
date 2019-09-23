@@ -186,7 +186,7 @@ if 3 in dosteps:
     for targ in targets:
 
         target = targ[1]
-        related_pcal = pcals[target][3][1]
+        related_pcal = pcals[targ[3]][1]
 
         applycal(vis=myms,
             gaintable=[gtab0,ktab0,bptab0,ftab0],

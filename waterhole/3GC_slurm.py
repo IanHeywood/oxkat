@@ -59,7 +59,7 @@ def main():
         slurmfile = SCRIPTS+'/slurm_makemask1_'+code+'.sh'
         logfile = LOGS+'/slurm_makemask1_'+code+'.log'
 
-        syscall,fitsmask = gen.generate_syscall_makemask(blind_prefix)
+        syscall,fitsmask = gen.generate_syscall_makemask(pcal_prefix)
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall
 
 

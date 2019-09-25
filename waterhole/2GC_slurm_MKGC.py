@@ -63,13 +63,16 @@ def main():
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=blind_prefix,
                                 datacol='DATA',
+                                briggs=-0.5,
                                 bda=True,
-                                niter=40000,
-                                mask='auto')
+                                niter=150000,
+                                multiscale=True,
+                                scales='0,5,15,45',
+                                mask='fits')
 
 
         gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'wdata',
+                    jobname=code+'wd_GC',
                     logfile=logfile,
                     syscall=syscall)
 
@@ -92,7 +95,7 @@ def main():
 
 
         gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'pdct1',
+                    jobname=code+'pr_GC',
                     logfile=logfile,
                     syscall=syscall)
 
@@ -115,9 +118,10 @@ def main():
 
 
         gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'pcal1',
+                    jobname=code+'sc_GC',
                     logfile=logfile,
                     syscall=syscall)
+
 
 
         job_id_phasecal1 = 'PHASECAL1_'+code
@@ -137,12 +141,16 @@ def main():
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=pcal_prefix,
                                 datacol='CORRECTED_DATA',
+                                briggs=-0.5,
                                 bda=True,
-                                mask='auto')
+                                niter=150000,
+                                multiscale=True,
+                                scales='0,5,15,45',
+                                mask='fits')
 
 
         gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'wcorr',
+                    jobname=code+'wc_GC',
                     logfile=logfile,
                     syscall=syscall)
 

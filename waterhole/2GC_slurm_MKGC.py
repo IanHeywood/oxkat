@@ -65,7 +65,7 @@ def main():
                                 datacol='DATA',
                                 briggs=-0.5,
                                 bda=True,
-                                niter=150000,
+                                niter=200000,
                                 multiscale=True,
                                 scales='0,5,15,45',
                                 mask='fits')
@@ -143,7 +143,7 @@ def main():
                                 datacol='CORRECTED_DATA',
                                 briggs=-0.5,
                                 bda=True,
-                                niter=150000,
+                                niter=200000,
                                 multiscale=True,
                                 scales='0,5,15,45',
                                 mask='fits')

@@ -64,12 +64,12 @@ def main():
                                 imgname=blind_prefix,
                                 datacol='DATA',
                                 imsize=8192,
-                                briggs=-0.5,
+                                briggs=-0.4,
                                 bda=True,
                                 niter=200000,
                                 multiscale=True,
-                                scales='0,5,15,45',
-                                mask='fits')
+                                scales='0,5,15',
+                                mask='auto')
 
 
         gen.write_slurm(opfile=slurmfile,
@@ -93,8 +93,8 @@ def main():
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_predict(msname=myms,
-        			imgbase=blind_prefix,
-        			imsize=8192)
+                    imgbase=blind_prefix,
+                    imsize=8192)
 
 
         gen.write_slurm(opfile=slurmfile,

@@ -92,7 +92,9 @@ def main():
 
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-        syscall += gen.generate_syscall_predict(msname=myms,imgbase=blind_prefix)
+        syscall += gen.generate_syscall_predict(msname=myms,
+        			imgbase=blind_prefix,
+        			imsize=8192)
 
 
         gen.write_slurm(opfile=slurmfile,

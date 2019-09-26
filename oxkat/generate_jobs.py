@@ -225,7 +225,7 @@ def generate_syscall_wsclean(mslist,
 
 def generate_syscall_predict(msname,
                             imgbase,
-                            channelsoout=8,
+                            channelsout=8,
                             imsize=8125,
                             scale='1.5asec',
                             predictchannels=64):

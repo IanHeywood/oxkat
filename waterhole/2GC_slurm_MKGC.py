@@ -150,7 +150,7 @@ def main():
                                 niter=200000,
                                 multiscale=True,
                                 scales='0,5,15,45',
-                                mask='fits')
+                                mask='auto')
 
 
         gen.write_slurm(opfile=slurmfile,

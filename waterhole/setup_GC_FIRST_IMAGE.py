@@ -167,7 +167,7 @@ def main():
         # ------------------------------------------------------------------------------
 
 #    kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+' > '+kill_file
-    kill = 'echo "scancel "$'+job_id_blind+'"'+' > '+kill_file
+    kill = 'echo "scancel "$'+job_id_blind+' > '+kill_file
 
     f.write(kill+'\n')
 

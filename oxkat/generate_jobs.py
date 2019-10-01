@@ -273,6 +273,9 @@ def generate_syscall_ddfacet(mspattern,
                           ndegridband=8,
                           beam='',
                           beamnband=16,
+#                          beamsmooth=False,
+                          dtbeammin=1,
+                          FITSParAngleIncDeg=1,
                           nband=4,
                           mask='auto',
                           masksigma=5.5,
@@ -311,6 +314,8 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--Beam-Model=FITS '
         syscall += "--Beam-FITSFile=\'"+str(beam)+"\' "
         syscall += '--Beam-NBand '+str(beamnband)+' '
+        syscall += '--Beam-DtBeamMin='+str(dtbeammin)+' '
+        syscall += '--FITSParAngleIncDeg='+str(FITSParAngleIncDeg)+' '
     syscall += '--Deconv-RMSFactor=3.000000 '
     syscall += '--Data-Sort 1 '
     syscall += '--Cache-Dir=. '

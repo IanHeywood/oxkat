@@ -23,7 +23,6 @@ def main():
 
 
     submit_file = 'submit_2GC_jobs.sh'
-    kill_file = 'kill_2GC_jobs.sh'
 
 
     gen.setup_dir(SCRIPTS)
@@ -46,6 +45,9 @@ def main():
 
         code = target[0][-3:]
         myms = target[2].rstrip('/')
+
+    
+        kill_file = SCRIPTS+'/kill_2GC_jobs_'+target[0].replace('+','p')+'.sh'
 
 
         blind_prefix = 'img_'+myms+'_data'
@@ -154,9 +156,9 @@ def main():
 
         # ------------------------------------------------------------------------------
 
-    kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+' > '+kill_file
+        kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+' > '+kill_file
 
-    f.write(kill+'\n')
+        f.write(kill+'\n')
 
     f.close()
 

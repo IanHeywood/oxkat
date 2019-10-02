@@ -177,7 +177,8 @@ def generate_syscall_wsclean(mslist,
                           sourcelist=True,
                           bda=False,
                           nomodel=False,
-                          mask='auto'):
+                          mask='auto',
+                          fitspectralpol=4):
 
     # Generate system call to run wsclean
 
@@ -213,7 +214,8 @@ def generate_syscall_wsclean(mslist,
         syscall += '-fits-mask '+mask+' '
     syscall += '-name '+imgname+' '
     syscall += '-channels-out 8 '
-    syscall += '-fit-spectral-pol 4 '
+    if fitspectralpol != 0:
+        syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
     syscall += '-join-channels '
     syscall += '-mem 90 '
 

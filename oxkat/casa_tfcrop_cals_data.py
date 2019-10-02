@@ -4,7 +4,12 @@
 import pickle
 
 
-project_info = pickle.load(open('project_info.p','rb'))
+
+with open('project_info.p','rb') as f:
+    project_info = pickle.load(f,encoding='latin1')
+#project_info = pickle.load(open('project_info.p','rb'))
+
+
 myms = project_info['master_ms']
 bpcal = project_info['primary']
 pcals = project_info['secondary']

@@ -168,6 +168,8 @@ def generate_syscall_tricolour(myms='',
 def generate_syscall_wsclean(mslist,
                           imgname,
                           datacol,
+                          startchan=-1,
+                          endchan=-1,
                           imsize=8125,
                           cellsize='1.5asec',
                           briggs=-0.3,
@@ -184,7 +186,7 @@ def generate_syscall_wsclean(mslist,
 
     syscall = 'wsclean '
     syscall += '-log-time '
-    if sourcelist:
+    if sourcelist and fitspectralpol != 0:
         syscall += '-save-source-list '
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
@@ -201,6 +203,8 @@ def generate_syscall_wsclean(mslist,
     syscall += '-mgain 0.85 '
     syscall += '-weight briggs '+str(briggs)+' '
     syscall += '-data-column '+datacol+' '
+    if startchan != -1 and endchan != -1:
+        syscall += '-channel-range '+str(startchan)+' '+str(endchan)+' '
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fits-mask '+mymask+' '

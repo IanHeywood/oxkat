@@ -170,6 +170,7 @@ def generate_syscall_wsclean(mslist,
                           datacol,
                           startchan=-1,
                           endchan=-1,
+                          chanout=8,
                           imsize=8125,
                           cellsize='1.5asec',
                           briggs=-0.3,
@@ -217,7 +218,7 @@ def generate_syscall_wsclean(mslist,
     else:
         syscall += '-fits-mask '+mask+' '
     syscall += '-name '+imgname+' '
-    syscall += '-channels-out 8 '
+    syscall += '-channels-out '+str(chanout)+' '
     if fitspectralpol != 0:
         syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
     syscall += '-join-channels '

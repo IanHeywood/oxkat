@@ -51,7 +51,7 @@ def main():
 
         job_ids = []
         for i in range(0,len(robs)):
-            job_ids.append('GCIM_'+code+'_'+str(rob[i]))
+            job_ids.append('GCIM_'+code+'_'+str(robs[i]))
 
         for i in range(0,len(robs)):
 

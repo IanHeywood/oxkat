@@ -39,135 +39,60 @@ def main():
 
 
     f = open(submit_file,'w')
+	f.write('touch '+kill_file+'\n')
+
+	robs = [-1.5,-1.0,-0.5]
 
 
     for target in targets:
 
-
-        code = target[0][-3:]
         myms = target[2].rstrip('/')
+        code = target[0][-3:]
+
+		job_ids = []
+		for i in range(0,len(robs)):
+			job_ids.append('GCIM_'+code+'_'+str(rob[i]))
+
+        for i in range(0,len(robs)):
+
+        	rob = robs[i]
+
+	        image_prefix = 'img_'+myms+'_datar'+str(rob)
 
 
-        blind_prefix = 'img_'+myms+'_data'
-        pcal_prefix = 'img_'+myms+'_pcal'
+	        slurmfile = SCRIPTS+'/slurm_wsclean_gc_r'+str(rob)+'_'+code+'.sh'
+	        logfile = LOGS+'/slurm_wsclean_gc_r'+str(rob)+'_'+code+'.log'
+
+	        syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+
+	        syscall += gen.generate_syscall_wsclean(mslist=[myms],
+	                                imgname=image_prefix,
+	                                datacol='DATA',
+	                                imsize=8192,
+	                                briggs=rob,
+	                                bda=True,
+	                                niter=250000,
+	                                multiscale=True,
+	                                scales='0,3,9,27,81',
+	                                mask='none')
 
 
-        # ------------------------------------------------------------------------------
-        # Automask wsclean 
+	        gen.write_slurm(opfile=slurmfile,
+	                    jobname=code+str(rob),
+	                    logfile=logfile,
+	                    syscall=syscall)
 
 
-        slurmfile = SCRIPTS+'/slurm_wsclean_blind_'+code+'.sh'
-        logfile = LOGS+'/slurm_wsclean_blind_'+code+'.log'
+	        job_id = job_ids[i]
 
-        syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-        syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                                imgname=blind_prefix,
-                                datacol='DATA',
-                                imsize=8192,
-                                briggs=-0.4,
-                                bda=True,
-                                niter=250000,
-                                multiscale=True,
-                                scales='0,5,15,45,225',
-                                mask='none')
+	        if rob == robs[0]
+		        syscall = job_id+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
+		    else:
+		    	syscall = job_id+"=`sbatch -d afterok:${"+job_ids[i-1]+"} "+slurmfile+" | awk '{print $4}'`"
 
+	        f.write(syscall+'\n')
 
-        gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'wd_GC',
-                    logfile=logfile,
-                    syscall=syscall)
-
-
-        job_id_blind = 'BLIND_'+code
-        syscall = job_id_blind+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
-        f.write(syscall+'\n')
-
-
-        # # ------------------------------------------------------------------------------
-        # # Predict 
-
-
-        # slurmfile = SCRIPTS+'/slurm_wsclean_predict1_'+code+'.sh'
-        # logfile = LOGS+'/slurm_wsclean_predict1_'+code+'.log'
-
-
-        # syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-        # syscall += gen.generate_syscall_predict(msname=myms,
-        #             imgbase=blind_prefix,
-        #             imsize=8192)
-
-
-        # gen.write_slurm(opfile=slurmfile,
-        #             jobname=code+'pr_GC',
-        #             logfile=logfile,
-        #             syscall=syscall)
-
-
-        # job_id_predict1 = 'PREDICT1_'+code
-        # syscall = job_id_predict1+"=`sbatch -d afterok:${"+job_id_blind+"} "+slurmfile+" | awk '{print $4}'`"
-        # f.write(syscall+'\n')
-
-
-        # # ------------------------------------------------------------------------------
-        # # Self-calibrate phases 
-
-
-        # slurmfile = SCRIPTS+'/slurm_phasecal1_'+code+'.sh'
-        # logfile = LOGS+'/slurm_phasecal1_'+code+'.log'
-
-
-        # syscall = 'singularity exec '+CASA_CONTAINER+' '
-        # syscall += 'casa -c '+OXKAT+'/casa_selfcal_target_phases.py '+myms+' --nologger --log2term --nogui\n'
-
-
-        # gen.write_slurm(opfile=slurmfile,
-        #             jobname=code+'sc_GC',
-        #             logfile=logfile,
-        #             syscall=syscall)
-
-
-
-        # job_id_phasecal1 = 'PHASECAL1_'+code
-        # syscall = job_id_phasecal1+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
-        # f.write(syscall+'\n')
-
-
-        # # ------------------------------------------------------------------------------
-        # # Masked wsclean CORRECTED_DATA
-
-
-        # slurmfile = SCRIPTS+'/slurm_wsclean_pcal1_'+code+'.sh'
-        # logfile = LOGS+'/slurm_wsclean_pcal1_'+code+'.log'
-
-
-        # syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-        # syscall += gen.generate_syscall_wsclean(mslist=[myms],
-        #                         imgname=pcal_prefix,
-        #                         datacol='CORRECTED_DATA',
-        #                         imsize=8192,
-        #                         briggs=-0.5,
-        #                         bda=True,
-        #                         niter=200000,
-        #                         multiscale=True,
-        #                         scales='0,5,15,45',
-        #                         mask='auto')
-
-
-        # gen.write_slurm(opfile=slurmfile,
-        #             jobname=code+'wc_GC',
-        #             logfile=logfile,
-        #             syscall=syscall)
-
-
-        # job_id_blind2 = 'BLIND2_'+code
-        # syscall = job_id_blind2+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
-        # f.write(syscall+'\n')
-
-
-        # ------------------------------------------------------------------------------
-
-#    kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+' > '+kill_file
-    kill = 'echo "scancel "$'+job_id_blind+' > '+kill_file
+		    kill = 'echo "scancel "$'+job_id+' >> '+kill_file
 
     f.write(kill+'\n')
 

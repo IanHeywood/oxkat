@@ -39,7 +39,7 @@ def main():
 
 
     f = open(submit_file,'w')
-    f.write('touch '+kill_file+'\n')
+    f.write('echo "#!/usr/bin/env bash" > '+kill_file+'\n')
 
     robs = [-1.5,-1.0,-0.5]
 

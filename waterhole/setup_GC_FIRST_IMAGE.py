@@ -39,9 +39,9 @@ def main():
 
 
     f = open(submit_file,'w')
-	f.write('touch '+kill_file+'\n')
+    f.write('touch '+kill_file+'\n')
 
-	robs = [-1.5,-1.0,-0.5]
+    robs = [-1.5,-1.0,-0.5]
 
 
     for target in targets:
@@ -49,50 +49,50 @@ def main():
         myms = target[2].rstrip('/')
         code = target[0][-3:]
 
-		job_ids = []
-		for i in range(0,len(robs)):
-			job_ids.append('GCIM_'+code+'_'+str(rob[i]))
+        job_ids = []
+        for i in range(0,len(robs)):
+            job_ids.append('GCIM_'+code+'_'+str(rob[i]))
 
         for i in range(0,len(robs)):
 
-        	rob = robs[i]
+            rob = robs[i]
 
-	        image_prefix = 'img_'+myms+'_datar'+str(rob)
-
-
-	        slurmfile = SCRIPTS+'/slurm_wsclean_gc_r'+str(rob)+'_'+code+'.sh'
-	        logfile = LOGS+'/slurm_wsclean_gc_r'+str(rob)+'_'+code+'.log'
-
-	        syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-
-	        syscall += gen.generate_syscall_wsclean(mslist=[myms],
-	                                imgname=image_prefix,
-	                                datacol='DATA',
-	                                imsize=8192,
-	                                briggs=rob,
-	                                bda=True,
-	                                niter=250000,
-	                                multiscale=True,
-	                                scales='0,3,9,27,81',
-	                                mask='none')
+            image_prefix = 'img_'+myms+'_datar'+str(rob)
 
 
-	        gen.write_slurm(opfile=slurmfile,
-	                    jobname=code+str(rob),
-	                    logfile=logfile,
-	                    syscall=syscall)
+            slurmfile = SCRIPTS+'/slurm_wsclean_gc_r'+str(rob)+'_'+code+'.sh'
+            logfile = LOGS+'/slurm_wsclean_gc_r'+str(rob)+'_'+code+'.log'
+
+            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+
+            syscall += gen.generate_syscall_wsclean(mslist=[myms],
+                                    imgname=image_prefix,
+                                    datacol='DATA',
+                                    imsize=8192,
+                                    briggs=rob,
+                                    bda=True,
+                                    niter=250000,
+                                    multiscale=True,
+                                    scales='0,3,9,27,81',
+                                    mask='none')
 
 
-	        job_id = job_ids[i]
+            gen.write_slurm(opfile=slurmfile,
+                        jobname=code+str(rob),
+                        logfile=logfile,
+                        syscall=syscall)
 
-	        if rob == robs[0]
-		        syscall = job_id+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
-		    else:
-		    	syscall = job_id+"=`sbatch -d afterok:${"+job_ids[i-1]+"} "+slurmfile+" | awk '{print $4}'`"
 
-	        f.write(syscall+'\n')
+            job_id = job_ids[i]
 
-		    kill = 'echo "scancel "$'+job_id+' >> '+kill_file
+            if rob == robs[0]
+                syscall = job_id+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
+            else:
+                syscall = job_id+"=`sbatch -d afterok:${"+job_ids[i-1]+"} "+slurmfile+" | awk '{print $4}'`"
+
+            f.write(syscall+'\n')
+
+            kill = 'echo "scancel "$'+job_id+' >> '+kill_file
 
     f.write(kill+'\n')
 

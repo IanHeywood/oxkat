@@ -85,7 +85,7 @@ def main():
 
             job_id = job_ids[i]
 
-            if rob == robs[0]
+            if rob == robs[0]:
                 syscall = job_id+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
             else:
                 syscall = job_id+"=`sbatch -d afterok:${"+job_ids[i-1]+"} "+slurmfile+" | awk '{print $4}'`"

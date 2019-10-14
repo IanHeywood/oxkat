@@ -51,7 +51,7 @@ def main():
 
         job_ids = []
         for i in range(0,len(robs)):
-            job_ids.append('GCIM_'+code+'_'+str(robs[i]))
+            job_ids.append('GCIM_'+code+'_'+str(robs[i]).replace('-','m').replace('.','p'))
 
         for i in range(0,len(robs)):
 
@@ -94,7 +94,7 @@ def main():
 
             kill = 'echo "scancel "$'+job_id+' >> '+kill_file
 
-    f.write(kill+'\n')
+            f.write(kill+'\n')
 
     f.close()
 

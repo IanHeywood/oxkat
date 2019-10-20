@@ -134,7 +134,24 @@ if 2 in dosteps:
         append=False)
 
     for i in range(0,len(pcals)):
+
         pcal = pcals[i][1]
+
+        gaincal(vis=myms,
+            field=pcal,
+            uvrange=myuvrange,
+            caltable=ktab0,
+            refant = str(ref_ant),
+        #   spw = delayspw,
+            gaintype = 'K',
+            solint = 'inf',
+            parang=False,
+            gaintable=[gtab0,ktab0,bptab0],
+            gainfield=[bpcal,bpcal,bpcal],
+            interp=['nearest','nearest','nearest'],
+            combine = '',
+            append=True)
+
         gaincal(vis=myms,
             field=pcal,
             uvrange=myuvrange,

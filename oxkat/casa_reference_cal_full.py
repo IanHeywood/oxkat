@@ -186,8 +186,8 @@ if 3 in dosteps:
         field=bpcal,
         calwt=False,
         parang=False,
-        gainfield=[bpcal,bpcal,bpcal,bpcal],
-        interp = ['nearest','nearest','nearest','linear'])
+        gainfield=[bpcal,'',bpcal,bpcal],
+        interp = ['nearest','nearest','linear','linear'])
 
     for i in range(0,len(pcals)):
         pcal = pcals[i][1]
@@ -196,8 +196,8 @@ if 3 in dosteps:
             field=pcal,
             calwt=False,
             parang=False,
-            gainfield=[bpcal,bpcal,bpcal,pcal],
-            interp = ['nearest','nearest','nearest','linear'])
+            gainfield=[bpcal,'',bpcal,pcal],
+            interp = ['nearest','nearest','linear','linear'])
 
 
     for targ in targets:
@@ -210,8 +210,8 @@ if 3 in dosteps:
             field=target,
             calwt=False,
             parang=False,
-            gainfield=[bpcal,bpcal,bpcal,related_pcal],
-            interp=['nearest','nearest','nearest','linear'])
+            gainfield=[bpcal,'',bpcal,related_pcal],
+            interp=['nearest','nearest','linear','linear'])
 
 
 flagmanager(vis=myms,mode='save',versionname='refcal-full')

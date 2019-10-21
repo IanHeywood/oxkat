@@ -119,9 +119,8 @@ for myms in mslist:
         interp=['nearest'],
         combine = '')
 
-
     bandpass(vis=myms,
-        field=bpcal,
+        field='0',
         uvrange=myuvrange,
         caltable=bptab0,
         refant = str(ref_ant),
@@ -179,7 +178,7 @@ for myms in mslist:
 
 
     bandpass(vis=myms,
-        field=bpcal,
+        field='0',
         uvrange=myuvrange,
         caltable=bptab1,
         refant = str(ref_ant),

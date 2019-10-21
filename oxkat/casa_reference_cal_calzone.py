@@ -77,7 +77,7 @@ if 1 in dosteps:
         caltable=gtab0,
         gaintype='G',
         solint='int',
-        calmode='ap',
+        calmode='p',
         minsnr=5)
 
 

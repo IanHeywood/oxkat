@@ -92,7 +92,7 @@ if 1 in dosteps:
         gaintable=[gtab0],
         gainfield=[bpcal],
         interp=['nearest'],
-        combine = '')
+        combine = 'spw')
 
 
     bandpass(vis=myms,
@@ -144,10 +144,10 @@ if 2 in dosteps:
             gaintype = 'K',
             solint = 'inf',
             parang=False,
-            gaintable=[gtab0,ktab0,bptab0],
-            gainfield=[bpcal,bpcal,bpcal],
-            interp=['nearest','nearest','nearest'],
-            combine = '',
+            gaintable=[gtab0,bptab0],
+            gainfield=[bpcal,bpcal],
+            interp=['nearest','nearest'],
+            combine = 'spw',
             append=True)
 
         gaincal(vis=myms,
@@ -165,7 +165,7 @@ if 2 in dosteps:
             calmode='ap',
             parang=False,
             gaintable=[gtab0,ktab0,bptab0],
-            gainfield=[bpcal,bpcal,bpcal],
+            gainfield=[bpcal,'',bpcal],
             interp=['nearest','nearest','nearest'],
             append=True)
 

@@ -92,7 +92,7 @@ if 1 in dosteps:
         gaintable=[gtab0],
         gainfield=[bpcal],
         interp=['nearest'],
-        combine = 'spw')
+        combine = '')
 
 
     bandpass(vis=myms,

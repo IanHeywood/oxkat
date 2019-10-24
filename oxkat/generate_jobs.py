@@ -83,6 +83,8 @@ def get_code(myms):
 
     code = myms.split('_')[0][-3:]
 
+    code = code.replace('-','_')
+
     return code
 
 

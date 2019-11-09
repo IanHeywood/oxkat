@@ -67,6 +67,7 @@ def main():
                                 datacol='DATA',
                                 startchan=0,
                                 endchan=896,
+                                chanout=7,
                                 bda=True,
                                 niter=60000,
                                 mask='auto')
@@ -143,6 +144,7 @@ def main():
                                 datacol='CORRECTED_DATA',
                                 startchan=0,
                                 endchan=896,
+                                chanout=7,
                                 bda=True,
                                 mask='auto')
 

@@ -49,7 +49,7 @@ def main():
 
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/casa_average_to_1k_add_wtspec_add_SPWs.py --nologger --log2term --nogui\n'
 
 
     gen.write_slurm(opfile=slurmfile,
@@ -135,7 +135,7 @@ def main():
 
 
     # ------------------------------------------------------------------------------
-    # Reference calibration cals only
+    # Reference calibration (new scheme)
 
 
     slurmfile = SCRIPTS+'/slurm_refcal-cals_'+code+'.sh'
@@ -143,63 +143,17 @@ def main():
 
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_reference_cal_calzone.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/casa_1GC.py --nologger --log2term --nogui\n'
 
 
     gen.write_slurm(opfile=slurmfile,
-                jobname=code+'rcal1',
+                jobname=code+'__1GC',
                 logfile=logfile,
                 syscall=syscall)
 
 
     job_id_refcal1 = 'REFCAL1_'+code
     syscall = job_id_refcal1+"=`sbatch -d afterok:${"+job_id_flag1+"} "+slurmfile+" | awk '{print $4}'`"
-    f.write(syscall+'\n')
-
-
-    # ------------------------------------------------------------------------------
-    # Autoflagger on calibrators (CORRECTED_DATA)
-
-
-    slurmfile = SCRIPTS+'/slurm_autoflag_cals_corr_'+code+'.sh'
-    logfile = LOGS+'/slurm_autoflag_cals_corr_'+code+'.log'
-
-
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_tfcrop_cals_corrected.py --nologger --log2term --nogui\n'
-
-
-    gen.write_slurm(opfile=slurmfile,
-                jobname=code+'flag2',
-                logfile=logfile,
-                syscall=syscall)
-
-
-    job_id_flag2 = 'FLAG2_'+code
-    syscall = job_id_flag2+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
-    f.write(syscall+'\n')
-
-
-    # ------------------------------------------------------------------------------
-    # Full reference calibration 
-
-
-    slurmfile = SCRIPTS+'/slurm_refcal-all_'+code+'.sh'
-    logfile = LOGS+'/slurm_refcal-all_'+code+'.log'
-
-
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_reference_cal_full.py --nologger --log2term --nogui\n'
-
-
-    gen.write_slurm(opfile=slurmfile,
-                jobname=code+'rcal2',
-                logfile=logfile,
-                syscall=syscall)
-
-
-    job_id_refcal2 = 'REFCAL2_'+code
-    syscall = job_id_refcal2+"=`sbatch -d afterok:${"+job_id_flag2+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 
@@ -216,13 +170,13 @@ def main():
 
 
     gen.write_slurm(opfile=slurmfile,
-                jobname=code+'flag3',
+                jobname=code+'fgtrg',
                 logfile=logfile,
                 syscall=syscall)
 
 
-    job_id_flag3 = 'FLAG3_'+code
-    syscall = job_id_flag3+"=`sbatch -d afterok:${"+job_id_refcal2+"} "+slurmfile+" | awk '{print $4}'`"
+    job_id_flag2 = 'FLAG2_'+code
+    syscall = job_id_flag3+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 
@@ -251,7 +205,7 @@ def main():
 
     # ------------------------------------------------------------------------------
 
-    kill = 'echo "scancel "$'+job_id_avg+'" "$'+job_id_info+'" "$'+job_id_basic+'" "$'+job_id_flag1+'" "$'+job_id_refcal1+'" "$'+job_id_flag2+'" "$'+job_id_refcal2+'" "$'+job_id_flag3+'" "$'+job_id_split+' > '+kill_file
+    kill = 'echo "scancel "$'+job_id_avg+'" "$'+job_id_info+'" "$'+job_id_basic+'" "$'+job_id_flag1+'" "$'+job_id_refcal1+'" "$'+job_id_flag2+'" "$'+job_id_split+' > '+kill_file
 
     f.write(kill+'\n')
 

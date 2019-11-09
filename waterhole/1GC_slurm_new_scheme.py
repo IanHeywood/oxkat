@@ -176,7 +176,7 @@ def main():
 
 
     job_id_flag2 = 'FLAG2_'+code
-    syscall = job_id_flag3+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
+    syscall = job_id_flag2+"=`sbatch -d afterok:${"+job_id_refcal1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 

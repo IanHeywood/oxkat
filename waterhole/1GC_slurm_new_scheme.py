@@ -199,7 +199,7 @@ def main():
 
 
     job_id_split = 'SPLIT_'+code
-    syscall = job_id_split+"=`sbatch -d afterok:${"+job_id_flag3+"} "+slurmfile+" | awk '{print $4}'`"
+    syscall = job_id_split+"=`sbatch -d afterok:${"+job_id_flag2+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 

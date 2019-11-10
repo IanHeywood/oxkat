@@ -30,3 +30,5 @@ mstransform(vis=myms,
 	usewtspectrum=True)
 
 flagmanager(vis=opms,mode='save',versionname='observatory')
+
+fixvis(vis=opms,reuse=False)

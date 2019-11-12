@@ -95,7 +95,7 @@ gaincal(vis=myms,
     gaintype = 'K',
     solint = 'inf',
     parang=False,
-    combine = '')
+    combine = 'spw')
 
 
 # ------- G0 (primary; apply K0)
@@ -189,7 +189,7 @@ gaincal(vis=myms,
     gaintable=[bptab0,gtab0],
     gainfield=[bpcal,bpcal],
     interp=['nearest','nearest'],
-    combine = '')
+    combine = 'spw')
 
 
 # ------- G1 (primary; apply K1,B0)
@@ -323,7 +323,7 @@ for i in range(0,len(pcals)):
         gaintable = [ktab1,gtab1,bptab1,gtab2],
         gainfield = [bpcal,bpcal,bpcal,pcal],
         interp = ['linear','linear','linear','linear'],
-        combine = '',
+        combine = 'spw',
         append = True)
 
 
@@ -472,7 +472,7 @@ for i in range(0,len(pcals)):
         gaintable = [ktab1,gtab1,bptab1,gtab3],
         gainfield = [bpcal,bpcal,bpcal,pcal],
         interp = ['linear','linear','linear','linear'],
-        combine = '',
+        combine = 'spw',
         append = True)
 
 

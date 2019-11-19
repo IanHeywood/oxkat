@@ -19,7 +19,7 @@ clearstat()
 
 
 # First two are band-edges, last one is Galactic HI line
-badfreqs = ['850~950MHz','1658~1800MHz','944~947MHz','1160~1310MHz','1476~1611MHz','1419.8~1421.3MHz']
+badfreqs = ['850~900MHz','1658~1800MHz','944~947MHz','1160~1310MHz','1476~1611MHz','1419.8~1421.3MHz']
 for badfreq in badfreqs:
 	badspw = '*:' + badfreq
 	flagdata(vis=myms, mode='manual', spw=badspw)

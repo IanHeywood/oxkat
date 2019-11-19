@@ -1,6 +1,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import glob
 import pickle
 import shutil
 import time
@@ -28,7 +29,7 @@ myuvrange = '>150m'
 
 project_info = pickle.load(open('project_info.p','rb'))
 #myms = project_info['master_ms']
-myms = 'calibrators.ms'
+myms = glob.glob('*calibrators.ms')[0]
 bpcal = project_info['primary'][0] # Using field names because targets will be removed
 pcals = project_info['secondary']
 primary_tag = project_info['primary_tag']
@@ -364,12 +365,10 @@ secondary_mapping = [] # To link field names to IDs in model dict, as different 
 
 
 for i in range(0,len(pcals)):
-
-
     pcal = pcals[i][0] # Using field names
     pcal_idx = getfieldid(myms,pcal)
-
     secondary_mapping.append((pcal,pcal_idx))
+
 
     # --- Correct secondaries with K2, G1, B1, F2
 

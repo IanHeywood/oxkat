@@ -291,7 +291,7 @@ for i in range(0,len(pcals)):
 
     for item in secondary_mapping:
         if item[0] == pcal_name:
-            mod_idx = item[1]
+            mod_idx = str(item[1])
 
 
     iflux = secondary_models[mod_idx]['fitFluxd']

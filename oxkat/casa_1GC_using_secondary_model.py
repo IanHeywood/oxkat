@@ -53,7 +53,7 @@ ftab3 = 'cal_'+myms+'_'+tt+'.flux3'
 
 
 secondary_pickle = pickle.load(open(glob.glob('secondary_models_final*.p')[0],'rb'))
-secondary_models_final = secondary_pickle[0]
+secondary_models = secondary_pickle[0]
 secondary_mapping = secondary_pickle[1]
 
 

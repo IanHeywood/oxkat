@@ -99,8 +99,7 @@ gaincal(vis=myms,
     refant = str(ref_ant),
     gaintype = 'K',
     solint = 'inf',
-    parang=False,
-    combine = 'spw')
+    parang=False)
 
 
 # ------- G0 (primary; apply K0)
@@ -116,7 +115,6 @@ gaincal(vis=myms,
     minsnr=5,
     gainfield=[bpcal],
     interp = ['nearest'],
-    spwmap = [0,0,0,0,0,0,0,0],
     gaintable=[ktab0])
 
 
@@ -138,7 +136,6 @@ bandpass(vis=myms,
     parang=False,
     gainfield=[bpcal,bpcal],
     interp = ['nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[]],
     gaintable=[ktab0,gtab0])
 
 
@@ -152,8 +149,7 @@ applycal(vis=myms,
     parang=False,
     applymode='calonly',
     gainfield=[bpcal,bpcal,bpcal],
-    interp = ['nearest','nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[],[]])
+    interp = ['nearest','nearest','nearest'])
 
 
 # ------- Flag primary on CORRECTED_DATA - MODEL_DATA
@@ -196,8 +192,7 @@ gaincal(vis=myms,
     parang=False,
     gaintable=[bptab0,gtab0],
     gainfield=[bpcal,bpcal],
-    interp=['nearest','nearest'],
-    combine = 'spw')
+    interp=['nearest','nearest'])
 
 
 # ------- G1 (primary; apply K1,B0)
@@ -213,7 +208,6 @@ gaincal(vis=myms,
     minsnr=5,
     gainfield=[bpcal,bpcal],
     interp = ['nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[]],
     gaintable=[ktab1,bptab0])
 
 
@@ -235,7 +229,6 @@ bandpass(vis=myms,
     parang=False,
     gainfield=[bpcal,bpcal],
     interp = ['nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[]],
     gaintable=[ktab1,gtab1])
 
 
@@ -248,8 +241,8 @@ applycal(vis=myms,
 #    calwt=False,
     parang=False,
     gainfield=[bpcal,bpcal,bpcal],
-    interp = ['nearest','nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[],[]])
+    interp = ['nearest','nearest','nearest'])
+
 
 # --------------------------------------------------------------- #
 # --------------------------------------------------------------- #
@@ -275,7 +268,6 @@ gaincal(vis = myms,
     gaintable = [ktab1,gtab1,bptab1],
     gainfield = [bpcal,bpcal,bpcal],
     interp = ['nearest','nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[],[]],
     append = False)
 
 
@@ -355,8 +347,6 @@ for i in range(0,len(pcals)):
         gaintable = [gtab1,bptab1,gtab2],
         gainfield = [bpcal,bpcal,pcal],
         interp = ['nearest','linear','linear','linear'],
-#        spwmap = [[0,0,0,0,0,0,0,0],[],[],[],[]],
-        combine = 'spw',
         append = True)
 
 
@@ -379,9 +369,7 @@ for i in range(0,len(pcals)):
 #        calwt = False,
         parang = False,
         gainfield = ['','',bpcal,''],
-        interp = ['nearest','linear','linear','linear'],
-        spwmap = [[0,0,0,0,0,0,0,0],[],[],[]])
-
+        interp = ['nearest','linear','linear','linear'])
 
 
     # --- Flag secondaries on CORRECTED_DATA - MODEL_DATA
@@ -423,7 +411,6 @@ gaincal(vis = myms,
     gaintable = [ktab1,gtab1,bptab1],
     gainfield = [bpcal,bpcal,bpcal],
     interp = ['nearest','nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[],[]],
     append = False)
 
 
@@ -461,7 +448,6 @@ for i in range(0,len(pcals)):
         gaintable=[ktab1,gtab1,bptab1],
         gainfield=[bpcal,bpcal,bpcal],
         interp=['nearest','linear','linear'],
-        spwmap = [[0,0,0,0,0,0,0,0],[],[]],
         append=True)
 
 
@@ -480,7 +466,6 @@ for i in range(0,len(pcals)):
         gaintable = [gtab1,bptab1,gtab3],
         gainfield = [bpcal,bpcal,bpcal,pcal],
         interp = ['linear','linear','linear'],
-        combine = 'spw',
         append = True)
 
 

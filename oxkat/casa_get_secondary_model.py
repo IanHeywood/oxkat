@@ -17,7 +17,7 @@ def getfieldid(myms,field):
     for i in range(0,len(names)):
         if names[i] == field:
             idx = i
-    return i
+    return idx
 
     
 

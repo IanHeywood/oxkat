@@ -8,6 +8,7 @@ import glob
 import pickle
 from pyrap.tables import table
 from astropy.coordinates import SkyCoord
+from optparse import OptionParser
 
 
 
@@ -34,9 +35,9 @@ def get_antnames(myms):
 
 
 def get_field_info(myms,
-                target='TARGET',
-                primary='BANDPASS',
-                secondary='PHASE'):
+                target_match='TARGET',
+                primary_match='BANDPASS',
+                secondary_match='PHASE'):
 
 
     # Tags and positions for the preferred primary calibrators
@@ -50,11 +51,11 @@ def get_field_info(myms,
 
 
     for i in range(0,len(modes)):
-        if modes[i] == target:
+        if modes[i] == target_match:
             target_state = i
-        if primary in modes[i]:
+        if primary_match in modes[i]:
             primary_state = i
-        if secondary in modes[i]:
+        if secondary_match in modes[i]:
             secondary_state = i
         if modes[i] == 'UNKNOWN':
             unknown_state = i
@@ -155,7 +156,26 @@ def get_refant(myms,field_id):
 def main():
 
 
-    myms = sys.argv[1].rstrip('/')
+    parser = OptionParser(usage='%prog [options]')
+    parser.add_option('--primary',dest='myprimary',help='Primary calibrator ID',default='')
+    parser.add_option('--secondary',dest='mysecondary',help='Secondary calibrator ID',default='')
+    parser.add_option('--target',dest='mytarget',help='Target field IDs (comma-separated list)',default='')
+    parser.add_option('--refant',dest='myrefant',help='Reference antenna',default='')
+
+
+    (options,args) = parser.parse_args()
+    myprimary = options.myprimary
+    mysecondary = options.mysecondary
+    mytargets = options.mytargets
+    refant = options.myrefant
+
+
+    if len(args) != 1:
+        print('Please specify a Measurement Set to plot')
+        sys.exit()
+    else:
+        myms = args[0].rstrip('/')
+
 
 
     outpick = 'project_info.p'
@@ -176,9 +196,16 @@ def main():
 
 
     nchan = get_nchan(myms)
+
     ant_names = get_antnames(myms)
+
     primary_field,primary_tag,secondary_field,target_list = get_field_info(myms)
-    ref_ant = get_refant(myms,primary_field[1])
+    
+    if myrefant == '':
+        ref_ant = get_refant(myms,primary_field[1])
+    else:
+        ref_ant = myrefant
+    
     project_info['primary'] = primary_field
     project_info['primary_tag'] = primary_tag
     project_info['secondary'] = secondary_field

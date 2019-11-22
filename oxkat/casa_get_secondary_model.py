@@ -105,8 +105,8 @@ gaincal(vis=myms,
     refant = str(ref_ant),
     gaintype = 'K',
     solint = 'inf',
-    parang=False,
-    combine = 'spw')
+#    combine = 'spw'
+    parang=False)
 
 
 # ------- G0 (primary; apply K0)
@@ -122,7 +122,7 @@ gaincal(vis=myms,
     minsnr=5,
     gainfield=[bpcal],
     interp = ['nearest'],
-    spwmap = [0,0,0,0,0,0,0,0],
+#    spwmap = [0,0,0,0,0,0,0,0],
     gaintable=[ktab0])
 
 
@@ -144,7 +144,7 @@ bandpass(vis=myms,
     parang=False,
     gainfield=[bpcal,bpcal],
     interp = ['nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[]],
+#    spwmap = [[0,0,0,0,0,0,0,0],[]],
     gaintable=[ktab0,gtab0])
 
 
@@ -158,8 +158,8 @@ applycal(vis=myms,
     parang=False,
     applymode='calonly',
     gainfield=[bpcal,bpcal,bpcal],
-    interp = ['nearest','nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[],[]])
+#    spwmap = [[0,0,0,0,0,0,0,0],[],[]],
+    interp = ['nearest','nearest','nearest'])
 
 
 # ------- Flag primary on CORRECTED_DATA - MODEL_DATA
@@ -202,8 +202,8 @@ gaincal(vis=myms,
     parang=False,
     gaintable=[bptab0,gtab0],
     gainfield=[bpcal,bpcal],
-    interp=['nearest','nearest'],
-    combine = 'spw')
+#       combine='spw',
+    interp=['nearest','nearest'])
 
 
 # ------- G1 (primary; apply K1,B0)
@@ -219,7 +219,7 @@ gaincal(vis=myms,
     minsnr=5,
     gainfield=[bpcal,bpcal],
     interp = ['nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[]],
+#    spwmap = [[0,0,0,0,0,0,0,0],[]],
     gaintable=[ktab1,bptab0])
 
 
@@ -241,7 +241,7 @@ bandpass(vis=myms,
     parang=False,
     gainfield=[bpcal,bpcal],
     interp = ['nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[]],
+#    spwmap = [[0,0,0,0,0,0,0,0],[]],
     gaintable=[ktab1,gtab1])
 
 
@@ -254,8 +254,8 @@ applycal(vis=myms,
 #    calwt=False,
     parang=False,
     gainfield=[bpcal,bpcal,bpcal],
-    interp = ['nearest','nearest','nearest'],
-    spwmap = [[0,0,0,0,0,0,0,0],[],[]])
+#    spwmap = [[0,0,0,0,0,0,0,0],[],[]],
+    interp = ['nearest','nearest','nearest'])
 
 
 # --------------------------------------------------------------- #
@@ -290,7 +290,7 @@ gaincal(vis = myms,
 # ------- Duplicate G2 (to save repetition of above step)
 
 
-shutil.copytree(ktab1,ktab2)
+#shutil.copytree(ktab1,ktab2)
 shutil.copytree(gtab2,gtab3)
 
 
@@ -323,28 +323,28 @@ for i in range(0,len(pcals)):
         gaintable=[ktab1,gtab1,bptab1],
         gainfield=[bpcal,bpcal,bpcal],
         interp=['nearest','linear','linear'],
-        spwmap = [[0,0,0,0,0,0,0,0],[],[]],
+#        spwmap = [[0,0,0,0,0,0,0,0],[],[]],
         append=True)
 
 
     # --- K2 (secondary)
 
 
-    gaincal(vis= myms,
-        field = pcal,
-        uvrange = myuvrange,
-        caltable = ktab1,
-        refant = str(ref_ant),
-    #   spw = delayspw,
-        gaintype = 'K',
-        solint = 'inf',
-        parang = False,
-        gaintable = [gtab1,bptab1,gtab2],
-        gainfield = [bpcal,bpcal,bpcal,pcal],
-        interp = ['linear','linear','linear'],
-#        spwmap = [[0,0,0,0,0,0,0,0],[],[],[]],
-        combine = 'spw',
-        append = True)
+#     gaincal(vis= myms,
+#         field = pcal,
+#         uvrange = myuvrange,
+#         caltable = ktab1,
+#         refant = str(ref_ant),
+# #        spw = delayspw,
+#         gaintype = 'K',
+#         solint = 'inf',
+#         parang = False,
+#         gaintable = [gtab1,bptab1,gtab2],
+#         gainfield = [bpcal,bpcal,bpcal,pcal],
+#         interp = ['linear','linear','linear'],
+# #        spwmap = [[0,0,0,0,0,0,0,0],[],[],[]],
+#         combine = 'spw',
+#         append = True)
 
 
 # ------- F2
@@ -376,11 +376,11 @@ for i in range(0,len(pcals)):
     applycal(vis = myms,
         gaintable = [ktab2,gtab1,bptab1,ftab2],
         field = pcal,
-#        calwt = False,
+        calwt = False,
         parang = False,
         gainfield = ['','',bpcal,''],
-        interp = ['nearest','linear','linear','linear'],
-        spwmap = [[0,0,0,0,0,0,0,0],[],[],[]])
+#        spwmap = [[0,0,0,0,0,0,0,0],[],[],[]],
+        interp = ['nearest','linear','linear','linear'])
 
 
     # --- Predict model data from fitted secondary models
@@ -446,7 +446,7 @@ flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
 # ------- Duplicate K1 table
 
 
-shutil.copytree(ktab1,ktab3)
+#shutil.copytree(ktab1,ktab3)
 
 
 # ------- Looping over secondaries
@@ -479,28 +479,28 @@ for i in range(0,len(pcals)):
         gaintable=[ktab1,gtab1,bptab1],
         gainfield=[bpcal,bpcal,bpcal],
         interp=['nearest','linear','linear'],
-        spwmap = [[0,0,0,0,0,0,0,0],[],[]],
+#        spwmap = [[0,0,0,0,0,0,0,0],[],[]],
         append=True)
 
 
     # --- K3 secondary
 
 
-    gaincal(vis= myms,
-        field = pcal,
-        uvrange = myuvrange,
-        caltable = ktab3,
-        refant = str(ref_ant),
-    #   spw = delayspw,
-        gaintype = 'K',
-        solint = 'inf',
-        parang = False,
-        gaintable = [ktab1,gtab1,bptab1,gtab3],
-        gainfield = [bpcal,bpcal,bpcal,pcal],
-        interp = ['nearest','linear','linear','linear'],
-        spwmap = [[0,0,0,0,0,0,0,0],[],[],[]],
-        combine = 'spw',
-        append = True)
+    # gaincal(vis= myms,
+    #     field = pcal,
+    #     uvrange = myuvrange,
+    #     caltable = ktab3,
+    #     refant = str(ref_ant),
+    # #   spw = delayspw,
+    #     gaintype = 'K',
+    #     solint = 'inf',
+    #     parang = False,
+    #     gaintable = [ktab1,gtab1,bptab1,gtab3],
+    #     gainfield = [bpcal,bpcal,bpcal,pcal],
+    #     interp = ['nearest','linear','linear','linear'],
+    #     spwmap = [[0,0,0,0,0,0,0,0],[],[],[]],
+    #     combine = 'spw',
+    #     append = True)
 
 
 # ------- F3

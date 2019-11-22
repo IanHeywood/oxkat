@@ -36,7 +36,7 @@ def main():
     code = gen.get_code(myms)
     myms = myms.replace('.ms','_wtspec.ms')
 
-    syscall += 'casa -c '+OXKAT+'/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
+    syscall = 'casa -c '+OXKAT+'/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
 
 
     f.write(syscall+'\n')
@@ -60,7 +60,7 @@ def main():
         syscall = 'casa -c '+OXKAT+'/'+script+' --nologger --log2term --nogui\n'
 
         f.write(syscall+'\n')
-    
+
 
     f.close()
 

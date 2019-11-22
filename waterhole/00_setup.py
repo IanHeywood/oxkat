@@ -8,6 +8,7 @@ import glob
 import pickle
 from pyrap.tables import table
 from astropy.coordinates import SkyCoord
+from optparse import OptionParser
 
 
 
@@ -34,9 +35,9 @@ def get_antnames(myms):
 
 
 def get_field_info(myms,
-                target='TARGET',
-                primary='BANDPASS',
-                secondary='PHASE'):
+                target_match='TARGET',
+                primary_match='BANDPASS',
+                secondary_match='PHASE'):
 
 
     # Tags and positions for the preferred primary calibrators
@@ -50,13 +51,21 @@ def get_field_info(myms,
 
 
     for i in range(0,len(modes)):
-        if modes[i] == target:
+        if modes[i] == target_match:
             target_state = i
-        if primary in modes[i]:
+        if primary_match in modes[i]:
             primary_state = i
-        if secondary in modes[i]:
+        if secondary_match in modes[i]:
             secondary_state = i
+        if modes[i] == 'UNKNOWN':
+            unknown_state = i
 
+    print('')
+    print('Target state:',target_state)
+    print('Primary state:',primary_state)
+    print('Secondary state:',secondary_state)
+    print('Unknown state:',unknown_state)
+    print('')
 
     field_tab = table(myms+'/FIELD',ack=False)
     names = field_tab.getcol('NAME')
@@ -64,6 +73,8 @@ def get_field_info(myms,
     field_tab.close()
 
 
+    primary_candidates = []
+    secondary_fields = []
     target_list = []
 
 
@@ -71,24 +82,43 @@ def get_field_info(myms,
     for i in range(0,len(names)):
         sub_tab = main_tab.query(query='FIELD_ID=='+str(i))
         state = numpy.unique(sub_tab.getcol('STATE_ID'))
-        if state == primary_state:
+        if state == primary_state or state == unknown_state:
             primary_dir = dirs[i][0,:]*180.0/numpy.pi
-            for cal in cals:
-                sep = calcsep(primary_dir[0],primary_dir[1],cal[1],cal[2])
-                if sep < 1e-4: # and project_info['primary_name'] == 'UNKNOWN':
-                    primary_field = (names[i],str(i))
-                    primary_tag = cal[0]
-                    # project_info['primary'] = [names[i],str(i)]
-                    # project_info['primary_name'] = cal[0]
+            primary_candidates.append((names[i],str(i),primary_dir))
         if state == secondary_state:
-            secondary_field = (names[i],str(i))
-#            project_info['secondary'] = [names[i],str(i)]
+            secondary_dir = dirs[i][0,:]*180.0/numpy.pi
+            secondary_fields.append((names[i],str(i),secondary_dir))
+
+   
+    for primary_candidate in primary_candidates:
+        primary_dir = primary_candidate[2]
+        for cal in cals:
+            sep = calcsep(primary_dir[0],primary_dir[1],cal[1],cal[2])
+            if sep < 1e-4: # and project_info['primary_name'] == 'UNKNOWN':
+                primary_field = (primary_candidate[0],primary_candidate[1])
+                primary_tag = cal[0]
+
+
+    for i in range(0,len(names)):
+        sub_tab = main_tab.query(query='FIELD_ID=='+str(i))
+        state = numpy.unique(sub_tab.getcol('STATE_ID'))
         if state == target_state:
             target_ms = myms.replace('.ms','_'+names[i].replace('+','p')+'.ms')
-            target_list.append((names[i],str(i),target_ms))
+            target_dir =  dirs[i][0,:]*180.0/numpy.pi
+            seps = []
+            for secondary_field in secondary_fields:
+                secondary_dir = secondary_field[2]
+                sep = calcsep(target_dir[0],target_dir[1],secondary_dir[0],secondary_dir[1])
+                seps.append(sep)
+            seps = numpy.array(seps)
+            secondary_idx = numpy.where(seps==numpy.min(seps))[0][0]
+
+
+            target_list.append((names[i],str(i),target_ms,secondary_idx))
 #            project_info['target'] = [names[i],str(i)]
 
-    return primary_field,primary_tag,secondary_field,target_list
+
+    return primary_field,primary_tag,secondary_fields,target_list
 
 
 def get_refant(myms,field_id):
@@ -126,7 +156,26 @@ def get_refant(myms,field_id):
 def main():
 
 
-    myms = sys.argv[1].rstrip('/')
+    parser = OptionParser(usage='%prog [options]')
+    parser.add_option('--primary',dest='myprimary',help='Primary calibrator ID',default='')
+    parser.add_option('--secondary',dest='mysecondary',help='Secondary calibrator ID',default='')
+    parser.add_option('--target',dest='mytarget',help='Target field IDs (comma-separated list)',default='')
+    parser.add_option('--refant',dest='myrefant',help='Reference antenna',default='')
+
+
+    (options,args) = parser.parse_args()
+    myprimary = options.myprimary
+    mysecondary = options.mysecondary
+    mytargets = options.mytargets
+    refant = options.myrefant
+
+
+    if len(args) != 1:
+        print('Please specify a Measurement Set to plot')
+        sys.exit()
+    else:
+        myms = args[0].rstrip('/')
+
 
 
     outpick = 'project_info.p'
@@ -147,9 +196,16 @@ def main():
 
 
     nchan = get_nchan(myms)
+
     ant_names = get_antnames(myms)
+
     primary_field,primary_tag,secondary_field,target_list = get_field_info(myms)
-    ref_ant = get_refant(myms,primary_field[1])
+    
+    if myrefant == '':
+        ref_ant = get_refant(myms,primary_field[1])
+    else:
+        ref_ant = myrefant
+    
     project_info['primary'] = primary_field
     project_info['primary_tag'] = primary_tag
     project_info['secondary'] = secondary_field
@@ -169,6 +225,15 @@ def main():
 
     print(project_info)
 
+    print('')
+    print('Here is what I have assumed about your fields:')
+    print('')
+    print('    Primary calibrator:  '+primary_field[0])
+    print('')
+    for i in range(0,len(target_list)):
+        print('    Target:              '+target_list[i][0])
+        print('    Associated with cal: '+secondary_field[target_list[i][3]][0])
+        print('    ')
 
 if __name__ == "__main__":
 

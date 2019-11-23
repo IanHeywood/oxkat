@@ -500,11 +500,11 @@ for targ in targets:
     related_pcal = pcals[targ[3]][1]
 
 
-    # --- Correct targets with K3, G1, B1, F3
+    # --- Correct targets with K3, G1, B1, G3
 
 
     applycal(vis=myms,
-        gaintable=[ktab3,gtab1,bptab1,ftab3],
+        gaintable=[ktab3,gtab1,bptab1,gtab3],
         field=target,
 #        calwt=False,
         parang=False,

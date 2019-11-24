@@ -145,6 +145,7 @@ bandpass(vis=myms,
 
 applycal(vis=myms,
     gaintable=[gtab0,bptab0],
+    applymode='calonly',
     field=bpcal,
 #    calwt=False,
     parang=False,
@@ -241,6 +242,7 @@ bandpass(vis=myms,
 
 applycal(vis=myms,
     gaintable=[gtab1,bptab1],
+    applymode='calonly',
     field=bpcal,
 #    calwt=False,
     parang=False,
@@ -343,6 +345,7 @@ for i in range(0,len(pcals)):
 
     applycal(vis = myms,
         gaintable = [gtab1,bptab1,ftab2],
+        applymode='calonly',
         field = pcal,
         calwt = False,
         parang = False,

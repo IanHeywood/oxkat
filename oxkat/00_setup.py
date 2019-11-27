@@ -123,33 +123,40 @@ def get_field_info(myms,
 def get_refant(myms,field_id):
 
     ant_names = get_antnames(myms)
-
+    main_tab = table(myms,ack='False')
+    
     ref_pool = ['m000','m001','m002','m003','m004','m006']
-    pc_list = numpy.ones(len(ref_pool))*100.0
-    idx_list = numpy.zeros(len(ref_pool),dtype=numpy.int8)
+    
+    pc_list = []
+    idx_list = []
 
-
+    main_tab = table(myms,ack=False)
+    field_id = 0
     for i in range(0,len(ref_pool)):
-        ant = ref_pool[i]
-        try:
-            idx = ant_names.index(ant)
-            sub_tab = main_tab.query(query='ANTENNA1=='+str(idx)+' && FIELD_ID=='+str(field_id))
-            flags = sub_tab.getcol('FLAG')
-            vals,counts = numpy.unique(flags,return_counts=True)
-            if len(vals) == 1 and vals == True:
-                flag_pc = 100.0
-            elif len(vals) == 1 and vals == False:
-                flag_pc = 0.0
-            else:
-                flag_pc = 100.*round(float(counts[1])/float(numpy.sum(counts)),2)
-            pc_list[i] = flag_pc
-            idx_list[i] = idx
-        except:
-            continue
+            ant = ref_pool[i]
+            if ant in ant_names:
+                    idx = ant_names.index(ant)
+                    sub_tab = main_tab.query(query='ANTENNA1=='+str(idx)+' && FIELD_ID=='+str(field_id))
+                    flags = sub_tab.getcol('FLAG')
+                    vals,counts = numpy.unique(flags,return_counts=True)
+                    if len(vals) == 1 and vals == True:
+                        flag_pc = 100.0
+                    elif len(vals) == 1 and vals == False:
+                        flag_pc = 0.0
+                    else:
+                        flag_pc = 100.*round(float(counts[1])/float(numpy.sum(counts)),8)
+                    pc_list.append(flag_pc)
+                    idx_list.append(str(idx))
+
+    pc_list = numpy.array(pc_list)
+    idx_list = numpy.array(idx_list)
 
     ref_idx = idx_list[numpy.where(pc_list==(numpy.min(pc_list)))][0]
 
-    return ref_idx
+    ranked_list = [x for _,x in sorted(zip(pc_list,idx_list))]
+    ranked_list = ','.join(ranked_list)
+
+    return ranked_list
 
 
 def main():

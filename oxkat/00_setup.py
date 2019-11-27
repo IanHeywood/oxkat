@@ -145,8 +145,9 @@ def get_refant(myms,field_id):
                         flag_pc = 0.0
                     else:
                         flag_pc = 100.*round(float(counts[1])/float(numpy.sum(counts)),8)
-                    pc_list.append(flag_pc)
-                    idx_list.append(str(idx))
+                    if flag_pc < 50.0:
+                        pc_list.append(flag_pc)
+                        idx_list.append(str(idx))
 
     pc_list = numpy.array(pc_list)
     idx_list = numpy.array(idx_list)

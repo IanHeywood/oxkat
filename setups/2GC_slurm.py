@@ -20,6 +20,7 @@ def main():
     LOGS = gen.LOGS
     CASA_CONTAINER = gen.CASA_CONTAINER
     WSCLEAN_CONTAINER = gen.WSCLEAN_CONTAINER
+    DDFACET_CONTAINER = gen.DDFACET_CONTAINER
 
 
     submit_file = 'submit_2GC_jobs.sh'

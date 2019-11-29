@@ -22,8 +22,9 @@ def main():
     DDFACET_CONTAINER = gen.DDFACET_CONTAINER 
 
 
-    BEAM = '/users/ianh/Beams/hvfix/MeerKAT_VBeam_10MHz_53Chans_$(xy)_$(reim).fits'
+    BEAM = '/users/ianh/Beams/hvfix/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
     MASK = glob.glob('*mask.fits')[0]
+
 
     print('Using FITS mask: '+MASK)
 
@@ -36,27 +37,24 @@ def main():
     gen.setup_dir(LOGS)
 
 
-#    project_info = pickle.load(open('project_info.p','rb'))
+    with open('project_info.p','rb') as f:
+        project_info = pickle.load(f,encoding='latin1')
 
 
- #   targets = project_info['target_list'] 
-
-
-
+    targets = project_info['target_list'] 
 
 
     f = open(submit_file,'w')
 
 
-    for target in ['']:
-
-        code = 'X12'
-
-#        code = target[0][-3:]
-#        myms = target[2].rstrip('/')
+    for target in targets:
 
 
-        ddf1_prefix = 'img_XMM12_DDFbeamHVfix'
+        code = target[0][-3:].replace('-','_')
+        mspat = '*'+target[0]+'*.ms'
+
+
+        ddf1_prefix = 'img_'+target[0]+'_DDF_corr_beam'
 
 
         # ------------------------------------------------------------------------------
@@ -68,7 +66,7 @@ def main():
 
 
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '
-        syscall += gen.generate_syscall_ddfacet(mspattern='*.ms',
+        syscall += gen.generate_syscall_ddfacet(mspattern=mspat,
                     imgname=ddf1_prefix,
                     chunkhours=2,
                     beam=BEAM,
@@ -87,31 +85,6 @@ def main():
         syscall = job_id_ddf1+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
-
-        # # ------------------------------------------------------------------------------
-        # # Make FITS mask 
-
-
-        # slurmfile = SCRIPTS+'/slurm_makemask1_'+code+'.sh'
-        # logfile = LOGS+'/slurm_makemask1_'+code+'.log'
-
-
-        # syscall1,syscall2 = gen.generate_syscall_makemask(blind_prefix,fits_mask1)
-
-
-        # syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall1
-        # syscall += 'singularity exec '+CUBICAL_CONTAINER+' '+syscall2
-
-
-        # gen.write_slurm(opfile=slurmfile,
-        #             jobname=code+'mask1',
-        #             logfile=logfile,
-        #             syscall=syscall)
-
-
-        # job_id_makemask1 = 'MAKEMASK1_'+code
-        # syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_blind+"} "+slurmfile+" | awk '{print $4}'`"
-        # f.write(syscall+'\n')
 
 
 

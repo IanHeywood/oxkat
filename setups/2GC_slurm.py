@@ -156,7 +156,30 @@ def main():
 
         # ------------------------------------------------------------------------------
 
-        kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+' > '+kill_file
+        # Make FITS mask 
+
+
+        slurmfile = SCRIPTS+'/slurm_makemask1_'+code+'.sh'
+        logfile = LOGS+'/slurm_makemask1_'+code+'.log'
+
+
+        syscall,fitsmask = gen.generate_syscall_makemask(pcal_prefix,thresh=5.5)
+
+
+        syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall1
+
+
+        gen.write_slurm(opfile=slurmfile,
+                    jobname=code+'mask1',
+                    logfile=logfile,
+                    syscall=syscall)
+
+
+        job_id_makemask1 = 'MAKEMASK1_'+code
+        syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
+        f.write(syscall+'\n')
+
+        kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+'" "$'+job_id_makemask1+' > '+kill_file
 
         f.write(kill+'\n')
 

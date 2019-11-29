@@ -167,7 +167,7 @@ def main():
         syscall,fitsmask = gen.generate_syscall_makemask(pcal_prefix,thresh=5.5)
 
 
-        syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall1
+        syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall
 
 
         gen.write_slurm(opfile=slurmfile,

@@ -488,7 +488,7 @@ for i in range(0,len(pcals)):
         gaintable = [ktab3,gtab1,bptab1,gtab3],
 #        applymode='calonly',
         field = pcal,
-        calwt = False,
+#        calwt = False,
         parang = False,
         gainfield = ['','',bpcal,''],
         interp = ['nearest','linear','linear','linear'])

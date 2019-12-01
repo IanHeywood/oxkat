@@ -94,7 +94,7 @@ elif primary_tag == '0408':
 
 gaincal(vis=myms,
     field=bpcal,
-    uvrange=myuvrange,
+    #uvrange=myuvrange,
     caltable=ktab0,
     refant = str(ref_ant),
     gaintype = 'K',
@@ -184,7 +184,7 @@ flagmanager(vis=myms,
 
 gaincal(vis=myms,
     field=bpcal,
-    uvrange=myuvrange,
+    #uvrange=myuvrange,
     caltable=ktab1,
     refant = str(ref_ant),
     gaintype = 'K',
@@ -338,7 +338,7 @@ for i in range(0,len(pcals)):
 
     gaincal(vis= myms,
         field = pcal,
-        uvrange = myuvrange,
+    #   uvrange = myuvrange,
         caltable = ktab1,
         refant = str(ref_ant),
     #   spw = delayspw,
@@ -458,7 +458,7 @@ for i in range(0,len(pcals)):
 
     gaincal(vis= myms,
         field = pcal,
-        uvrange = myuvrange,
+    #   uvrange = myuvrange,
         caltable = ktab3,
         refant = str(ref_ant),
     #   spw = delayspw,

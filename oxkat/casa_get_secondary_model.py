@@ -414,7 +414,6 @@ for i in range(0,len(pcals)):
         uvrange = myuvrange,
         caltable = gtab3,     
         refant = str(ref_ant),
-        smodel = [1,0,0,0],
         minblperant = 4,
         minsnr = 3,
         solint = 'inf',

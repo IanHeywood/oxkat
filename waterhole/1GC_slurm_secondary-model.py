@@ -175,7 +175,7 @@ def main():
                 syscall=syscall)
 
 
-    job_id_secondary_model = 'SPLITCAL_'+code
+    job_id_secondary_model = 'SECMODEL_'+code
     syscall = job_id_secondary_model+"=`sbatch -d afterok:${"+job_id_split_cals+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
@@ -198,7 +198,7 @@ def main():
                 syscall=syscall)
 
 
-    job_id_1GC = 'SPLITCAL_'+code
+    job_id_1GC = 'FIRSTGEN_'+code
     syscall = job_id_1GC+"=`sbatch -d afterok:${"+job_id_secondary_model+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 

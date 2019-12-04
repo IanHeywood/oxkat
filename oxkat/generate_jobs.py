@@ -105,7 +105,7 @@ def write_slurm(opfile,
                 ntasks='1',
                 nodes='1',
                 cpus='32',
-                mem='230GB'):
+                mem='236GB'):
 
     f = open(opfile,'w')
     f.writelines(['#!/bin/bash\n',

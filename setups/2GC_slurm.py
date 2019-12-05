@@ -44,7 +44,7 @@ def main():
     for target in targets:
 
 
-        code = target[0][-3:].replace('-','_')
+        code = target[0][-3:].replace('-','_').replace('.','p')
         myms = target[2].rstrip('/')
 
     

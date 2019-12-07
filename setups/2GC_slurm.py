@@ -114,7 +114,7 @@ def main():
 
 
         syscall = 'singularity exec '+CASA_CONTAINER+' '
-        syscall += 'casa -c '+OXKAT+'/casa_selfcal_target_amp_phases.py '+myms+' --nologger --log2term --nogui\n'
+        syscall += 'casa -c '+OXKAT+'/casa_selfcal_target_phases.py '+myms+' --nologger --log2term --nogui\n'
 
 
         gen.write_slurm(opfile=slurmfile,

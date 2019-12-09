@@ -50,7 +50,7 @@ def main():
     for target in targets:
 
 
-        code = target[0][-3:].replace('-','_')
+        code = target[0][-3:].replace('-','_').replace('.','p')
         mspat = '*'+target[0]+'*.ms'
 
 

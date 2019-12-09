@@ -76,9 +76,9 @@ def main():
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'ddfbm',
                     logfile=logfile,
-                    syscall=syscall)
-#                    mem='480GB',
-#                    partition='HighMem')
+                    syscall=syscall,
+                    mem='480GB',
+                    partition='HighMem')
 
 
         job_id_ddf1 = 'DDF1_'+code

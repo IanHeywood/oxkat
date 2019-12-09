@@ -73,7 +73,7 @@ def main():
                                     bda=True,
                                     niter=250000,
                                     multiscale=True,
-                                    scales='0,3,9,27,81',
+                                    scales='0,3,9,15',
                                     mask='none')
 
 

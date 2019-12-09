@@ -355,6 +355,54 @@ def generate_syscall_ddfacet(mspattern,
     if ddsols != '':
         syscall += '--DDESolutions-DDSols '+ddsols
 
+    syscall += ' && CleanSHM.py'
+
+    return syscall
+
+
+def generate_syscall_killms(myms,
+                        baseimg,
+                        outsols,
+                        nodesfile,
+                        dicomodel,
+                        incol='CORRECTED_DATA',
+                        tchunk=0.2,
+                        dt=12,
+                        beam=''):
+
+    # Generate system call to run killMS
+
+    syscall = 'kMS.py '
+    syscall+= '--MSName '+myms+' '
+    syscall+= '--SolverType CohJones '
+    syscall+= '--PolMode Scalar '
+    syscall+= '--BaseImageName '+baseimg+' '
+    syscall+= '--TChunk '+str(tchunk)+' '
+    syscall+= '--dt '+str(dt)+' '
+    syscall+= '--NCPU 32 '
+    syscall+= '--OutSolsName '+outsols+' '
+    syscall+= '--NChanSols 64 '
+    syscall+= '--NIterKF 9 '
+    syscall+= '--CovQ 0.05 '
+    syscall+= '--UVMinMax=0.15,8000.0 '
+    if beam == '':
+        syscall+= '--BeamModel=None '
+    else:
+        syscall+= '--BeamModel=FITS '
+        syscall+= '--BeamAt Facet '
+        syscall+= "--FITSFile=\'"+str(beam)+"\' "
+    syscall+= '--NChanBeamPerMS 95 '
+    syscall+= '--FITSParAngleIncDeg 1 '
+    syscall+= '--DtBeamMin 1 '
+    syscall+= '--InCol '+incol+' '
+    syscall+= '--OutCol '+incol+' '
+    syscall+= '--Weighting Natural '
+    syscall+= '--NodesFile '+nodes+' '
+    syscall+= '--DicoModel '+dico+' '
+    syscall+= '--MaxFacetSize .25 '
+
+    syscall += ' && CleanSHM.py'
+
     return syscall
 
 

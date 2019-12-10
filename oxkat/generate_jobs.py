@@ -31,7 +31,8 @@ CODEX_CONTAINER = IDIA_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
 CUBICAL_CONTAINER = IDIA_CONTAINER_PATH+'cubical-1.1.5.simg'
 DDFACET_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-0.4.1.simg'
 KILLMS_CONTAINER = IDIA_CONTAINER_PATH+'killms-2.7.0.simg'
-SOURCEFINDER_CONTAINER = '/idia/software/containers/SF-PY3-bionic.simg'
+SOURCEFINDER_CONTAINER = '/idia/software/containers/kern5.simg'
+CLUSTERCAT_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-dev.simg'
 TRICOLOUR_CONTAINER = IDIA_CONTAINER_PATH+'tricolour-1.1.3.simg'
 WSCLEAN_CONTAINER = IDIA_CONTAINER_PATH+'wsclean-1.1.5.simg'
 
@@ -280,7 +281,7 @@ def generate_syscall_ddfacet(mspattern,
                           robust=-0.3,
                           npix=8125,
                           cell=1.5,
-                          nfacets=12,
+                          nfacets=16,
                           ndegridband=8,
                           beam='',
                           beamnband=10,
@@ -367,7 +368,7 @@ def generate_syscall_killms(myms,
                         dicomodel,
                         incol='CORRECTED_DATA',
                         tchunk=0.2,
-                        dt=12,
+                        dt=10,
                         beam=''):
 
     # Generate system call to run killMS
@@ -404,6 +405,38 @@ def generate_syscall_killms(myms,
     syscall += ' ; CleanSHM.py'
 
     return syscall
+
+
+def generate_syscall_pybdsf(fitsfile,
+                        thresh_pix=5.0,
+                        thresh_isl=3.0,
+                        catalogtype='srl',
+                        catalogformat='fits'):
+
+    if catalogtype == 'srl':
+        opfile = fitsfile+'.srl'
+    elif catalogtype == 'gaul':
+        opfile = fitsfile+'.gaul'
+
+    if catalogformat == 'fits':
+        opfile += '.fits'
+
+    syscall = "python -c '"
+    syscall += "import bdsf; "
+    syscall += "img = bdsf.process_image(\""+fitsfile+"\","
+    syscall += "thresh_pix="+str(thresh_pix)+","
+    syscall += "thresh_isl="+str(thresh_isl)+","
+    syscall += "adaptive_rms_box=True) ; "
+    syscall += "img.write_catalog(outfile=\""+opfile+"\","
+    syscall += "format='"+catalogformat+"',"
+    syscall += "catalog_type='"+catalogtype+"',"
+    syscall += "clobber=True,incl_empty=True)'"
+
+    return syscall
+
+
+#def generate_syscall_clustercat()
+
 
 
 def generate_syscall_crystalball(myms,

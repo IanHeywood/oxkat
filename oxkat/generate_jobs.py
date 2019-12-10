@@ -428,8 +428,8 @@ def generate_syscall_pybdsf(fitsfile,
     syscall += "thresh_isl="+str(thresh_isl)+","
     syscall += "adaptive_rms_box=True) ; "
     syscall += "img.write_catalog(outfile=\""+opfile+"\","
-    syscall += "format='"+catalogformat+"',"
-    syscall += "catalog_type='"+catalogtype+"',"
+    syscall += "format=\""+catalogformat+"\","
+    syscall += "catalog_type=\""+catalogtype+"\","
     syscall += "clobber=True,incl_empty=True)'"
 
     return syscall

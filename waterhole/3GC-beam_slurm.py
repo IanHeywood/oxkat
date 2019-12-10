@@ -101,7 +101,7 @@ def main():
         syscall = 'singularity exec '+SOURCEFINDER_CONTAINER+' '
         syscall += gen.generate_syscall_pybdsf(ddf1_prefix+'.app.restored.fits',
                         catalogtype='gaul',
-                        catalogformat='')
+                        catalogformat='ascii')
 
 
         gen.write_slurm(opfile=slurmfile,

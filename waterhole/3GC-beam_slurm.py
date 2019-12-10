@@ -19,7 +19,11 @@ def main():
     PARSETS = gen.PARSETS
     SCRIPTS = gen.SCRIPTS
     LOGS = gen.LOGS
-    DDFACET_CONTAINER = gen.DDFACET_CONTAINER 
+    TOOLS = gen.TOOLS
+    DDFACET_CONTAINER = gen.DDFACET_CONTAINER
+    SOURCEFINDER_CONTAINER = gen.SOURCEFINDER_CONTAINER
+    CLUSTERCAT_CONTAINER = gen.CLUSTERCAT_CONTAINER
+    KILLMS_CONTAINER = gen.KILLMS_CONTAINER 
 
 
     BEAM = '/users/ianh/Beams/hvfix/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
@@ -86,6 +90,52 @@ def main():
         f.write(syscall+'\n')
 
 
+        # ------------------------------------------------------------------------------
+        # PyBDSF
+
+
+        slurmfile = SCRIPTS+'/slurm_pybdsf_'+code+'.sh'
+        logfile = LOGS+'/slurm_pydsf_'+code+'.log'
+
+
+        syscall = 'singularity exec '+SOURCEFINDER_CONTAINER+' '
+        syscall += gen.generate_syscall_pybdsf(ddf1_prefix+'.app.restored.fits',
+                        catalogtype='gaul',
+                        catalogformat='')
+
+
+        gen.write_slurm(opfile=slurmfile,
+                    jobname=code+'bdsf',
+                    logfile=logfile,
+                    syscall=syscall)
+
+
+        job_id_bdsf = 'BDSF_'+code
+        syscall = job_id_ddf1+"=`sbatch -d afterok:${"+job_id_ddf1+"} "+slurmfile+" | awk '{print $4}'`"
+        f.write(syscall+'\n')
+
+
+        # ------------------------------------------------------------------------------
+        # Identify tessel centres
+
+
+        slurmfile = SCRIPTS+'/slurm_dEid_'+code+'.sh'
+        logfile = LOGS+'/slurm_dEid_'+code+'.log'
+
+
+        syscall = 'singularity exec '+SOURCEFINDER_CONTAINER+' '
+        syscall += 'python '+TOOLS+'/identify_dE_directions.py'
+
+
+        gen.write_slurm(opfile=slurmfile,
+                    jobname=code+'dEid',
+                    logfile=logfile,
+                    syscall=syscall)
+
+
+        job_id_deid = 'DEID_'+code
+        syscall = job_id_ddf1+"=`sbatch -d afterok:${"+job_id_bdsf+"} "+slurmfile+" | awk '{print $4}'`"
+        f.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------

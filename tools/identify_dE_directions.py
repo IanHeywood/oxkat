@@ -208,9 +208,9 @@ def writeDS9(nodes,regionfile):
 def main():
 
 	
-#	infile = glob.glob('*.gaul')[0]
+	infile = glob.glob('*.gaul')[0]
 
-	infile = sys.argv[1]
+#	infile = sys.argv[1]
 
 	regionfile = infile.replace('.gaul','.reg')
 

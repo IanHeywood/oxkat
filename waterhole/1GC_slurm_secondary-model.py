@@ -26,6 +26,7 @@ def main():
 
     submit_file = 'submit_1GC_jobs.sh'
     kill_file = 'kill_1GC_jobs.sh'
+    run_file = 'run_1GC_job.sh'
 
 
     gen.setup_dir(SCRIPTS)
@@ -33,6 +34,7 @@ def main():
 
 
     f = open(submit_file,'w')
+    g = open(run_file,'w')
 
 
     myms = glob.glob('*.ms')[0]
@@ -63,6 +65,11 @@ def main():
     f.write(syscall+'\n')
 
 
+    syscall = 'singularity exec '+XCASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
+
+    g.write(syscall+'\n')
+
 
     # ------------------------------------------------------------------------------
     # Run setup script
@@ -85,6 +92,12 @@ def main():
     job_id_info = 'INFO_'+code
     syscall = job_id_info+"=`sbatch -d afterok:${"+job_id_avg+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
+
+
+    syscall = 'singularity exec '+XCUBICAL_CONTAINER+' '
+    syscall += 'python '+OXKAT+'/00_setup.py '+myms+'\n'
+
+    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -110,6 +123,12 @@ def main():
     f.write(syscall+'\n')
 
 
+    syscall = 'singularity exec '+XCASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_basic_flags.py --nologger --log2term --nogui\n'
+
+    g.write(syscall+'\n')
+
+
     # ------------------------------------------------------------------------------
     # Autoflagger on calibrators (DATA)
 
@@ -132,6 +151,11 @@ def main():
     syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_basic+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
+
+    syscall = 'singularity exec '+XCASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_tfcrop_cals_data.py --nologger --log2term --nogui\n'
+
+    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -157,6 +181,12 @@ def main():
     f.write(syscall+'\n')
 
 
+    syscall = 'singularity exec '+XCASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_split_calibrators.py --nologger --log2term --nogui\n'
+
+    g.write(syscall+'\n')
+
+
     # ------------------------------------------------------------------------------
     # Get secondary model 
 
@@ -178,6 +208,12 @@ def main():
     job_id_secondary_model = 'SECMODEL_'+code
     syscall = job_id_secondary_model+"=`sbatch -d afterok:${"+job_id_split_cals+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
+
+
+    syscall = 'singularity exec '+XCASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_get_secondary_model.py --nologger --log2term --nogui\n'
+
+    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -203,6 +239,12 @@ def main():
     f.write(syscall+'\n')
 
 
+    syscall = 'singularity exec '+XCASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_1GC_using_secondary_model.py --nologger --log2term --nogui\n'
+
+    g.write(syscall+'\n')
+
+
     # ------------------------------------------------------------------------------
     # Autoflagger on targets
 
@@ -226,6 +268,12 @@ def main():
     f.write(syscall+'\n')
 
 
+    syscall = 'singularity exec '+XCASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_autoflag_targets_corrected.py --nologger --log2term --nogui\n'
+
+    g.write(syscall+'\n')
+
+
     # ------------------------------------------------------------------------------
     # Split targets
 
@@ -247,6 +295,12 @@ def main():
     job_id_split = 'SPLIT_'+code
     syscall = job_id_split+"=`sbatch -d afterok:${"+job_id_flag2+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
+
+
+    syscall = 'singularity exec '+XCASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/casa_split_targets.py --nologger --log2term --nogui\n'
+
+    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------

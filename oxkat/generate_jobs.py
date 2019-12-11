@@ -25,7 +25,7 @@ LOGS = CWD+'/logs'
 
 # Containers for IDIA
 IDIA_CONTAINER_PATH = '/users/ianh/containers/'
-CASA_CONTAINER = '/idia/software/containers/casa-stable-5.4.1-31.simg'
+CASA_CONTAINER = '/idia/software/containers/casa-stable-5.6.2-2.simg'
 #CASA_CONTAINER = '/idia/software/containers/casa-stable-4.7.2.simg'
 CODEX_CONTAINER = IDIA_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
 CUBICAL_CONTAINER = IDIA_CONTAINER_PATH+'cubical-1.1.5.simg'
@@ -39,7 +39,7 @@ WSCLEAN_CONTAINER = IDIA_CONTAINER_PATH+'wsclean-1.1.5.simg'
 
 # Containers for standalone servers
 SERVER_CONTAINER_PATH = '/home/ianh/containers/'
-XCASA_CONTAINER = SERVER_CONTAINER_PATH+'casa-stable-5.4.1-31.simg'
+XCASA_CONTAINER = SERVER_CONTAINER_PATH+'casa-stable-5.6.2-2.simg'
 XCODEX_CONTAINER = SERVER_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
 XCUBICAL_CONTAINER = SERVER_CONTAINER_PATH+'cubical-1.1.5.simg'
 XDDFACET_CONTAINER = SERVER_CONTAINER_PATH+'ddfacet-0.4.1.simg'

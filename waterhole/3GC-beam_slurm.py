@@ -184,7 +184,10 @@ def main():
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'kilMS',
                     logfile=logfile,
-                    syscall=syscall)
+                    syscall=syscall,
+                    mem='480GB',
+                    partition='HighMem')
+
 
 
         job_id_killms = 'KILLMS_'+code

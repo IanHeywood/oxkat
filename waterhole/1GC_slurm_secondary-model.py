@@ -22,6 +22,8 @@ def main():
     LOGS = gen.LOGS
     CASA_CONTAINER = gen.CASA_CONTAINER
     CUBICAL_CONTAINER = gen.CUBICAL_CONTAINER
+    XCASA_CONTAINER = gen.XCASA_CONTAINER
+    XCUBICAL_CONTAINER = gen.XCUBICAL_CONTAINER
  
 
     submit_file = 'submit_1GC_jobs.sh'

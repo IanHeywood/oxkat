@@ -398,7 +398,7 @@ def generate_syscall_killms(myms,
     syscall+= '--InCol '+incol+' '
     syscall+= '--OutCol '+incol+' '
     syscall+= '--Weighting Natural '
-    syscall+= '--NodesFile '+nodes+' '
+    syscall+= '--NodesFile '+nodesfile+' '
     syscall+= '--DicoModel '+dico+' '
     syscall+= '--MaxFacetSize .25 '
 

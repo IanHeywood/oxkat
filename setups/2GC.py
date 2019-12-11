@@ -92,14 +92,7 @@ def main():
         f.write(syscall+'\n')
 
 
-        syscall = 'singularity exec '+XWSCLEAN_CONTAINER+' '
-        syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                                imgname=blind_prefix,
-                                datacol='DATA',
-                                bda=True,
-                                niter=60000,
-                                mask='auto')
-
+        syscall = syscall.replace(WSCLEAN_CONTAINER,XWSCLEAN_CONTAINER)
         g.write(syscall+'\n')
 
 
@@ -127,9 +120,7 @@ def main():
         f.write(syscall+'\n')
 
 
-        syscall = 'singularity exec '+XWSCLEAN_CONTAINER+' '
-        syscall += gen.generate_syscall_predict(msname=myms,imgbase=blind_prefix)
-
+        syscall = syscall.replace(WSCLEAN_CONTAINER,XWSCLEAN_CONTAINER)
         g.write(syscall+'\n')
 
 
@@ -157,9 +148,7 @@ def main():
         f.write(syscall+'\n')
 
 
-        syscall = 'singularity exec '+XCASA_CONTAINER+' '
-        syscall += 'casa -c '+OXKAT+'/casa_selfcal_target_phases.py '+myms+' --nologger --log2term --nogui\n'
-
+        syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
         g.write(syscall+'\n')
 
 
@@ -191,13 +180,7 @@ def main():
         f.write(syscall+'\n')
 
 
-        syscall = 'singularity exec '+XWSCLEAN_CONTAINER+' '
-        syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                                imgname=pcal_prefix,
-                                datacol='CORRECTED_DATA',
-                                bda=True,
-                                mask='auto')
-
+        syscall = syscall.replace(WSCLEAN_CONTAINER,XWSCLEAN_CONTAINER)
         g.write(syscall+'\n')
 
 
@@ -226,16 +209,16 @@ def main():
         f.write(syscall+'\n')
 
 
-        syscall,fitsmask = gen.generate_syscall_makemask(pcal_prefix,thresh=5.5)
-        syscall = 'singularity exec '+XDDFACET_CONTAINER+' '+syscall
-
+        syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
         g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
 
 
-        kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+'" "$'+job_id_makemask1+' > '+kill_file
+        kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+'" "$'+job_id_makemask1+' >> '+kill_file
+
+        f.write(kill+'\n')
 
 
     f.close()

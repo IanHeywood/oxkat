@@ -71,9 +71,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    syscall = 'singularity exec '+XCASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
-
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
     g.write(syscall+'\n')
 
 
@@ -100,9 +98,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    syscall = 'singularity exec '+XCUBICAL_CONTAINER+' '
-    syscall += 'python '+OXKAT+'/00_setup.py '+myms+'\n'
-
+    syscall = syscall.replace(CUBICAL_CONTAINER,XCUBICAL_CONTAINER)
     g.write(syscall+'\n')
 
 
@@ -129,9 +125,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    syscall = 'singularity exec '+XCASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_basic_flags.py --nologger --log2term --nogui\n'
-
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
     g.write(syscall+'\n')
 
 
@@ -158,9 +152,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    syscall = 'singularity exec '+XCASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_tfcrop_cals_data.py --nologger --log2term --nogui\n'
-
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
     g.write(syscall+'\n')
 
 
@@ -187,9 +179,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    syscall = 'singularity exec '+XCASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_split_calibrators.py --nologger --log2term --nogui\n'
-
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
     g.write(syscall+'\n')
 
 
@@ -216,9 +206,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    syscall = 'singularity exec '+XCASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_get_secondary_model.py --nologger --log2term --nogui\n'
-
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
     g.write(syscall+'\n')
 
 
@@ -245,9 +233,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    syscall = 'singularity exec '+XCASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_1GC_using_secondary_model.py --nologger --log2term --nogui\n'
-
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
     g.write(syscall+'\n')
 
 
@@ -274,9 +260,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    syscall = 'singularity exec '+XCASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_autoflag_targets_corrected.py --nologger --log2term --nogui\n'
-
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
     g.write(syscall+'\n')
 
 
@@ -303,9 +287,7 @@ def main():
     f.write(syscall+'\n')
 
 
-    syscall = 'singularity exec '+XCASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_split_targets.py --nologger --log2term --nogui\n'
-
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
     g.write(syscall+'\n')
 
 

@@ -78,7 +78,7 @@ def main():
 
 
         gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'ddfbm',
+                    jobname=code+'_DDF1',
                     logfile=logfile,
                     syscall=syscall,
                     mem='480GB',
@@ -99,19 +99,20 @@ def main():
 
 
         syscall = 'singularity exec '+SOURCEFINDER_CONTAINER+' '
-        syscall += gen.generate_syscall_pybdsf(ddf1_prefix+'.app.restored.fits',
-                        catalogtype='gaul',
-                        catalogformat='ascii')
+        syscall2,bdsfcat = gen.generate_syscall_pybdsf(ddf1_prefix+'.app.restored.fits',
+                        catalogtype='srl',
+                        catalogformat='fits')
+        syscall += syscall2
 
 
         gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'bdsf',
+                    jobname=code+'pbdsf',
                     logfile=logfile,
                     syscall=syscall)
 
 
         job_id_bdsf = 'BDSF_'+code
-        syscall = job_id_ddf1+"=`sbatch -d afterok:${"+job_id_ddf1+"} "+slurmfile+" | awk '{print $4}'`"
+        syscall = job_id_bdsf+"=`sbatch -d afterok:${"+job_id_ddf1+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
 
@@ -119,24 +120,47 @@ def main():
         # Identify tessel centres
 
 
-        slurmfile = SCRIPTS+'/slurm_dEid_'+code+'.sh'
-        logfile = LOGS+'/slurm_dEid_'+code+'.log'
+        # slurmfile = SCRIPTS+'/slurm_dEid_'+code+'.sh'
+        # logfile = LOGS+'/slurm_dEid_'+code+'.log'
 
 
-        syscall = 'singularity exec '+SOURCEFINDER_CONTAINER+' '
-        syscall += 'python '+TOOLS+'/identify_dE_directions.py'
+        # syscall = 'singularity exec '+SOURCEFINDER_CONTAINER+' '
+        # syscall += 'python '+TOOLS+'/identify_dE_directions.py'
+
+
+        # gen.write_slurm(opfile=slurmfile,
+        #             jobname=code+'dEid',
+        #             logfile=logfile,
+        #             syscall=syscall)
+
+
+        # job_id_deid = 'DEID_'+code
+        # syscall = job_id_deid+"=`sbatch -d afterok:${"+job_id_bdsf+"} "+slurmfile+" | awk '{print $4}'`"
+        # f.write(syscall+'\n')
+
+
+        # ------------------------------------------------------------------------------
+        # Run ClusterCat
+
+
+        slurmfile = SCRIPTS+'/slurm_cluster_'+code+'.sh'
+        logfile = LOGS+'/slurm_cluster_'+code+'.log'
+
+
+        syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+        syscall1,clusterfile = gen.generate_syscall_clustercat(bdsfcat,ndir=7)
+        syscall += syscall1
 
 
         gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'dEid',
+                    jobname=code+'clstr',
                     logfile=logfile,
                     syscall=syscall)
 
 
-        job_id_deid = 'DEID_'+code
-        syscall = job_id_ddf1+"=`sbatch -d afterok:${"+job_id_bdsf+"} "+slurmfile+" | awk '{print $4}'`"
+        job_id_cluster = 'CLSTR_'+code
+        syscall = job_id_cluster+"=`sbatch -d afterok:${"+job_id_bdsf+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
-
 
         # ------------------------------------------------------------------------------
 

@@ -29,7 +29,7 @@ CASA_CONTAINER = '/idia/software/containers/casa-stable-5.6.2-2.simg'
 #CASA_CONTAINER = '/idia/software/containers/casa-stable-4.7.2.simg'
 CODEX_CONTAINER = IDIA_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
 CUBICAL_CONTAINER = IDIA_CONTAINER_PATH+'cubical-1.1.5.simg'
-DDFACET_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-0.4.1.simg'
+DDFACET_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-0.5.0.simg'
 KILLMS_CONTAINER = IDIA_CONTAINER_PATH+'killms-2.7.0.simg'
 SOURCEFINDER_CONTAINER = '/idia/software/containers/kern5.simg'
 CLUSTERCAT_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-dev.simg'
@@ -432,11 +432,27 @@ def generate_syscall_pybdsf(fitsfile,
     syscall += "catalog_type=\""+catalogtype+"\","
     syscall += "clobber=True,incl_empty=True)'"
 
-    return syscall
+    return syscall,opfile
 
 
-#def generate_syscall_clustercat()
+def generate_syscall_clustercat(srl,
+                        ndir=7,
+                        centralradius=0.15,
+                        ngen=100,
+                        fluxmin=0.000001,
+                        ncpu=32):
 
+    opfile = srl.replace('.srl.fits','.srl.fits.'+str(ndir)+'.dirs.ClusterCat.npy')
+    syscall = 'ClusterCat.py --SourceCat '+srl+' '
+    syscall += '--NGen '+str(ngen)+' '
+    syscall += '--NCluster '+str(ndir)+' '
+    syscall += '--FluxMin='+str(fluxmin)+' '
+    syscall += '--CentralRadius='+str(centralradius)+' '
+    syscall += '--NCPU='+str(ncpu)+' '
+    syscall += '--DoPlot=0 '
+    syscall += '--OutClusterCat='+opfile
+
+    return syscall, opfile
 
 
 def generate_syscall_crystalball(myms,

@@ -39,7 +39,7 @@ $ ln -s /idia/projects/mightee/1538856059/1538856059_sdp_l0.full_1284.full_pol.m
 5. Set up and submit the 1GC jobs:
 
 ```
-$ python setups/1GC_slurm.py
+$ python setups/1GC.py
 $ source submit_1GC_jobs.sh
 ```
 
@@ -52,7 +52,7 @@ $ source kill_1GC_jobs.sh
 7. If that completes successfully you can set up and submit the 2GC jobs, which does imaging with an iteration of phase-only self-cal:
 
 ```
-$ python setups/2GC_slurm.py
+$ python setups/2GC.py
 $ source submit_2GC_jobs.sh
 ```
 
@@ -61,6 +61,8 @@ $ source submit_2GC_jobs.sh
 ```
 $ source kill_2GC_jobs.sh
 ```
+
+The setup scripts will also produce a `run_*GC_jobs.sh` for use on standalone servers. 
 
 ---
 

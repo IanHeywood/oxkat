@@ -88,6 +88,7 @@ def main():
 
         job_id_blind = 'BLIND_'+code
         syscall = job_id_blind+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
+
         f.write(syscall+'\n')
 
 
@@ -122,6 +123,7 @@ def main():
 
         job_id_predict1 = 'PREDICT1_'+code
         syscall = job_id_predict1+"=`sbatch -d afterok:${"+job_id_blind+"} "+slurmfile+" | awk '{print $4}'`"
+
         f.write(syscall+'\n')
 
 
@@ -151,6 +153,7 @@ def main():
 
         job_id_phasecal1 = 'PHASECAL1_'+code
         syscall = job_id_phasecal1+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
+
         f.write(syscall+'\n')
 
 
@@ -184,6 +187,7 @@ def main():
 
         job_id_blind2 = 'BLIND2_'+code
         syscall = job_id_blind2+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
+
         f.write(syscall+'\n')
 
 
@@ -218,6 +222,7 @@ def main():
 
         job_id_makemask1 = 'MAKEMASK1_'+code
         syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
+        
         f.write(syscall+'\n')
 
 

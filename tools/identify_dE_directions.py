@@ -178,7 +178,7 @@ def tiggerConvert(gaul):
 	output = gaul.replace('.gaul','.lsm.html')
 
 
-	cluster = 1000.0
+	cluster = 800.0
 
 
 	syscall = 'tigger-convert -t ASCII --format "'
@@ -230,7 +230,7 @@ def main():
 				ra = rad2deg(src.pos.ra)
 				dec = rad2deg(src.pos.dec)
 				nodes.append((ra,dec))
-				print src.name,ra,dec,'1.0'
+#				print src.name,ra,dec,'1.0'
 
 	writeDS9(nodes,regionfile)
 

@@ -39,6 +39,10 @@ def main():
     g = open(run_file,'w')
 
 
+    f.write('#!/usr/bin/env bash\n')
+    g.write('#!/usr/bin/env bash\n')
+
+
     myms = glob.glob('*.ms')[0]
     code = gen.get_code(myms)
     myms = myms.replace('.ms','_wtspec.ms')

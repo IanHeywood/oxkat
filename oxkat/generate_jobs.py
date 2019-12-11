@@ -399,7 +399,7 @@ def generate_syscall_killms(myms,
     syscall+= '--OutCol '+incol+' '
     syscall+= '--Weighting Natural '
     syscall+= '--NodesFile '+nodesfile+' '
-    syscall+= '--DicoModel '+dico+' '
+    syscall+= '--DicoModel '+dicomodel+' '
     syscall+= '--MaxFacetSize .25 '
 
     syscall += ' ; CleanSHM.py'

@@ -55,6 +55,7 @@ def main():
 
 
         code = target[0][-3:].replace('-','_').replace('.','p')
+        myms = target[2].rstrip('/')
         mspat = '*'+target[0]+'*.ms'
 
 
@@ -162,7 +163,37 @@ def main():
         syscall = job_id_cluster+"=`sbatch -d afterok:${"+job_id_bdsf+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
+
         # ------------------------------------------------------------------------------
+        # Run killMS
+
+
+        slurmfile = SCRIPTS+'/slurm_killMS_'+code+'.sh'
+        logfile = LOGS+'/slurm_killMS_'+code+'.log'
+
+
+        syscall = 'singularity exec '+KILLMS_CONTAINER+' '
+        syscall += gen.generate_syscall_killms(myms,
+                        baseimg=ddf1_prefix,
+                        outsols='killms-cohjones',
+                        nodesfile=clusterfile,
+                        dicomodel=ddf1_prefix+'.DicoModel',
+                        beam=BEAM)
+
+
+        gen.write_slurm(opfile=slurmfile,
+                    jobname=code+'kilMS',
+                    logfile=logfile,
+                    syscall=syscall)
+
+
+        job_id_killms = 'KILLMS_'+code
+        syscall = job_id_killms+"=`sbatch -d afterok:${"+job_id_cluster+"} "+slurmfile+" | awk '{print $4}'`"
+        f.write(syscall+'\n')
+
+
+        # ------------------------------------------------------------------------------
+
 
     kill = 'echo "scancel "$'+job_id_ddf1+' > '+kill_file
 

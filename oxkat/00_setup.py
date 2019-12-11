@@ -136,7 +136,7 @@ def get_refant(myms,field_id):
             ant = ref_pool[i]
             if ant in ant_names:
                     idx = ant_names.index(ant)
-                    sub_tab = main_tab.query(query='ANTENNA1=='+str(idx)+' && FIELD_ID=='+str(field_id))
+                    sub_tab = main_tab.query(query='ANTENNA1=={idx} || ANTENNA2=={idx} && FIELD_ID=={field_id}'.format(**locals()))
                     flags = sub_tab.getcol('FLAG')
                     vals,counts = numpy.unique(flags,return_counts=True)
                     if len(vals) == 1 and vals == True:
@@ -145,7 +145,7 @@ def get_refant(myms,field_id):
                         flag_pc = 0.0
                     else:
                         flag_pc = 100.*round(float(counts[1])/float(numpy.sum(counts)),8)
-                    if flag_pc < 50.0:
+                    if flag_pc < 80.0:
                         pc_list.append(flag_pc)
                         idx_list.append(str(idx))
 

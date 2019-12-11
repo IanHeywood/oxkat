@@ -21,16 +21,20 @@ def main():
     CASA_CONTAINER = gen.CASA_CONTAINER
     WSCLEAN_CONTAINER = gen.WSCLEAN_CONTAINER
     DDFACET_CONTAINER = gen.DDFACET_CONTAINER
+    XCASA_CONTAINER = gen.XCASA_CONTAINER
+    XWSCLEAN_CONTAINER = gen.XWSCLEAN_CONTAINER
+    XDDFACET_CONTAINER = gen.XDDFACET_CONTAINER
 
 
     submit_file = 'submit_2GC_jobs.sh'
+    kill_file = 'kill_2GC_jobs.sh'
+    run_file = 'run_2GC_jobs.sh'
 
 
     gen.setup_dir(SCRIPTS)
     gen.setup_dir(LOGS)
 
 
-#    project_info = pickle.load(open('project_info.p','rb'))
     with open('project_info.p','rb') as f:
         project_info = pickle.load(f,encoding='latin1')
 
@@ -39,6 +43,11 @@ def main():
 
 
     f = open(submit_file,'w')
+    g = open(run_file,'w')
+
+
+    f.write('#!/usr/bin/env bash\n')
+    g.write('#!/usr/bin/env bash\n')
 
 
     for target in targets:
@@ -79,7 +88,19 @@ def main():
 
         job_id_blind = 'BLIND_'+code
         syscall = job_id_blind+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
+
         f.write(syscall+'\n')
+
+
+        syscall = 'singularity exec '+XWSCLEAN_CONTAINER+' '
+        syscall += gen.generate_syscall_wsclean(mslist=[myms],
+                                imgname=blind_prefix,
+                                datacol='DATA',
+                                bda=True,
+                                niter=60000,
+                                mask='auto')
+
+        g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -102,7 +123,14 @@ def main():
 
         job_id_predict1 = 'PREDICT1_'+code
         syscall = job_id_predict1+"=`sbatch -d afterok:${"+job_id_blind+"} "+slurmfile+" | awk '{print $4}'`"
+
         f.write(syscall+'\n')
+
+
+        syscall = 'singularity exec '+XWSCLEAN_CONTAINER+' '
+        syscall += gen.generate_syscall_predict(msname=myms,imgbase=blind_prefix)
+
+        g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -125,7 +153,14 @@ def main():
 
         job_id_phasecal1 = 'PHASECAL1_'+code
         syscall = job_id_phasecal1+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
+
         f.write(syscall+'\n')
+
+
+        syscall = 'singularity exec '+XCASA_CONTAINER+' '
+        syscall += 'casa -c '+OXKAT+'/casa_selfcal_target_phases.py '+myms+' --nologger --log2term --nogui\n'
+
+        g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -152,7 +187,18 @@ def main():
 
         job_id_blind2 = 'BLIND2_'+code
         syscall = job_id_blind2+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
+
         f.write(syscall+'\n')
+
+
+        syscall = 'singularity exec '+XWSCLEAN_CONTAINER+' '
+        syscall += gen.generate_syscall_wsclean(mslist=[myms],
+                                imgname=pcal_prefix,
+                                datacol='CORRECTED_DATA',
+                                bda=True,
+                                mask='auto')
+
+        g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -165,8 +211,6 @@ def main():
 
 
         syscall,fitsmask = gen.generate_syscall_makemask(pcal_prefix,thresh=5.5)
-
-
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall
 
 
@@ -178,13 +222,24 @@ def main():
 
         job_id_makemask1 = 'MAKEMASK1_'+code
         syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
+        
         f.write(syscall+'\n')
+
+
+        syscall,fitsmask = gen.generate_syscall_makemask(pcal_prefix,thresh=5.5)
+        syscall = 'singularity exec '+XDDFACET_CONTAINER+' '+syscall
+
+        g.write(syscall+'\n')
+
+
+        # ------------------------------------------------------------------------------
+
 
         kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+'" "$'+job_id_makemask1+' > '+kill_file
 
-        f.write(kill+'\n')
 
     f.close()
+    g.close()
 
 
 if __name__ == "__main__":

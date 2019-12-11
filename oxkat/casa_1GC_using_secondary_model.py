@@ -94,11 +94,11 @@ elif primary_tag == '0408':
 
 gaincal(vis=myms,
     field=bpcal,
-    uvrange=myuvrange,
+    #uvrange=myuvrange,
     caltable=ktab0,
     refant = str(ref_ant),
     gaintype = 'K',
-    solint = 'inf',
+    solint = 'int',
     parang=False)
 
 
@@ -144,10 +144,10 @@ bandpass(vis=myms,
 
 applycal(vis=myms,
     gaintable=[ktab0,gtab0,bptab0],
+#    applymode='calonly',
     field=bpcal,
 #    calwt=False,
     parang=False,
-    applymode='calonly',
     gainfield=[bpcal,bpcal,bpcal],
     interp = ['nearest','nearest','nearest'])
 
@@ -184,11 +184,11 @@ flagmanager(vis=myms,
 
 gaincal(vis=myms,
     field=bpcal,
-    uvrange=myuvrange,
+    #uvrange=myuvrange,
     caltable=ktab1,
     refant = str(ref_ant),
     gaintype = 'K',
-    solint = 'inf',
+    solint = 'int',
     parang=False,
     gaintable=[bptab0,gtab0],
     gainfield=[bpcal,bpcal],
@@ -237,6 +237,7 @@ bandpass(vis=myms,
 
 applycal(vis=myms,
     gaintable=[ktab1,gtab1,bptab1],
+#    applymode='calonly',
     field=bpcal,
 #    calwt=False,
     parang=False,
@@ -317,7 +318,6 @@ for i in range(0,len(pcals)):
         uvrange = myuvrange,
         caltable = gtab2,     
         refant = str(ref_ant),
-        smodel = [1,0,0,0],
         minblperant = 4,
         minsnr = 3,
         solint = 'inf',
@@ -337,7 +337,7 @@ for i in range(0,len(pcals)):
 
     gaincal(vis= myms,
         field = pcal,
-        uvrange = myuvrange,
+    #   uvrange = myuvrange,
         caltable = ktab1,
         refant = str(ref_ant),
     #   spw = delayspw,
@@ -365,6 +365,7 @@ for i in range(0,len(pcals)):
 
     applycal(vis = myms,
         gaintable = [ktab2,gtab1,bptab1,gtab2],
+#        applymode='calonly',
         field = pcal,
 #        calwt = False,
         parang = False,
@@ -456,7 +457,7 @@ for i in range(0,len(pcals)):
 
     gaincal(vis= myms,
         field = pcal,
-        uvrange = myuvrange,
+    #   uvrange = myuvrange,
         caltable = ktab3,
         refant = str(ref_ant),
     #   spw = delayspw,
@@ -484,8 +485,9 @@ for i in range(0,len(pcals)):
 
     applycal(vis = myms,
         gaintable = [ktab3,gtab1,bptab1,gtab3],
+#        applymode='calonly',
         field = pcal,
-        calwt = False,
+#        calwt = False,
         parang = False,
         gainfield = ['','',bpcal,''],
         interp = ['nearest','linear','linear','linear'])
@@ -500,11 +502,12 @@ for targ in targets:
     related_pcal = pcals[targ[3]][1]
 
 
-    # --- Correct targets with K3, G1, B1, F3
+    # --- Correct targets with K3, G1, B1, G3
 
 
     applycal(vis=myms,
-        gaintable=[ktab3,gtab1,bptab1,ftab3],
+        gaintable=[ktab3,gtab1,bptab1,gtab3],
+#        applymode='calonly',
         field=target,
 #        calwt=False,
         parang=False,

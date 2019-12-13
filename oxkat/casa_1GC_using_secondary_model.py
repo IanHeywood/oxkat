@@ -296,8 +296,15 @@ for i in range(0,len(pcals)):
 
 
     iflux = secondary_models[mod_idx]['fitFluxd']
-    alpha = secondary_models[mod_idx]['spidx'][1]
-    beta = secondary_models[mod_idx]['spidx'][2]
+    spidx = secondary_models[mod_idx]['spidx']
+    if len(spidx) == 2:
+        myspix = spidx[1] 
+    elif len(spidx) == 3:
+        alpha = spidx[1]        
+        beta = spidx[2]
+        myspix = [alpha,beta]
+    # alpha = secondary_models[mod_idx]['spidx'][1]
+    # beta = secondary_models[mod_idx]['spidx'][2]
     ref_freq = str(secondary_models[mod_idx]['fitRefFreq'])+'Hz'
 
 
@@ -305,7 +312,7 @@ for i in range(0,len(pcals)):
         field = pcal,
         standard = 'manual',
         fluxdensity = [iflux,0,0,0],
-        spix = [alpha,beta],
+        spix = myspix,
         reffreq = ref_freq,
         usescratch = True)
 

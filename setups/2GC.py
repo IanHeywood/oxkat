@@ -86,14 +86,13 @@ def main():
                     syscall=syscall)
 
 
-        job_id_blind = 'BLIND_'+code
-        syscall = job_id_blind+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
-
-        f.write(syscall+'\n')
-
-
         syscall = syscall.replace(WSCLEAN_CONTAINER,XWSCLEAN_CONTAINER)
         g.write(syscall+'\n')
+
+
+        job_id_blind = 'BLIND_'+code
+        syscall = job_id_blind+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
+        f.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -114,14 +113,13 @@ def main():
                     syscall=syscall)
 
 
-        job_id_predict1 = 'PREDICT1_'+code
-        syscall = job_id_predict1+"=`sbatch -d afterok:${"+job_id_blind+"} "+slurmfile+" | awk '{print $4}'`"
-
-        f.write(syscall+'\n')
-
-
         syscall = syscall.replace(WSCLEAN_CONTAINER,XWSCLEAN_CONTAINER)
         g.write(syscall+'\n')
+
+
+        job_id_predict1 = 'PREDICT1_'+code
+        syscall = job_id_predict1+"=`sbatch -d afterok:${"+job_id_blind+"} "+slurmfile+" | awk '{print $4}'`"
+        f.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -142,14 +140,13 @@ def main():
                     syscall=syscall)
 
 
-        job_id_phasecal1 = 'PHASECAL1_'+code
-        syscall = job_id_phasecal1+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
-
-        f.write(syscall+'\n')
-
-
         syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
         g.write(syscall+'\n')
+
+
+        job_id_phasecal1 = 'PHASECAL1_'+code
+        syscall = job_id_phasecal1+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
+        f.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -174,14 +171,13 @@ def main():
                     syscall=syscall)
 
 
-        job_id_blind2 = 'BLIND2_'+code
-        syscall = job_id_blind2+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
-
-        f.write(syscall+'\n')
-
-
         syscall = syscall.replace(WSCLEAN_CONTAINER,XWSCLEAN_CONTAINER)
         g.write(syscall+'\n')
+
+
+        job_id_blind2 = 'BLIND2_'+code
+        syscall = job_id_blind2+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
+        f.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -203,14 +199,13 @@ def main():
                     syscall=syscall)
 
 
-        job_id_makemask1 = 'MAKEMASK1_'+code
-        syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_blind2+"} "+slurmfile+" | awk '{print $4}'`"
-        
-        f.write(syscall+'\n')
-
-
         syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
         g.write(syscall+'\n')
+
+
+        job_id_makemask1 = 'MAKEMASK1_'+code
+        syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_blind2+"} "+slurmfile+" | awk '{print $4}'`"        
+        f.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------

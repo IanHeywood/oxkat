@@ -66,13 +66,13 @@ def main():
                 syscall=syscall)
 
 
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
+    g.write(syscall+'\n')
+
+
     job_id_avg = 'AVG_'+code
     syscall = job_id_avg+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
-
-
-    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
-    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -93,13 +93,13 @@ def main():
                 syscall=syscall)
 
 
+    syscall = syscall.replace(CUBICAL_CONTAINER,XCUBICAL_CONTAINER)
+    g.write(syscall+'\n')
+
+
     job_id_info = 'INFO_'+code
     syscall = job_id_info+"=`sbatch -d afterok:${"+job_id_avg+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
-
-
-    syscall = syscall.replace(CUBICAL_CONTAINER,XCUBICAL_CONTAINER)
-    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -120,13 +120,13 @@ def main():
                 syscall=syscall)
 
 
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
+    g.write(syscall+'\n')
+
+
     job_id_basic = 'BASIC_'+code
     syscall = job_id_basic+"=`sbatch -d afterok:${"+job_id_info+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
-
-
-    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
-    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -147,13 +147,13 @@ def main():
                 syscall=syscall)
 
 
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
+    g.write(syscall+'\n')
+
+
     job_id_flag1 = 'FLAG1_'+code
     syscall = job_id_flag1+"=`sbatch -d afterok:${"+job_id_basic+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
-
-
-    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
-    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -174,13 +174,13 @@ def main():
                 syscall=syscall)
 
 
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
+    g.write(syscall+'\n')
+
+
     job_id_split_cals = 'SPLITCAL_'+code
     syscall = job_id_split_cals+"=`sbatch -d afterok:${"+job_id_flag1+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
-
-
-    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
-    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -201,13 +201,13 @@ def main():
                 syscall=syscall)
 
 
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
+    g.write(syscall+'\n')
+
+
     job_id_secondary_model = 'SECMODEL_'+code
     syscall = job_id_secondary_model+"=`sbatch -d afterok:${"+job_id_split_cals+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
-
-
-    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
-    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -228,13 +228,13 @@ def main():
                 syscall=syscall)
 
 
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
+    g.write(syscall+'\n')
+
+
     job_id_1GC = 'FIRSTGEN_'+code
     syscall = job_id_1GC+"=`sbatch -d afterok:${"+job_id_secondary_model+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
-
-
-    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
-    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -255,13 +255,13 @@ def main():
                 syscall=syscall)
 
 
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
+    g.write(syscall+'\n')
+
+
     job_id_flag2 = 'FLAG2_'+code
     syscall = job_id_flag2+"=`sbatch -d afterok:${"+job_id_1GC+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
-
-
-    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
-    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------
@@ -282,13 +282,13 @@ def main():
                 syscall=syscall)
 
 
+    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
+    g.write(syscall+'\n')
+
+
     job_id_split = 'SPLIT_'+code
     syscall = job_id_split+"=`sbatch -d afterok:${"+job_id_flag2+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
-
-
-    syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
-    g.write(syscall+'\n')
 
 
     # ------------------------------------------------------------------------------

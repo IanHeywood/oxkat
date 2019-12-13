@@ -204,7 +204,7 @@ def main():
 
 
         job_id_makemask1 = 'MAKEMASK1_'+code
-        syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
+        syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_blind2+"} "+slurmfile+" | awk '{print $4}'`"
         
         f.write(syscall+'\n')
 

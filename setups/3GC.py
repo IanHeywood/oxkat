@@ -99,13 +99,13 @@ def main():
                     partition='HighMem')
 
 
+        syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
+        g.write(syscall+'\n')
+
+
         job_id_ddf1 = 'DDF1_'+code
         syscall = job_id_ddf1+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
-
-
-        syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
-        g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -129,13 +129,13 @@ def main():
                     syscall=syscall)
 
 
+        syscall = syscall.replace(SOURCEFINDER_CONTAINER,XSOURCEFINDER_CONTAINER)
+        g.write(syscall+'\n')
+
+
         job_id_bdsf = 'BDSF_'+code
         syscall = job_id_bdsf+"=`sbatch -d afterok:${"+job_id_ddf1+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
-
-
-        syscall = syscall.replace(SOURCEFINDER_CONTAINER,XSOURCEFINDER_CONTAINER)
-        g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -180,13 +180,13 @@ def main():
                     syscall=syscall)
 
 
+        syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
+        g.write(syscall+'\n')
+
+
         job_id_cluster = 'CLSTR_'+code
         syscall = job_id_cluster+"=`sbatch -d afterok:${"+job_id_bdsf+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
-
-
-        syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
-        g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -214,13 +214,13 @@ def main():
                     partition='HighMem')
 
 
+        syscall = syscall.replace(KILLMS_CONTAINER,XKILLMS_CONTAINER)
+        g.write(syscall+'\n')
+
+
         job_id_killms = 'KILLMS_'+code
         syscall = job_id_killms+"=`sbatch -d afterok:${"+job_id_cluster+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
-
-
-        syscall = syscall.replace(KILLMS_CONTAINER,XKILLMS_CONTAINER)
-        g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -251,13 +251,13 @@ def main():
                     partition='HighMem')
 
 
+        syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
+        g.write(syscall+'\n')
+
+
         job_id_ddf2 = 'DDF2_'+code
         syscall = job_id_ddf2+"=`sbatch -d afterok:${"+job_id_killms+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
-
-
-        syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
-        g.write(syscall+'\n')
 
 
         # ------------------------------------------------------------------------------

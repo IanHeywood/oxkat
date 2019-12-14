@@ -89,6 +89,7 @@ def main():
                     chunkhours=1,
                     beam=BEAM,
                     mask=MASK)
+        syscall += ' ; singularity exec '+DDFACET_CONTAINER+' CleanSMH.py'
 
 
         gen.write_slurm(opfile=slurmfile,
@@ -204,6 +205,7 @@ def main():
                         nodesfile=clusterfile,
                         dicomodel=ddf1_prefix+'.DicoModel',
                         beam=BEAM)
+        syscall += ' ; singularity exec '+KILLMS_CONTAINER+' CleanSMH.py'
 
 
         gen.write_slurm(opfile=slurmfile,
@@ -241,6 +243,7 @@ def main():
                     maxmajoriter=1,
                     ddsols=solnames,
                     initdicomodel=ddf1_prefix+'.DicoModel')
+        syscall += ' ; singularity exec '+DDFACET_CONTAINER+' CleanSMH.py'
 
 
         gen.write_slurm(opfile=slurmfile,

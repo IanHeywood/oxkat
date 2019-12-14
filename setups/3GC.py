@@ -169,7 +169,7 @@ def main():
         logfile = LOGS+'/slurm_cluster_'+code+'.log'
 
 
-        syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+        syscall = 'singularity exec '+CLUSTERCAT_CONTAINER+' '
         syscall1,clusterfile = gen.generate_syscall_clustercat(bdsfcat,ndir=7)
         syscall += syscall1
 

@@ -356,8 +356,6 @@ def generate_syscall_ddfacet(mspattern,
     if ddsols != '':
         syscall += '--DDESolutions-DDSols '+ddsols
 
-    syscall += ' ; CleanSHM.py'
-
     return syscall
 
 
@@ -401,8 +399,6 @@ def generate_syscall_killms(myms,
     syscall+= '--NodesFile '+nodesfile+' '
     syscall+= '--DicoModel '+dicomodel+' '
     syscall+= '--MaxFacetSize .25 '
-
-    syscall += ' ; CleanSHM.py'
 
     return syscall
 

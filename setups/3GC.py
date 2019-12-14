@@ -180,7 +180,7 @@ def main():
                     syscall=syscall)
 
 
-        syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
+        syscall = syscall.replace(CLUSTERCAT_CONTAINER,XCLUSTERCAT_CONTAINER)
         g.write(syscall+'\n')
 
 

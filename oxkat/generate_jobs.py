@@ -33,7 +33,7 @@ KILLMS_CONTAINER = IDIA_CONTAINER_PATH+'killms-2.7.0.simg'
 CLUSTERCAT_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-0.5.0.simg'
 SOURCEFINDER_CONTAINER = '/idia/software/containers/kern5.simg'
 TRICOLOUR_CONTAINER = IDIA_CONTAINER_PATH+'tricolour-1.1.3.simg'
-WSCLEAN_CONTAINER = IDIA_CONTAINER_PATH+'wsclean-1.1.5.simg'
+WSCLEAN_CONTAINER = IDIA_CONTAINER_PATH+'wsclean-1.2.4.simg'
 
 
 # Containers for standalone servers
@@ -175,12 +175,12 @@ def generate_syscall_wsclean(mslist,
                           startchan=-1,
                           endchan=-1,
                           chanout=8,
-                          imsize=8125,
-                          cellsize='1.5asec',
+                          imsize=10125,
+                          cellsize='1.2asec',
                           briggs=-0.3,
-                          niter=60000,
+                          niter=100000,
                           multiscale=False,
-                          scales='0,5,15',
+                          scales='0,3,9',
                           sourcelist=True,
                           bda=False,
                           nomodel=False,
@@ -226,6 +226,7 @@ def generate_syscall_wsclean(mslist,
     if fitspectralpol != 0:
         syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
     syscall += '-join-channels '
+    syscall += '-padding 1.3 '
     syscall += '-mem 90 '
 
     for myms in mslist:
@@ -237,8 +238,8 @@ def generate_syscall_wsclean(mslist,
 def generate_syscall_predict(msname,
                             imgbase,
                             channelsout=8,
-                            imsize=8125,
-                            scale='1.5asec',
+                            imsize=10125,
+                            scale='1.2asec',
                             predictchannels=64):
 
     # Generate system call to run wsclean in predict mode
@@ -279,8 +280,8 @@ def generate_syscall_ddfacet(mspattern,
                           ncpu=32,
                           maxmajoriter=3,
                           robust=-0.3,
-                          npix=8125,
-                          cell=1.5,
+                          npix=10125,
+                          cell=1.2,
                           nfacets=16,
                           ndegridband=8,
                           beam='',

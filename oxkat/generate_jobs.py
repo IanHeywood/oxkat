@@ -366,7 +366,7 @@ def generate_syscall_killms(myms,
                         dicomodel,
                         incol='CORRECTED_DATA',
                         tchunk=0.2,
-                        dt=10,
+                        dt=12,
                         beam=''):
 
     # Generate system call to run killMS
@@ -380,10 +380,10 @@ def generate_syscall_killms(myms,
     syscall+= '--dt '+str(dt)+' '
     syscall+= '--NCPU 32 '
     syscall+= '--OutSolsName '+outsols+' '
-    syscall+= '--NChanSols 64 '
+    syscall+= '--NChanSols 4 '
     syscall+= '--NIterKF 9 '
     syscall+= '--CovQ 0.05 '
-    syscall+= '--UVMinMax=0.15,8000.0 '
+    syscall+= '--UVMinMax=0.15,8500.0 '
     if beam == '':
         syscall+= '--BeamModel=None '
     else:

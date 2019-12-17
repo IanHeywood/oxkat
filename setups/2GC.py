@@ -76,7 +76,6 @@ def main():
                                 imgname=blind_prefix,
                                 datacol='DATA',
                                 bda=True,
-                                niter=60000,
                                 mask='auto')
 
 

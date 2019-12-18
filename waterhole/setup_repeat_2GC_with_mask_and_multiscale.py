@@ -80,6 +80,8 @@ def main():
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=mask_prefix,
                                 datacol='CORRECTED_DATA',
+                                imsize=8125,
+                                cellsize='1.5asec',
                                 bda=True,
                                 mask=mymask,
                                 multiscale=True,
@@ -116,6 +118,8 @@ def main():
 
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'pdct1',
+                    imsize=8125,
+                    cellsize='1.5arcsec',
                     logfile=logfile,
                     syscall=syscall)
 
@@ -168,6 +172,8 @@ def main():
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=pcal_prefix,
                                 datacol='CORRECTED_DATA',
+                                imsize=8125,
+                                cellsize='1.5asec',
                                 bda=True,
                                 mask=mymask,
                                 multiscale=True,

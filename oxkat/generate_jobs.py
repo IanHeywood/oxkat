@@ -239,7 +239,7 @@ def generate_syscall_predict(msname,
                             imgbase,
                             channelsout=8,
                             imsize=10125,
-                            scale='1.2asec',
+                            cellsize='1.2asec',
                             predictchannels=64):
 
     # Generate system call to run wsclean in predict mode
@@ -249,7 +249,7 @@ def generate_syscall_predict(msname,
     syscall += '-predict '
     syscall += '-channelsout '+str(channelsout)+' '
     syscall += ' -size '+str(imsize)+' '+str(imsize)+' '
-    syscall += '-scale '+scale+' '
+    syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
     syscall += '-mem 90 '
     syscall += '-predict-channels '+str(predictchannels)+' '

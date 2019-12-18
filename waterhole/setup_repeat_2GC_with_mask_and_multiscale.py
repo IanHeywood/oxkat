@@ -66,7 +66,7 @@ def main():
 
 
         mymask = glob.glob('*'+target[0]+'*.mask.fits')[0]
-        print('Using mask: '+mymask+' for field '+field[0])
+        print('Using mask: '+mymask+' for field '+target[0])
 
 
         # ------------------------------------------------------------------------------

@@ -152,7 +152,7 @@ def main():
 
 
         job_id_phasecal2 = 'PHASECAL2_'+code
-        syscall = job_id_phasecal1+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
+        syscall = job_id_phasecal2+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
         f.write(syscall+'\n')
 
 
@@ -221,7 +221,7 @@ def main():
         # ------------------------------------------------------------------------------
 
 
-        kill = 'echo "scancel "$'+job_id_mask+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_mask2+'" "$'+job_id_makemask1+' >> '+kill_file
+        kill = 'echo "scancel "$'+job_id_mask+'" "$'+job_id_predict1+'" "$'+job_id_phasecal2+'" "$'+job_id_mask2+'" "$'+job_id_makemask1+' >> '+kill_file
 
         f.write(kill+'\n')
 

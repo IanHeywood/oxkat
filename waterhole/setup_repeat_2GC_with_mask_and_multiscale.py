@@ -113,13 +113,11 @@ def main():
 
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-        syscall += gen.generate_syscall_predict(msname=myms,imgbase=mask_prefix)
+        syscall += gen.generate_syscall_predict(msname=myms,imgbase=mask_prefix,imsize=8125,cellsize='1.5asec')
 
 
         gen.write_slurm(opfile=slurmfile,
                     jobname=code+'pdct1',
-                    imsize=8125,
-                    cellsize='1.5arcsec',
                     logfile=logfile,
                     syscall=syscall)
 

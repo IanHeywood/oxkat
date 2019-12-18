@@ -168,7 +168,6 @@ def main():
                                 imgname=pcal_prefix,
                                 datacol='CORRECTED_DATA',
                                 bda=True,
-                                mask='auto',
                                 mask=mymask,
                                 multiscale=True,
                                 scales='0,3,9',

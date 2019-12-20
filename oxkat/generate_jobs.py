@@ -175,10 +175,10 @@ def generate_syscall_wsclean(mslist,
                           startchan=-1,
                           endchan=-1,
                           chanout=8,
-                          imsize=10125,
-                          cellsize='1.2asec',
+                          imsize=10240,
+                          cellsize='1.1asec',
                           briggs=-0.3,
-                          niter=100000,
+                          niter=120000,
                           multiscale=False,
                           scales='0,3,9',
                           sourcelist=True,
@@ -238,8 +238,8 @@ def generate_syscall_wsclean(mslist,
 def generate_syscall_predict(msname,
                             imgbase,
                             channelsout=8,
-                            imsize=10125,
-                            cellsize='1.2asec',
+                            imsize=10240,
+                            cellsize='1.1asec',
                             predictchannels=64):
 
     # Generate system call to run wsclean in predict mode
@@ -278,10 +278,11 @@ def generate_syscall_ddfacet(mspattern,
                           chunkhours=1,
                           colname='CORRECTED_DATA',
                           ncpu=32,
+                          maxminoriter=120000,
                           maxmajoriter=3,
                           robust=-0.3,
-                          npix=10125,
-                          cell=1.2,
+                          npix=10240,
+                          cell=1.1,
                           nfacets=16,
                           ndegridband=8,
                           beam='',
@@ -309,7 +310,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Output-Mode=Clean '
     syscall += '--Deconv-CycleFactor=0 '
     syscall += '--Deconv-MaxMajorIter='+str(maxmajoriter)+' '
-    syscall += '--Deconv-MaxMinorIter=80000 '
+    syscall += '--Deconv-MaxMinorIter='+str(maxminoriter)+' '
     syscall += '--Deconv-Mode SSD '
     syscall += '--Weight-Robust '+str(robust)+' '
     syscall += '--Image-NPix='+str(npix)+' '

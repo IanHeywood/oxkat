@@ -80,12 +80,12 @@ def main():
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=mask_prefix,
                                 datacol='CORRECTED_DATA',
-                                imsize=8125,
-                                cellsize='1.5asec',
+#                                imsize=8125,
+#                                cellsize='1.5asec',
                                 bda=True,
                                 mask=mymask,
                                 multiscale=True,
-                                scales='0,3,9',
+                                scales='0,3,9,27',
                                 niter=200000)
 
 
@@ -113,7 +113,7 @@ def main():
 
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-        syscall += gen.generate_syscall_predict(msname=myms,imgbase=mask_prefix,imsize=8125,cellsize='1.5asec')
+        syscall += gen.generate_syscall_predict(msname=myms,imgbase=mask_prefix)#,imsize=8125,cellsize='1.5asec')
 
 
         gen.write_slurm(opfile=slurmfile,
@@ -170,12 +170,12 @@ def main():
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=pcal_prefix,
                                 datacol='CORRECTED_DATA',
-                                imsize=8125,
-                                cellsize='1.5asec',
+                                # imsize=8125,
+                                # cellsize='1.5asec',
                                 bda=True,
                                 mask=mymask,
                                 multiscale=True,
-                                scales='0,3,9',
+                                scales='0,3,9,27',
                                 niter=200000)
 
 

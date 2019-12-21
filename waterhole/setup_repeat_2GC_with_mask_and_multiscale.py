@@ -65,7 +65,7 @@ def main():
         pcal_prefix = 'img_'+myms+'_msmask_pcal'
 
 
-        mymask = glob.glob('*'+target[0]+'*.mask.fits')[0]
+        mymask = glob.glob('img*'+target[0]+'*.mask.fits')[0]
         print('Using mask: '+mymask+' for field '+target[0])
 
 

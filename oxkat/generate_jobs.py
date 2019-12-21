@@ -276,11 +276,14 @@ def generate_syscall_predict(msname,
 def generate_syscall_makemask(prefix,thresh=6.0):
 
     # Generate call to MakeMask.py and dilate the result
-
-    syscall = 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+prefix+'-MFS-image.fits && '
+    
     fitsmask = prefix+'-MFS-image.fits.mask.fits'
+
+    syscall = 'bash -c "'
+    syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+prefix+'-MFS-image.fits && '
     syscall += 'python '+TOOLS+'/dilate_FITS_mask.py '+fitsmask+' 3 && '
-    syscall += 'fitstool.py -z 10125 '+prefix+'-MFS-image.fits.mask.fits \n'
+    syscall += 'fitstool.py -z 10125 '+prefix+'-MFS-image.fits.mask.fits '
+    syscall += '"'
 #    syscall2 = 'python '+OXKAT+'/merge_FITS_masks.py '+prefix+' '+opfits+'\n'
 
  #   return syscall1,syscall2

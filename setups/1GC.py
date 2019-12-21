@@ -21,9 +21,9 @@ def main():
     SCRIPTS = gen.SCRIPTS
     LOGS = gen.LOGS
     CASA_CONTAINER = gen.CASA_CONTAINER
-    CUBICAL_CONTAINER = gen.CUBICAL_CONTAINER
+    DDFACET_CONTAINER = gen.DDFACET_CONTAINER
     XCASA_CONTAINER = gen.XCASA_CONTAINER
-    XCUBICAL_CONTAINER = gen.XCUBICAL_CONTAINER
+    XDDFACET_CONTAINER = gen.XDDFACET_CONTAINER
  
 
     submit_file = 'submit_1GC_jobs.sh'
@@ -83,7 +83,7 @@ def main():
     logfile = LOGS+'/slurm_setup_'+code+'.log'
 
 
-    syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+    syscall = 'singularity exec '+DDFACET_CONTAINER+' '
     syscall += 'python '+OXKAT+'/00_setup.py '+myms+'\n'
 
 
@@ -93,7 +93,7 @@ def main():
                 syscall=syscall)
 
 
-    syscall = syscall.replace(CUBICAL_CONTAINER,XCUBICAL_CONTAINER)
+    syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
     g.write(syscall+'\n')
 
 

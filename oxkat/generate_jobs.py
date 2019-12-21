@@ -6,6 +6,7 @@ import glob
 import datetime
 import time
 import os
+import sys
 
 
 # ------------------------------------------------------------------------
@@ -99,6 +100,14 @@ def make_executable(infile):
     os.chmod(infile, mode)
 
 
+def is_odd(xx):
+    if (xx % 2) == 0:
+        odd = False
+    else:
+        odd = True
+    return odd
+
+
 def write_slurm(opfile,
                 jobname,
                 logfile,
@@ -188,6 +197,12 @@ def generate_syscall_wsclean(mslist,
                           fitspectralpol=4):
 
     # Generate system call to run wsclean
+
+
+    if is_odd(imsize):
+        print('Do not use odd image sizes with wsclean')
+        sys.exit()
+
 
     syscall = 'wsclean '
     syscall += '-log-time '
@@ -282,7 +297,7 @@ def generate_syscall_ddfacet(mspattern,
                           maxminoriter=120000,
                           maxmajoriter=3,
                           robust=-0.3,
-                          npix=10240,
+                          npix=10215,
                           cell=1.1,
                           nfacets=16,
                           ndegridband=8,

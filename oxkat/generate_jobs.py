@@ -333,7 +333,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Deconv-Mode SSD '
     syscall += '--Weight-Robust '+str(robust)+' '
     syscall += '--Image-NPix='+str(npix)+' '
-    syscall += '--CF-wmax 8000 '
+    syscall += '--CF-wmax 0 '
     syscall += '--CF-Nw 100 '
     syscall += '--Output-Also onNeds '
     syscall += '--Image-Cell '+str(cell)+' '

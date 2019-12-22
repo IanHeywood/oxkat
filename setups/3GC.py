@@ -31,10 +31,6 @@ def main():
 
 
     BEAM = '/users/ianh/Beams/hvfix/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
-    MASK = glob.glob('*mask.fits')[0]
-
-
-    print('Using FITS mask: '+MASK)
 
 
     submit_file = 'submit_3GC_jobs.sh'
@@ -65,6 +61,12 @@ def main():
 
 
     for target in targets:
+
+
+        MASK = glob.glob('zoom*'+target[0]+'*mask.fits')[0]
+
+
+        print('Using FITS mask: '+MASK)
 
 
         code = target[0][-3:].replace('-','_').replace('.','p')
@@ -116,7 +118,7 @@ def main():
 
 
         slurmfile = SCRIPTS+'/slurm_pybdsf_'+code+'.sh'
-        logfile = LOGS+'/slurm_pydsf_'+code+'.log'
+        logfile = LOGS+'/slurm_pybdsf_'+code+'.log'
 
 
         syscall = 'singularity exec '+SOURCEFINDER_CONTAINER+' '

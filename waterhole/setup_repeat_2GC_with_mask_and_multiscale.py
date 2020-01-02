@@ -79,7 +79,7 @@ def main():
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                                 imgname=mask_prefix,
-                                datacol='CORRECTED_DATA',
+                                datacol='DATA',
 #                                imsize=8125,
 #                                cellsize='1.5asec',
                                 bda=True,

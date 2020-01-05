@@ -18,8 +18,7 @@ def main():
 
     RAGAVI_CONTAINER = gen.RAGAVI_CONTAINER
     GAINPLOTS = gen.GAINPLOTS
-
-    setup_dir(GAINPLOTS)
+    gen.setup_dir(GAINPLOTS)
 
 #    dependency = sys.argv[1]
 

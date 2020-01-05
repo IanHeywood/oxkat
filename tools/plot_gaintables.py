@@ -27,3 +27,9 @@ def main():
         gaintype = caltab.split('.')[-1][0]
         print(caltab)
         print(gaintype)
+
+
+if __name__ == "__main__":
+
+
+    main()

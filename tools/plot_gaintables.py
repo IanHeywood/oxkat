@@ -6,7 +6,7 @@ import glob
 import os.path as o
 import pickle
 import sys
-sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "../../")))
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "../")))
 
 
 from oxkat import generate_jobs as gen
@@ -32,7 +32,7 @@ def main():
 
         syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
 
-        print syscall
+        print(syscall)
 
 if __name__ == "__main__":
 

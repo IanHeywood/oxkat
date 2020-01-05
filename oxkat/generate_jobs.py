@@ -22,6 +22,7 @@ PARSETS = CWD+'/parsets'
 SCRIPTS = CWD+'/scripts'
 TOOLS = CWD+'/tools'
 LOGS = CWD+'/logs'
+GAINPLOTS = CWD+'/gainplots'
 
 
 # Containers for IDIA

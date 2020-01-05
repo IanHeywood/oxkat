@@ -16,6 +16,7 @@ from oxkat import generate_jobs as gen
 
 def main():
 
+    RAGAVI_CONTAINER = gen.RAGAVI_CONTAINER
 
 	dependency = sys.argv[1]
 

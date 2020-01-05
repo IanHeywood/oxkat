@@ -17,17 +17,22 @@ from oxkat import generate_jobs as gen
 def main():
 
     RAGAVI_CONTAINER = gen.RAGAVI_CONTAINER
+    GAINPLOTS = gen.GAINPLOTS
 
-    dependency = sys.argv[1]
+    setup_dir(GAINPLOTS)
+
+#    dependency = sys.argv[1]
 
     caltabs = sorted(glob.glob('cal_*'))
 
     for caltab in caltabs:
 
-        gaintype = caltab.split('.')[-1][0]
-        print(caltab)
-        print(gaintype)
+        gaintype = caltab.split('.')[-1][0].upper()
+        opfile = GAINPLOTS+'/'+caltab
 
+        syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
+
+        print syscall
 
 if __name__ == "__main__":
 

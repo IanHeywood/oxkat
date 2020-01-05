@@ -18,12 +18,12 @@ def main():
 
     RAGAVI_CONTAINER = gen.RAGAVI_CONTAINER
 
-	dependency = sys.argv[1]
+    dependency = sys.argv[1]
 
-	caltabs = sorted(glob.glob('cal_*'))
+    caltabs = sorted(glob.glob('cal_*'))
 
-	for caltab in caltabs:
+    for caltab in caltabs:
 
-		gaintype = caltab.split('.')[-1][0]
+        gaintype = caltab.split('.')[-1][0]
 
-		print(gaintype)
+        print(gaintype)

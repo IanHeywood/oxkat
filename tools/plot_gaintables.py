@@ -25,5 +25,5 @@ def main():
     for caltab in caltabs:
 
         gaintype = caltab.split('.')[-1][0]
-
+        print(caltab)
         print(gaintype)

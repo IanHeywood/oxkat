@@ -261,7 +261,7 @@ def main():
 
 
     job_id_gainplot = 'GAINPLOT_'+code
-    syscall = job_id_gainplot+"=`sbatch -d afterok:${"+job_id_1GC"} "+slurmfile+" | awk '{print $4}'`"
+    syscall = job_id_gainplot+"=`sbatch -d afterok:${"+job_id_1GC+"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 

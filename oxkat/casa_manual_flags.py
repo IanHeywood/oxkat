@@ -31,6 +31,7 @@ while line:
 		cols = line.split(':')
 		if len(cols) == 1:
 			ant = cols[0]
+			scans = ''
 		elif len(cols) == 2:
 			ant = cols[0]
 			scans = cols[1]

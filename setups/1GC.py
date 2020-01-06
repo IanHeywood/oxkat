@@ -18,7 +18,7 @@ def main():
     CWD = gen.CWD
     OXKAT = gen.OXKAT
     PARSETS = gen.PARSETS
-    SCRIPTS = gen.SCRIPT
+    SCRIPTS = gen.SCRIPTS
     TOOLS = gen.TOOLS
     LOGS = gen.LOGS
     CASA_CONTAINER = gen.CASA_CONTAINER

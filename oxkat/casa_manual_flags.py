@@ -43,6 +43,8 @@ while line:
 			mode = 'manual',
 			antenna = ant,
 			scan = scans)
+	line = f.readline()
+f.close()
 
 
 flagmanager(vis=myms,mode='save',versionname='manual_flags')

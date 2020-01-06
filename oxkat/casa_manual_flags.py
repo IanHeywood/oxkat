@@ -3,10 +3,18 @@
 
 import pickle
 import glob
+import sys
 
 
 project_info = pickle.load(open('project_info.p','rb'))
 flag_file = glob.glob('*manualflags.txt')
+
+
+if len(flag_file) == 1:
+	flag_file = flag_file[0]
+else:
+	print('No or multiple manual flag files found.')
+	sys.exit()
 
 
 myms = project_info['master_ms']

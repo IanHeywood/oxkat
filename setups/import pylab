@@ -1,0 +1,26 @@
+import pylab
+import numpy
+from pyrap.tables import table
+
+myms = '1562500862_sdp_l0_wtspec_A3556.ms'
+pp = 0 # ANTENNA1
+qq = 1 # ANTENNA2
+field = 0 #
+
+tt = table(myms)
+subtab = tt.query('ANTENNA1=='+str(pp)+' && ANTENNA2=='+str(qq)+' && FIELD_ID=='+str(field))
+wt = subtab.getcol('WEIGHT_SPECTRUM')
+
+spec = numpy.mean(wt,axis=2)
+
+fig = pylab.figure()
+ax = fig.add_subplot(111)
+
+chans = numpy.arange(0,spec.shape[1])
+ax.plot(chans,spec[0,:],'o')
+ax.set_xlabel("Channel")
+ax.set_ylabel("WEIGHT_SPECTRUM")
+
+pngname = 'plot_'+myms.rstrip('/')+'_'+str(pp)+'_'+str(qq)+'_FLD'+str(field)+'.png'
+
+fig.savefig('wtspec.png')

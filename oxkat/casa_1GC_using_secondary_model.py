@@ -376,7 +376,7 @@ for i in range(0,len(pcals)):
         field = pcal,
 #        calwt = False,
         parang = False,
-        gainfield = ['','',bpcal,''],
+        gainfield = ['','',bpcal,pcal],
         interp = ['nearest','linear','linear','linear'])
 
 
@@ -496,7 +496,7 @@ for i in range(0,len(pcals)):
         field = pcal,
 #        calwt = False,
         parang = False,
-        gainfield = ['','',bpcal,''],
+        gainfield = ['','',bpcal,pcal],
         interp = ['nearest','linear','linear','linear'])
 
 

@@ -18,7 +18,8 @@ def main():
     CWD = gen.CWD
     OXKAT = gen.OXKAT
     PARSETS = gen.PARSETS
-    SCRIPTS = gen.SCRIPTS
+    SCRIPTS = gen.SCRIPT
+    TOOLS = gen.TOOLS
     LOGS = gen.LOGS
     CASA_CONTAINER = gen.CASA_CONTAINER
     DDFACET_CONTAINER = gen.DDFACET_CONTAINER
@@ -223,7 +224,7 @@ def main():
 
 
     gen.write_slurm(opfile=slurmfile,
-                jobname=code+'_1GC',
+                jobname=code+'__1GC',
                 logfile=logfile,
                 syscall=syscall)
 
@@ -234,6 +235,33 @@ def main():
 
     job_id_1GC = 'FIRSTGEN_'+code
     syscall = job_id_1GC+"=`sbatch -d afterok:${"+job_id_secondary_model+"} "+slurmfile+" | awk '{print $4}'`"
+    f.write(syscall+'\n')
+
+
+    # ------------------------------------------------------------------------------
+    # Plot calibration tables 
+
+
+    slurmfile = SCRIPTS+'/slurm_gainplot_'+code+'.sh'
+    logfile = LOGS+'/slurm_gainplot_'+code+'.log'
+
+
+    syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
+    syscall += 'python3 '+TOOLS+'/plot_gaintabs.py\n'
+
+
+    gen.write_slurm(opfile=slurmfile,
+                jobname=code+'gplot',
+                logfile=logfile,
+                syscall=syscall)
+
+
+    syscall = syscall.replace(RAGAVI_CONTAINER,XRAGAVI_CONTAINER)
+    g.write(syscall+'\n')
+
+
+    job_id_gainplot = 'GAINPLOT_'+code
+    syscall = job_id_gainplot+"=`sbatch -d afterok:${"+job_id_1GC"} "+slurmfile+" | awk '{print $4}'`"
     f.write(syscall+'\n')
 
 

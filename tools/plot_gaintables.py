@@ -3,6 +3,7 @@
 
 
 import glob
+import os
 import os.path as o
 import pickle
 import subprocess
@@ -27,9 +28,11 @@ def main():
 
         gaintype = caltab.split('.')[-1][0].upper()
         opfile = GAINPLOTS+'/'+caltab
-        syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
-        subprocess.run([syscall],shell=True)
-
+        if not os.path.isfile(opfile):
+	        syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
+    	    subprocess.run([syscall],shell=True)
+    	else:
+    		print(opfile+' exists, skipping')
 
 if __name__ == "__main__":
 

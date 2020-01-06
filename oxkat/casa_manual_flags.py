@@ -41,7 +41,6 @@ while line:
 			continue
 		flagdata(vis=myms,
 			mode = 'manual',
-			selectdata = True,
 			antenna = ant,
 			scan = scans)
 

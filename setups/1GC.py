@@ -249,7 +249,7 @@ def main():
 
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
-    syscall += 'python3 '+TOOLS+'/plot_gaintabs.py\n'
+    syscall += 'python3 '+TOOLS+'/plot_gaintables.py\n'
 
 
     gen.write_slurm(opfile=slurmfile,

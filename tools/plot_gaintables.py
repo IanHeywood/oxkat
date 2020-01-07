@@ -29,10 +29,10 @@ def main():
         gaintype = caltab.split('.')[-1][0].upper()
         opfile = GAINPLOTS+'/'+caltab
         if not os.path.isfile(opfile):
-	        syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
-    	    subprocess.run([syscall],shell=True)
-    	else:
-    		print(opfile+' exists, skipping')
+            syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
+            subprocess.run([syscall],shell=True)
+        else:
+            print(opfile+' exists, skipping')
 
 if __name__ == "__main__":
 

@@ -25,10 +25,10 @@ clearstat()
 
 
 f = open(flag_file,'r')
-line = f.readline()
+line = f.readline().rstrip('\n')
 while line:
 	if line[0] != '#':
-		cols = line.split(':').rstrip('\n')
+		cols = line.split(':')
 		if len(cols) == 1:
 			ant = cols[0]
 			scans = ''
@@ -43,7 +43,7 @@ while line:
 			mode = 'manual',
 			antenna = ant,
 			scan = scans)
-	line = f.readline()
+	line = f.readline().rstrip('\n')
 f.close()
 
 

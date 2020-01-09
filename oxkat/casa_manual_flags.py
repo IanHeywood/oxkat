@@ -28,7 +28,7 @@ f = open(flag_file,'r')
 line = f.readline()
 while line:
 	if line[0] != '#':
-		cols = line.split(':')
+		cols = line.split(':').rstrip('\n')
 		if len(cols) == 1:
 			ant = cols[0]
 			scans = ''

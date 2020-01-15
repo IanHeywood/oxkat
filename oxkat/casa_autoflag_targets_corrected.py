@@ -22,7 +22,7 @@ clearstat()
 for target in targets:
     flagdata(vis=myms,mode='rflag',datacolumn='corrected',field=target[1])
     flagdata(vis=myms,mode='tfcrop',datacolumn='corrected',field=target[1])
-    flagdata(vis=myms,mode='extend',growtime=90.0,growfreq=90.0,growaround=True,flagneartime=True,flagnearfreq=True)
+    flagdata(vis=myms,mode='extend',growtime=90.0,growfreq=90.0,growaround=True,flagneartime=True,flagnearfreq=True,field=target[1])
 
 
 flagmanager(vis=myms,mode='save',versionname='tfcrop_targets')

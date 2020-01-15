@@ -141,7 +141,7 @@ def main():
 
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_tfcrop_cals_data.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/casa_autoflag_cals_data.py --nologger --log2term --nogui\n'
 
 
     gen.write_slurm(opfile=slurmfile,

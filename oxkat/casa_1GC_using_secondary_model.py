@@ -98,7 +98,7 @@ gaincal(vis=myms,
     caltable=ktab0,
     refant = str(ref_ant),
     gaintype = 'K',
-    solint = 'int',
+    solint = 'inf',
     parang=False)
 
 
@@ -188,7 +188,7 @@ gaincal(vis=myms,
     caltable=ktab1,
     refant = str(ref_ant),
     gaintype = 'K',
-    solint = 'int',
+    solint = 'inf',
     parang=False,
     gaintable=[bptab0,gtab0],
     gainfield=[bpcal,bpcal],

@@ -2,6 +2,9 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+# Requires: pip install scikit-ued
+
+
 import numpy
 import shutil
 import sys
@@ -40,7 +43,6 @@ def main():
 
         input_fits = sys.argv[1]
 
-#        input_fits = 'zoom5450_beam_mh_1283MHz_3deg_I_re.fits'
         output_fits = input_fits.replace('.fits','_azavg.fits')
 
         shutil.copyfile(input_fits,output_fits)

@@ -305,7 +305,7 @@ def generate_syscall_ddfacet(mspattern,
                           robust=-0.3,
                           npix=10215,
                           cell=1.1,
-                          nfacets=16,
+                          nfacets=32,
                           ndegridband=8,
                           beam='',
                           beamnband=10,
@@ -352,6 +352,7 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--Beam-NBand '+str(beamnband)+' '
         syscall += '--Beam-DtBeamMin='+str(dtbeammin)+' '
         syscall += '--Beam-FITSParAngleIncDeg='+str(FITSParAngleIncDeg)+' '
+        syscall += '--Beam-CenterNorm=True '
     syscall += '--Deconv-RMSFactor=3.000000 '
     syscall += '--Data-Sort 1 '
     syscall += '--Cache-Dir=. '

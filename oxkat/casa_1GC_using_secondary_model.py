@@ -139,6 +139,10 @@ bandpass(vis=myms,
     gaintable=[ktab0,gtab0])
 
 
+flagdata(vis=bptab0,mode='tfcrop',datacolumn='CPARAM')
+flagdata(vis=bptab0,mode='rflag',datacolumn='CPARAM')
+
+
 # ------- Correct primary data with K0,B0,G0
 
 
@@ -230,6 +234,10 @@ bandpass(vis=myms,
     gainfield=[bpcal,bpcal],
     interp = ['nearest','nearest'],
     gaintable=[ktab1,gtab1])
+
+
+flagdata(vis=bptab1,mode='tfcrop',datacolumn='CPARAM')
+flagdata(vis=bptab1,mode='rflag',datacolumn='CPARAM')
 
 
 # ------- Correct primary data with K1,G1,B1

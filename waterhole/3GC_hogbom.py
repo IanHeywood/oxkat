@@ -104,7 +104,7 @@ def main():
                     partition='HighMem')
 
 
-        syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
+        syscall = syscall.replace(CLUSTERCAT_CONTAINER,CLUSTERCAT_CONTAINER)
         g.write(syscall+'\n')
 
 

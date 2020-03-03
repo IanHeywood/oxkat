@@ -321,6 +321,25 @@ def generate_syscall_ddfacet(mspattern,
 
     # Generate system call to run DDFacet
 
+# Output key:
+# Also                    =                   # Save also these images (i.e. adds to the default set of --Output-Images) #metavar:CODES #type:str
+# Cubes       =                   # Also save cube versions for these images (only MmRrIi codes recognized) #metavar:CODES #type:str
+# Images            = DdPAMRIikz        # Combination of letter codes indicating what images to save.
+#     Uppercase for intrinsic flux scale [D]irty, [M]odel, [C]onvolved model, [R]esiduals, restored [I]mage;
+#     Lowercase for apparent flux scale  [d]irty, [m]odel, [c]onvolved model, [r]esiduals, restored [i]mage;
+#     Other images: [P]SF,
+#     [N]orm, [n]orm facets,
+#     [S] flux scale,
+#     [A]lpha (spectral index),
+#     [X] mixed-scale (intrinsic model, apparent residuals, i.e. Cyrils original output),
+#     [o] intermediate mOdels (Model_i),
+#     [e] intermediate rEsiduals (Residual_i),
+#     [k] intermediate masK image,
+#     [z] intermediate auto mask-related noiZe image,
+#     [g] intermediate dirty images (only if [Debugging] SaveIntermediateDirtyImages is enabled).
+#     Use "all" to save all.
+
+
     syscall = 'DDF.py '
     syscall += '--Output-Name='+imgname+' '
     syscall += '--Data-MS '+mspattern+'//'+ddid+'//'+field+' '
@@ -338,7 +357,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Image-NPix='+str(npix)+' '
     syscall += '--CF-wmax 0 '
     syscall += '--CF-Nw 100 '
-    syscall += '--Output-Also onNeds '
+    syscall += '--Output-Also nNs '
     syscall += '--Image-Cell '+str(cell)+' '
     syscall += '--Facets-NFacets='+str(nfacets)+' '
     syscall += '--Facets-PSFOversize=1.5 '

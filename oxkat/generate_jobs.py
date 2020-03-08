@@ -115,6 +115,7 @@ def write_slurm(opfile,
                 jobname,
                 logfile,
                 syscall,
+                time='24:00:00',  
                 partition='Main',
                 ntasks='1',
                 nodes='1',
@@ -125,6 +126,7 @@ def write_slurm(opfile,
     f.writelines(['#!/bin/bash\n',
         '#file: '+opfile+':\n',
         '#SBATCH --job-name='+jobname+'\n',
+        '#SBATCH --time='+time+'\n',
         '#SBATCH --partition='+partition+'\n'
         '#SBATCH --ntasks='+ntasks+'\n',
         '#SBATCH --nodes='+nodes+'\n',
@@ -421,6 +423,7 @@ def generate_syscall_ddfacet_hogbom(mspattern,
                           ndegridband=64,
                           beam='',
                           beamnband=10,
+                          feedswap=1,
 #                          beamsmooth=False,
                           dtbeammin=1.0,
                           FITSParAngleIncDeg=0.5,
@@ -452,7 +455,7 @@ def generate_syscall_ddfacet_hogbom(mspattern,
     syscall += '--Image-NPix='+str(npix)+' '
     syscall += '--CF-wmax 0 '
     syscall += '--CF-Nw 100 '
-    syscall += '--Output-Also onNeds '
+    syscall += '--Output-Also nNs '
     syscall += '--Image-Cell '+str(cell)+' '
     syscall += '--Facets-NFacets='+str(nfacets)+' '
     syscall += '--Facets-PSFOversize=1.5 '
@@ -467,6 +470,7 @@ def generate_syscall_ddfacet_hogbom(mspattern,
         syscall += '--Beam-DtBeamMin='+str(dtbeammin)+' '
         syscall += '--Beam-FITSParAngleIncDeg='+str(FITSParAngleIncDeg)+' '
         syscall += '--Beam-CenterNorm=True '
+        syscall += '--Beam-FITSFeedSwap='+str(feedswap)+' '
     syscall += '--Deconv-RMSFactor=3.000000 '
     syscall += '--Data-Sort 1 '
     syscall += '--Cache-Dir=. '

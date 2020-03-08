@@ -66,7 +66,10 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'avrge',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,
+                time='12:00:00',
+                cpus='8',
+                mem='64GB')
 
 
     syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
@@ -93,7 +96,11 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'setup',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,
+                time='02:00:00',
+                cpus='8',
+                mem='64GB')
+
 
 
     syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
@@ -120,7 +127,11 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'basic',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,
+                time='12:00:00',
+                cpus='8',
+                mem='64GB')
+
 
 
     syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
@@ -147,7 +158,11 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'flag1',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,
+                time='12:00:00',
+                cpus='16',
+                mem='128GB')
+
 
 
     syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
@@ -174,7 +189,10 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'spcal',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,
+                time='12:00:00',
+                cpus='8',
+                mem='64GB')
 
 
     syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
@@ -201,7 +219,11 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'model',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,                
+                time='12:00:00',
+                cpus='16',
+                mem='128GB')
+
 
 
     syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
@@ -228,7 +250,11 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'__1GC',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,
+                time='12:00:00',
+                cpus='16',
+                mem='128GB')
+
 
 
     syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
@@ -255,7 +281,11 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'gplot',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,
+                time='12:00:00',
+                cpus='8',
+                mem='64GB')
+
 
 
     syscall = syscall.replace(RAGAVI_CONTAINER,XRAGAVI_CONTAINER)
@@ -282,7 +312,11 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'flag2',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,
+                time='12:00:00',
+                cpus='16',
+                mem='128GB')
+
 
 
     syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
@@ -309,7 +343,11 @@ def main():
     gen.write_slurm(opfile=slurmfile,
                 jobname=code+'split',
                 logfile=logfile,
-                syscall=syscall)
+                syscall=syscall,
+                time='12:00:00',
+                cpus='8',
+                mem='64GB')
+
 
 
     syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)

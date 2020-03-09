@@ -30,7 +30,7 @@ def main():
     XCLUSTERCAT_CONTAINER = gen.XCLUSTERCAT_CONTAINER
 
 
-    BEAM = '/users/ianh/Beams/hvfix/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
+    BEAM = '/home/ianh/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
 
 
     submit_file = 'submit_3GC_jobs.sh'

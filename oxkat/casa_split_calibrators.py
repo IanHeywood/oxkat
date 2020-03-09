@@ -19,6 +19,8 @@ field_selection = [bpcal]
 for pcal in pcals:
 	field_selection.append(pcal[1])
 
+field_selection = ','.join(sorted(field_selection))
+
 
 tb.open(myms+'/SPECTRAL_WINDOW')
 nchan = tb.getcol('NUM_CHAN')[0]
@@ -33,6 +35,7 @@ else:
 
 mstransform(vis=myms,
 	outputvis=opms,
+	field=field_selection,
 	datacolumn='data',
 	chanaverage=mychanave,
 	chanbin=mychanbin,

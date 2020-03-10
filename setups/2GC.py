@@ -57,7 +57,7 @@ def main():
         myms = target[2].rstrip('/')
 
     
-        kill_file = SCRIPTS+'/kill_2GC_jobs_'+target[0].replace('+','p')+'.sh'
+        kill_file = 'kill_2GC_jobs_'+target[0].replace('+','p')+'.sh'
 
 
         blind_prefix = 'img_'+myms+'_data'

@@ -177,10 +177,7 @@ def main():
         'target_list':['2','2'],
         'ref_ant':'-1',
         'master_ms':myms,
-        'nchan':4096,
-        'edge_flags':120,
-        'k0':2120,
-        'k1':3120}
+        'nchan':4096}
 
 
     nchan = get_nchan(myms)
@@ -193,12 +190,6 @@ def main():
     project_info['target_list'] = target_list 
     project_info['ref_ant'] = str(ref_ant)
     project_info['nchan'] = nchan
-    edge_flags = int(120*nchan/4096)
-    project_info['edge_flags'] = edge_flags
-    k0 = int(2120*nchan/4096)
-    k1 = int(3120*nchan/4096)
-    project_info['k0'] = k0
-    project_info['k1'] = k1
 
 
     pickle.dump(project_info,open(outpick,'wb'))

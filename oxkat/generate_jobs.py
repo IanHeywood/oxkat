@@ -82,52 +82,6 @@ def is_odd(xx):
     return odd
 
 
-def write_slurm(opfile,
-                jobname,
-                logfile,
-                syscall,
-                time='24:00:00',  
-                partition='Main',
-                ntasks='1',
-                nodes='1',
-                cpus='32',
-                mem='236GB'):
-
-    f = open(opfile,'w')
-    f.writelines(['#!/bin/bash\n',
-        '#file: '+opfile+':\n',
-        '#SBATCH --job-name='+jobname+'\n',
-        '#SBATCH --time='+time+'\n',
-        '#SBATCH --partition='+partition+'\n'
-        '#SBATCH --ntasks='+ntasks+'\n',
-        '#SBATCH --nodes='+nodes+'\n',
-        '#SBATCH --cpus-per-task='+cpus+'\n',
-        '#SBATCH --mem='+mem+'\n',
-        '#SBATCH --output='+logfile+'\n',
-        syscall+'\n',
-#        'singularity exec '+container+' '+syscall+'\n',
-        'sleep 10\n'])
-    f.close()
-
-    make_executable(opfile)
-
-
-# def write_pbs(opfile,
-#                 jobname,
-#                 logfile,
-#                 errfile,
-#                 syscall,
-#                 program='ASTR1301',
-#                 walltime='24:00:00',  
-#                 partition='serial',
-#                 nodes='1',
-#                 ppn='23',
-#                 mem='120gb'):
-
-
-#     make_executable(opfile)
-
-
 def job_handler(syscall,
                 jobname,
                 infrastructure,

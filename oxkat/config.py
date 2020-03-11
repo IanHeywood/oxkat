@@ -67,11 +67,11 @@ SLURM_MEM = '236GB'
 
 
 PBS_PROGRAM = 'ASTR1301'
-PBS_WALLTIME = '24:00:00'
+PBS_WALLTIME = '12:00:00'
 PBS_QUEUE = 'serial'
 PBS_NODES = '1'
-PBS_PPN = '23'
-PBS_MEM = '120gb'
+PBS_PPN = '8'
+PBS_MEM = '64gb'
 
 
 # ------------------------------------------------------------------------

@@ -102,7 +102,7 @@ def job_handler(syscall,
     if infrastructure == 'idia':
 
         slurm_runfile = cfg.SCRIPTS+'/slurm_'+jobname+'.sh'
-        slurm_logfile = cfg.SCRIPTS+'/slurm_'+jobname+'.log'
+        slurm_logfile = cfg.LOGS+'/slurm_'+jobname+'.log'
 
         run_command = jobname+"=`sbatch "
         if dependency:
@@ -129,8 +129,8 @@ def job_handler(syscall,
     elif infrastructure == 'chpc':
 
         pbs_runfile = cfg.SCRIPTS+'/pbs_'+jobname+'.sh'
-        pbs_logfile = cfg.SCRIPTS+'/pbs_'+jobname+'.log'
-        pbs_errfile = cfg.SCRIPTS+'/pbs_'+jobname+'.err'
+        pbs_logfile = cfg.LOGS+'/pbs_'+jobname+'.log'
+        pbs_errfile = cfg.LOGS+'/pbs_'+jobname+'.err'
 
         run_command = jobname+"=`qsub "
         if dependency:

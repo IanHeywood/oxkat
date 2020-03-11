@@ -30,7 +30,7 @@ BEAM = '~/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
 
 
 IDIA_CONTAINER_PATH = '~/containers/'
-CHPC_CONTAINER_PATH = '~/lustre/containers/'
+CHPC_CONTAINER_PATH = '/home/iheywood/lustre/containers'
 NODE_CONTAINER_PATH = '~/containers/'
 
 

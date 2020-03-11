@@ -9,7 +9,6 @@ import os
 import os.path as o
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
-
 import config as cfg
 
 
@@ -31,12 +30,12 @@ def get_container(path,pattern):
     path = path.rstrip('/')+'/'
     ll = sorted(glob.glob(path+'*'+pattern+'*img'))
     if len(ll) == 0:
-        print('Failed to find container for '+pattern+' in '+path)
+        print(now()+'Failed to find container for '+pattern+' in '+path)
         sys.exit()
     elif len(ll) > 1:
-        print('Warning, more than one match for '+pattern+' in '+path)
+        print(now()+'Warning, more than one match for '+pattern+' in '+path)
     container = ll[0]
-    print('Using container: '+container)
+    print(now()+'Using container: '+container)
     return container
 
 
@@ -61,11 +60,8 @@ def get_code(myms):
     # Last three digits of the data set ID
 
     myms = myms.split('/')[-1]
-
     code = myms.split('_')[0][-3:]
-
     code = code.replace('-','_')
-
     return code
 
 
@@ -128,39 +124,92 @@ def write_slurm(opfile,
 #                 ppn='23',
 #                 mem='120gb'):
 
-# '''
-# #!/bin/bash
-# #PBS -N 165avrge
-# #PBS -P ASTR1301
-# #PBS -l nodes=1:ppn=23,mem=120gb
-# #PBS -l walltime=06:00:00
-# #PBS -q serial
-# #PBS -o /mnt/lustre/users/iheywood/GC/GC29/logs/slurm_avg_165.log
-# #PBS -e /mnt/lustre/users/iheywood/GC/GC29/logs/slurm_avg_165.err
-
-# module load chpc/singularity
-# cd /mnt/lustre/users/iheywood/GC/GC29/
-# singularity exec /mnt/lustre/users/iheywood/containers/casa-stable-5.6.2-2.simg casa -c /mnt/lustre/users/ihe
-# ywood/GC/GC29/oxkat/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui
-# sleep 10
-# '''
-
-#     f = open(opfile,'w')
-#     f.writelines(['#!/bin/bash\n',
-#         '#PBS -N '+jobname+'\n',
-#         '#PBS -l walltime='+walltime+'\n',
-#         '#PBS -P --partition='+partition+'\n'
-#         '#SBATCH --ntasks='+ntasks+'\n',
-#         '#SBATCH --nodes='+nodes+'\n',
-#         '#SBATCH --cpus-per-task='+cpus+'\n',
-#         '#SBATCH --mem='+mem+'\n',
-#         '#SBATCH --output='+logfile+'\n',
-#         syscall+'\n',
-# #        'singularity exec '+container+' '+syscall+'\n',
-#         'sleep 10\n'])
-#     f.close()
 
 #     make_executable(opfile)
+
+
+def job_handler(syscall,
+                jobname,
+                infrastructure,
+                dependency=None,
+                slurm_time=cfg.SLURM_TIME,
+                slurm_partition=cfg.SLURM_PARTITION,
+                slurm_ntasks=cfg.SLURM_NTASKS,
+                slurm_nodes=cfg.SLURM_NODES,
+                slurm_cpus=cfg.SLURM_CPUS,
+                slurm_mem=cfg.SLURM_MEM,
+                pbs_program=cfg.PBS_PROGRAM,
+                pbs_walltime=cfg.PBS_WALLTIME,
+                pbs_queue=cfg.PBS_QUEUE,
+                pbs_nodes=cfg.PBS_NODES,
+                pbs_ppn=cfg.PBS_PPN,
+                pbs_mem=cfg.PBS_MEM):
+
+    if infrastructure == 'idia':
+
+        slurm_runfile = cfg.SCRIPTS+'/slurm_'+jobname+'.sh'
+        slurm_logfile = cfg.SCRIPTS+'/slurm_'+jobname+'.log'
+
+        run_command = jobname+"=`sbatch "
+        if dependency:
+          run_command += "-d afterok:${"+dependency+"} "
+        run_command += slurm_runfile+" | awk '{print $4}'`"
+
+        f = open(slurm_runfile,'w')
+        f.writelines(['#!/bin/bash\n',
+            '#file: '+slurm_runfile+':\n',
+            '#SBATCH --job-name='+jobname+'\n',
+            '#SBATCH --time='+slurm_time+'\n',
+            '#SBATCH --partition='+slurm_partition+'\n'
+            '#SBATCH --ntasks='+slurm_ntasks+'\n',
+            '#SBATCH --nodes='+slurm_nodes+'\n',
+            '#SBATCH --cpus-per-task='+slurm_cpus+'\n',
+            '#SBATCH --mem='+slurm_mem+'\n',
+            '#SBATCH --output='+slurm_logfile+'\n',
+            syscall,
+            'sleep 10\n'])
+        f.close()
+
+        make_executable(slurm_runfile)
+
+    elif infrastructure == 'chpc':
+
+        pbs_runfile = cfg.SCRIPTS+'/pbs_'+jobname+'.sh'
+        pbs_logfile = cfg.SCRIPTS+'/pbs_'+jobname+'.log'
+        pbs_errfile = cfg.SCRIPTS+'/pbs_'+jobname+'.err'
+
+        run_command = jobname+"=`qsub "
+        if dependency:
+          run_command += "depend=afterok:${"+dependency+"} "
+        run_command += pbs_runfile+" | awk '{print $4}'`"
+
+        f = open(pbs_runfile,'w')
+        f.writelines(['#!/bin/bash\n',
+            '#PBS -N '+jobname+'\n',
+            '#PBS -P '+pbs_program+'\n'
+            '#PBS -l walltime='+pbs_walltime+'\n',
+            '#PBS -l nodes='+pbs_nodes+':ppn='+pbs_ppn+',mem='+pbs_mem+'\n',
+            '#PBS -q '+pbs_queue+'\n'
+            '#PBS -o '+pbs_logfile+'\n'
+            '#PBS -e '+pbs_errfile+'\n'
+            '\n',
+            'module load chpc/singularity\n'
+            'cd '+cfg.CWD+'\n',
+            syscall+'\n',
+            'sleep 10\n'])
+        f.close()
+
+        make_executable(pbs_runfile)
+
+
+    elif infrastructure == 'node':
+
+        run_command = syscall
+
+    return run_command
+
+        
+
 
 def generate_syscall_cubical(parset,myms,prefix):
 

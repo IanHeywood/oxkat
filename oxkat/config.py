@@ -14,11 +14,13 @@ CWD = os.getcwd()
 
 OXKAT = CWD+'/oxkat'
 PARSETS = CWD+'/parsets'
-SCRIPTS = CWD+'/scripts'
 TOOLS = CWD+'/tools'
+
+SCRIPTS = CWD+'/scripts'
 LOGS = CWD+'/logs'
 GAINPLOTS = CWD+'/gainplots'
-BEAM = '/home/ianh/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
+
+BEAM = '~/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
 
 
 # ------------------------------------------------------------------------
@@ -66,7 +68,8 @@ SLURM_MEM = '236GB'
 
 PBS_PROGRAM = 'ASTR1301'
 PBS_WALLTIME = '24:00:00'
-PBS_PARTITION = 'serial'
+PBS_QUEUE = 'serial'
+PBS_NODES = '1'
 PBS_PPN = '23'
 PBS_MEM = '120gb'
 

@@ -6,70 +6,45 @@ import glob
 import datetime
 import time
 import os
+import os.path as o
 import sys
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
+
+import config as cfg
 
 
 # ------------------------------------------------------------------------
-#
-# GENERAL CONFIGURATION
-#
 
 
-# Folders
-CWD = os.getcwd()
-OXKAT = CWD+'/oxkat'
-PARSETS = CWD+'/parsets'
-SCRIPTS = CWD+'/scripts'
-TOOLS = CWD+'/tools'
-LOGS = CWD+'/logs'
-GAINPLOTS = CWD+'/gainplots'
+def now():
+    # stamp = time.strftime('[%H:%M:%S] ')
+    stamp = time.strftime('[%Y-%m-%d %H:%M:%S]: ')
+    # msg = '\033[92m'+stamp+'\033[0m' # time in green
+    msg = stamp+' '
+    return msg
 
 
-# Containers for IDIA
-IDIA_CONTAINER_PATH = '/users/ianh/containers/'
-CASA_CONTAINER = '/idia/software/containers/casa-stable-5.6.2-2.simg'
-CODEX_CONTAINER = IDIA_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
-CUBICAL_CONTAINER = IDIA_CONTAINER_PATH+'cubical-1.2.4.simg'
-DDFACET_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-0.4.1.simg'
-KILLMS_CONTAINER = IDIA_CONTAINER_PATH+'killms-2.7.0.simg'
-RAGAVI_CONTAINER = IDIA_CONTAINER_PATH+'ragavi-1.2.4.simg'
-CLUSTERCAT_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-0.5.2.simg'
-SOURCEFINDER_CONTAINER = IDIA_CONTAINER_PATH+'pybdsf-1.2.3.simg'
-TRICOLOUR_CONTAINER = IDIA_CONTAINER_PATH+'tricolour-1.1.3.simg'
-WSCLEAN_CONTAINER = IDIA_CONTAINER_PATH+'wsclean-1.2.4.simg'
+def get_container(path,pattern):
 
+    # Search for a file matching pattern in path
 
-# Containers for standalone servers
-SERVER_CONTAINER_PATH = '/home/ianh/containers/'
-XCASA_CONTAINER = SERVER_CONTAINER_PATH+'casa-stable-5.6.2-2.simg'
-XCODEX_CONTAINER = SERVER_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
-XCUBICAL_CONTAINER = SERVER_CONTAINER_PATH+'cubical-1.2.4.simg'
-XDDFACET_CONTAINER = SERVER_CONTAINER_PATH+'ddfacet-0.4.1.simg'
-XKILLMS_CONTAINER = SERVER_CONTAINER_PATH+'killms-2.7.0.simg'
-XRAGAVI_CONTAINER = SERVER_CONTAINER_PATH+'ragavi-1.2.4.simg'
-XCLUSTERCAT_CONTAINER = SERVER_CONTAINER_PATH+'ddfacet-0.5.0.simg'
-XSOURCEFINDER_CONTAINER = SERVER_CONTAINER_PATH+'pybdsf-1.2.3.simg'
-XTRICOLOUR_CONTAINER = SERVER_CONTAINER_PATH+'tricolour-1.1.3.simg'
-XWSCLEAN_CONTAINER = SERVER_CONTAINER_PATH+'wsclean-1.2.4.simg'
-
-
-# Miscellaneous
-#XCASA_EXEC = '/home/ianh/Software/casa-release-4.7.2-el7/bin/casa'
-XCASA_EXEC = 'casa'
-TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
-PLOT_SCRIPTS = '/users/ianh/Software/plot_utils'
-
-
-#
-#
-# ------------------------------------------------------------------------
+    path = path.rstrip('/')+'/'
+    ll = sorted(glob.glob(path+'*'+pattern+'*img'))
+    if len(ll) == 0:
+        print('Failed to find container for '+pattern+' in '+path)
+        sys.exit()
+    elif len(ll) > 1:
+        print('Warning, more than one match for '+pattern+' in '+path)
+    container = ll[0]
+    print('Using container: '+container)
+    return container
 
 
 def setup_dir(DIR):
 
     # Make scripts folder if it doesn't exist
 
-    if not os.path.isdir(DIR):
+    if not o.isdir(DIR):
         os.mkdir(DIR)
 
 
@@ -140,6 +115,52 @@ def write_slurm(opfile,
 
     make_executable(opfile)
 
+
+# def write_pbs(opfile,
+#                 jobname,
+#                 logfile,
+#                 errfile,
+#                 syscall,
+#                 program='ASTR1301',
+#                 walltime='24:00:00',  
+#                 partition='serial',
+#                 nodes='1',
+#                 ppn='23',
+#                 mem='120gb'):
+
+# '''
+# #!/bin/bash
+# #PBS -N 165avrge
+# #PBS -P ASTR1301
+# #PBS -l nodes=1:ppn=23,mem=120gb
+# #PBS -l walltime=06:00:00
+# #PBS -q serial
+# #PBS -o /mnt/lustre/users/iheywood/GC/GC29/logs/slurm_avg_165.log
+# #PBS -e /mnt/lustre/users/iheywood/GC/GC29/logs/slurm_avg_165.err
+
+# module load chpc/singularity
+# cd /mnt/lustre/users/iheywood/GC/GC29/
+# singularity exec /mnt/lustre/users/iheywood/containers/casa-stable-5.6.2-2.simg casa -c /mnt/lustre/users/ihe
+# ywood/GC/GC29/oxkat/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui
+# sleep 10
+# '''
+
+#     f = open(opfile,'w')
+#     f.writelines(['#!/bin/bash\n',
+#         '#PBS -N '+jobname+'\n',
+#         '#PBS -l walltime='+walltime+'\n',
+#         '#PBS -P --partition='+partition+'\n'
+#         '#SBATCH --ntasks='+ntasks+'\n',
+#         '#SBATCH --nodes='+nodes+'\n',
+#         '#SBATCH --cpus-per-task='+cpus+'\n',
+#         '#SBATCH --mem='+mem+'\n',
+#         '#SBATCH --output='+logfile+'\n',
+#         syscall+'\n',
+# #        'singularity exec '+container+' '+syscall+'\n',
+#         'sleep 10\n'])
+#     f.close()
+
+#     make_executable(opfile)
 
 def generate_syscall_cubical(parset,myms,prefix):
 

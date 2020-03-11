@@ -29,9 +29,9 @@ BEAM = '~/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
 #
 
 
-IDIA_CONTAINER_PATH = '/users/ianh/containers/'
-CHPC_CONTAINER_PATH = '/mnt/lustre/users/iheywood/containers/'
-NODE_CONTAINER_PATH = '/home/ianh/containers/'
+IDIA_CONTAINER_PATH = '~/containers/'
+CHPC_CONTAINER_PATH = '~/lustre/containers/'
+NODE_CONTAINER_PATH = '~/containers/'
 
 
 CASA_PATTERN = 'casa'

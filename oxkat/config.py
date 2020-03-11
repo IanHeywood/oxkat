@@ -35,10 +35,10 @@ NODE_CONTAINER_PATH = '~/containers/'
 
 
 CASA_PATTERN = 'casa'
-CLUSTERCAT_PATTERN = 'ddfacet-0.5.2'
+CLUSTERCAT_PATTERN = 'ddfacet-0.4.1'
 CODEX_PATTERN = 'codex-africanus'
 CUBICAL_PATTERN = 'cubical'
-DDFACET_PATTERN = 'ddfacet-0.4.1'
+DDFACET_PATTERN = 'ddfacet-0.5.2'
 KILLMS_PATTERN = 'killms'
 PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'

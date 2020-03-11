@@ -134,7 +134,7 @@ def job_handler(syscall,
 
         run_command = jobname+"=`qsub "
         if dependency:
-          run_command += "depend=afterok:${"+dependency+"} "
+          run_command += "-W depend=afterok:${"+dependency+"} "
         run_command += pbs_runfile+" | awk '{print $1}'`"
 
         f = open(pbs_runfile,'w')

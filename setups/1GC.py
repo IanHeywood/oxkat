@@ -41,7 +41,6 @@ def main():
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
-    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
 
  
     submit_file = 'submit_1GC_jobs.sh'
@@ -85,7 +84,7 @@ def main():
     # Run setup script
 
 
-    syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+    syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
     syscall += 'python '+OXKAT+'/00_setup.py '+myms+'\n'
 
     id_setup = 'INFO_'+code

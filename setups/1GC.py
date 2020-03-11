@@ -177,7 +177,7 @@ def main():
     syscall = 'singularity exec '+CASA_CONTAINER+' '
     syscall += 'casa -c '+OXKAT+'/casa_1GC_using_secondary_model.py --nologger --log2term --nogui\n'
 
-    id_1GC = '1GC__'+code
+    id_1GC = 'ONEGC'+code
     id_list.append(id_1GC)
 
     run_command = gen.job_handler(syscall=syscall,

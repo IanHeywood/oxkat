@@ -9,7 +9,7 @@ import os
 import os.path as o
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
-import config as cfg
+from oxkat import config as cfg
 
 
 # ------------------------------------------------------------------------
@@ -17,7 +17,7 @@ import config as cfg
 
 def now():
     # stamp = time.strftime('[%H:%M:%S] ')
-    stamp = time.strftime('[%Y-%m-%d %H:%M:%S]: ')
+    stamp = time.strftime('[%Y-%m-%d %H:%M:%S]:')
     # msg = '\033[92m'+stamp+'\033[0m' # time in green
     msg = stamp+' '
     return msg
@@ -162,8 +162,6 @@ def job_handler(syscall,
 
     return run_command
 
-        
-
 
 def generate_syscall_cubical(parset,myms,prefix):
 
@@ -229,7 +227,7 @@ def generate_syscall_wsclean(mslist,
 
 
     if is_odd(imsize):
-        print('Do not use odd image sizes with wsclean')
+        print(now()+'Do not use odd image sizes with wsclean')
         sys.exit()
 
 
@@ -323,8 +321,9 @@ def generate_syscall_ddfacet(mspattern,
                           imgname,
                           ddid='D*',
                           field='F0',
-                          chunkhours=1,
-                          colname='CORRECTED_DATA',
+                          colname=cfg.DDF_COLNAME,
+                          chunkhours=cfg.DDF_CHUNKHOURS,
+                          predictcolname=cfg.DDF_PREDICTCOLNAME,
                           ncpu=32,
                           maxminoriter=120000,
                           maxmajoriter=3,
@@ -369,10 +368,13 @@ def generate_syscall_ddfacet(mspattern,
     syscall = 'DDF.py '
     syscall += '--Output-Name='+imgname+' '
     syscall += '--Data-MS '+mspattern+'//'+ddid+'//'+field+' '
-    syscall += '--Data-ChunkHours '+str(chunkhours)+' '
-    syscall += '--Deconv-PeakFactor 0.001000 '
     syscall += '--Data-ColName '+colname+' '
-    syscall += '--Predict-ColName MODEL_DATA '
+    syscall += '--Data-ChunkHours '+str(chunkhours)+' '
+    syscall += '--Data-Sort 1 '
+    syscall += '--Deconv-PeakFactor 0.001000 '
+    syscall += '--Predict-ColName '+predictcolname+' '
+    if initdicomodel != '':
+        syscall += '--Predict-InitDicoModel '+initdicomodel+' '
     syscall += '--Parallel-NCPU='+str(ncpu)+' '
     syscall += '--Output-Mode=Clean '
     syscall += '--Deconv-CycleFactor=0 '
@@ -399,7 +401,6 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--Beam-FITSParAngleIncDeg='+str(FITSParAngleIncDeg)+' '
         syscall += '--Beam-CenterNorm=True '
     syscall += '--Deconv-RMSFactor=3.000000 '
-    syscall += '--Data-Sort 1 '
     syscall += '--Cache-Dir=. '
     syscall += '--Cache-HMP 1 '
     syscall += '--Freq-NBand='+str(nband)+' '
@@ -421,8 +422,6 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Facets-DiamMin 0.05 '
     syscall += '--Misc-ConserveMemory 1 '
     syscall += '--Log-Memory 1 '
-    if initdicomodel != '':
-        syscall += '--Predict-InitDicoModel '+initdicomodel+' '
     if ddsols != '':
         syscall += '--DDESolutions-DDSols '+ddsols
 

@@ -8,10 +8,11 @@ import os.path as o
 import pickle
 import subprocess
 import sys
-sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "../")))
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
 
 from oxkat import generate_jobs as gen
+from oxkat import config as cfg
 
 
 def main():

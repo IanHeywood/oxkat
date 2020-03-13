@@ -18,7 +18,7 @@ from oxkat import config as cfg
 def main():
 
 
-    GAINPLOTS = gen.GAINPLOTS
+    GAINPLOTS = cfg.GAINPLOTS
     gen.setup_dir(GAINPLOTS)
 
 

@@ -319,210 +319,140 @@ def generate_syscall_makemask(prefix,thresh=6.0):
 
 def generate_syscall_ddfacet(mspattern,
                           imgname,
-                          ddid='D*',
-                          field='F0',
-                          colname=cfg.DDF_COLNAME,
-                          chunkhours=cfg.DDF_CHUNKHOURS,
-                          predictcolname=cfg.DDF_PREDICTCOLNAME,
-                          ncpu=32,
-                          maxminoriter=120000,
-                          maxmajoriter=3,
-                          robust=-0.3,
-                          npix=10215,
-                          cell=1.1,
-                          nfacets=32,
-                          ndegridband=8,
-                          beam='',
-                          beamnband=10,
-#                          beamsmooth=False,
-                          dtbeammin=1,
-                          FITSParAngleIncDeg=0.5,
-                          nband=8,
-                          mask='auto',
-                          masksigma=5.5,
-                          cachereset=0,
-                          ddsols='',
-                          initdicomodel=''):
-
-    # Generate system call to run DDFacet
-
-# Output key:
-# Also                    =                   # Save also these images (i.e. adds to the default set of --Output-Images) #metavar:CODES #type:str
-# Cubes       =                   # Also save cube versions for these images (only MmRrIi codes recognized) #metavar:CODES #type:str
-# Images            = DdPAMRIikz        # Combination of letter codes indicating what images to save.
-#     Uppercase for intrinsic flux scale [D]irty, [M]odel, [C]onvolved model, [R]esiduals, restored [I]mage;
-#     Lowercase for apparent flux scale  [d]irty, [m]odel, [c]onvolved model, [r]esiduals, restored [i]mage;
-#     Other images: [P]SF,
-#     [N]orm, [n]orm facets,
-#     [S] flux scale,
-#     [A]lpha (spectral index),
-#     [X] mixed-scale (intrinsic model, apparent residuals, i.e. Cyrils original output),
-#     [o] intermediate mOdels (Model_i),
-#     [e] intermediate rEsiduals (Residual_i),
-#     [k] intermediate masK image,
-#     [z] intermediate auto mask-related noiZe image,
-#     [g] intermediate dirty images (only if [Debugging] SaveIntermediateDirtyImages is enabled).
-#     Use "all" to save all.
-
+                          ddid = cfg.DDF_DDID,
+                          field = cfg.DDF_FIELD,
+                          colname = cfg.DDF_COLNAME,
+                          chunkhours = cfg.DDF_CHUNKHOURS,
+                          predictcolname = cfg.DDF_PREDICTCOLNAME,
+                          initdicomodel = cfg.INITDICOMODEL,
+                          outputalso = cfg.DDF_OUTPUTALSO,
+                          outputimages = cfg.DDF_OUTPUTIMAGES,
+                          outputcubes = cfg.DDF_OUTPUTCUBES,
+                          npix = cfg.DDF_NPIX,
+                          cell = cfg.DDF_CELL,
+                          nfacets =cfg.DDF_NFACETS,
+                          psfoversize = cfg.DDF_PSFOVERSIZE,
+                          robust = cfg.DDF_ROBUST,
+                          sparsification = cfg.DDF_SPARSIFICATION,
+                          ncpu = cfg.DDF_NCPU,
+                          cachereset = cfg.DDF_CACHERESET,
+                          cachedir = cfg.DDF_CACHEDIR,
+                          cachehmp = cfg.DDF_CACHEHMP,
+                          beam = cfg.DDF_BEAM,
+                          beamnband = cfg.DDF_BEAMNBAND,
+                          dtbeammin = cfg.DDF_DTBEAMMIN,
+                          FITSParAngleIncDeg = cfg.DDF_FITSPARANGLEINCDEG,
+                          beamcentrenorm = cfg.DDF_BEAMCENTRENORM,
+                          beamsmooth = cfg.DDF_BEAMSMOOTH,
+                          nband = cfg.DDF_NBAND,
+                          ndegridband = cfg.DDF_NDEGRIDBAND,
+                          ddsols = cfg.DDF_DDSOLS,
+                          ddmodegrid = cfg.DDF_DDMODEGRID,
+                          ddmodedegrid = cfg.DDF_DDMODEDEGRID,
+                          deconvmode = cfg.DDF_DECONVMODE,
+                          ssd_deconvpeakfactor = cfg.DDF_SSD_DECONVPEAKFACTOR,
+                          ssd_maxminoriter = cfg.DDF_SSD_MAXMINORITER,
+                          ssd_maxmajoriter = cfg.DDF_SSD_MAXMAJORITER,
+                          ssd_enlargedata = cfg.DDF_SSD_ENLARGEDATA,
+                          hogbom_deconvpeakfactor = cfg.DDF_HOGBOM_DECONVPEAKFACTOR,
+                          hogbom_maxminoriter = cfg.DDF_HOGBOM_MAXMINORITER,
+                          hogbom_maxmajoriter = cfg.DDF_HOGBOM_MAXMAJORITER,
+                          hogbom_polyfitorder = cfg.DDF_HOGBOM_POLYFITORDER,
+                          mask = cfg.DDF_MASK,
+                          masksigma = cfg.DDF_MASKSIGMA,
+                          conservememory = cfg.DDF_CONSERVEMEMORY):
 
     syscall = 'DDF.py '
-    syscall += '--Output-Name='+imgname+' '
+    # [Data]
     syscall += '--Data-MS '+mspattern+'//'+ddid+'//'+field+' '
     syscall += '--Data-ColName '+colname+' '
     syscall += '--Data-ChunkHours '+str(chunkhours)+' '
     syscall += '--Data-Sort 1 '
-    syscall += '--Deconv-PeakFactor 0.001000 '
+    # [Predict]
     syscall += '--Predict-ColName '+predictcolname+' '
     if initdicomodel != '':
         syscall += '--Predict-InitDicoModel '+initdicomodel+' '
-    syscall += '--Parallel-NCPU='+str(ncpu)+' '
-    syscall += '--Output-Mode=Clean '
-    syscall += '--Deconv-CycleFactor=0 '
-    syscall += '--Deconv-MaxMajorIter='+str(maxmajoriter)+' '
-    syscall += '--Deconv-MaxMinorIter='+str(maxminoriter)+' '
-    syscall += '--Deconv-Mode SSD '
-    syscall += '--Weight-Robust '+str(robust)+' '
-    syscall += '--Image-NPix='+str(npix)+' '
-    syscall += '--CF-wmax 0 '
-    syscall += '--CF-Nw 100 '
-    syscall += '--Output-Also nNs '
+    # [Output]
+    syscall += '--Output-Name '+imgname+' '
+    syscall += '--Output-Mode Clean '
+    syscall += '--Output-Also '+outputalso+' '
+    syscall += '--Output-Images '+outputimages+' '
+    syscall += '--Output-Cubes '+outputcubes+' '
+    # [Image]
+    syscall += '--Image-NPix '+str(npix)+' '
     syscall += '--Image-Cell '+str(cell)+' '
-    syscall += '--Facets-NFacets='+str(nfacets)+' '
-    syscall += '--Facets-PSFOversize=1.5 '
-    syscall += '--SSDClean-NEnlargeData 0 '
-    syscall += '--Freq-NDegridBand '+str(ndegridband)+' '
-    if beam == '':
-        syscall += '--Beam-Model=None '
-    else:
-        syscall += '--Beam-Model=FITS '
-        syscall += "--Beam-FITSFile=\'"+str(beam)+"\' "
-        syscall += '--Beam-NBand '+str(beamnband)+' '
-        syscall += '--Beam-DtBeamMin='+str(dtbeammin)+' '
-        syscall += '--Beam-FITSParAngleIncDeg='+str(FITSParAngleIncDeg)+' '
-        syscall += '--Beam-CenterNorm=True '
-    syscall += '--Deconv-RMSFactor=3.000000 '
-    syscall += '--Cache-Dir=. '
-    syscall += '--Cache-HMP 1 '
-    syscall += '--Freq-NBand='+str(nband)+' '
-    if mask.lower() == 'fits':
-        mymask = glob.glob('*mask.fits')[0]
-        syscall += '--Mask-Auto=0 '
-        syscall += '--Mask-External='+mymask+' '
-    elif mask.lower() == 'auto':
-        syscall += '--Mask-Auto=1 '
-        syscall += '--Mask-SigTh='+str(masksigma)+' '
-    else:
-        syscall += '--Mask-Auto=0 '
-        syscall += '--Mask-External='+mask+' '
-    syscall += '--Cache-Reset '+str(cachereset)+' '
-    syscall += '--Comp-GridDecorr=0.01 '
-    syscall += '--Comp-DegridDecorr=0.01 '
-    #syscall += '--SSDClean-MinSizeInit=10 '
+    # [Facets]
     syscall += '--Facets-DiamMax .25 '
     syscall += '--Facets-DiamMin 0.05 '
-    syscall += '--Misc-ConserveMemory 1 '
-    syscall += '--Log-Memory 1 '
+    syscall += '--Facets-NFacets '+str(nfacets)+' '
+    syscall += '--Facets-PSFOversize '+str(psfoversize)+' '
+    # [Weight]
+    syscall += '--Weight-Robust '+str(robust)+' '
+    # [CF]
+    # syscall += '--CF-wmax 0 '
+    # syscall += '--CF-Nw 100 '
+    # [Comp]
+    syscall += '--Comp-GridDecorr 0.01 '
+    syscall += '--Comp-DegridDecorr 0.01 '
+    syscall += '--Comp-Sparsification '+str(sparsification)+' '
+    # [Parallel]
+    syscall += '--Parallel-NCPU '+str(ncpu)+' '
+    # [Cache]    
+    syscall += '--Cache-Reset '+str(cachereset)+' '
+    syscall += '--Cache-Dir '+str(cachedir)+' '
+    syscall += '--Cache-HMP 1 '+str(cachehmp)+' '
+    # [Beam]
+    if beam == '':
+        syscall += '--Beam-Model None '
+    else:
+        syscall += '--Beam-Model FITS '
+        syscall += "--Beam-FITSFile \'"+str(beam)+"\' "
+        syscall += '--Beam-NBand '+str(beamnband)+' '
+        syscall += '--Beam-DtBeamMin '+str(dtbeammin)+' '
+        syscall += '--Beam-FITSParAngleIncDeg '+str(FITSParAngleIncDeg)+' '
+        syscall += '--Beam-CenterNorm '+str(beamcentrenorm)+' '
+        syscall += '--Beam-FITSFeedSwap '+str(feedswap)+' '
+        syscall += '--Beam-Smooth '=str(beamsmooth)+' '
+    # [Freq]
+    syscall += '--Freq-NBand '+str(nband)+' '
+    syscall += '--Freq-NDegridBand '+str(ndegridband)+' '
+    # [DDESolutions]
     if ddsols != '':
-        syscall += '--DDESolutions-DDSols '+ddsols
+        syscall += '--DDESolutions-DDSols '+ddsols+' '
+        syscall += '--DDESolutions-DDModeGrid '+ddmodegrid+' '
+        syscall += '--DDESolutions-DDModeDeGrid '+ddmodedegrid+' '
+    # [Deconv]
+    syscall += '--Deconv-CycleFactor 0 '
+    syscall += '--Deconv-RMSFactor 3.000000 '
+    if deconvmode.lower() == 'ssd':
+        syscall += '--Deconv-Mode SSD '
+        syscall += '--Deconv-PeakFactor '+str(ssd_deconvpeakfactor)+' '
+        syscall += '--Deconv-MaxMajorIter '+str(ssd_maxmajoriter)+' '
+        syscall += '--Deconv-MaxMinorIter '+str(ssd_maxminoriter)+' '
+        syscall += '--SSDClean-NEnlargeData '+str(ssd_enlargedata)
+    elif deconvmode.lower() == 'hogbom':
+        syscall += '--Deconv-Mode Hogbom '
+        syscall += '--Deconv-PeakFactor '+str(hogbom_deconvpeakfactor)+' '
+        syscall += '--Deconv-MaxMajorIter '+str(hogbom_maxmajoriter)+' '
+        syscall += '--Deconv-MaxMinorIter '+str(hogbom_maxminoriter)+' '    
+        syscall += '--Hogbom-PolyFitOrder '+str(hogbom_polyfitorder)+' '
+    # [Mask]
+    if mask.lower() == 'fits':
+        mymask = sorted(glob.glob('*mask.fits')[0])
+        syscall += '--Mask-Auto 0 '
+        syscall += '--Mask-External '+mymask+' '
+    elif mask.lower() == 'auto':
+        syscall += '--Mask-Auto 1 '
+        syscall += '--Mask-SigTh '+str(masksigma)+' '
+    else:
+        syscall += '--Mask-Auto 0 '
+        syscall += '--Mask-External '+mask+' '
+    syscall += '--Misc-ConserveMemory '+str(conservememory)+' '
+    syscall += '--Log-Memory 1 '
+    syscall += '--Log-Boring 1 '
 
     return syscall
 
-
-def generate_syscall_ddfacet_hogbom(mspattern,
-                          imgname,
-                          ddid='D*',
-                          field='F0',
-                          chunkhours=1,
-                          colname='CORRECTED_DATA',
-                          ncpu=72,
-                          maxminoriter=50000,
-                          maxmajoriter=10,
-                          polyfitorder=4,
-                          deconvpeakfactor=0.4,
-                          robust=-0.3,
-                          npix=10215,
-                          cell=1.1,
-                          nfacets=32,
-                          ndegridband=64,
-                          beam='',
-                          beamnband=10,
-                          feedswap=1,
-#                          beamsmooth=False,
-                          dtbeammin=1.0,
-                          FITSParAngleIncDeg=0.5,
-                          nband=8,
-                          mask='auto',
-                          masksigma=5.5,
-                          cachereset=0,
-                          ddsols='',
-                          initdicomodel=''):
-
-    # Generate system call to run DDFacet with Hogbom clean
-
-    syscall = 'DDF.py '
-    syscall += '--Output-Name='+imgname+' '
-    syscall += '--Data-MS '+mspattern+'//'+ddid+'//'+field+' '
-    syscall += '--Data-ChunkHours '+str(chunkhours)+' '
-    syscall += '--Deconv-PeakFactor 0.001000 '
-    syscall += '--Data-ColName '+colname+' '
-    syscall += '--Predict-ColName MODEL_DATA '
-    syscall += '--Parallel-NCPU='+str(ncpu)+' '
-    syscall += '--Output-Mode=Clean '
-    syscall += '--Deconv-CycleFactor=0 '
-    syscall += '--Deconv-MaxMajorIter='+str(maxmajoriter)+' '
-    syscall += '--Deconv-MaxMinorIter='+str(maxminoriter)+' '
-    syscall += '--Deconv-Mode Hogbom '
-    syscall += '--Deconv-PeakFactor '+str(deconvpeakfactor)+' '
-    syscall += '--Hogbom-PolyFitOrder '+str(polyfitorder)+' '
-    syscall += '--Weight-Robust '+str(robust)+' '
-    syscall += '--Image-NPix='+str(npix)+' '
-    syscall += '--CF-wmax 0 '
-    syscall += '--CF-Nw 100 '
-    syscall += '--Output-Also nNs '
-    syscall += '--Image-Cell '+str(cell)+' '
-    syscall += '--Facets-NFacets='+str(nfacets)+' '
-    syscall += '--Facets-PSFOversize=1.5 '
-#    syscall += '--SSDClean-NEnlargeData 0 '
-    syscall += '--Freq-NDegridBand '+str(ndegridband)+' '
-    if beam == '':
-        syscall += '--Beam-Model=None '
-    else:
-        syscall += '--Beam-Model=FITS '
-        syscall += "--Beam-FITSFile=\'"+str(beam)+"\' "
-        syscall += '--Beam-NBand '+str(beamnband)+' '
-        syscall += '--Beam-DtBeamMin='+str(dtbeammin)+' '
-        syscall += '--Beam-FITSParAngleIncDeg='+str(FITSParAngleIncDeg)+' '
-        syscall += '--Beam-CenterNorm=True '
-        syscall += '--Beam-FITSFeedSwap='+str(feedswap)+' '
-    syscall += '--Deconv-RMSFactor=3.000000 '
-    syscall += '--Data-Sort 1 '
-    syscall += '--Cache-Dir=. '
-    syscall += '--Cache-HMP 1 '
-    syscall += '--Freq-NBand='+str(nband)+' '
-    if mask.lower() == 'fits':
-        mymask = glob.glob('*mask.fits')[0]
-        syscall += '--Mask-Auto=0 '
-        syscall += '--Mask-External='+mymask+' '
-    elif mask.lower() == 'auto':
-        syscall += '--Mask-Auto=1 '
-        syscall += '--Mask-SigTh='+str(masksigma)+' '
-    else:
-        syscall += '--Mask-Auto=0 '
-        syscall += '--Mask-External='+mask+' '
-    syscall += '--Cache-Reset '+str(cachereset)+' '
-    syscall += '--Comp-GridDecorr=0.01 '
-    syscall += '--Comp-DegridDecorr=0.01 '
-    #syscall += '--SSDClean-MinSizeInit=10 '
-    syscall += '--Facets-DiamMax .25 '
-    syscall += '--Facets-DiamMin 0.05 '
-    syscall += '--Misc-ConserveMemory 1 '
-    syscall += '--Log-Memory 1 '
-    if initdicomodel != '':
-        syscall += '--Predict-InitDicoModel '+initdicomodel+' '
-    if ddsols != '':
-        syscall += '--DDESolutions-DDSols '+ddsols
-
-    return syscall
 
 
 

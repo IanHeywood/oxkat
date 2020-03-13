@@ -22,7 +22,7 @@ def main():
     gen.setup_dir(GAINPLOTS)
 
 
-    caltabs = sorted(glob.glob('cal_*'))
+    caltabs = sorted([item for item in glob.glob('cal_*') if not os.path.basename(item).endswith('flagversions')])
 
 
     for caltab in caltabs:

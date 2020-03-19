@@ -498,7 +498,7 @@ def generate_syscall_killms(myms,
                         dt = cfg.KMS_DT,
                         nchansols = cfg.KMS_NCHANSOLS,
                         niterkf = cfg.KMS_NITERKF,
-                        covq = cfg.KMS_NITERCOVQ):
+                        covq = cfg.KMS_COVQ):
 
     # Generate system call to run killMS
 

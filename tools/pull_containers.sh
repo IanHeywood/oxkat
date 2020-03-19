@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#singularity pull docker://stimela/tricolour:dev
+singularity pull docker://stimela/tricolour:1.2.5
 singularity pull docker://stimela/wsclean:1.2.4
 singularity pull docker://stimela/cubical:1.2.4
 singularity pull docker://stimela/pybdsf:1.2.4

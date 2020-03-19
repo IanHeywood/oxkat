@@ -5,24 +5,6 @@
 import os
 CWD = os.getcwd()
 
-
-# ------------------------------------------------------------------------
-#
-# PATHS FOR COMPONENTS AND OUTPUTS
-#
-
-
-OXKAT = CWD+'/oxkat'
-PARSETS = CWD+'/parsets'
-TOOLS = CWD+'/tools'
-
-SCRIPTS = CWD+'/scripts'
-LOGS = CWD+'/logs'
-GAINPLOTS = CWD+'/gainplots'
-
-BEAM = '~/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
-
-
 # ------------------------------------------------------------------------
 #
 # CONTAINER SETUP
@@ -44,6 +26,24 @@ PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
 TRICOLOUR_PATTERN = 'tricolour'
 WSCLEAN_PATTERN = 'wsclean'
+
+
+
+# ------------------------------------------------------------------------
+#
+# PATHS FOR COMPONENTS AND OUTPUTS
+#
+
+
+OXKAT = CWD+'/oxkat'
+PARSETS = CWD+'/parsets'
+TOOLS = CWD+'/tools'
+
+SCRIPTS = CWD+'/scripts'
+LOGS = CWD+'/logs'
+GAINPLOTS = CWD+'/gainplots'
+
+BEAM = '~/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
 
 
 # ------------------------------------------------------------------------
@@ -82,7 +82,7 @@ PBS_MEM = '64gb'
 
 WSC_STARTCHAN = -1
 WSC_ENDCHAN = -1
-WSC_CHANOUT = 8
+WSC_CHANNELSOUT = 8
 WSC_IMSIZE = 10240
 WSC_CELLSIZE = '1.1asec'
 WSC_BRIGGS = -0.3
@@ -91,12 +91,14 @@ WSC_MULTISCALE = False
 WSC_SCALES = '0,3,9'
 WSC_SOURCELIST = True
 WSC_BDA = False
+WSC_BDA_FACTOR = 24
 WSC_NOMODEL = False
 WSC_MASK = 'auto'
 WSC_AUTOTHRESHOLD = 0.3
 WSC_AUTOMASK = 5.0
 WSC_FITSPECTRALPOL = 4
 WSC_PREDICTCHANNELS = 64
+WSC_MEM = 95
 
 
 # ------------------------------------------------------------------------
@@ -106,6 +108,7 @@ WSC_PREDICTCHANNELS = 64
 
 
 MAKEMASK_THRESH = 6.0
+MAKEMASK_DILATION = 3
 
 
 # ------------------------------------------------------------------------
@@ -114,40 +117,69 @@ MAKEMASK_THRESH = 6.0
 #
 
 
+# [Data]
 DDF_DDID = 'D*'
 DDF_FIELD = 'F0'
-DDF_CHUNKHOURS = 2
 DDF_COLNAME = 'CORRECTED_DATA'
+DDF_CHUNKHOURS = 2
+DDF_DATASORT = 1
+# [Predict]
 DDF_PREDICTCOLNAME = 'MODEL_DATA'
+DDF_INITDICOMODEL = ''
+# [Output]
 DDF_OUTPUTALSO = 'nNs'
-DDF_NCPU = 32
-#
-DDF_SSD_MAXMINORITER = 120000
-DDF_SSD_MAXMAJORITER = 3
-#
-DDF_HOGBOM_MAXMINORITER = 40000
-DDF_HOGBOM_MAXMAJORITER = 10
-DDF_HOGBOM_POLYFITORDER = 4
-DDF_HOGBOM_DECONVPEAKFACTOR = 0.4
-#
-DDF_PSFOVERSIZE = 1.5
-DDF_ROBUST = -0.3
+DDF_OUTPUTIMAGES = 'q' # add 'A' to re-include spectral index map
+DDF_OUTPUTCUBES = 'MmRi' # output intrinsic and apparent resid and model cubes
+# [Image]
 DDF_NPIX = 10215
 DDF_CELL = 1.1
+# [Predict]
+DDF_DIAMMAX = 0.25
+DDF_DIAMMIN = 0.05
 DDF_NFACETS = 32
-DDF_NDEGRIDBAND = 8
-DDF_BEAM = ''
+DDF_PSFOVERSIZE = 1.5
+# [Weight]
+DDF_ROBUST = -0.3
+# [Comp]
+DDF_SPARSIFICATION = '0' # [100,30,10]
+# [Parallel]
+DDF_NCPU = 32
+# [Cache]
+DDF_CACHERESET = 0
+DDF_CACHEDIR = '.'
+DDF_CACHEHMP = 1
+# [Beam]
+DDF_BEAM = '' # specify beam cube of the form: meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits
 DDF_BEAMNBAND= 10
 DDF_DTBEAMMIN = 1
-DDF_FEEDSWAP = 1
-DDF_BEAMCENTRENORM = True
 DDF_FITSPARANGLEINCDEG = 0.5
+DDF_BEAMCENTRENORM = True
+DDF_FEEDSWAP = 1
+DDF_BEAMSMOOTH = False
+# [Freq]
 DDF_NBAND = 8
-DDF_MASK = 'auto'
-DDF_MASKSIGMA = 5.5
-DDF_CACHERESET = 0
+DDF_NDEGRIDBAND = 8
+# [DDESolutions]
 DDF_DDSOLS = ''
-DDF_INITDICOMODEL = ''
+DDF_DDMODEGRID = 'AP'
+DDF_DDMODEDEGRID = 'AP'
+# [Deconv]
+DDF_DECONVMODE = 'hogbom'
+DDF_SSD_DECONVPEAKFACTOR = 0.001
+DDF_SSD_MAXMAJORITER = 3
+DDF_SSD_MAXMINORITER = 120000
+DDF_SSD_ENLARGEDATA = 0
+DDF_HOGBOM_DECONVPEAKFACTOR = 0.4
+DDF_HOGBOM_MAXMAJORITER = 10
+DDF_HOGBOM_MAXMINORITER = 40000
+DDF_HOGBOM_POLYFITORDER = 4
+# [Mask]
+DDF_MASK = 'auto' # 'auto' enables automasking 
+                  # 'fits' uses the first *.mask.fits in the current folder
+                  # otherwise pass a filename to use a specific FITS image
+# [Misc]
+DDF_MASKSIGMA = 5.5
+DDF_CONSERVEMEMORY = 1
 
 
 # ------------------------------------------------------------------------
@@ -156,10 +188,34 @@ DDF_INITDICOMODEL = ''
 #
 
 
-KMS_INCOL = 'CORRECTED_DATA'
+# [VisData]
 KMS_TCHUNK = 0.2
-KMS_DT = 12
+KMS_INCOL = 'CORRECTED_DATA'
+KMS_OUTCOL = 'MODEL_DATA'
+# [Beam]
 KMS_BEAM = ''
+KMS_BEAMAT = 'Facet'
+KMS_DTBEAMMIN = 1
+KMS_CENTRENORM = 1
+KMS_NCHANBEAMPERMS = 95
+KMS_FITSPARANGLEINCDEG = 0.5
+KMS_FITSFEEDSWAP = 1
+# [ImageSkyModel]
+KMS_MAXFACETSIZE = 0.25
+# [DataSelection]
+KMS_UVMINMAX = '0.15,8500.0'
+KMS_FIELDID = 0
+KMS_DDID = 0
+# [Actions]
+KMS_NCPU = 32
+KMS_DOBAR = 0
+# [Solvers]
+KMS_SOLVERTYPE = 'CohJones'
+KMS_DT = 12
+KMS_NCHANSOLS = 8
+# [KAFCA]
+KMS_NITERKF = 9
+KMS_COVQ = 0.05
 
 
 # ------------------------------------------------------------------------

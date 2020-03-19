@@ -191,6 +191,13 @@ def generate_syscall_tricolour(myms='',
 
 #    syscall = 'bash -c "source '+TRICOLOUR_VENV+' ; '
 
+    syscall = 'tricolour '
+    syscall += '--config '+config+' '
+    syscall += '--data-column '+column_selection+' '
+    syscall += '--field-names '+field_selection+' '
+    syscall += '--flagging-strategy '+fs+' '
+    syscall += myms
+
     syscall = 'python '+OXKAT+'/run_tricolour.py '
     if config != '':
         syscall += '--config='+config+' '
@@ -208,20 +215,24 @@ def generate_syscall_tricolour(myms='',
 def generate_syscall_wsclean(mslist,
                           imgname,
                           datacol,
-                          startchan=-1,
-                          endchan=-1,
-                          chanout=8,
-                          imsize=10240,
-                          cellsize='1.1asec',
-                          briggs=-0.3,
-                          niter=120000,
-                          multiscale=False,
-                          scales='0,3,9',
-                          sourcelist=True,
-                          bda=False,
-                          nomodel=False,
-                          mask='auto',
-                          fitspectralpol=4):
+                          startchan = cfg.WSC_STARTCHAN,
+                          endchan = cfg.WSC_ENDCHAN,
+                          chanout = cfg.WSC_CHANOUT,
+                          imsize = cfg.WSC_IMSIZE,
+                          cellsize = cfg.WSC_CELLSIZE,
+                          briggs = cfg.WSC_BRIGGS,
+                          niter = cfg.WSC_NITER,
+                          multiscale = cfg.WSC_MULTISCALE,
+                          scales = cfg.WSC_SCALES,
+                          sourcelist = cfg.WSC_SOURCELIST,
+                          bda = cfg.WSC_BDA,
+                          bdafactor = cfg.WSC_BDAFACTOR,
+                          nomodel = cfg.WSC_BDA,
+                          mask = cfg.WSC_MASK,
+                          autothreshold = cfg.WSC_AUTOTHRESHOLD,
+                          automask = cfg.WSC_AUTOMASK,
+                          fitspectralpol = cfg.WSC_FITSPECTRALPOL,
+                          mem = cfg.WSC_MEM):
 
     # Generate system call to run wsclean
 
@@ -238,7 +249,7 @@ def generate_syscall_wsclean(mslist,
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
     if bda:
-        syscall += '-baseline-averaging 24 '
+        syscall += '-baseline-averaging '+str(bdafactor)+' '
         syscall += '-no-update-model-required '
     elif not bda and nomodel:
         syscall += '-no-update-model-required '
@@ -259,8 +270,8 @@ def generate_syscall_wsclean(mslist,
         syscall += ''
     elif mask.lower() == 'auto':
         syscall += '-local-rms '
-        syscall += '-auto-threshold 0.3 '
-        syscall += '-auto-mask 5.0 '
+        syscall += '-auto-threshold '+str(autothreshold)+' '
+        syscall += '-auto-mask '+str(automask)+' '
     else:
         syscall += '-fits-mask '+mask+' '
     syscall += '-name '+imgname+' '
@@ -269,7 +280,7 @@ def generate_syscall_wsclean(mslist,
         syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
     syscall += '-join-channels '
     syscall += '-padding 1.3 '
-    syscall += '-mem 90 '
+    syscall += '-mem '+str(mem)+' '
 
     for myms in mslist:
         syscall += myms+' '
@@ -279,10 +290,11 @@ def generate_syscall_wsclean(mslist,
 
 def generate_syscall_predict(msname,
                             imgbase,
-                            channelsout=8,
-                            imsize=10240,
-                            cellsize='1.1asec',
-                            predictchannels=64):
+                            channelsout = cfg.WSC_CHANNELSOUT,
+                            imsize = cfg.WSC_IMSIZE,
+                            cellsize = cfg.WSC_CELLSIZE,
+                            predictchannels = cfg.WSC_PREDICTCHANNELS,
+                            mem = cfg.WSC_MEM):
 
     # Generate system call to run wsclean in predict mode
 
@@ -293,14 +305,17 @@ def generate_syscall_predict(msname,
     syscall += ' -size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
-    syscall += '-mem 90 '
+    syscall += '-mem '+mem+' '
     syscall += '-predict-channels '+str(predictchannels)+' '
     syscall += msname
 
     return syscall 
 
 
-def generate_syscall_makemask(prefix,thresh=6.0):
+def generate_syscall_makemask(prefix,
+                            thresh = cfg.MAKEMASK_THRESH,
+                            dilation = cfg.MAKEMASK_DILATION,
+                            zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
     
@@ -308,8 +323,8 @@ def generate_syscall_makemask(prefix,thresh=6.0):
 
     syscall = 'bash -c "'
     syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+prefix+'-MFS-image.fits && '
-    syscall += 'python '+TOOLS+'/dilate_FITS_mask.py '+fitsmask+' 3 && '
-    syscall += 'fitstool.py -z 10125 '+prefix+'-MFS-image.fits.mask.fits '
+    syscall += 'python '+TOOLS+'/dilate_FITS_mask.py '+fitsmask+' '+str(dilation)+' && '
+    syscall += 'fitstool.py -z '+str(zoompix)+s' '+prefix+'-MFS-image.fits.mask.fits '
     syscall += '"'
 #    syscall2 = 'python '+OXKAT+'/merge_FITS_masks.py '+prefix+' '+opfits+'\n'
 
@@ -323,6 +338,7 @@ def generate_syscall_ddfacet(mspattern,
                           field = cfg.DDF_FIELD,
                           colname = cfg.DDF_COLNAME,
                           chunkhours = cfg.DDF_CHUNKHOURS,
+                          datasort = cfg.DDF_DATASORT,
                           predictcolname = cfg.DDF_PREDICTCOLNAME,
                           initdicomodel = cfg.INITDICOMODEL,
                           outputalso = cfg.DDF_OUTPUTALSO,
@@ -330,6 +346,8 @@ def generate_syscall_ddfacet(mspattern,
                           outputcubes = cfg.DDF_OUTPUTCUBES,
                           npix = cfg.DDF_NPIX,
                           cell = cfg.DDF_CELL,
+                          diammax = cfg.DDF_DIAMMAX,
+                          diammin = cfg.DDF_DIAMMIN,
                           nfacets =cfg.DDF_NFACETS,
                           psfoversize = cfg.DDF_PSFOVERSIZE,
                           robust = cfg.DDF_ROBUST,
@@ -341,7 +359,7 @@ def generate_syscall_ddfacet(mspattern,
                           beam = cfg.DDF_BEAM,
                           beamnband = cfg.DDF_BEAMNBAND,
                           dtbeammin = cfg.DDF_DTBEAMMIN,
-                          FITSParAngleIncDeg = cfg.DDF_FITSPARANGLEINCDEG,
+                          fitsparangleincdeg = cfg.DDF_FITSPARANGLEINCDEG,
                           beamcentrenorm = cfg.DDF_BEAMCENTRENORM,
                           beamsmooth = cfg.DDF_BEAMSMOOTH,
                           nband = cfg.DDF_NBAND,
@@ -367,7 +385,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Data-MS '+mspattern+'//'+ddid+'//'+field+' '
     syscall += '--Data-ColName '+colname+' '
     syscall += '--Data-ChunkHours '+str(chunkhours)+' '
-    syscall += '--Data-Sort 1 '
+    syscall += '--Data-Sort '+str(datasort)+' '
     # [Predict]
     syscall += '--Predict-ColName '+predictcolname+' '
     if initdicomodel != '':
@@ -382,8 +400,8 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Image-NPix '+str(npix)+' '
     syscall += '--Image-Cell '+str(cell)+' '
     # [Facets]
-    syscall += '--Facets-DiamMax .25 '
-    syscall += '--Facets-DiamMin 0.05 '
+    syscall += '--Facets-DiamMax '+str(diammax)+' '
+    syscall += '--Facets-DiamMin '+str(diammin)+' '
     syscall += '--Facets-NFacets '+str(nfacets)+' '
     syscall += '--Facets-PSFOversize '+str(psfoversize)+' '
     # [Weight]
@@ -409,7 +427,7 @@ def generate_syscall_ddfacet(mspattern,
         syscall += "--Beam-FITSFile \'"+str(beam)+"\' "
         syscall += '--Beam-NBand '+str(beamnband)+' '
         syscall += '--Beam-DtBeamMin '+str(dtbeammin)+' '
-        syscall += '--Beam-FITSParAngleIncDeg '+str(FITSParAngleIncDeg)+' '
+        syscall += '--Beam-FITSParAngleIncDeg '+str(fitsparangleincdeg)+' '
         syscall += '--Beam-CenterNorm '+str(beamcentrenorm)+' '
         syscall += '--Beam-FITSFeedSwap '+str(feedswap)+' '
         syscall += '--Beam-Smooth '=str(beamsmooth)+' '
@@ -454,57 +472,86 @@ def generate_syscall_ddfacet(mspattern,
     return syscall
 
 
-
-
 def generate_syscall_killms(myms,
                         baseimg,
                         outsols,
                         nodesfile,
                         dicomodel,
-                        incol='CORRECTED_DATA',
-                        tchunk=0.2,
-                        dt=12,
-                        beam=''):
+                        tchunk = cfg.KMS_TCHUNK,
+                        incol = cfg.KMS_INCOL,
+                        outcol = cfg.KMS_OUTCOL,
+                        beam = cfg.KMS_BEAM,
+                        beamat = cfg.KMS_BEAMAT,
+                        dtbeammin = cfg.KMS_DTBEAMMIN,
+                        centrenorm = cfg.KMS_CENTRENORM,
+                        nchanbeamperms = cfg.KMS_NCHANBEAMPERMS,
+                        fitsparangleincdeg = cfg.KMS_FITSPARANGLEINCDEG,
+                        fitsfeedswap = cfg.KMS_FITSFEEDSWAP,
+                        maxfacetsize = cfg.KMS_MAXFACETSIZE,
+                        uvminmax = cfg.KMS_UVMINMAX,
+                        fieldid = cfg.KMS_FIELDID,
+                        ddid = cfg.KMS_DDID,
+                        ncpu = cfg.KMS_NCPU,
+                        dobar = cfg.KMS_DOBAR,
+                        solvertype= cfg.KMS_SOLVERTYPE,
+                        dt = cfg.KMS_DT,
+                        nchansols = cfg.KMS_NCHANSOLS,
+                        niterkf = cfg.KMS_NITERKF,
+                        covq = cfg.KMS_NITERCOVQ):
 
     # Generate system call to run killMS
 
     syscall = 'kMS.py '
+    # [VisData]
     syscall+= '--MSName '+myms+' '
-    syscall+= '--SolverType CohJones '
-    syscall+= '--PolMode Scalar '
-    syscall+= '--BaseImageName '+baseimg+' '
     syscall+= '--TChunk '+str(tchunk)+' '
-    syscall+= '--dt '+str(dt)+' '
-    syscall+= '--NCPU 32 '
-    syscall+= '--OutSolsName '+outsols+' '
-    syscall+= '--NChanSols 4 '
-    syscall+= '--NIterKF 9 '
-    syscall+= '--CovQ 0.05 '
-    syscall+= '--UVMinMax=0.15,8500.0 '
-    if beam == '':
-        syscall+= '--BeamModel=None '
-    else:
-        syscall+= '--BeamModel=FITS '
-        syscall+= '--BeamAt Facet '
-        syscall+= "--FITSFile=\'"+str(beam)+"\' "
-    syscall+= '--NChanBeamPerMS 95 '
-    syscall+= '--FITSParAngleIncDeg 1 '
-    syscall+= '--DtBeamMin 1 '
     syscall+= '--InCol '+incol+' '
-    syscall+= '--OutCol '+incol+' '
-    syscall+= '--Weighting Natural '
-    syscall+= '--NodesFile '+nodesfile+' '
+    syscall+= '--OutCol '+outcol+' '
+    # [Beam]
+    if beam == '':
+        syscall+= '--BeamModel None '
+    else:
+        syscall+= '--BeamModel FITS '
+        syscall+= '--BeamAt '+beamat+' '
+        syscall+= '--DtBeamMin '+str(dtbeammin)+' '
+        syscall+= '--CenterNorm '+str(centrenorm)+' '
+        syscall+= '--NChanBeamPerMS '+str(nchanbeamperms)+' '
+        syscall+= "--FITSFile \'"+str(beam)+"\' "
+        syscall+= '--FITSParAngleIncDeg '+str(fitsparangleincdeg)+' '
+        syscall+= '--FITSFeedSwap '+str(fitsfeedswap)+' '
+    # [ImageSkyModel]
+    syscall+= '--BaseImageName '+baseimg+' '
     syscall+= '--DicoModel '+dicomodel+' '
-    syscall+= '--MaxFacetSize .25 '
+    syscall+= '--NodesFile '+nodesfile+' '
+    syscall+= '--MaxFacetSize '+str(maxfacetsize)+' '
+    # [DataSelection]
+    syscall+= '--UVMinMax '+uvminmax+' '
+    syscall+= '--FieldID '+str(fieldid)+' '
+    syscall+= '--DDID '+str(ddid)+' '
+    # [Weighting]
+    syscall+= '--Weighting Natural '
+    # [Actions]
+    syscall+= '--NCPU '+str(ncpu)+' '
+    syscall+= '--DoBar '+str(dobar)+' '
+    # [Solutions]
+    syscall+= '--OutSolsName '+outsols+' '
+    # [Solvers]
+    syscall+= '--SolverType '+solvertype+' '
+    syscall+= '--PolMode Scalar '
+    syscall+= '--dt '+str(dt)+' '
+    syscall+= '--NChanSols '+str(nchansols)+' '
+    # [KAFCA]
+    syscall+= '--NIterKF '+str(niterkf)+' '
+    syscall+= '--CovQ '+str(covq)+' '
 
     return syscall
 
 
 def generate_syscall_pybdsf(fitsfile,
-                        thresh_pix=5.0,
-                        thresh_isl=3.0,
-                        catalogtype='srl',
-                        catalogformat='fits'):
+                        thresh_pix = cfg.PYBDSF_THRESH_PIX,
+                        thresh_isl = cfg.PYBDSF_THRESH_ISL,
+                        catalogtype = cfg.PYBDSF_CATALOGTYPE,
+                        catalogformat = cfg.PYBDSF_CATALOGFORMAT):
 
     if catalogtype == 'srl':
         opfile = fitsfile+'.srl'
@@ -529,11 +576,11 @@ def generate_syscall_pybdsf(fitsfile,
 
 
 def generate_syscall_clustercat(srl,
-                        ndir=7,
-                        centralradius=0.15,
-                        ngen=100,
-                        fluxmin=0.000001,
-                        ncpu=32):
+                        ndir = cfg.CLUSTERCAT_NDIR,
+                        centralradius = cfg.CLUSTERCAT_CENTRALRADIUS,
+                        ngen = cfg.CLUSTERCAT_NGEN,
+                        fluxmin = cfg.CLUSTERCAT_FLUXMIN,
+                        ncpu = cfg.CLUSTERCAT_NCPU):
 
     opfile = srl.replace('.srl.fits','.srl.fits.'+str(ndir)+'.dirs.ClusterCat.npy')
     syscall = 'ClusterCat.py --SourceCat '+srl+' '

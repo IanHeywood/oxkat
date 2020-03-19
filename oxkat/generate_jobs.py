@@ -430,7 +430,7 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--Beam-FITSParAngleIncDeg '+str(fitsparangleincdeg)+' '
         syscall += '--Beam-CenterNorm '+str(beamcentrenorm)+' '
         syscall += '--Beam-FITSFeedSwap '+str(feedswap)+' '
-        syscall += '--Beam-Smooth '=str(beamsmooth)+' '
+        syscall += '--Beam-Smooth '+str(beamsmooth)+' '
     # [Freq]
     syscall += '--Freq-NBand '+str(nband)+' '
     syscall += '--Freq-NDegridBand '+str(ndegridband)+' '

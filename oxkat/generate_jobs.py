@@ -465,6 +465,7 @@ def generate_syscall_ddfacet(mspattern,
     else:
         syscall += '--Mask-Auto 0 '
         syscall += '--Mask-External '+mask+' '
+    # [Misc]
     syscall += '--Misc-ConserveMemory '+str(conservememory)+' '
     syscall += '--Log-Memory 1 '
     syscall += '--Log-Boring 1 '

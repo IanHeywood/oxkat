@@ -66,7 +66,7 @@ def main():
     # Get the MS name
 
     original_ms = glob.glob('*.ms')[0]
-    code = gen.get_code(myms)
+    code = gen.get_code(original_ms)
     myms = original_ms.replace('.ms','_wtspec.ms')
 
 

@@ -417,7 +417,7 @@ def generate_syscall_ddfacet(mspattern,
     # [Cache]    
     syscall += '--Cache-Reset '+str(cachereset)+' '
     syscall += '--Cache-Dir '+str(cachedir)+' '
-    syscall += '--Cache-HMP 1 '+str(cachehmp)+' '
+    syscall += '--Cache-HMP '+str(cachehmp)+' '
     # [Beam]
     if beam == '':
         syscall += '--Beam-Model None '

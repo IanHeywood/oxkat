@@ -3,7 +3,9 @@
 
 
 import os
+
 CWD = os.getcwd()
+HOME = os.path.expanduser('~')
 
 
 # ------------------------------------------------------------------------
@@ -12,9 +14,9 @@ CWD = os.getcwd()
 #
 
 
-IDIA_CONTAINER_PATH = '~/containers/'
-CHPC_CONTAINER_PATH = '/home/iheywood/lustre/containers'
-NODE_CONTAINER_PATH = '~/containers/'
+IDIA_CONTAINER_PATH = HOME+'/containers/'
+CHPC_CONTAINER_PATH = HOME+'/lustre/containers'
+NODE_CONTAINER_PATH = HOME+'/containers/'
 
 
 CASA_PATTERN = 'casa'
@@ -29,7 +31,6 @@ TRICOLOUR_PATTERN = 'tricolour'
 WSCLEAN_PATTERN = 'wsclean'
 
 
-
 # ------------------------------------------------------------------------
 #
 # PATHS FOR COMPONENTS AND OUTPUTS
@@ -40,11 +41,20 @@ OXKAT = CWD+'/oxkat'
 PARSETS = CWD+'/parsets'
 TOOLS = CWD+'/tools'
 
-SCRIPTS = CWD+'/scripts'
-LOGS = CWD+'/logs'
 GAINPLOTS = CWD+'/gainplots'
+#GAINTABLES = CWD+'/gaintables'
+IMAGES = CWD+'/images'
+LOGS = CWD+'/logs'
+SCRIPTS = CWD+'/scripts'
 
-BEAM = '~/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
+
+# ------------------------------------------------------------------------
+#
+# MeerKAT primary beam models
+#
+
+
+BEAM_L = HOME+'/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
 
 
 # ------------------------------------------------------------------------

@@ -23,12 +23,12 @@ def main():
     CWD = cfg.CWD
     OXKAT = cfg.OXKAT
     PARSETS = cfg.PARSETS
-    SCRIPTS = cfg.SCRIPTS
     TOOLS = cfg.TOOLS
     LOGS = cfg.LOGS
+    SCRIPTS = cfg.SCRIPTS
 
-    gen.setup_dir(SCRIPTS)
     gen.setup_dir(LOGS)
+    gen.setup_dir(SCRIPTS)
 
 
     # Set infrastructure and container path
@@ -44,8 +44,8 @@ def main():
         infrastructure = 'chpc'
         CONTAINER_PATH = cfg.CHPC_CONTAINER_PATH
     elif sys.argv[1].lower() == 'node':
-        CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
         infrastructure = 'node'
+        CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
 
 
     # Find containers needed for 1GC

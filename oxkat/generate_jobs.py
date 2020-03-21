@@ -155,7 +155,6 @@ def job_handler(syscall,
 
         make_executable(pbs_runfile)
 
-
     elif infrastructure == 'node':
 
         run_command = syscall

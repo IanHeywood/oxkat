@@ -15,4 +15,15 @@ for targ in targets:
     target = targ[1]
     opms = targ[2]
 
-    mstransform(vis=myms,outputvis=opms,field=target,usewtspectrum=True,realmodelcol=True,datacolumn='corrected')
+
+    mstransform(vis=myms,
+    	outputvis=opms,
+    	field=target,
+    	usewtspectrum=True,
+    	realmodelcol=True,
+    	datacolumn='corrected')
+
+
+	flagmanager(vis=opms,
+	    mode='save',
+	    versionname='post-1GC')

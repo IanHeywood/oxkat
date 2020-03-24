@@ -138,11 +138,11 @@ DDF_DATASORT = 1
 DDF_PREDICTCOLNAME = 'MODEL_DATA'
 DDF_INITDICOMODEL = ''
 # [Output]
-DDF_OUTPUTALSO = 'nNs'
+DDF_OUTPUTALSO = 'oe'
 DDF_OUTPUTIMAGES = 'DdPMRIikz' # add 'A' to re-include spectral index map
 DDF_OUTPUTCUBES = 'MmRi' # output intrinsic and apparent resid and model cubes
 # [Image]
-DDF_NPIX = 10215
+DDF_NPIX = 10125
 DDF_CELL = 1.1
 # [Predict]
 DDF_DIAMMAX = 0.25

@@ -17,13 +17,13 @@ for targ in targets:
 
 
     mstransform(vis=myms,
-    	outputvis=opms,
-    	field=target,
-    	usewtspectrum=True,
-    	realmodelcol=True,
-    	datacolumn='corrected')
+        outputvis=opms,
+        field=target,
+        usewtspectrum=True,
+        realmodelcol=True,
+        datacolumn='corrected')
 
 
-	flagmanager(vis=opms,
-	    mode='save',
-	    versionname='post-1GC')
+    flagmanager(vis=opms,
+        mode='save',
+        versionname='post-1GC')

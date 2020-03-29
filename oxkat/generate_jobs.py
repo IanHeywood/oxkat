@@ -197,14 +197,14 @@ def generate_syscall_tricolour(myms='',
     syscall += '--flagging-strategy '+fs+' '
     syscall += myms
 
-    syscall = 'python '+OXKAT+'/run_tricolour.py '
-    if config != '':
-        syscall += '--config='+config+' '
-    syscall += '--col='+datacol+' '
-    syscall += '--fields='+fields+' '
-    syscall += '--fs='+fs+' '
-    syscall += '--runfile='+runfile+' '
-    syscall += myms
+    # syscall = 'python '+OXKAT+'/run_tricolour.py '
+    # if config != '':
+    #     syscall += '--config='+config+' '
+    # syscall += '--col='+datacol+' '
+    # syscall += '--fields='+fields+' '
+    # syscall += '--fs='+fs+' '
+    # syscall += '--runfile='+runfile+' '
+    # syscall += myms
 
 #   syscall += '; deactivate"'
 

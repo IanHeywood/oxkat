@@ -138,7 +138,7 @@ DDF_DATASORT = 1
 DDF_PREDICTCOLNAME = 'MODEL_DATA'
 DDF_INITDICOMODEL = ''
 # [Output]
-DDF_OUTPUTALSO = 'oe'
+DDF_OUTPUTALSO = 'oenNS'
 DDF_OUTPUTIMAGES = 'DdPMRIikz' # add 'A' to re-include spectral index map
 DDF_OUTPUTCUBES = 'MmRi' # output intrinsic and apparent resid and model cubes
 # [Image]

@@ -63,7 +63,7 @@ def main():
     if pngname == '':
         pngname = infits+'_FFT_amplitudes.png'
 
-    imageio.imwrite(pngname,numpy.uint8(fftimg))
+    imageio.imwrite(pngname,fftimg)
 
 
 if __name__ == "__main__":

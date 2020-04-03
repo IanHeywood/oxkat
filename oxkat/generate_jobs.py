@@ -85,21 +85,30 @@ def is_odd(xx):
 def job_handler(syscall,
                 jobname,
                 infrastructure,
-                dependency=None,
-                slurm_time=cfg.SLURM_TIME,
-                slurm_partition=cfg.SLURM_PARTITION,
-                slurm_ntasks=cfg.SLURM_NTASKS,
-                slurm_nodes=cfg.SLURM_NODES,
-                slurm_cpus=cfg.SLURM_CPUS,
-                slurm_mem=cfg.SLURM_MEM,
-                pbs_program=cfg.PBS_PROGRAM,
-                pbs_walltime=cfg.PBS_WALLTIME,
-                pbs_queue=cfg.PBS_QUEUE,
-                pbs_nodes=cfg.PBS_NODES,
-                pbs_ppn=cfg.PBS_PPN,
-                pbs_mem=cfg.PBS_MEM):
+                dependency = None,
+                slurm_config = cfg.SLURM_DEFAULTS,
+                pbs_config = cfg.PBS_DEFAULTS):
+                # slurm_time=cfg.SLURM_TIME,
+                # slurm_partition=cfg.SLURM_PARTITION,
+                # slurm_ntasks=cfg.SLURM_NTASKS,
+                # slurm_nodes=cfg.SLURM_NODES,
+                # slurm_cpus=cfg.SLURM_CPUS,
+                # slurm_mem=cfg.SLURM_MEM,
+                # pbs_program=cfg.PBS_PROGRAM,
+                # pbs_walltime=cfg.PBS_WALLTIME,
+                # pbs_queue=cfg.PBS_QUEUE,
+                # pbs_nodes=cfg.PBS_NODES,
+                # pbs_ppn=cfg.PBS_PPN,
+                # pbs_mem=cfg.PBS_MEM):
 
     if infrastructure == 'idia':
+
+        slurm_time = slurm_config['TIME']
+        slurm_partition = slurm_config['PARTITION']
+        slurm_ntasks = slurm_config['NTASKS']
+        slurm_nodes = slurm_config['NODES']
+        slurm_cpus = slurm_config['CPUS']
+        slurm_mem = slurm_config['MEM']
 
         slurm_runfile = cfg.SCRIPTS+'/slurm_'+jobname+'.sh'
         slurm_logfile = cfg.LOGS+'/slurm_'+jobname+'.log'
@@ -127,6 +136,13 @@ def job_handler(syscall,
         make_executable(slurm_runfile)
 
     elif infrastructure == 'chpc':
+
+        pbs_program = pbs_config['PROGRAM']
+        pbs_walltime = pbs_config['WALLTIME']
+        pbs_queue = pbs_config['QUEUE']
+        pbs_nodes = pbs_config['NODES']
+        pbs_ppn = pbs_config['PPN']
+        pbs_mem = pbs_config['MEM']
 
         pbs_runfile = cfg.SCRIPTS+'/pbs_'+jobname+'.sh'
         pbs_logfile = cfg.LOGS+'/pbs_'+jobname+'.log'

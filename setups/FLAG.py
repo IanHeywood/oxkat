@@ -122,7 +122,7 @@ def main():
                                 slurm_config = cfg.SLURM_TRICOLOUR,
                                 pbs_config = cfg.PBS_TRICOLOUR)
 
-        f.write(run_command)
+        f.write(run_command+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ def main():
                                 slurm_config = cfg.SLURM_WSCLEAN,
                                 pbs_config = cfg.PBS_WSCLEAN)
 
-        f.write(run_command)
+        f.write(run_command+'\n')
 
 
         # ------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ def main():
                                 infrastructure = infrastructure,
                                 dependency = id_wsclean)
 
-        f.write(run_command)
+        f.write(run_command+'\n')
 
         # ------------------------------------------------------------------------------
 

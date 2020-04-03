@@ -30,7 +30,7 @@ def main():
 
     gen.setup_dir(LOGS)
     gen.setup_dir(SCRIPTS)
-    get.setup_dir(IMAGES)
+    gen.setup_dir(IMAGES)
 
 
     # Set infrastructure and container path

@@ -155,7 +155,7 @@ def main():
 
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '
         syscall += gen.generate_syscall_makemask(prefix = imgname,
-                                zoompix = '')
+                                zoompix = '')[0]
 
         id_makemask = 'MKMSK'+code
         id_list.append(id_makemask)

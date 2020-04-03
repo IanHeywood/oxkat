@@ -115,7 +115,7 @@ def main():
                    
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
-    syscall += 'python '+OXKAT+'/00_setup.py '+myms+'\n'
+    syscall += 'python '+OXKAT+'/1GC_00_setup.py '+myms+'\n'
 
     id_setup = 'INFO_'+code
     id_list.append(id_setup)
@@ -142,7 +142,7 @@ def main():
                                     
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_basic_flags.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_01_casa_basic_flags.py --nologger --log2term --nogui\n'
 
     id_basic = 'BASIC'+code
     id_list.append(id_basic)
@@ -169,7 +169,7 @@ def main():
 
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_autoflag_cals_data.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_02_casa_autoflag_cals_DATA.py --nologger --log2term --nogui\n'
 
     id_autoflagcals = 'FLG_C'+code
     id_list.append(id_autoflagcals)
@@ -196,7 +196,7 @@ def main():
                                               
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_split_calibrators.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_03_casa_split_calibrators.py --nologger --log2term --nogui\n'
 
     id_splitcals = 'SPLCL'+code
     id_list.append(id_splitcals)
@@ -223,7 +223,7 @@ def main():
                                                        
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_get_secondary_model.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_04_casa_get_secondary_model.py --nologger --log2term --nogui\n'
 
     id_secondarymodel = 'MODEL'+code
     id_list.append(id_secondarymodel)
@@ -250,7 +250,7 @@ def main():
                                                
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_1GC_using_secondary_model.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_05_casa_refcal_using_secondary_model.py --nologger --log2term --nogui\n'
 
     id_1GC = 'ONEGC'+code
     id_list.append(id_1GC)
@@ -277,7 +277,7 @@ def main():
                                          
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
-    syscall += 'python3 '+TOOLS+'/plot_gaintables.py\n'
+    syscall += 'python3 '+OXKAT+'/1GC_06_plot_gaintables.py\n'
 
     id_gainplots = 'GPLOT'+code
     id_list.append(id_gainplots)
@@ -292,33 +292,6 @@ def main():
 
     # ------------------------------------------------------------------------------
     # STEP 8:
-    #   _   _ _  ___ _  ___  _     _   __ 
-    #  / \ | | ||_ _/ \| __|| |   / \ / _|
-    # | o || U | | ( o ) _| | |_ | o ( |_n
-    # |_n_||___| |_|\_/|_|  |___||_n_|\__/
-    #                                    
-    #  ___  _   ___  __  ___  ___ __      
-    # |_ _|/ \ | o \/ _|| __||_ _/ _|     
-    #  | || o ||   ( |_n| _|  | |\_ \     
-    #  |_||_n_||_|\\\__/|___| |_||__/     
-                                    
-
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_autoflag_targets_corrected.py --nologger --log2term --nogui\n'
-
-    id_autoflagtargets = 'FLG_T'+code
-    id_list.append(id_autoflagtargets)
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_autoflagtargets,
-                infrastructure=infrastructure,
-                dependency=id_1GC)
-
-    f.write(run_command+'\n')
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 9:
     #  __  ___ _    _  ___           
     # / _|| o \ |  | ||_ _|          
     # \_ \|  _/ |_ | | | |           
@@ -331,7 +304,7 @@ def main():
                                
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_split_targets.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_07_casa_split_targets.py --nologger --log2term --nogui\n'
 
     id_splittargets = 'SPLTG'+code
     id_list.append(id_splittargets)
@@ -339,7 +312,7 @@ def main():
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_splittargets,
                 infrastructure=infrastructure,
-                dependency=id_autoflagtargets)
+                dependency=id_1GC)
 
     f.write(run_command+'\n')
 

@@ -23,7 +23,6 @@ def main():
     CWD = cfg.CWD
     OXKAT = cfg.OXKAT
     PARSETS = cfg.PARSETS
-    TOOLS = cfg.TOOLS
     LOGS = cfg.LOGS
     SCRIPTS = cfg.SCRIPTS
 
@@ -57,7 +56,7 @@ def main():
     # Set names of the run and kill files, open run file for writing
 
     submit_file = 'submit_1GC_jobs.sh'
-    kill_file = 'kill_1GC_jobs.sh'
+    kill_file = SCRIPTS+'/kill_1GC_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

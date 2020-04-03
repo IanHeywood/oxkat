@@ -54,7 +54,7 @@ def main():
 
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
-    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_CONTAINER)
+    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
 
 
     # Get target information from project pickle

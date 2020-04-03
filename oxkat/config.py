@@ -77,7 +77,7 @@ SLURM_TRICOLOUR = {
     'NTASKS': '1',
     'NODES': '1',
     'CPUS': '32',
-    'MEM': '238GB'
+    'MEM': '230GB'
 }
 
 SLURM_WSCLEAN = {
@@ -86,7 +86,7 @@ SLURM_WSCLEAN = {
     'NTASKS': '1',
     'NODES': '1',
     'CPUS': '32',
-    'MEM': '238GB'
+    'MEM': '230GB'
 }
 
 

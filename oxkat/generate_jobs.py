@@ -197,32 +197,18 @@ def generate_syscall_cubical(parset,myms,prefix):
     return syscall
 
 
-def generate_syscall_tricolour(myms='',
-                          config='',
-                          datacol='DATA',
-                          fields='all',
-                          fs='polarisation',
-                          runfile='run_tricolour.sh'):
-
-#    syscall = 'bash -c "source '+TRICOLOUR_VENV+' ; '
+def generate_syscall_tricolour(myms = '',
+                          config = '',
+                          datacol = 'DATA',
+                          fields = 'all',
+                          strategy = 'polarisation'):
 
     syscall = 'tricolour '
     syscall += '--config '+config+' '
-    syscall += '--data-column '+column_selection+' '
-    syscall += '--field-names '+field_selection+' '
-    syscall += '--flagging-strategy '+fs+' '
+    syscall += '--data-column '+datacol+' '
+    syscall += '--field-names '+fields+' '
+    syscall += '--flagging-strategy '+strategy+' '
     syscall += myms
-
-    # syscall = 'python '+OXKAT+'/run_tricolour.py '
-    # if config != '':
-    #     syscall += '--config='+config+' '
-    # syscall += '--col='+datacol+' '
-    # syscall += '--fields='+fields+' '
-    # syscall += '--fs='+fs+' '
-    # syscall += '--runfile='+runfile+' '
-    # syscall += myms
-
-#   syscall += '; deactivate"'
 
     return syscall
 
@@ -339,7 +325,8 @@ def generate_syscall_makemask(prefix,
     syscall = 'bash -c "'
     syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+prefix+'-MFS-image.fits && '
     syscall += 'python '+TOOLS+'/dilate_FITS_mask.py '+fitsmask+' '+str(dilation)+' && '
-    syscall += 'fitstool.py -z '+str(zoompix)+' '+prefix+'-MFS-image.fits.mask.fits '
+    if zoompix !+ '':
+      syscall += 'fitstool.py -z '+str(zoompix)+' '+prefix+'-MFS-image.fits.mask.fits '
     syscall += '"'
 #    syscall2 = 'python '+OXKAT+'/merge_FITS_masks.py '+prefix+' '+opfits+'\n'
 

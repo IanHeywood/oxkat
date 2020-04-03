@@ -59,7 +59,7 @@ BEAM_L = HOME+'/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
 
 # ------------------------------------------------------------------------
 #
-# SLURM DEFAULTS
+# SLURM SETTINGS
 #
 
 SLURM_DEFAULTS = {
@@ -71,17 +71,28 @@ SLURM_DEFAULTS = {
 	'MEM': '64GB'
 }
 
-# SLURM_TIME = '12:00:00'
-# SLURM_PARTITION = 'Main'
-# SLURM_NTASKS = '1'
-# SLURM_NODES = '1'
-# SLURM_CPUS = '8'
-# SLURM_MEM = '64GB'
+SLURM_TRICOLOUR = {
+    'TIME': '12:00:00',
+    'PARTITION': 'Main',
+    'NTASKS': '1',
+    'NODES': '1',
+    'CPUS': '32',
+    'MEM': '238GB'
+}
+
+SLURM_WSCLEAN = {
+    'TIME': '12:00:00',
+    'PARTITION': 'Main',
+    'NTASKS': '1',
+    'NODES': '1',
+    'CPUS': '32',
+    'MEM': '238GB'
+}
 
 
 # ------------------------------------------------------------------------
 #
-# PBS DEFAULTS
+# PBS SETTINGS
 #
 
 PBS_DEFAULTS = {
@@ -93,13 +104,23 @@ PBS_DEFAULTS = {
 	'MEM': '64gb'
 }
 
-# PBS_PROGRAM = 'ASTR1301'
-# PBS_WALLTIME = '12:00:00'
-# PBS_QUEUE = 'serial'
-# PBS_NODES = '1'
-# PBS_PPN = '8'
-# PBS_MEM = '64gb'
+PBS_TRICOLOUR = {
+	'PROGRAM': 'ASTR1301',
+	'WALLTIME': '12:00:00',
+	'QUEUE': 'serial',
+	'NODES': '1',
+	'PPN': '23',
+	'MEM': '128gb'
+}
 
+PBS_WSCLEAN = {
+	'PROGRAM': 'ASTR1301',
+	'WALLTIME': '12:00:00',
+	'QUEUE': 'serial',
+	'NODES': '1',
+	'PPN': '23',
+	'MEM': '128gb'
+}
 
 # ------------------------------------------------------------------------
 #
@@ -135,7 +156,7 @@ WSC_MEM = 95
 
 
 MAKEMASK_THRESH = 6.0
-MAKEMASK_DILATION = 3
+MAKEMASK_DILATION = 2
 
 
 # ------------------------------------------------------------------------

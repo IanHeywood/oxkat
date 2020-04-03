@@ -90,7 +90,7 @@ def main():
     
         # Image prefix
 
-        imgname = 'img_'+myms+'_datablind'
+        imgname = IMAGES+'/img_'+myms+'_datablind'
 
 
         # Target-specific kill file

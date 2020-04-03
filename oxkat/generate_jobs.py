@@ -129,7 +129,7 @@ def job_handler(syscall,
             '#SBATCH --cpus-per-task='+slurm_cpus+'\n',
             '#SBATCH --mem='+slurm_mem+'\n',
             '#SBATCH --output='+slurm_logfile+'\n',
-            syscall,
+            syscall+'\n',
             'sleep 10\n'])
         f.close()
 
@@ -175,7 +175,7 @@ def job_handler(syscall,
 
         run_command = syscall
 
-    return run_command
+    return run_command+'\n'
 
 
 def generate_syscall_cubical(parset,myms,prefix):

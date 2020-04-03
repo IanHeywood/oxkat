@@ -107,7 +107,7 @@ def main():
         # STEP 1: Run Tricolour
 
         syscall = 'singularity exec '+TRICOLOUR_CONTAINER+' '
-        syscall += generate_syscall_tricolour(myms = myms,
+        syscall += gen.generate_syscall_tricolour(myms = myms,
                                 config = PARSETS+'/target_flagging_1.yaml',
                                 datacol = 'DATA',
                                 fields = '0',
@@ -130,7 +130,7 @@ def main():
 
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-        syscall += generate_syscall_wsclean(mslist = [myms],
+        syscall += gen.generate_syscall_wsclean(mslist = [myms],
                                 imgname = imgname,
                                 datacol = 'DATA',
                                 bda = True,
@@ -154,7 +154,7 @@ def main():
         # Make FITS mask 
 
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '
-        syscall += generate_syscall_makemask(prefix = imgname,
+        syscall += gen.generate_syscall_makemask(prefix = imgname,
                                 zoompix = '')
 
         id_makemask = 'MKMSK'+code

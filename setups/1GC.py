@@ -88,7 +88,7 @@ def main():
     #  \\                                                  // 
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
 
     id_average = 'AVRGE'+code
     id_list.append(id_average)

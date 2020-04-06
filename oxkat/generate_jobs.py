@@ -236,7 +236,10 @@ def generate_syscall_wsclean(mslist,
                           autothreshold = cfg.WSC_AUTOTHRESHOLD,
                           automask = cfg.WSC_AUTOMASK,
                           fitspectralpol = cfg.WSC_FITSPECTRALPOL,
-                          mem = cfg.WSC_MEM):
+                          mem = cfg.WSC_MEM,
+                          useidg = cfg.WSC_USEIDG,
+                          idgmode = cfg.WSC_IDGMODE,
+                          paralleldeconvolution = cfg.WSC_PARALLELDECONVOLUTION):
 
     # Generate system call to run wsclean
 
@@ -252,11 +255,14 @@ def generate_syscall_wsclean(mslist,
         syscall += '-save-source-list '
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
-    if bda:
+    if bda and not useidg:
         syscall += '-baseline-averaging '+str(bdafactor)+' '
         syscall += '-no-update-model-required '
     elif not bda and nomodel:
         syscall += '-no-update-model-required '
+    if useidg:
+        syscall += '-use-idg '
+        syscall += '-idg-mode '+idgmode+' '
     if multiscale:
         syscall += '-multiscale '
         syscall += '-multiscale-scales '+scales+' '
@@ -265,6 +271,8 @@ def generate_syscall_wsclean(mslist,
     syscall += '-mgain 0.85 '
     syscall += '-weight briggs '+str(briggs)+' '
     syscall += '-data-column '+datacol+' '
+    if paralleldeconvolution != 0:
+        syscall += '-parallel-deconvolution '+str(paralleldeconvolution)+' '
     if startchan != -1 and endchan != -1:
         syscall += '-channel-range '+str(startchan)+' '+str(endchan)+' '
     if mask.lower() == 'fits':

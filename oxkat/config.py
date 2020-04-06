@@ -147,6 +147,9 @@ WSC_AUTOMASK = 5.0
 WSC_FITSPECTRALPOL = 4
 WSC_PREDICTCHANNELS = 64
 WSC_MEM = 95
+WSC_USEIDG = False # use image-domain gridder
+WSC_IDGMODE = 'CPU'
+WSC_PARALLELDECONVOLUTION = 0 # 0 or specify max facet size
 
 
 # ------------------------------------------------------------------------

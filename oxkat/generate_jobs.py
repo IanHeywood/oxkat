@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+y#!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 
@@ -129,7 +129,9 @@ def job_handler(syscall,
             '#SBATCH --cpus-per-task='+slurm_cpus+'\n',
             '#SBATCH --mem='+slurm_mem+'\n',
             '#SBATCH --output='+slurm_logfile+'\n',
+            'SECONDS=0\n'
             syscall+'\n',
+            'echo "****ELAPSED "$SECONDS" "'+jobname+'"\n',
             'sleep 10\n'])
         f.close()
 
@@ -162,10 +164,11 @@ def job_handler(syscall,
             '#PBS -q '+pbs_queue+'\n'
             '#PBS -o '+pbs_logfile+'\n'
             '#PBS -e '+pbs_errfile+'\n'
-            '\n',
+            'SECONDS=0\n'
             'module load chpc/singularity\n'
             'cd '+cfg.CWD+'\n',
             syscall+'\n',
+            'echo "****ELAPSED "$SECONDS" "'+jobname+'"\n',
             'sleep 10\n'])
         f.close()
 

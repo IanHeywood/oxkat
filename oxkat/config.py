@@ -29,6 +29,7 @@ PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
 TRICOLOUR_PATTERN = 'tricolour'
 WSCLEAN_PATTERN = 'wsclean'
+WSCLEAN_IDG_PATTERN = 'wsclean-gpu'
 
 
 # ------------------------------------------------------------------------

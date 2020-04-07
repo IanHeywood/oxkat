@@ -148,7 +148,7 @@ def job_handler(syscall,
             '#SBATCH --cpus-per-task='+slurm_cpus+'\n',
             '#SBATCH --mem='+slurm_mem+'\n',
             '#SBATCH --output='+slurm_logfile+'\n',
-            'SECONDS=0\n'
+            'SECONDS=0\n',
             syscall+'\n',
             'echo "****ELAPSED "$SECONDS" "'+jobname+'"\n',
             'sleep 10\n'])

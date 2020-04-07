@@ -58,7 +58,7 @@ def main():
 
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+sys.argv[1]+' --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+sys.argv[2]+' --nologger --log2term --nogui\n'
 
     id_average = 'CASA'
 

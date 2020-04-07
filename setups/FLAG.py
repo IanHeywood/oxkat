@@ -18,6 +18,10 @@ def main():
     # ------------------------------------------------------------------------------
     # Setup
 
+
+    infrastructure, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+
+
     # Get paths from config and setup folders
 
     CWD = cfg.CWD
@@ -33,28 +37,12 @@ def main():
     gen.setup_dir(IMAGES)
 
 
-    # Set infrastructure and container path
+    # Get containers needed for this script
 
-    if len(sys.argv) == 1:
-        print('Please specify infrastructure (idia / chpc / node)')
-        sys.exit()
-
-    if sys.argv[1].lower() == 'idia':
-        infrastructure = 'idia'
-        CONTAINER_PATH = cfg.IDIA_CONTAINER_PATH
-    elif sys.argv[1].lower() == 'chpc':
-        infrastructure = 'chpc'
-        CONTAINER_PATH = cfg.CHPC_CONTAINER_PATH
-    elif sys.argv[1].lower() == 'node':
-        infrastructure = 'node'
-        CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
-
-
-    # Find containers needed
-
+    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_CONTAINER)
+    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
-    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
 
 
     # Get target information from project pickle
@@ -104,11 +92,12 @@ def main():
 
 
         # ------------------------------------------------------------------------------
-        # STEP 1: Run Tricolour
+        # STEP 1: 
+        # Run Tricolour on targets
 
         syscall = 'singularity exec '+TRICOLOUR_CONTAINER+' '
         syscall += gen.generate_syscall_tricolour(myms = myms,
-                                config = PARSETS+'/target_flagging_1.yaml',
+                                config = PARSETS+'/target_flagging_1_narrow.yaml',
                                 datacol = 'DATA',
                                 fields = '0',
                                 strategy = 'polarisation')
@@ -126,7 +115,8 @@ def main():
 
 
         # ------------------------------------------------------------------------------
-        # STEP 2: wsclean with blind deconvolution
+        # STEP 2: 
+        # wsclean with blind deconvolution
 
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
@@ -150,8 +140,9 @@ def main():
 
 
         # ------------------------------------------------------------------------------
+        # STEP 3:
+        # Make a FITS mask 
 
-        # Make FITS mask 
 
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '
         syscall += gen.generate_syscall_makemask(prefix = imgname,
@@ -166,6 +157,24 @@ def main():
                                 dependency = id_wsclean)
 
         f.write(run_command)
+
+        # ------------------------------------------------------------------------------
+        # STEP 4:
+        # Backup the flag table 
+
+        syscall = 'singularity exec '+CASA_CONTAINER+' '
+        syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
+        syscall += 'versionname=tricolour1 '
+
+        id_saveflags = 'SAVFG'+code
+        id_list.append(id_saveflags)
+
+        run_command = gen.job_handler(syscall=syscall,
+                    jobname=id_saveflags,
+                    infrastructure=infrastructure,
+                    dependency=id_wsclean)
+
+        f.write(run_command+'\n')
 
         # ------------------------------------------------------------------------------
 

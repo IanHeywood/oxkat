@@ -343,20 +343,22 @@ def generate_syscall_predict(msname,
     return syscall 
 
 
-def generate_syscall_makemask(prefix,
+def generate_syscall_makemask(restoredimage,
                             thresh = cfg.MAKEMASK_THRESH,
                             dilation = cfg.MAKEMASK_DILATION,
                             zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
     
-    fitsmask = prefix+'-MFS-image.fits.mask.fits'
+    fitsmask = restoredimage+'.mask.fits'
 
     syscall = 'bash -c "'
-    syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+prefix+'-MFS-image.fits '
-    syscall += '&& python '+cfg.TOOLS+'/dilate_FITS_mask.py '+fitsmask+' '+str(dilation)+' '
+    syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+restoredimage+' '
+    syscall += '&& python3 '+cfg.TOOLS+'/dilate_FITS_mask.py '+fitsmask+' '+str(dilation)+' '
     if zoompix != '':
-      syscall += '&& fitstool.py -z '+str(zoompix)+' '+prefix+'-MFS-image.fits.mask.fits '
+      zoomfits = restoredimage+'_zoom'+str(zoompix)+'.mask.fits'
+      syscall += '&& fitstool.py -z '+str(zoompix)+' -o '+zoomfits+' '
+      syscall += restoredimage+'.mask.fits '
     syscall += '"'
 #    syscall2 = 'python '+OXKAT+'/merge_FITS_masks.py '+prefix+' '+opfits+'\n'
 

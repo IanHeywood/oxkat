@@ -150,7 +150,7 @@ def job_handler(syscall,
             '#SBATCH --output='+slurm_logfile+'\n',
             'SECONDS=0\n',
             syscall+'\n',
-            'echo "****ELAPSED "$SECONDS" "'+jobname+'"\n',
+            'echo "****ELAPSED "$SECONDS" '+jobname+'"\n',
             'sleep 10\n'])
         f.close()
 

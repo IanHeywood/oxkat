@@ -18,6 +18,10 @@ def main():
     # ------------------------------------------------------------------------------
     # Setup
 
+
+    infrastructure, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+
+
     # Get paths from config and setup folders
 
     CWD = cfg.CWD
@@ -30,21 +34,22 @@ def main():
     gen.setup_dir(SCRIPTS)
 
 
+
     # Set infrastructure and container path
 
-    if len(sys.argv) == 1:
-        print('Please specify infrastructure (idia / chpc / node)')
-        sys.exit()
+    # if len(sys.argv) == 1:
+    #     print('Please specify infrastructure (idia / chpc / node)')
+    #     sys.exit()
 
-    if sys.argv[1].lower() == 'idia':
-        infrastructure = 'idia'
-        CONTAINER_PATH = cfg.IDIA_CONTAINER_PATH
-    elif sys.argv[1].lower() == 'chpc':
-        infrastructure = 'chpc'
-        CONTAINER_PATH = cfg.CHPC_CONTAINER_PATH
-    elif sys.argv[1].lower() == 'node':
-        infrastructure = 'node'
-        CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
+    # if sys.argv[1].lower() == 'idia':
+    #     infrastructure = 'idia'
+    #     CONTAINER_PATH = cfg.IDIA_CONTAINER_PATH
+    # elif sys.argv[1].lower() == 'chpc':
+    #     infrastructure = 'chpc'
+    #     CONTAINER_PATH = cfg.CHPC_CONTAINER_PATH
+    # elif sys.argv[1].lower() == 'node':
+    #     infrastructure = 'node'
+    #     CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
 
 
     # Find containers needed for 1GC

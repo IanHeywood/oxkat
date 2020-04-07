@@ -39,6 +39,25 @@ def get_container(path,pattern):
     return container
 
 
+def set_infrastructure(args):
+
+    if len(args) == 1:
+        print('Please specify infrastructure (idia / chpc / node)')
+        sys.exit()
+
+    if args[1].lower() == 'idia':
+        infrastructure = 'idia'
+        CONTAINER_PATH = cfg.IDIA_CONTAINER_PATH
+    elif args[1].lower() == 'chpc':
+        infrastructure = 'chpc'
+        CONTAINER_PATH = cfg.CHPC_CONTAINER_PATH
+    elif args[1].lower() == 'node':
+        infrastructure = 'node'
+        CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
+
+    return infrastructure,CONTAINER_PATH
+
+
 def setup_dir(DIR):
 
     # Make scripts folder if it doesn't exist

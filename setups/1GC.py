@@ -75,17 +75,9 @@ def main():
 
 
     # ------------------------------------------------------------------------------
-    # STEP 0:
-    #  __  ___ _    _  ___                                    
-    # / _|| o \ |  | ||_ _|                                   
-    # \_ \|  _/ |_ | | | |                                    
-    # |__/|_| |___||_| |_|                                    
-    #                                                        
-    #   _  _   _  _  __     _   _ _  ___  ___  _   __  ___ _  
-    #  // / \ | \| ||  \   / \ | | || __|| o \/ \ / _|| __|\\ 
-    # || | o || \\ || o ) | o || V || _| |   / o ( |_n| _|  ||
-    # || |_n_||_|\_||__/  |_n_| \_/ |___||_|\\_n_|\__/|___| ||
-    #  \\                                                  // 
+    # Pre-processing:
+    # Duplicate orignal MS, average to 1k channels if required
+
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
     syscall += 'casa -c '+OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
@@ -101,16 +93,8 @@ def main():
 
 
     # ------------------------------------------------------------------------------
-    # STEP 1:
-    #   __  ___  ___   ___ ___  _     _  ___ __  ___ 
-    #  / _|| __||_ _| | o \ o \/ \   | || __/ _||_ _|
-    # ( |_n| _|  | |  |  _/   ( o )n_| || _( (_  | | 
-    #  \__/|___| |_|  |_| |_|\\\_/ \__/ |___\__| |_| 
-    #                                               
-    #  _  _  _  ___ _                                
-    # | || \| || __/ \                               
-    # | || \\ || _( o )                              
-    # |_||_|\_||_| \_/                               
+    # STEP 0:
+    # Examine MS and store relevant deductions in project_info.p                           
                    
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
@@ -128,26 +112,37 @@ def main():
 
 
     # ------------------------------------------------------------------------------
-    # STEP 2: Run basic flags
-    #  ___  _   __  _  __                  
-    # | o )/ \ / _|| |/ _|                 
-    # | o \ o |\_ \| ( (_                  
-    # |___/_n_||__/|_|\__|                 
-    #                                     
-    #  ___  _     _   __   __  _  _  _  __ 
-    # | __|| |   / \ / _| / _|| || \| |/ _|
-    # | _| | |_ | o ( |_n( |_n| || \\ ( |_n
-    # |_|  |___||_n_|\__/ \__/|_||_|\_|\__/
+    # STEP 1:
+    # Rephase the primary calibrators to correct positions
                                     
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_01_casa_basic_flags.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_01_casa_rephase_primary_calibrator.py --nologger --log2term --nogui\n'
+
+    id_fixvis = 'UVFIX'+code
+    id_list.append(id_fixvis)
+
+    run_command = gen.job_handler(syscall=syscall,
+                jobname=id_fixvis,
+                infrastructure=infrastructure,
+                dependency=id_setup)
+
+    f.write(run_command+'\n')
+
+
+    # ------------------------------------------------------------------------------
+    # STEP 2:
+    # Apply basic flagging steps to all fields
+                                    
+
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += 'casa -c '+OXKAT+'/1GC_02_casa_basic_flags.py --nologger --log2term --nogui\n'
 
     id_basic = 'BASIC'+code
     id_list.append(id_basic)
 
     run_command = gen.job_handler(syscall=syscall,
-                jobname=id_basic,
+                jobname=id_fixvis,
                 infrastructure=infrastructure,
                 dependency=id_setup)
 
@@ -156,19 +151,11 @@ def main():
 
     # ------------------------------------------------------------------------------
     # STEP 3:
-    #   _   _ _  ___ _  ___  _     _   __           
-    #  / \ | | ||_ _/ \| __|| |   / \ / _|          
-    # | o || U | | ( o ) _| | |_ | o ( |_n          
-    # |_n_||___| |_|\_/|_|  |___||_n_|\__/          
-    #                                              
-    #   __   _   _    _  ___ ___  _  ___ _  ___  __ 
-    #  / _| / \ | |  | || o ) o \/ \|_ _/ \| o \/ _|
-    # ( (_ | o || |_ | || o \   / o || ( o )   /\_ \
-    #  \__||_n_||___||_||___/_|\\_n_||_|\_/|_|\\|__/
+    # Run auto-flaggers on calibrators
 
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_02_casa_autoflag_cals_DATA.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_03_casa_autoflag_cals_DATA.py --nologger --log2term --nogui\n'
 
     id_autoflagcals = 'FLG_C'+code
     id_list.append(id_autoflagcals)
@@ -183,19 +170,11 @@ def main():
 
     # ------------------------------------------------------------------------------
     # STEP 4:
-    #  __  ___ _    _  ___                          
-    # / _|| o \ |  | ||_ _|                         
-    # \_ \|  _/ |_ | | | |                          
-    # |__/|_| |___||_| |_|                          
-    #                                              
-    #   __   _   _    _  ___ ___  _  ___ _  ___  __ 
-    #  / _| / \ | |  | || o ) o \/ \|_ _/ \| o \/ _|
-    # ( (_ | o || |_ | || o \   / o || ( o )   /\_ \
-    #  \__||_n_||___||_||___/_|\\_n_||_|\_/|_|\\|__/
+    # Split calibrators into a MS with 8 spectral windows
                                               
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_03_casa_split_calibrators.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_04_casa_split_calibrators.py --nologger --log2term --nogui\n'
 
     id_splitcals = 'SPLCL'+code
     id_list.append(id_splitcals)
@@ -210,19 +189,11 @@ def main():
 
     # ------------------------------------------------------------------------------
     # STEP 5:
-    #   __  ___  ___   __  ___ __ _  _  _  __   _   ___ __ __
-    #  / _|| __||_ _| / _|| __/ _/ \| \| ||  \ / \ | o \\ V /
-    # ( |_n| _|  | |  \_ \| _( (( o ) \\ || o ) o ||   / \ / 
-    #  \__/|___| |_|  |__/|___\__\_/|_|\_||__/|_n_||_|\\ |_| 
-    #                                                       
-    #  _   _  _  __  ___  _                                  
-    # | \_/ |/ \|  \| __|| |                                 
-    # | \_/ ( o ) o ) _| | |_                                
-    # |_| |_|\_/|__/|___||___|                               
+    # Derive an intrinsic spectral model for the secondary calibrator                              
                                                        
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_04_casa_get_secondary_model.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_05_casa_get_secondary_model.py --nologger --log2term --nogui\n'
 
     id_secondarymodel = 'MODEL'+code
     id_list.append(id_secondarymodel)
@@ -237,19 +208,11 @@ def main():
 
     # ------------------------------------------------------------------------------
     # STEP 6: (1GC)
-    #  ___ ___  ___  ___  ___ ___  _  _  __  ___     
-    # | o \ __|| __|| __|| o \ __|| \| |/ _|| __|    
-    # |   / _| | _| | _| |   / _| | \\ ( (_ | _|     
-    # |_|\\___||_|  |___||_|\\___||_|\_|\__||___|    
-    #                                               
-    #   __   _   _    _  ___ ___  _  ___  _  _  _  _ 
-    #  / _| / \ | |  | || o ) o \/ \|_ _|| |/ \| \| |
-    # ( (_ | o || |_ | || o \   / o || | | ( o ) \\ |
-    #  \__||_n_||___||_||___/_|\\_n_||_| |_|\_/|_|\_|
+    # Perform reference calibration steps and apply to target(s)
                                                
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_05_casa_refcal_using_secondary_model.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_06_casa_refcal_using_secondary_model.py --nologger --log2term --nogui\n'
 
     id_1GC = 'ONEGC'+code
     id_list.append(id_1GC)
@@ -264,19 +227,11 @@ def main():
 
     # ------------------------------------------------------------------------------
     # STEP 7: 
-    #  ___ _   _ ___                           
-    # | o \ | / \_ _|                          
-    # |  _/ |( o ) |                           
-    # |_| |___\_/|_|                           
-    #                                        
-    #   __   _   _   ___  _   ___ _    ___  __ 
-    #  / _| / \ | | |_ _|/ \ | o ) |  | __|/ _|
-    # ( (_ | o || |_ | || o || o \ |_ | _| \_ \
-    #  \__||_n_||___||_||_n_||___/___||___||__/
+    # Make gain table plots
                                          
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/1GC_06_plot_gaintables.py\n'
+    syscall += 'python3 '+OXKAT+'/1GC_07_plot_gaintables.py\n'
 
     id_gainplots = 'GPLOT'+code
     id_list.append(id_gainplots)
@@ -291,19 +246,11 @@ def main():
 
     # ------------------------------------------------------------------------------
     # STEP 8:
-    #  __  ___ _    _  ___           
-    # / _|| o \ |  | ||_ _|          
-    # \_ \|  _/ |_ | | | |           
-    # |__/|_| |___||_| |_|           
-    #                               
-    #  ___  _   ___  __  ___  ___ __ 
-    # |_ _|/ \ | o \/ _|| __||_ _/ _|
-    #  | || o ||   ( |_n| _|  | |\_ \
-    #  |_||_n_||_|\\\__/|___| |_||__/
+    # Split the corrected target data into individual Measurement Sets
                                
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_07_casa_split_targets.py --nologger --log2term --nogui\n'
+    syscall += 'casa -c '+OXKAT+'/1GC_08_casa_split_targets.py --nologger --log2term --nogui\n'
 
     id_splittargets = 'SPLTG'+code
     id_list.append(id_splittargets)

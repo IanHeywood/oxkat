@@ -182,7 +182,11 @@ def main():
             f.write(kill+'\n')
 
 
-    f.close()
+        f.close()
+
+
+        gen.make_executable(submit_file)
+        gen.make_executable(kill_file)
 
 
 if __name__ == "__main__":

@@ -34,7 +34,7 @@ def main():
     gen.setup_dir(SCRIPTS)
 
 
-    # Find containers needed for this script
+    # Get containers needed for this script
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
@@ -129,9 +129,9 @@ def main():
     id_list.append(id_basic)
 
     run_command = gen.job_handler(syscall=syscall,
-                jobname=id_fixvis,
+                jobname=id_basic,
                 infrastructure=infrastructure,
-                dependency=id_setup)
+                dependency=id_fixvis)
 
     f.write(run_command+'\n')
 

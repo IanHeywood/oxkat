@@ -118,7 +118,6 @@ def main():
         # STEP 2: 
         # wsclean with blind deconvolution
 
-
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist = [myms],
                                 imgname = imgname,
@@ -143,9 +142,8 @@ def main():
         # STEP 3:
         # Make a FITS mask 
 
-
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '
-        syscall += gen.generate_syscall_makemask(prefix = imgname,
+        syscall += gen.generate_syscall_makemask(restoredimage = imgname+'-MFS-image.fits',
                                 zoompix = '')[0]
 
         id_makemask = 'MKMSK'+code

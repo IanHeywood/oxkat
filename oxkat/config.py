@@ -4,13 +4,14 @@
 
 import os
 
+
 CWD = os.getcwd()
 HOME = os.path.expanduser('~')
 
 
 # ------------------------------------------------------------------------
 #
-# CONTAINER SETUP
+# Singularity containers
 #
 
 
@@ -34,7 +35,7 @@ WSCLEANIDG_PATTERN = 'wsclean*idg'
 
 # ------------------------------------------------------------------------
 #
-# PATHS FOR COMPONENTS AND OUTPUTS
+# Paths for components and OUTPUTS
 #
 
 
@@ -42,11 +43,11 @@ OXKAT = CWD+'/oxkat'
 PARSETS = CWD+'/parsets'
 TOOLS = CWD+'/tools'
 
-GAINPLOTS = CWD+'/gainplots'
-#GAINTABLES = CWD+'/gaintables'
-IMAGES = CWD+'/images'
-LOGS = CWD+'/logs'
-SCRIPTS = CWD+'/scripts'
+GAINPLOTS = CWD+'/GAINPLOTS'
+GAINTABLES = CWD+'/GAINTABLES'
+IMAGES = CWD+'/IMAGES'
+LOGS = CWD+'/LOGS'
+SCRIPTS = CWD+'/SCRIPTS'
 
 
 # ------------------------------------------------------------------------
@@ -60,7 +61,7 @@ BEAM_L = HOME+'/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
 
 # ------------------------------------------------------------------------
 #
-# SLURM SETTINGS
+# Slurm settings
 #
 
 SLURM_DEFAULTS = {
@@ -93,7 +94,7 @@ SLURM_WSCLEAN = {
 
 # ------------------------------------------------------------------------
 #
-# PBS SETTINGS
+# PBS settings
 #
 
 PBS_DEFAULTS = {
@@ -123,9 +124,10 @@ PBS_WSCLEAN = {
 	'MEM': '128gb'
 }
 
+
 # ------------------------------------------------------------------------
 #
-# WSCLEAN DEFAULTS
+# wsclean defaults
 #
 
 
@@ -155,7 +157,7 @@ WSC_PARALLELDECONVOLUTION = 0 # 0 or specify max facet size
 
 # ------------------------------------------------------------------------
 #
-# MAKEMASK DEFAULTS
+# MakeMask defaults
 #
 
 
@@ -165,7 +167,7 @@ MAKEMASK_DILATION = 2
 
 # ------------------------------------------------------------------------
 #
-# DDFACET DEFAULTS
+# DDFacet defaults
 #
 
 
@@ -185,7 +187,7 @@ DDF_OUTPUTCUBES = 'MmRi' # output intrinsic and apparent resid and model cubes
 # [Image]
 DDF_NPIX = 10125
 DDF_CELL = 1.1
-# [Predict]
+# [Facets]
 DDF_DIAMMAX = 0.25
 DDF_DIAMMIN = 0.05
 DDF_NFACETS = 32
@@ -236,7 +238,7 @@ DDF_CONSERVEMEMORY = 1
 
 # ------------------------------------------------------------------------
 #
-# KILLMS DEFAULTS
+# killMS defaults
 #
 
 
@@ -272,7 +274,7 @@ KMS_COVQ = 0.05
 
 # ------------------------------------------------------------------------
 #
-# PYBDSF DEFAULTS
+# PyBDSF defaults
 #
 
 
@@ -284,7 +286,7 @@ PYBDSF_CATALOGFORMAT = 'fits'
 
 # ------------------------------------------------------------------------
 #
-# CLUSTERCAT DEFAULTS
+# ClusterCat defaults
 #
 
 

@@ -34,25 +34,7 @@ def main():
     gen.setup_dir(SCRIPTS)
 
 
-
-    # Set infrastructure and container path
-
-    # if len(sys.argv) == 1:
-    #     print('Please specify infrastructure (idia / chpc / node)')
-    #     sys.exit()
-
-    # if sys.argv[1].lower() == 'idia':
-    #     infrastructure = 'idia'
-    #     CONTAINER_PATH = cfg.IDIA_CONTAINER_PATH
-    # elif sys.argv[1].lower() == 'chpc':
-    #     infrastructure = 'chpc'
-    #     CONTAINER_PATH = cfg.CHPC_CONTAINER_PATH
-    # elif sys.argv[1].lower() == 'node':
-    #     infrastructure = 'node'
-    #     CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
-
-
-    # Find containers needed for 1GC
+    # Find containers needed for this script
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)

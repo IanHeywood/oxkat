@@ -19,7 +19,7 @@ def main():
     # Setup
 
 
-    infrastructure, CONTAINER_PATH = gen.set_infrastructure(sys.argv[0])
+    infrastructure, CONTAINER_PATH = gen.set_infrastructure(sys.argv[1])
 
 
     # Get paths from config and setup folders

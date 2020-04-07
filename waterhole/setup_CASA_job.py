@@ -25,7 +25,7 @@ def main():
     elif sys.argv[1].lower() == 'chpc':
         infrastructure = 'chpc'
         CONTAINER_PATH = cfg.CHPC_CONTAINER_PATH
-    elif sys.argv[1].lower() == 'node':
+    elif sys.sargv[1].lower() == 'node':
         infrastructure = 'node'
         CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
 

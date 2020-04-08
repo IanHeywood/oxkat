@@ -18,7 +18,7 @@ clearstat()
 # ------------------------------------------------------------------------
 # Frequency ranges to flag over all baselines
 
-bandfreqs = ['850~880MHz', # Lower band edge
+badfreqs = ['850~880MHz', # Lower band edge
 	'1658~1800MHz', # Upper bandpass edge
 	'1419.8~1421.3MHz'] # Galactic HI
 

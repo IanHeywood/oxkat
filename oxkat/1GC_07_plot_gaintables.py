@@ -5,7 +5,6 @@
 import glob
 import os
 import os.path as o
-import pickle
 import subprocess
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
@@ -19,10 +18,11 @@ def main():
 
 
     GAINPLOTS = cfg.GAINPLOTS
+    GAINTABLES = cfg.GAINTABLES
     gen.setup_dir(GAINPLOTS)
 
 
-    caltabs = sorted([item for item in glob.glob('cal_*') if not os.path.basename(item).endswith('flagversions')])
+    caltabs = sorted([item for item in glob.glob(GAINTABLES+'/cal_*') if not os.path.basename(item).endswith('flagversions')])
 
 
     for caltab in caltabs:

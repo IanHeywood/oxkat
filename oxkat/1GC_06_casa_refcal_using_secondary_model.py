@@ -7,8 +7,12 @@ import shutil
 import time
 
 
+execfile('oxkat/config.py')
+
+
 def stamp():
-    return str(time.time()).replace('.','')
+    now = str(datetime.datetime.now()).replace(' ','-').replace(':','-').split('.')[0]
+    return now
     
 
 # ------- Parameters
@@ -32,27 +36,27 @@ ref_ant = project_info['ref_ant']
 tt = stamp()
 
 
-ktab0 = 'cal_'+myms+'_'+tt+'.K0'
-bptab0 = 'cal_'+myms+'_'+tt+'.B0'
-gtab0 = 'cal_'+myms+'_'+tt+'.G0'
+ktab0 = GAINTABLES+'cal_'+myms+'_'+tt+'.K0'
+bptab0 = GAINTABLES+'cal_'+myms+'_'+tt+'.B0'
+gtab0 = GAINTABLES+'cal_'+myms+'_'+tt+'.G0'
 
 
-ktab1 = 'cal_'+myms+'_'+tt+'.K1'
-bptab1 = 'cal_'+myms+'_'+tt+'.B1'
-gtab1 = 'cal_'+myms+'_'+tt+'.G1'
+ktab1 = GAINTABLES+'cal_'+myms+'_'+tt+'.K1'
+bptab1 = GAINTABLES+'cal_'+myms+'_'+tt+'.B1'
+gtab1 = GAINTABLES+'cal_'+myms+'_'+tt+'.G1'
 
 
-ktab2 = 'cal_'+myms+'_'+tt+'.K2'
-gtab2 = 'cal_'+myms+'_'+tt+'.G2'
-ftab2 = 'cal_'+myms+'_'+tt+'.flux2'
+ktab2 = GAINTABLES+'cal_'+myms+'_'+tt+'.K2'
+gtab2 = GAINTABLES+'cal_'+myms+'_'+tt+'.G2'
+ftab2 = GAINTABLES+'cal_'+myms+'_'+tt+'.flux2'
 
 
-ktab3 = 'cal_'+myms+'_'+tt+'.K3'
-gtab3 = 'cal_'+myms+'_'+tt+'.G3'
-ftab3 = 'cal_'+myms+'_'+tt+'.flux3'
+ktab3 = GAINTABLES+'cal_'+myms+'_'+tt+'.K3'
+gtab3 = GAINTABLES+'cal_'+myms+'_'+tt+'.G3'
+ftab3 = GAINTABLES+'cal_'+myms+'_'+tt+'.flux3'
 
 
-secondary_pickle = pickle.load(open(glob.glob('secondary_models_final*.p')[0],'rb'))
+secondary_pickle = pickle.load(open(glob.glob(GAINTABLES+'/secondary_models_final*.p')[0],'rb'))
 secondary_models = secondary_pickle[0]
 secondary_mapping = secondary_pickle[1]
 

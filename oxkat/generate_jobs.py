@@ -204,7 +204,7 @@ def generate_syscall_casa(casascript,casalogfile):
 
     syscall = 'casa -c '+casascript+' '
     syscall += '--logfile '+casalogfile+' '
-    syscall += '--nologger --log2term --nogui\n'
+    syscall += '--nogui\n'
 
     return syscall
 

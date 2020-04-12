@@ -200,6 +200,16 @@ def job_handler(syscall,
     return run_command+'\n'
 
 
+def generate_syscall_casa(casascript,casalogfile):
+
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += 'casa -c '+casascript+' '
+    syscall += '--logfile '+casalogfile+' '
+    syscall += '--nologger --log2term --nogui\n'
+
+    return syscall
+
+
 def generate_syscall_cubical(parset,myms,prefix):
 
     now = timenow()

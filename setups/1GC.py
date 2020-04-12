@@ -66,11 +66,14 @@ def main():
     # Duplicate orignal MS, average to 1k channels if required
 
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py --nologger --log2term --nogui\n'
-
-    id_average = 'AVRGE'+code
+    id_average = 'SPPRE'+code
     id_list.append(id_average)
+
+    casalog = LOGS+'/casa_1GC_'+id_average+'.log'
+
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py',
+                casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_average,
@@ -84,11 +87,11 @@ def main():
     # Examine MS and store relevant deductions in project_info.p                           
                    
 
+    id_setup = 'SETUP'+code
+    id_list.append(id_setup)
+
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
     syscall += 'python '+OXKAT+'/1GC_00_setup.py '+myms+'\n'
-
-    id_setup = 'INFO_'+code
-    id_list.append(id_setup)
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_setup,
@@ -103,11 +106,14 @@ def main():
     # Rephase the primary calibrators to correct positions
                                     
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_01_casa_rephase_primary_calibrator.py --nologger --log2term --nogui\n'
-
     id_fixvis = 'UVFIX'+code
     id_list.append(id_fixvis)
+
+    casalog = LOGS+'/casa_1GC_'+id_fixvis+'.log'
+
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_01_casa_rephase_primary_calibrator.py',
+                casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_fixvis,
@@ -122,11 +128,14 @@ def main():
     # Apply basic flagging steps to all fields
                                     
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_02_casa_basic_flags.py --nologger --log2term --nogui\n'
-
-    id_basic = 'BASIC'+code
+    id_basic = 'FGBAS'+code
     id_list.append(id_basic)
+
+    casalog = LOGS+'/casa_1GC_'+id_basic+'.log'
+
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_02_casa_basic_flags.py',
+                casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_basic,
@@ -141,11 +150,14 @@ def main():
     # Run auto-flaggers on calibrators
 
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_03_casa_autoflag_cals_DATA.py --nologger --log2term --nogui\n'
-
-    id_autoflagcals = 'FLG_C'+code
+    id_autoflagcals = 'FGCAL'+code
     id_list.append(id_autoflagcals)
+
+    casalog = LOGS+'/casa_1GC_'+id_autoflagcals+'.log'
+
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_03_casa_autoflag_cals_DATA.py',
+                casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_autoflagcals,
@@ -160,11 +172,14 @@ def main():
     # Split calibrators into a MS with 8 spectral windows
                                               
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_04_casa_split_calibrators.py --nologger --log2term --nogui\n'
-
-    id_splitcals = 'SPLCL'+code
+    id_splitcals = 'SPCAL'+code
     id_list.append(id_splitcals)
+
+    casalog = LOGS+'/casa_1GC_'+id_splitcals+'.log'
+
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_04_casa_split_calibrators.py',
+                casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_splitcals,
@@ -179,11 +194,14 @@ def main():
     # Derive an intrinsic spectral model for the secondary calibrator                              
                                                        
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_05_casa_get_secondary_model.py --nologger --log2term --nogui\n'
-
-    id_secondarymodel = 'MODEL'+code
+    id_secondarymodel = 'CLMOD'+code
     id_list.append(id_secondarymodel)
+
+    casalog = LOGS+'/casa_1GC_'+id_secondarymodel+'.log'
+
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_05_casa_get_secondary_model.py',
+                casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_secondarymodel,
@@ -197,12 +215,14 @@ def main():
     # STEP 6: (1GC)
     # Perform reference calibration steps and apply to target(s)
                                                
+    id_1GC = 'CL1GC'+code
+    id_list.append(id_1GC)
+
+    casalog = LOGS+'/casa_1GC_'+id_1GC+'.log'
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_06_casa_refcal_using_secondary_model.py --nologger --log2term --nogui\n'
-
-    id_1GC = 'ONEGC'+code
-    id_list.append(id_1GC)
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_06_casa_refcal_using_secondary_model.py',
+                casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_1GC,
@@ -217,11 +237,11 @@ def main():
     # Make gain table plots
                                          
 
-    syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/1GC_07_plot_gaintables.py\n'
-
     id_gainplots = 'GPLOT'+code
     id_list.append(id_gainplots)
+
+    syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
+    syscall += 'python3 '+OXKAT+'/1GC_07_plot_gaintables.py\n'
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_gainplots,
@@ -236,11 +256,14 @@ def main():
     # Split the corrected target data into individual Measurement Sets
                                
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += 'casa -c '+OXKAT+'/1GC_08_casa_split_targets.py --nologger --log2term --nogui\n'
-
-    id_splittargets = 'SPLTG'+code
+    id_splittargets = 'SPTRG'+code
     id_list.append(id_splittargets)
+
+    casalog = LOGS+'/casa_1GC_'+id_splittargets+'.log'
+
+    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_08_casa_split_targets.py',
+                casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_splittargets,

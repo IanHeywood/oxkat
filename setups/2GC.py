@@ -71,7 +71,7 @@ def main():
         myms = target[2].rstrip('/')
         mask0 = sorted(glob.glob(IMAGES+'/'+filename_targetname+'.mask0.fits'))
 
-        print(gen.now()+'Target:     '+)
+        print(gen.now()+'Target:     '+targetname)
         print(gen.now()+'MS:         '+myms)
 
         if len(mask0) > 0:

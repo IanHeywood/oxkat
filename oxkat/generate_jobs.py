@@ -220,7 +220,7 @@ def generate_syscall_casa(casascript,casalogfile,extra_args=''):
 
     syscall = 'casa -c '+casascript+' '
     syscall += '--logfile '+casalogfile+' '
-    syscall += '--nogui'
+    syscall += '--nogui '
     if extra_args != '':
       syscall += extra_args+' '
     syscall += '\n'

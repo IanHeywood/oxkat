@@ -79,7 +79,7 @@ def main():
 
         # Target-specific kill file
     
-        kill_file = SCRIPTS+'/kill_flag_jobs_'filename_targetname+'.sh'
+        kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
 
     
         # Initialise a list to hold all the job IDs

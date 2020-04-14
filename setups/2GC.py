@@ -69,7 +69,7 @@ def main():
         filename_targetname = gen.scrub_target_name(targetname)
         code = gen.get_target_code(targetname)
         myms = target[2].rstrip('/')
-        mask0 = sorted(glob.glob(IMAGES+'/'+filename_targetname+'.mask0.fits'))
+        mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
 
         print(gen.now()+'Target:     '+targetname)
         print(gen.now()+'MS:         '+myms)

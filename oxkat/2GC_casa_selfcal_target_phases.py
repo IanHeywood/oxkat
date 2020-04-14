@@ -2,36 +2,32 @@
 
 
 import sys
-import pickle
 import time
 import shutil
+
+
+execfile('oxkat/config.py')
 
 
 def stamp():
     return str(time.time()).replace('.','')
 
 
-project_info = pickle.load(open('project_info.p','rb'))
-ref_ant = project_info['ref_ant']
-targets = project_info['target_list'] 
+args = sys.argv
+for item in sys.argv:
+    parts = item.split('=')
+    if parts[0] == 'mslist':
+        mslist = parts[1].split(',')
+
 
 myuvrange = '>150m'
 
-myms = sys.argv[3]
-
-for target in targets:
-    if target[2] == myms:
-        target_name = target[0]
-
 
 clearstat()
 clearstat()
 
 
-code = target_name[-3:]
-
-
-gtab = 'cal_'+myms+'_'+target_name+'_'+stamp()+'.GP0'
+gtab = GAINTABLES+'/cal_'+myms+'_'+stamp()+'.GP0'
 
 
 gaincal(vis=myms,

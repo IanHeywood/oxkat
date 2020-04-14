@@ -19,7 +19,7 @@ def main():
     # Setup
 
 
-    infrastructure, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+    INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
 
 
     # Get paths from config and setup folders
@@ -77,7 +77,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_average,
-                infrastructure=infrastructure)
+                infrastructure=INFRASTRUCTURE)
 
     f.write(run_command+'\n')
 
@@ -95,7 +95,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_setup,
-                infrastructure=infrastructure,
+                infrastructure=INFRASTRUCTURE,
                 dependency=id_average)
 
     f.write(run_command+'\n')
@@ -117,7 +117,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_fixvis,
-                infrastructure=infrastructure,
+                infrastructure=INFRASTRUCTURE,
                 dependency=id_setup)
 
     f.write(run_command+'\n')
@@ -139,7 +139,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_basic,
-                infrastructure=infrastructure,
+                infrastructure=INFRASTRUCTURE,
                 dependency=id_fixvis)
 
     f.write(run_command+'\n')
@@ -161,7 +161,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_autoflagcals,
-                infrastructure=infrastructure,
+                infrastructure=INFRASTRUCTURE,
                 dependency=id_basic)
 
     f.write(run_command+'\n')
@@ -183,7 +183,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_splitcals,
-                infrastructure=infrastructure,
+                infrastructure=INFRASTRUCTURE,
                 dependency=id_autoflagcals)
 
     f.write(run_command+'\n')
@@ -205,7 +205,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_secondarymodel,
-                infrastructure=infrastructure,
+                infrastructure=INFRASTRUCTURE,
                 dependency=id_splitcals)
 
     f.write(run_command+'\n')
@@ -226,7 +226,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_1GC,
-                infrastructure=infrastructure,
+                infrastructure=INFRASTRUCTURE,
                 dependency=id_secondarymodel)
 
     f.write(run_command+'\n')
@@ -237,7 +237,7 @@ def main():
     # Make gain table plots
                                          
 
-    id_gainplots = 'GPLOT'+code
+    id_gainplots = 'PLTAB'+code
     id_list.append(id_gainplots)
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
@@ -245,7 +245,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_gainplots,
-                infrastructure=infrastructure,
+                infrastructure=INFRASTRUCTURE,
                 dependency=id_1GC)
 
     f.write(run_command+'\n')
@@ -267,7 +267,7 @@ def main():
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_splittargets,
-                infrastructure=infrastructure,
+                infrastructure=INFRASTRUCTURE,
                 dependency=id_1GC)
 
     f.write(run_command+'\n')
@@ -276,7 +276,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    if infrastructure in ['idia','chpc']:
+    if INFRASTRUCTURE in ['idia','chpc']:
         kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
         f.write(kill+'\n')
     

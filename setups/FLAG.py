@@ -66,24 +66,20 @@ def main():
     for target in targets:
 
 
-        # Code for job names is last three characters of target name
-    
-        code = target[0][-3:].replace('-','_').replace('.','p')
-
-    
-        # Target MS
-    
+        targetname = target[0]
+        filename_targetname = gen.scrub_target_name(targetname)
+        code = gen.get_target_code(targetname)
         myms = target[2].rstrip('/')
 
     
         # Image prefix
 
-        imgname = IMAGES+'/img_'+myms+'_datablind'
+        img_prefix = IMAGES+'/img_'+myms+'_datablind'
 
 
         # Target-specific kill file
     
-        kill_file = SCRIPTS+'/kill_flag_jobs_'+target[0].replace('+','p')+'.sh'
+        kill_file = SCRIPTS+'/kill_flag_jobs_'filename_targetname+'.sh'
 
     
         # Initialise a list to hold all the job IDs
@@ -120,12 +116,12 @@ def main():
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist = [myms],
-                                imgname = imgname,
+                                imgname = img_prefix,
                                 datacol = 'DATA',
                                 bda = True,
                                 mask = 'none')
 
-        id_wsclean = 'WSCLN'+code
+        id_wsclean = 'WSDBL'+code
         id_list.append(id_wsclean)
 
         run_command = gen.job_handler(syscall = syscall,
@@ -143,7 +139,8 @@ def main():
         # Make a FITS mask 
 
         syscall = 'singularity exec '+DDFACET_CONTAINER+' '
-        syscall += gen.generate_syscall_makemask(restoredimage = imgname+'-MFS-image.fits',
+        syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
+                                suffix = '.mask0.fits',
                                 zoompix = '')[0]
 
         id_makemask = 'MKMSK'+code

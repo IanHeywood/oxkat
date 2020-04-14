@@ -84,6 +84,22 @@ def get_code(myms):
     return code
 
 
+def get_target_code(targetname):
+
+    # Last three digits of the target name
+
+    code = targetname.replace('-','_').replace('.','p').replace(' ','')[-3:]
+    return code
+
+
+def scrub_target_name(targetname):
+
+    # Replace + with p and space with underscore
+
+    scrubbed = target[0].replace('+','p').replace(' ','_')[-3:]
+    return scrubbed
+
+
 def make_executable(infile):
 
     # https://stackoverflow.com/questions/12791997/how-do-you-do-a-simple-chmod-x-from-within-python
@@ -200,11 +216,14 @@ def job_handler(syscall,
     return run_command+'\n'
 
 
-def generate_syscall_casa(casascript,casalogfile):
+def generate_syscall_casa(casascript,casalogfile,extra_args=''):
 
     syscall = 'casa -c '+casascript+' '
     syscall += '--logfile '+casalogfile+' '
-    syscall += '--nogui\n'
+    syscall += '--nogui'
+    if extra_args != '':
+      syscall += extra_args+' '
+    syscall += '\n'
 
     return syscall
 
@@ -353,16 +372,18 @@ def generate_syscall_predict(msname,
 
 
 def generate_syscall_makemask(restoredimage,
+                            suffix = '.mask.fits',
                             thresh = cfg.MAKEMASK_THRESH,
                             dilation = cfg.MAKEMASK_DILATION,
                             zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
     
-    fitsmask = restoredimage+'.mask.fits'
+    fitsmask = restoredimage+suffix
 
     syscall = 'bash -c "'
     syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+restoredimage+' '
+    syscall += '--Outname='+fitsmask+' '
     syscall += '&& python3 '+cfg.TOOLS+'/dilate_FITS_mask.py '+fitsmask+' '+str(dilation)+' '
     if zoompix != '':
       zoomfits = restoredimage+'_zoom'+str(zoompix)+'.mask.fits'

@@ -102,7 +102,7 @@ def get_field_info(myms,
         sub_tab = main_tab.query(query='FIELD_ID=='+str(i))
         state = numpy.unique(sub_tab.getcol('STATE_ID'))
         if state == target_state:
-            target_ms = myms.replace('.ms','_'+names[i].replace('+','p')+'.ms')
+            target_ms = myms.replace('.ms','_'+names[i].replace('+','p').replace(' ','_')+'.ms')
             target_dir =  dirs[i][0,:]*180.0/numpy.pi
             seps = []
             for secondary_field in secondary_fields:

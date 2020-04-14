@@ -2,6 +2,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import glob
 import os.path as o
 import pickle
 import sys
@@ -9,210 +10,223 @@ sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), ".."
 
 
 from oxkat import generate_jobs as gen
+from oxkat import config as cfg
 
 
 def main():
-    
-    CWD = gen.CWD
-    OXKAT = gen.OXKAT
-    PARSETS = gen.PARSETS
-    SCRIPTS = gen.SCRIPTS
-    LOGS = gen.LOGS
-    CASA_CONTAINER = gen.CASA_CONTAINER
-    WSCLEAN_CONTAINER = gen.WSCLEAN_CONTAINER
-    DDFACET_CONTAINER = gen.DDFACET_CONTAINER
-    XCASA_CONTAINER = gen.XCASA_CONTAINER
-    XWSCLEAN_CONTAINER = gen.XWSCLEAN_CONTAINER
-    XDDFACET_CONTAINER = gen.XDDFACET_CONTAINER
 
+    # ------------------------------------------------------------------------------
+    # Setup
+
+
+    INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+
+
+    # Get paths from config and setup folders
+
+    CWD = cfg.CWD
+    OXKAT = cfg.OXKAT
+    PARSETS = cfg.PARSETS
+    TOOLS = cfg.TOOLS
+    IMAGES = cfg.IMAGES
+    LOGS = cfg.LOGS
+    SCRIPTS = cfg.SCRIPTS
+
+
+    gen.setup_dir(LOGS)
+    gen.setup_dir(SCRIPTS)
+
+
+    # Get containers needed for this script
+
+    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
+    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
+    TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_CONTAINER)
+    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
+ 
+
+    # Set names of the run and kill files, open run file for writing
 
     submit_file = 'submit_2GC_jobs.sh'
-    kill_file = 'kill_2GC_jobs.sh'
-    run_file = 'run_2GC_jobs.sh'
+
+    f = open(submit_file,'w')
+    f.write('#!/usr/bin/env bash\n')
 
 
-    gen.setup_dir(SCRIPTS)
-    gen.setup_dir(LOGS)
-
+    # Get target info from project_info.p
 
     with open('project_info.p','rb') as f:
         project_info = pickle.load(f,encoding='latin1')
 
-
     targets = project_info['target_list'] 
 
 
-    f = open(submit_file,'w')
-    g = open(run_file,'w')
-
-
-    f.write('#!/usr/bin/env bash\n')
-    g.write('#!/usr/bin/env bash\n')
-
+    # Loop over targets
 
     for target in targets:
 
-
-        code = target[0][-3:].replace('-','_').replace('.','p')
+        targetname = target[0]
+        filename_targetname = gen.scrub_target_name(targetname)
+        code = gen.get_target_code(targetname)
         myms = target[2].rstrip('/')
+        mask0 = sorted(glob.glob(IMAGES+'/'+filename_targetname+'.mask0.fits'))
+
+        print(gen.now()+'Target:     '+)
+        print(gen.now()+'MS:         '+myms)
+
+        if len(mask0) > 0:
+            mask = mask0[0]
+        else:
+            mask = 'auto'
+
+        print(gen.now()+'Using mask:     '+mask)
+        print('------------------------------------------')
 
     
-        kill_file = 'kill_2GC_jobs_'+target[0].replace('+','p')+'.sh'
+        kill_file = 'kill_2GC_jobs_'+filename_targetname+'.sh'
 
 
-        blind_prefix = 'img_'+myms+'_data'
-        pcal_prefix = 'img_'+myms+'_pcal'
+        data_img_prefix = 'img_'+myms+'_datamask'
+        corr_img_prefix = 'img_'+myms+'_pcalmask'
+
+
+        # Initialise a list to hold all the job IDs
+
+        id_list = []
 
 
         # ------------------------------------------------------------------------------
-        # Automask wsclean 
+        # STEP 1: 
+        # Masked wsclean on DATA column
 
 
-        slurmfile = SCRIPTS+'/slurm_wsclean_blind_'+code+'.sh'
-        logfile = LOGS+'/slurm_wsclean_blind_'+code+'.log'
+        id_wsclean1 = 'WSDMA'+code
+        id_list.append(id_wsclean1)
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                                imgname=blind_prefix,
-                                datacol='DATA',
-                                bda=True,
-                                mask='auto')
+                    imgname=data_img_prefix,
+                    datacol='DATA',
+                    bda=True,
+                    mask=mask)
 
+        run_command = gen.job_handler(syscall=syscall,
+                    jobname=id_wsclean1,
+                    infrastructure=INFRASTRUCTURE)
 
-        gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'wdata',
-                    logfile=logfile,
-                    syscall=syscall)
-
-
-        syscall = syscall.replace(WSCLEAN_CONTAINER,XWSCLEAN_CONTAINER)
-        g.write(syscall+'\n')
-
-
-        job_id_blind = 'BLIND_'+code
-        syscall = job_id_blind+"=`sbatch "+slurmfile+" | awk '{print $4}'`"
-        f.write(syscall+'\n')
+        f.write(run_command+'\n')
 
 
         # ------------------------------------------------------------------------------
-        # Predict 
+        # STEP 2:
+        # Predict MODEL_DATA
 
 
-        slurmfile = SCRIPTS+'/slurm_wsclean_predict1_'+code+'.sh'
-        logfile = LOGS+'/slurm_wsclean_predict1_'+code+'.log'
-
+        id_predict1 = 'WSDPR'+code
+        id_list.append(id_predict1)
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-        syscall += gen.generate_syscall_predict(msname=myms,imgbase=blind_prefix)
+        syscall += gen.generate_syscall_predict(msname=myms,imgbase=data_img_prefix)
 
+        run_command = gen.job_handler(syscall=syscall,
+                    jobname=id_predict1,
+                    infrastructure=INFRASTRUCTURE,
+                    dependency=id_wsclean1)
 
-        gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'pdct1',
-                    logfile=logfile,
-                    syscall=syscall)
-
-
-        syscall = syscall.replace(WSCLEAN_CONTAINER,XWSCLEAN_CONTAINER)
-        g.write(syscall+'\n')
-
-
-        job_id_predict1 = 'PREDICT1_'+code
-        syscall = job_id_predict1+"=`sbatch -d afterok:${"+job_id_blind+"} "+slurmfile+" | awk '{print $4}'`"
-        f.write(syscall+'\n')
+        f.write(run_command+'\n')
 
 
         # ------------------------------------------------------------------------------
-        # Self-calibrate phases 
+        # STEP 3:
+        # Self-calibrate phases then amplitudes
 
 
-        slurmfile = SCRIPTS+'/slurm_phasecal1_'+code+'.sh'
-        logfile = LOGS+'/slurm_phasecal1_'+code+'.log'
+        id_selfcal = 'CLSLF'+code
+        id_list.append(id_selfcal)
 
+        casalog = LOGS+'/casa_2GC_'+id_selfcal+'.log'
 
         syscall = 'singularity exec '+CASA_CONTAINER+' '
-        syscall += 'casa -c '+OXKAT+'/casa_selfcal_target_phases.py '+myms+' --nologger --log2term --nogui\n'
+        syscall += gen.generate_syscall_casa(casascript=OXKAT+'/casa_selfcal_target_amp_phases.py',
+                    casalogfile=casalog,
+                    extra_args='mslist=['+myms+']')
 
+        run_command = gen.job_handler(syscall=syscall,
+                    jobname=id_selfcal,
+                    infrastructure=INFRASTRUCTURE,
+                    dependency=id_predict1)
 
-        gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'pcal1',
-                    logfile=logfile,
-                    syscall=syscall)
-
-
-        syscall = syscall.replace(CASA_CONTAINER,XCASA_CONTAINER)
-        g.write(syscall+'\n')
-
-
-        job_id_phasecal1 = 'PHASECAL1_'+code
-        syscall = job_id_phasecal1+"=`sbatch -d afterok:${"+job_id_predict1+"} "+slurmfile+" | awk '{print $4}'`"
-        f.write(syscall+'\n')
+        f.write(run_command+'\n')
 
 
         # ------------------------------------------------------------------------------
-        # Masked wsclean CORRECTED_DATA
+        # STEP 4:
+        # Masked wsclean on CORRECTED_DATA column
 
 
-        slurmfile = SCRIPTS+'/slurm_wsclean_pcal1_'+code+'.sh'
-        logfile = LOGS+'/slurm_wsclean_pcal1_'+code+'.log'
-
+        id_wsclean2 = 'WSCMA'+code
+        id_list.append(id_wsclean2)
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                                imgname=pcal_prefix,
-                                datacol='CORRECTED_DATA',
-                                bda=True,
-                                mask='auto')
+                    imgname=corr_img_prefix,
+                    datacol='CORRECTED_DATA',
+                    bda=True,
+                    mask=mask)
+
+        run_command = gen.job_handler(syscall=syscall,
+                    jobname=id_wsclean2,
+                    infrastructure=INFRASTRUCTURE,
+                    dependency=id_selfcal)
+
+        f.write(run_command+'\n')
 
 
-        gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'wcorr',
-                    logfile=logfile,
-                    syscall=syscall)
+        # ------------------------------------------------------------------------------
+        # STEP 5:
+        # Make a FITS mask 
+
+        syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+        syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
+                                suffix = '.mask1.fits',
+                                zoompix = '')[0]
+
+        id_makemask = 'MKMSK'+code
+        id_list.append(id_makemask)
+
+        run_command = gen.job_handler(syscall = syscall,
+                                jobname = id_makemask,
+                                infrastructure = infrastructure,
+                                dependency = id_wsclean2)
+
+        f.write(run_command)
 
 
-        syscall = syscall.replace(WSCLEAN_CONTAINER,XWSCLEAN_CONTAINER)
-        g.write(syscall+'\n')
+        # ------------------------------------------------------------------------------
+        # STEP 6:
+        # Predict MODEL_DATA
 
 
-        job_id_blind2 = 'BLIND2_'+code
-        syscall = job_id_blind2+"=`sbatch -d afterok:${"+job_id_phasecal1+"} "+slurmfile+" | awk '{print $4}'`"
-        f.write(syscall+'\n')
+        id_predict2 = 'WSCPR'+code
+        id_list.append(id_predict2)
+
+        syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+        syscall += gen.generate_syscall_predict(msname=myms,imgbase=pcal_img_prefix)
+
+        run_command = gen.job_handler(syscall=syscall,
+                    jobname=id_predict2,
+                    infrastructure=INFRASTRUCTURE,
+                    dependency=id_wsclean2)
+
+        f.write(run_command+'\n')
 
 
         # ------------------------------------------------------------------------------
 
-        # Make FITS mask 
 
-
-        slurmfile = SCRIPTS+'/slurm_makemask1_'+code+'.sh'
-        logfile = LOGS+'/slurm_makemask1_'+code+'.log'
-
-
-        syscall,fitsmask = gen.generate_syscall_makemask(pcal_prefix,thresh=5.5)
-        syscall = 'singularity exec '+DDFACET_CONTAINER+' '+syscall
-
-
-        gen.write_slurm(opfile=slurmfile,
-                    jobname=code+'mask1',
-                    logfile=logfile,
-                    syscall=syscall)
-
-
-        syscall = syscall.replace(DDFACET_CONTAINER,XDDFACET_CONTAINER)
-        g.write(syscall+'\n')
-
-
-        job_id_makemask1 = 'MAKEMASK1_'+code
-        syscall = job_id_makemask1+"=`sbatch -d afterok:${"+job_id_blind2+"} "+slurmfile+" | awk '{print $4}'`"        
-        f.write(syscall+'\n')
-
-
-        # ------------------------------------------------------------------------------
-
-
-        kill = 'echo "scancel "$'+job_id_blind+'" "$'+job_id_predict1+'" "$'+job_id_phasecal1+'" "$'+job_id_blind2+'" "$'+job_id_makemask1+' >> '+kill_file
-
-        f.write(kill+'\n')
+        if infrastructure in ['idia','chpc']:
+            kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
+            f.write(kill+'\n')
 
 
     f.close()

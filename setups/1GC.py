@@ -27,11 +27,13 @@ def main():
     CWD = cfg.CWD
     OXKAT = cfg.OXKAT
     PARSETS = cfg.PARSETS
+    GAINTABLES = cfg.GAINTABLES
     LOGS = cfg.LOGS
     SCRIPTS = cfg.SCRIPTS
 
     gen.setup_dir(LOGS)
     gen.setup_dir(SCRIPTS)
+    gen.setup_dir(GAINTABLES)
 
 
     # Get containers needed for this script

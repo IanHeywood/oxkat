@@ -19,7 +19,7 @@ def main():
     # Setup
 
 
-    infrastructure, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+    INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
 
 
     # Get paths from config and setup folders
@@ -102,7 +102,7 @@ def main():
 
         run_command  = gen.job_handler(syscall = syscall,
                                 jobname = id_tricolour,
-                                infrastructure = infrastructure,
+                                infrastructure = INFRASTRUCTURE,
                                 slurm_config = cfg.SLURM_TRICOLOUR,
                                 pbs_config = cfg.PBS_TRICOLOUR)
 
@@ -125,7 +125,7 @@ def main():
 
         run_command = gen.job_handler(syscall = syscall,
                                 jobname = id_wsclean,
-                                infrastructure = infrastructure,
+                                infrastructure = INFRASTRUCTURE,
                                 dependency = id_tricolour,
                                 slurm_config = cfg.SLURM_WSCLEAN,
                                 pbs_config = cfg.PBS_WSCLEAN)
@@ -147,7 +147,7 @@ def main():
 
         run_command = gen.job_handler(syscall = syscall,
                                 jobname = id_makemask,
-                                infrastructure = infrastructure,
+                                infrastructure = INFRASTRUCTURE,
                                 dependency = id_wsclean)
 
         f.write(run_command)
@@ -163,17 +163,17 @@ def main():
         id_saveflags = 'SAVFG'+code
         id_list.append(id_saveflags)
 
-        run_command = gen.job_handler(syscall=syscall,
-                    jobname=id_saveflags,
-                    infrastructure=infrastructure,
-                    dependency=id_wsclean)
+        run_command = gen.job_handler(syscall = syscall,
+                    jobname = id_saveflags,
+                    infrastructure  =INFRASTRUCTURE,
+                    dependency = id_wsclean)
 
         f.write(run_command+'\n')
 
         # ------------------------------------------------------------------------------
 
 
-        if infrastructure in ['idia','chpc']:
+        if INFRASTRUCTURE in ['idia','chpc']:
             kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
             f.write(kill+'\n')
 

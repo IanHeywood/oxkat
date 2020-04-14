@@ -195,7 +195,7 @@ def main():
 
         run_command = gen.job_handler(syscall = syscall,
                                 jobname = id_makemask,
-                                infrastructure = infrastructure,
+                                infrastructure = INFRASTRUCTURE,
                                 dependency = id_wsclean2)
 
         f.write(run_command)

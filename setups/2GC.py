@@ -55,8 +55,7 @@ def main():
 
     # Get target info from project_info.p
 
-    with open('project_info.p','rb') as f:
-        project_info = pickle.load(f,encoding='latin1')
+    pickle.load(open('project_info.p','rb'),encoding='latin1')
 
     targets = project_info['target_list'] 
 

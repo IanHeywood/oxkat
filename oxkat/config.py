@@ -28,6 +28,7 @@ DDFACET_PATTERN = 'ddfacet-0.5.2'
 KILLMS_PATTERN = 'killms'
 PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
+SHADEMS_PATTERN = 'shadems'
 TRICOLOUR_PATTERN = 'tricolour'
 WSCLEAN_PATTERN = 'wsclean'
 WSCLEANIDG_PATTERN = 'wsclean*idg'
@@ -48,6 +49,7 @@ GAINTABLES = CWD+'/GAINTABLES'
 IMAGES = CWD+'/IMAGES'
 LOGS = CWD+'/LOGS'
 SCRIPTS = CWD+'/SCRIPTS'
+VISPLOTS = CWD+'/VISPLOTS'
 
 
 # ------------------------------------------------------------------------
@@ -74,7 +76,7 @@ SLURM_DEFAULTS = {
 }
 
 SLURM_TRICOLOUR = {
-    'TIME': '12:00:00',
+    'TIME': '06:00:00',
     'PARTITION': 'Main',
     'NTASKS': '1',
     'NODES': '1',
@@ -108,7 +110,7 @@ PBS_DEFAULTS = {
 
 PBS_TRICOLOUR = {
 	'PROGRAM': 'ASTR1301',
-	'WALLTIME': '12:00:00',
+	'WALLTIME': '06:00:00',
 	'QUEUE': 'serial',
 	'NODES': '1',
 	'PPN': '23',

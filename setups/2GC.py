@@ -70,6 +70,7 @@ def main():
         myms = target[2].rstrip('/')
         mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
 
+        print('------------------------------------------------------')
         print(gen.now()+'Target:     '+targetname)
         print(gen.now()+'MS:         '+myms)
 
@@ -78,8 +79,7 @@ def main():
         else:
             mask = 'auto'
 
-        print(gen.now()+'Using mask:     '+mask)
-        print('------------------------------------------')
+        print(gen.now()+'Using mask: '+mask)
 
     
         kill_file = 'kill_2GC_jobs_'+filename_targetname+'.sh'
@@ -111,7 +111,10 @@ def main():
 
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_wsclean1,
-                    infrastructure=INFRASTRUCTURE)
+                    infrastructure=INFRASTRUCTURE,
+                    slurm_config = cfg.SLURM_WSCLEAN,
+                    pbs_config = cfg.PBS_WSCLEAN)
+
 
         f.write(run_command+'\n')
 
@@ -130,7 +133,10 @@ def main():
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_predict1,
                     infrastructure=INFRASTRUCTURE,
-                    dependency=id_wsclean1)
+                    dependency=id_wsclean1,
+                    slurm_config = cfg.SLURM_WSCLEAN,
+                    pbs_config = cfg.PBS_WSCLEAN)
+
 
         f.write(run_command+'\n')
 
@@ -176,7 +182,10 @@ def main():
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_wsclean2,
                     infrastructure=INFRASTRUCTURE,
-                    dependency=id_selfcal)
+                    dependency=id_selfcal,
+                    slurm_config = cfg.SLURM_WSCLEAN,
+                    pbs_config = cfg.PBS_WSCLEAN)
+
 
         f.write(run_command+'\n')
 
@@ -215,7 +224,10 @@ def main():
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_predict2,
                     infrastructure=INFRASTRUCTURE,
-                    dependency=id_wsclean2)
+                    dependency=id_wsclean2,
+                    slurm_config = cfg.SLURM_WSCLEAN,
+                    pbs_config = cfg.PBS_WSCLEAN)
+
 
         f.write(run_command+'\n')
 

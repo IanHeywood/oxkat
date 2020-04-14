@@ -210,7 +210,7 @@ def main():
         id_list.append(id_predict2)
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-        syscall += gen.generate_syscall_predict(msname=myms,imgbase=pcal_img_prefix)
+        syscall += gen.generate_syscall_predict(msname=myms,imgbase=corr_img_prefix)
 
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_predict2,

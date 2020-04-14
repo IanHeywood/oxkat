@@ -230,7 +230,6 @@ def main():
 
 
     f.close()
-    g.close()
 
 
 if __name__ == "__main__":

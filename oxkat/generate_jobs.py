@@ -349,7 +349,7 @@ def generate_syscall_wsclean(mslist,
 
 def generate_syscall_predict(msname,
                             imgbase,
-                            channelsout = cfg.WSC_CHANNELSOUT,
+                            chanout = cfg.WSC_CHANNELSOUT,
                             imsize = cfg.WSC_IMSIZE,
                             cellsize = cfg.WSC_CELLSIZE,
                             predictchannels = cfg.WSC_PREDICTCHANNELS,
@@ -360,11 +360,11 @@ def generate_syscall_predict(msname,
     syscall = 'wsclean '
     syscall += '-log-time '
     syscall += '-predict '
-    syscall += '-channelsout '+str(channelsout)+' '
+    syscall += '-channelsout '+str(chanout)+' '
     syscall += ' -size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
-    syscall += '-mem '+mem+' '
+    syscall += '-mem '+str(mem)+' '
     syscall += '-predict-channels '+str(predictchannels)+' '
     syscall += msname
 

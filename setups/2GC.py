@@ -82,7 +82,7 @@ def main():
         print(gen.now()+'Using mask: '+mask)
 
     
-        kill_file = 'kill_2GC_jobs_'+filename_targetname+'.sh'
+        kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
 
 
         data_img_prefix = 'img_'+myms+'_datamask'

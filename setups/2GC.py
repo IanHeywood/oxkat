@@ -223,7 +223,7 @@ def main():
         # ------------------------------------------------------------------------------
 
 
-        if infrastructure in ['idia','chpc']:
+        if INFRASTRUCTURE in ['idia','chpc']:
             kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
             f.write(kill+'\n')
 

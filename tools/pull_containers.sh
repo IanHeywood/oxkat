@@ -7,7 +7,7 @@ singularity pull docker://bhugo/ddfacet:0.5.2
 singularity pull docker://bhugo/killms:2.7.0
 singularity pull docker://stimela/pybdsf:1.2.4
 singularity pull docker://stimela/ragavi:1.2.6
-singularity pull docker://ianheywood/shadems:0.0.3
+singularity pull docker://ianheywood/shadems:0.1.0
 singularity pull docker://stimela/tricolour:1.2.5
 singularity pull docker://stimela/wsclean:1.2.4
 #singularity pull docker://stimela/codex-africanus:dev

@@ -157,7 +157,7 @@ def main():
         syscall = 'singularity exec '+CASA_CONTAINER+' '
         syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
                     casalogfile=casalog,
-                    extra_args='mslist=["'+myms+'"]')
+                    extra_args='mslist='+myms+')'
 
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_selfcal,

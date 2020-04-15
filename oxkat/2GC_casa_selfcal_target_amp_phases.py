@@ -23,64 +23,66 @@ for item in sys.argv:
 myuvrange = '>150m'
 
 
-clearstat()
-clearstat()
+for myms in mslist:
+
+    clearstat()
+    clearstat()
 
 
-gptab = GAINTABLES+'/cal_'+myms+'_'+stamp()+'.GP0'
-gatab = GAINTABLES+'/cal_'+myms+'_'+stamp()+'.GA0'
+    gptab = GAINTABLES+'/cal_'+myms+'_'+stamp()+'.GP0'
+    gatab = GAINTABLES+'/cal_'+myms+'_'+stamp()+'.GA0'
 
 
-gaincal(vis=myms,
-    field='0',
-    uvrange=myuvrange,
-    caltable=gptab,
-    refant = str(ref_ant),
-    solint='64s',
-    solnorm=False,
-    combine='',
-    minsnr=3,
-    calmode='p',
-    parang=False,
-    gaintable=[],
-    gainfield=[],
-    interp=[],
-    append=False)
+    gaincal(vis=myms,
+        field='0',
+        uvrange=myuvrange,
+        caltable=gptab,
+        refant = str(ref_ant),
+        solint='64s',
+        solnorm=False,
+        combine='',
+        minsnr=3,
+        calmode='p',
+        parang=False,
+        gaintable=[],
+        gainfield=[],
+        interp=[],
+        append=False)
 
 
-gaincal(vis=myms,
-    field='0',
-    uvrange=myuvrange,
-    caltable=gatab,
-    refant = str(ref_ant),
-    solint='inf',
-    solnorm=False,
-    combine='',
-    minsnr=3,
-    calmode='ap',
-    parang=False,
-    gaintable=[gptab],
-    gainfield=[''],
-    interp=[''],
-    append=False)
+    gaincal(vis=myms,
+        field='0',
+        uvrange=myuvrange,
+        caltable=gatab,
+        refant = str(ref_ant),
+        solint='inf',
+        solnorm=False,
+        combine='',
+        minsnr=3,
+        calmode='ap',
+        parang=False,
+        gaintable=[gptab],
+        gainfield=[''],
+        interp=[''],
+        append=False)
 
 
 
-applycal(vis=myms,
-    gaintable=[gptab,gatab],
-    field='0',
-    calwt=False,
-    parang=False,
-    applymode='calonly',
-    gainfield=['',''],
-    interp = ['nearest','linear'])
+    applycal(vis=myms,
+        gaintable=[gptab,gatab],
+        field='0',
+        calwt=False,
+        parang=False,
+        applymode='calonly',
+        gainfield=['',''],
+        interp = ['nearest','linear'])
 
 
-# statwt(vis=myms,
-#     field='0')
+    # statwt(vis=myms,
+    #     field='0')
 
 
-clearstat()
-clearstat()
+    clearstat()
+    clearstat()
 
 

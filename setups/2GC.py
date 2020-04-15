@@ -28,6 +28,7 @@ def main():
     OXKAT = cfg.OXKAT
     PARSETS = cfg.PARSETS
     TOOLS = cfg.TOOLS
+    GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES
     LOGS = cfg.LOGS
     SCRIPTS = cfg.SCRIPTS
@@ -35,6 +36,8 @@ def main():
 
     gen.setup_dir(LOGS)
     gen.setup_dir(SCRIPTS)
+    gen.setup_dir(IMAGES)
+    gen.setup_dir(GAINTABLES)
 
 
     # Get containers needed for this script
@@ -207,7 +210,7 @@ def main():
                                 infrastructure = INFRASTRUCTURE,
                                 dependency = id_wsclean2)
 
-        f.write(run_command)
+        f.write(run_command+'\n')
 
 
         # ------------------------------------------------------------------------------

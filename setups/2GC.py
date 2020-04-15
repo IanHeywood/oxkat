@@ -85,8 +85,8 @@ def main():
         kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
 
 
-        data_img_prefix = 'img_'+myms+'_datamask'
-        corr_img_prefix = 'img_'+myms+'_pcalmask'
+        data_img_prefix = IMAGES+'/img_'+myms+'_datamask'
+        corr_img_prefix = IMAGES+'/img_'+myms+'_pcalmask'
 
 
         # Initialise a list to hold all the job IDs

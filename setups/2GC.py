@@ -152,7 +152,7 @@ def main():
         casalog = LOGS+'/casa_2GC_'+id_selfcal+'.log'
 
         syscall = 'singularity exec '+CASA_CONTAINER+' '
-        syscall += gen.generate_syscall_casa(casascript=OXKAT+'/casa_selfcal_target_amp_phases.py',
+        syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
                     casalogfile=casalog,
                     extra_args='mslist=["'+myms+'"]')
 

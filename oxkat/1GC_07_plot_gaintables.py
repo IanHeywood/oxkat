@@ -28,7 +28,7 @@ def main():
     for caltab in caltabs:
 
         gaintype = caltab.split('.')[-1][0].upper()
-        opfile = GAINPLOTS+'/'+caltab
+        opfile = GAINPLOTS+'/'+caltab.split('/')[-1]
         if not os.path.isfile(opfile):
             syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
             subprocess.run([syscall],shell=True)

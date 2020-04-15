@@ -12,15 +12,18 @@ execfile('oxkat/config.py')
 def stamp():
     return str(time.time()).replace('.','')
 
+myuvrange = ''
 
 args = sys.argv
 for item in sys.argv:
     parts = item.split('=')
     if parts[0] == 'mslist':
         mslist = parts[1].split(',')
+    if parts[0] == 'uvmin':
+        myuvrange = '>'+parts[1]
 
-
-myuvrange = '>150m'
+if myuvrange == ''
+    myuvrange = '>150m'
 
 
 for myms in mslist:

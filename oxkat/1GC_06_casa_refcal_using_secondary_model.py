@@ -51,9 +51,9 @@ gtab2 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G2'
 ftab2 = GAINTABLES+'/cal_'+myms+'_'+tt+'.flux2'
 
 
-ktab3 = GAINTABLES+'cal_'+myms+'_'+tt+'.K3'
-gtab3 = GAINTABLES+'cal_'+myms+'_'+tt+'.G3'
-ftab3 = GAINTABLES+'cal_'+myms+'_'+tt+'.flux3'
+ktab3 = GAINTABLES+'/cal_'+myms+'_'+tt+'.K3'
+gtab3 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G3'
+ftab3 = GAINTABLES+'/cal_'+myms+'_'+tt+'.flux3'
 
 
 secondary_pickle = pickle.load(open(glob.glob(GAINTABLES+'/secondary_models_final*.p')[0],'rb'))

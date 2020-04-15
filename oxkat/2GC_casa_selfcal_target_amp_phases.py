@@ -22,7 +22,7 @@ for item in sys.argv:
     if parts[0] == 'uvmin':
         myuvrange = '>'+parts[1]
 
-if myuvrange == ''
+if myuvrange == '':
     myuvrange = '>150m'
 
 

@@ -26,6 +26,10 @@ if myuvrange == '':
     myuvrange = '>150m'
 
 
+project_info = pickle.load(open('project_info.p','rb'))
+ref_ant = project_info['ref_ant']
+
+
 for myms in mslist:
 
     clearstat()

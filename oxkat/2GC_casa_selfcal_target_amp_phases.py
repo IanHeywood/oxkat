@@ -1,9 +1,9 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import pickle
 import sys
 import time
-import shutil
 
 
 execfile('oxkat/config.py')

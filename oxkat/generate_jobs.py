@@ -266,6 +266,7 @@ def generate_syscall_tricolour(myms = '',
 def generate_syscall_wsclean(mslist,
                           imgname,
                           datacol,
+                          continueclean = cfg.WSC_CONTINUE,
                           startchan = cfg.WSC_STARTCHAN,
                           endchan = cfg.WSC_ENDCHAN,
                           chanout = cfg.WSC_CHANNELSOUT,
@@ -295,9 +296,14 @@ def generate_syscall_wsclean(mslist,
         print(now()+'Do not use odd image sizes with wsclean')
         sys.exit()
 
+    if continueclean and bda:
+        print(now()+'Cannot continue deconvolution with wsclean if BDA is enabled')
+        sys.exit()
 
     syscall = 'wsclean '
     syscall += '-log-time '
+    if continueclean:
+        syscall += '-continue '
     if sourcelist and fitspectralpol != 0:
         syscall += '-save-source-list '
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '

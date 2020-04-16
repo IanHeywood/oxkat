@@ -383,7 +383,7 @@ def generate_syscall_makemask(restoredimage,
 
     syscall = 'bash -c "'
     syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+restoredimage+' '
-    syscall += '--Outname='+fitsmask+' '
+    syscall += '--OutName='+fitsmask+' '
     syscall += '&& python3 '+cfg.TOOLS+'/dilate_FITS_mask.py '+fitsmask+' '+str(dilation)+' '
     if zoompix != '':
       zoomfits = restoredimage+'_zoom'+str(zoompix)+'.mask.fits'

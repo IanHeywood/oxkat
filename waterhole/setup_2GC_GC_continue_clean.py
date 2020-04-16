@@ -99,7 +99,6 @@ def main():
 
 
         id_wsclean = 'WSCMA'+code
-        id_list.append(id_wsclean2)
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
@@ -121,7 +120,6 @@ def main():
 
 
         f.write(run_command+'\n')
-
 
 
     f.close()

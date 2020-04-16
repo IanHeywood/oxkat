@@ -90,7 +90,7 @@ def main():
         syscall = 'singularity exec '+CLUSTERCAT_CONTAINER+' '
         syscall += gen.generate_syscall_ddfacet_hogbom(mspattern=mspat,
                     imgname=ddf1_prefix,
-                    chunkhours=2,
+                    chunkhours=4,
                     beam=BEAM,
                     mask=MASK)
         syscall += ' ; singularity exec '+CLUSTERCAT_CONTAINER+' CleanSHM.py'

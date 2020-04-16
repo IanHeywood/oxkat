@@ -142,7 +142,7 @@ def main():
                                 suffix = 'mask0',
                                 zoompix = '')[0]
 
-        id_makemask = 'MKMSK'+code
+        id_makemask = 'MASK0'+code
         id_list.append(id_makemask)
 
         run_command = gen.job_handler(syscall = syscall,

@@ -37,7 +37,7 @@ def main():
 	infits = sys.argv[1]
 	thresh = float(sys.argv[2])
 
-	thresh_str = 'thresh'+str(thresh).replace('.','p')+'.mask.fits'
+	thresh_str = '.thresh'+str(thresh).replace('.','p')+'.mask.fits'
 	opfits = infits.replace('.fits',thresh_str)
 
 	copyfile(infits,opfits)

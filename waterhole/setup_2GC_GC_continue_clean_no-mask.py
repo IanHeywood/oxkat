@@ -81,13 +81,6 @@ def main():
         print(gen.now()+'Target:     '+targetname)
         print(gen.now()+'MS:         '+myms)
 
-        if len(mask0) > 0:
-            mask = mask0[0]
-        else:
-            mask = 'auto'
-
-        print(gen.now()+'Using mask: '+mask)
-
     
         corr_img_prefix = IMAGES+'/img_'+myms+'_pcalmask'
 

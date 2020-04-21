@@ -8,6 +8,7 @@
 import pickle
 import sys
 
+mslist = False
 
 args = sys.argv
 for item in sys.argv:
@@ -16,8 +17,6 @@ for item in sys.argv:
         versionname = parts[1]
     if parts[0] == 'mslist':
         mslist = parts[1].split(',')
-    else:
-        mslist = False
 
 
 if not mslist:

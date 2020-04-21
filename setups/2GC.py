@@ -65,23 +65,33 @@ def main():
 
     # Loop over targets
 
+    codes = []
+    ii = 1
+
     for target in targets:
 
         targetname = target[0]
         filename_targetname = gen.scrub_target_name(targetname)
-        code = gen.get_target_code(targetname)
         myms = target[2].rstrip('/')
+
+
+        code = gen.get_target_code(targetname)
+        if code in codes:
+            code += '_'+str(ii)
+            ii += 1
+        codes.append(code)
+
+
         mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
-
-        print('------------------------------------------------------')
-        print(gen.now()+'Target:     '+targetname)
-        print(gen.now()+'MS:         '+myms)
-
         if len(mask0) > 0:
             mask = mask0[0]
         else:
             mask = 'auto'
 
+
+        print('------------------------------------------------------')
+        print(gen.now()+'Target:     '+targetname)
+        print(gen.now()+'MS:         '+myms)
         print(gen.now()+'Using mask: '+mask)
 
     

@@ -59,6 +59,8 @@ def main():
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')
 
+    codes = []
+    ii = 1
 
     # Loop over targets
 
@@ -67,8 +69,14 @@ def main():
 
         targetname = target[0]
         filename_targetname = gen.scrub_target_name(targetname)
-        code = gen.get_target_code(targetname)
         myms = target[2].rstrip('/')
+
+
+        code = gen.get_target_code(targetname)
+        if code in codes:
+            code += '_'+str(ii)
+            ii += 1
+        codes.append(code)
 
     
         # Image prefix

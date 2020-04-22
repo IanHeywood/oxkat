@@ -176,7 +176,7 @@ def main():
                     infrastructure  =INFRASTRUCTURE,
                     dependency = id_wsclean)
 
-        f.write(run_command+'\n')
+        f.write(run_command)
 
         # ------------------------------------------------------------------------------
 
@@ -184,6 +184,7 @@ def main():
         if INFRASTRUCTURE in ['idia','chpc']:
             kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
             f.write(kill+'\n')
+        f.write('\n')
 
 
     f.close()

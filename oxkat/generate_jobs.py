@@ -384,8 +384,11 @@ def generate_syscall_makemask(restoredimage,
                             zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
-    
-    fitsmask = restoredimage+'.'+suffix+'.fits'
+  
+    if suffix == '':
+      fitsmask = restoredimage+'.mask.fits'
+    else: 
+      fitsmask = restoredimage+'.'+suffix+'.fits'
 
     syscall = 'bash -c "'
     syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+restoredimage+' '

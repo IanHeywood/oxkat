@@ -378,7 +378,7 @@ def generate_syscall_predict(msname,
 
 
 def generate_syscall_makemask(restoredimage,
-                            suffix = '.mask.fits',
+                            suffix = '',
                             thresh = cfg.MAKEMASK_THRESH,
                             dilation = cfg.MAKEMASK_DILATION,
                             zoompix = cfg.DDF_NPIX):
@@ -389,7 +389,8 @@ def generate_syscall_makemask(restoredimage,
 
     syscall = 'bash -c "'
     syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+restoredimage+' '
-    syscall += '--OutName='+suffix+' '
+    if suffix != '':
+      syscall += '--OutName='+suffix+' '
     syscall += '&& python3 '+cfg.TOOLS+'/dilate_FITS_mask.py '+fitsmask+' '+str(dilation)+' '
     if zoompix != '':
       zoomfits = fitsmask.replace('.fits','.zoom'+str(zoompix)+'.fits')

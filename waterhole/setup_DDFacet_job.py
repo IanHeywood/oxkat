@@ -68,8 +68,7 @@ def main():
     f.write('#!/usr/bin/env bash\n')
 
 
-    with open('project_info.p','rb') as f:
-        project_info = pickle.load(f,encoding='latin1')
+    project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
 
 
     targets = project_info['target_list'] 

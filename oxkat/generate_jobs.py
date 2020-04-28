@@ -391,7 +391,9 @@ def generate_syscall_makemask(restoredimage,
       fitsmask = restoredimage+'.'+suffix+'.fits'
 
     syscall = 'bash -c "'
-    syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+restoredimage+' '
+    #syscall += 'MakeMask.py '
+    syscall += 'python3 '+cfg.TOOLS+'/MakeMask.py '
+    syscall += '--Th='+str(thresh)+' --RestoredIm='+restoredimage+' '
     if suffix != '':
       syscall += '--OutName='+suffix+' '
     syscall += '&& python3 '+cfg.TOOLS+'/dilate_FITS_mask.py '+fitsmask+' '+str(dilation)+' '

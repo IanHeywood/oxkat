@@ -108,11 +108,8 @@ def main():
                     jobname = id_ddf,
                     infrastructure = infrastructure,
                     dependency = dependency,
-                    slurm_partition = 'HighMem',
-                    slurm_mem = '480GB',
-                    pbs_walltime = '48:00:00',
-                    pbs_ppn='24',
-                    pbs_mem='120gb')
+                    slurm_config = cfg.SLURM_WSCLEAN,
+                    pbs_config = cfg.PBS_WSCLEAN)
 
         f.write(run_command+'\n')
 

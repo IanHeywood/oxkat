@@ -84,13 +84,6 @@ def main():
         img_prefix = IMAGES+'/img_'+myms+'_datablind'
 
 
-        # Check for existing final product
-
-        if o.isfile(img_prefix+'-MFS-image.fits.mask0.fits'):
-            print(gen.now()+'Found products for '+targetname+', skipping')
-            continue
-
-
         # Target-specific kill file
     
         kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'

@@ -87,7 +87,7 @@ def main():
         # Check for existing final product
 
         if o.isfile(img_prefix+'-MFS-image.fits.mask0.fits'):
-            print('Found products for '+targetname+', skipping')
+            print(gen.now()+'Found products for '+targetname+', skipping')
             continue
 
 

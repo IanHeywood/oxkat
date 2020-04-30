@@ -61,7 +61,7 @@ def main():
     parser.add_option('--dilate', dest = 'dilate', help = 'Number of iterations of binary dilation (default = 0)', default = 0)
     parser.add_option('--savenoise', dest = 'savenoise', help = 'Enable to export noise image as FITS file (default = do not save noise image', action = 'store_true', default = False)
     (options,args) = parser.parse_args()
-    threshold = options.threshold
+    threshold = float(options.threshold)
     boxsize = int(options.boxsize)
     suffix = options.suffix
     dilate = int(options.dilate)

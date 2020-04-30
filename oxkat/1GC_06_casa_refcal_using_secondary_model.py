@@ -19,6 +19,7 @@ def stamp():
 
 
 myuvrange = '>150m'
+gapfill = 8
 
 
 project_info = pickle.load(open('project_info.p','rb'))
@@ -136,7 +137,7 @@ bandpass(vis=myms,
     minblperant=4,
     minsnr=3.0,
     bandtype='B',
-    fillgaps=64,
+    fillgaps=gapfill,
     parang=False,
     gainfield=[bpcal,bpcal],
     interp = ['nearest','nearest'],
@@ -233,7 +234,7 @@ bandpass(vis=myms,
     minblperant=4,
     minsnr=3.0,
     bandtype='B',
-    fillgaps=64,
+    fillgaps=gapfill,
     parang=False,
     gainfield=[bpcal,bpcal],
     interp = ['nearest','nearest'],

@@ -386,25 +386,23 @@ def generate_syscall_makemask(restoredimage,
     # Generate call to MakeMask.py and dilate the result
   
     if suffix == '':
-      fitsmask = restoredimage+'.mask.fits'
+        fitsmask = restoredimage+'.mask.fits'
     else: 
-      fitsmask = restoredimage+'.'+suffix+'.fits'
+        fitsmask = restoredimage+'.'+suffix+'.fits'
 
     syscall = 'bash -c "'
-    #syscall += 'MakeMask.py '
-    syscall += 'python3 '+cfg.TOOLS+'/MakeMask.py '
-    syscall += '--Th='+str(thresh)+' --RestoredIm='+restoredimage+' '
+    syscall += 'python3 '+cfg.TOOLS+'/pyMakeMask.py '
+    syscall += '--threshold='+str(thresh)+' '
+    syscall += '--dilate='+str(dilation)+' '
     if suffix != '':
-      syscall += '--OutName='+suffix+' '
-    syscall += '&& python3 '+cfg.TOOLS+'/dilate_FITS_mask.py '+fitsmask+' '+str(dilation)+' '
+        syscall += '--suffix='+str(suffix)+' '
+    syscall += restoredimage
     if zoompix != '':
-      zoomfits = fitsmask.replace('.fits','.zoom'+str(zoompix)+'.fits')
-      syscall += '&& fitstool.py -z '+str(zoompix)+' -o '+zoomfits+' '
-      syscall += fitsmask
+        zoomfits = fitsmask.replace('.fits','.zoom'+str(zoompix)+'.fits')
+        syscall += '&& fitstool.py -z '+str(zoompix)+' -o '+zoomfits+' '
+        syscall += fitsmask
     syscall += '"'
-#    syscall2 = 'python '+OXKAT+'/merge_FITS_masks.py '+prefix+' '+opfits+'\n'
 
- #   return syscall1,syscall2
     return syscall,fitsmask
 
 

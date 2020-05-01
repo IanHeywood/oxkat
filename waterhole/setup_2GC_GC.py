@@ -1,6 +1,19 @@
 #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
+# 2GC script modified for Galactic Centre pointings
+#
+# - Expects manually-thresholded mask in IMAGES folder
+#   repo at: https://github.com/IanHeywood/masks
+#
+# - Multiscale and deeper clean enabled with robust = -1.5
+#
+# - Walltimes bumped up accordingly
+#
+# - Harsher inner uv cut for phase-only selfcal
+#
+# - Final MakeMask step excluded because this should be done manually for these fields
+
 
 import glob
 import os.path as o
@@ -63,35 +76,32 @@ def main():
     targets = project_info['target_list'] 
 
 
-    # Loop over targets
+    SLURM_WSCLEAN_MOD = cfg.SLURM_WSCLEAN
+    SLURM_WSCLEAN_MOD['TIME'] = '18:00:00'
 
-    codes = []
-    ii = 1
+    PBS_WSCLEAN_MOD = cfg.PBS_WSCLEAN
+    PBS_WSCLEAN_MOD['TIME'] = '18:00:00'
+
+
+    # Loop over targets
 
     for target in targets:
 
         targetname = target[0]
         filename_targetname = gen.scrub_target_name(targetname)
-        myms = target[2].rstrip('/')
-
-
         code = gen.get_target_code(targetname)
-        if code in codes:
-            code += '_'+str(ii)
-            ii += 1
-        codes.append(code)
+        myms = target[2].rstrip('/')
+        mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask.fits'))
 
+        print('------------------------------------------------------')
+        print(gen.now()+'Target:     '+targetname)
+        print(gen.now()+'MS:         '+myms)
 
-        mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
         if len(mask0) > 0:
             mask = mask0[0]
         else:
             mask = 'auto'
 
-
-        print('------------------------------------------------------')
-        print(gen.now()+'Target:     '+targetname)
-        print(gen.now()+'MS:         '+myms)
         print(gen.now()+'Using mask: '+mask)
 
     
@@ -118,6 +128,10 @@ def main():
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                     imgname=data_img_prefix,
+                    briggs = -1.5,
+                    multiscale = True,
+                    scales = '0,3,9',
+                    niter = 300000,
                     datacol='DATA',
                     bda=True,
                     mask=mask)
@@ -125,8 +139,8 @@ def main():
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_wsclean1,
                     infrastructure=INFRASTRUCTURE,
-                    slurm_config = cfg.SLURM_WSCLEAN,
-                    pbs_config = cfg.PBS_WSCLEAN)
+                    slurm_config = SLURM_WSCLEAN_MOD,
+                    pbs_config = PBS_WSCLEAN_MOD)
 
 
         f.write(run_command+'\n')
@@ -167,7 +181,7 @@ def main():
         syscall = 'singularity exec '+CASA_CONTAINER+' '
         syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
                     casalogfile=casalog,
-                    extra_args='mslist='+myms)
+                    extra_args='mslist='+myms+' uvmin=300')
 
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_selfcal,
@@ -189,6 +203,10 @@ def main():
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                     imgname=corr_img_prefix,
                     datacol='CORRECTED_DATA',
+                    briggs = -1.5,
+                    multiscale = True,
+                    scales = '0,3,9',
+                    niter = 300000,
                     bda=True,
                     mask=mask)
 
@@ -196,8 +214,8 @@ def main():
                     jobname=id_wsclean2,
                     infrastructure=INFRASTRUCTURE,
                     dependency=id_selfcal,
-                    slurm_config = cfg.SLURM_WSCLEAN,
-                    pbs_config = cfg.PBS_WSCLEAN)
+                    slurm_config = SLURM_WSCLEAN_MOD,
+                    pbs_config = PBS_WSCLEAN_MOD)
 
 
         f.write(run_command+'\n')
@@ -205,27 +223,6 @@ def main():
 
         # ------------------------------------------------------------------------------
         # STEP 5:
-        # Make a FITS mask 
-
-        syscall = 'singularity exec '+DDFACET_CONTAINER+' '
-        syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
-                                suffix = 'mask1',
-                                thresh = 5.0,
-                                zoompix = cfg.DDF_NPIX)[0]
-
-        id_makemask = 'MASK1'+code
-        id_list.append(id_makemask)
-
-        run_command = gen.job_handler(syscall = syscall,
-                                jobname = id_makemask,
-                                infrastructure = INFRASTRUCTURE,
-                                dependency = id_wsclean2)
-
-        f.write(run_command+'\n')
-
-
-        # ------------------------------------------------------------------------------
-        # STEP 6:
         # Predict MODEL_DATA
 
 

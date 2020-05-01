@@ -8,7 +8,6 @@ import glob
 import pickle
 from pyrap.tables import table
 from astropy.coordinates import SkyCoord
-from optparse import OptionParser
 
 
 
@@ -35,9 +34,9 @@ def get_antnames(myms):
 
 
 def get_field_info(myms,
-                target_match='TARGET',
-                primary_match='BANDPASS',
-                secondary_match='PHASE'):
+                target='TARGET',
+                primary='BANDPASS',
+                secondary='PHASE'):
 
 
     # Tags and positions for the preferred primary calibrators
@@ -51,11 +50,11 @@ def get_field_info(myms,
 
 
     for i in range(0,len(modes)):
-        if modes[i] == target_match:
+        if modes[i] == target:
             target_state = i
-        if primary_match in modes[i]:
+        if primary in modes[i]:
             primary_state = i
-        if secondary_match in modes[i]:
+        if secondary in modes[i]:
             secondary_state = i
         if modes[i] == 'UNKNOWN':
             unknown_state = i
@@ -103,7 +102,7 @@ def get_field_info(myms,
         sub_tab = main_tab.query(query='FIELD_ID=='+str(i))
         state = numpy.unique(sub_tab.getcol('STATE_ID'))
         if state == target_state:
-            target_ms = myms.replace('.ms','_'+names[i].replace('+','p')+'.ms')
+            target_ms = myms.replace('.ms','_'+names[i].replace('+','p').replace(' ','_')+'.ms')
             target_dir =  dirs[i][0,:]*180.0/numpy.pi
             seps = []
             for secondary_field in secondary_fields:
@@ -124,58 +123,47 @@ def get_field_info(myms,
 def get_refant(myms,field_id):
 
     ant_names = get_antnames(myms)
-
+    main_tab = table(myms,ack='False')
+    
     ref_pool = ['m000','m001','m002','m003','m004','m006']
-    pc_list = numpy.ones(len(ref_pool))*100.0
-    idx_list = numpy.zeros(len(ref_pool),dtype=numpy.int8)
+    
+    pc_list = []
+    idx_list = []
 
-
+    main_tab = table(myms,ack=False)
+    field_id = 0
     for i in range(0,len(ref_pool)):
-        ant = ref_pool[i]
-        try:
-            idx = ant_names.index(ant)
-            sub_tab = main_tab.query(query='ANTENNA1=='+str(idx)+' && FIELD_ID=='+str(field_id))
-            flags = sub_tab.getcol('FLAG')
-            vals,counts = numpy.unique(flags,return_counts=True)
-            if len(vals) == 1 and vals == True:
-                flag_pc = 100.0
-            elif len(vals) == 1 and vals == False:
-                flag_pc = 0.0
-            else:
-                flag_pc = 100.*round(float(counts[1])/float(numpy.sum(counts)),2)
-            pc_list[i] = flag_pc
-            idx_list[i] = idx
-        except:
-            continue
+            ant = ref_pool[i]
+            if ant in ant_names:
+                    idx = ant_names.index(ant)
+                    sub_tab = main_tab.query(query='ANTENNA1=={idx} || ANTENNA2=={idx} && FIELD_ID=={field_id}'.format(**locals()))
+                    flags = sub_tab.getcol('FLAG')
+                    vals,counts = numpy.unique(flags,return_counts=True)
+                    if len(vals) == 1 and vals == True:
+                        flag_pc = 100.0
+                    elif len(vals) == 1 and vals == False:
+                        flag_pc = 0.0
+                    else:
+                        flag_pc = 100.*round(float(counts[1])/float(numpy.sum(counts)),8)
+                    if flag_pc < 80.0:
+                        pc_list.append(flag_pc)
+                        idx_list.append(str(idx))
+
+    pc_list = numpy.array(pc_list)
+    idx_list = numpy.array(idx_list)
 
     ref_idx = idx_list[numpy.where(pc_list==(numpy.min(pc_list)))][0]
 
-    return ref_idx
+    ranked_list = [x for _,x in sorted(zip(pc_list,idx_list))]
+    ranked_list = ','.join(ranked_list)
+
+    return ranked_list
 
 
 def main():
 
 
-    parser = OptionParser(usage='%prog [options]')
-    parser.add_option('--primary',dest='myprimary',help='Primary calibrator ID',default='')
-    parser.add_option('--secondary',dest='mysecondary',help='Secondary calibrator ID',default='')
-    parser.add_option('--target',dest='mytarget',help='Target field IDs (comma-separated list)',default='')
-    parser.add_option('--refant',dest='myrefant',help='Reference antenna',default='')
-
-
-    (options,args) = parser.parse_args()
-    myprimary = options.myprimary
-    mysecondary = options.mysecondary
-    mytargets = options.mytargets
-    refant = options.myrefant
-
-
-    if len(args) != 1:
-        print('Please specify a Measurement Set to plot')
-        sys.exit()
-    else:
-        myms = args[0].rstrip('/')
-
+    myms = sys.argv[1].rstrip('/')
 
 
     outpick = 'project_info.p'
@@ -189,35 +177,19 @@ def main():
         'target_list':['2','2'],
         'ref_ant':'-1',
         'master_ms':myms,
-        'nchan':4096,
-        'edge_flags':120,
-        'k0':2120,
-        'k1':3120}
+        'nchan':4096}
 
 
     nchan = get_nchan(myms)
-
     ant_names = get_antnames(myms)
-
     primary_field,primary_tag,secondary_field,target_list = get_field_info(myms)
-    
-    if myrefant == '':
-        ref_ant = get_refant(myms,primary_field[1])
-    else:
-        ref_ant = myrefant
-    
+    ref_ant = get_refant(myms,primary_field[1])
     project_info['primary'] = primary_field
     project_info['primary_tag'] = primary_tag
     project_info['secondary'] = secondary_field
     project_info['target_list'] = target_list 
     project_info['ref_ant'] = str(ref_ant)
     project_info['nchan'] = nchan
-    edge_flags = int(120*nchan/4096)
-    project_info['edge_flags'] = edge_flags
-    k0 = int(2120*nchan/4096)
-    k1 = int(3120*nchan/4096)
-    project_info['k0'] = k0
-    project_info['k1'] = k1
 
 
     pickle.dump(project_info,open(outpick,'wb'))

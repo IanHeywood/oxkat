@@ -6,70 +6,63 @@ import glob
 import datetime
 import time
 import os
+import os.path as o
 import sys
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
+from oxkat import config as cfg
 
 
 # ------------------------------------------------------------------------
-#
-# GENERAL CONFIGURATION
-#
 
 
-# Folders
-CWD = os.getcwd()
-OXKAT = CWD+'/oxkat'
-PARSETS = CWD+'/parsets'
-SCRIPTS = CWD+'/scripts'
-TOOLS = CWD+'/tools'
-LOGS = CWD+'/logs'
-GAINPLOTS = CWD+'/gainplots'
+def now():
+    # stamp = time.strftime('[%H:%M:%S] ')
+    stamp = time.strftime('[%Y-%m-%d %H:%M:%S]:')
+    # msg = '\033[92m'+stamp+'\033[0m' # time in green
+    msg = stamp+' '
+    return msg
 
 
-# Containers for IDIA
-IDIA_CONTAINER_PATH = '/users/ianh/containers/'
-CASA_CONTAINER = '/idia/software/containers/casa-stable-5.6.2-2.simg'
-CODEX_CONTAINER = IDIA_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
-CUBICAL_CONTAINER = IDIA_CONTAINER_PATH+'cubical-1.2.4.simg'
-DDFACET_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-0.4.1.simg'
-KILLMS_CONTAINER = IDIA_CONTAINER_PATH+'killms-2.7.0.simg'
-RAGAVI_CONTAINER = IDIA_CONTAINER_PATH+'ragavi-1.2.4.simg'
-CLUSTERCAT_CONTAINER = IDIA_CONTAINER_PATH+'ddfacet-0.5.2.simg'
-SOURCEFINDER_CONTAINER = IDIA_CONTAINER_PATH+'pybdsf-1.2.3.simg'
-TRICOLOUR_CONTAINER = IDIA_CONTAINER_PATH+'tricolour-1.1.3.simg'
-WSCLEAN_CONTAINER = IDIA_CONTAINER_PATH+'wsclean-1.2.4.simg'
+def get_container(path,pattern):
+
+    # Search for a file matching pattern in path
+
+    path = path.rstrip('/')+'/'
+    ll = sorted(glob.glob(path+'*'+pattern+'*img'))
+    if len(ll) == 0:
+        print(now()+'Failed to find container for '+pattern+' in '+path)
+        sys.exit()
+    elif len(ll) > 1:
+        print(now()+'Warning, more than one match for '+pattern+' in '+path)
+    container = ll[0]
+    print(now()+'Using container: '+container)
+    return container
 
 
-# Containers for standalone servers
-SERVER_CONTAINER_PATH = '/home/ianh/containers/'
-XCASA_CONTAINER = SERVER_CONTAINER_PATH+'casa-stable-5.6.2-2.simg'
-XCODEX_CONTAINER = SERVER_CONTAINER_PATH+'codex-africanus-1.1.1.simg'
-XCUBICAL_CONTAINER = SERVER_CONTAINER_PATH+'cubical-1.2.4.simg'
-XDDFACET_CONTAINER = SERVER_CONTAINER_PATH+'ddfacet-0.4.1.simg'
-XKILLMS_CONTAINER = SERVER_CONTAINER_PATH+'killms-2.7.0.simg'
-XRAGAVI_CONTAINER = SERVER_CONTAINER_PATH+'ragavi-1.2.4.simg'
-XCLUSTERCAT_CONTAINER = SERVER_CONTAINER_PATH+'ddfacet-0.5.0.simg'
-XSOURCEFINDER_CONTAINER = SERVER_CONTAINER_PATH+'pybdsf-1.2.3.simg'
-XTRICOLOUR_CONTAINER = SERVER_CONTAINER_PATH+'tricolour-1.1.3.simg'
-XWSCLEAN_CONTAINER = SERVER_CONTAINER_PATH+'wsclean-1.2.4.simg'
+def set_infrastructure(args):
 
+    if len(args) == 1:
+        print('Please specify infrastructure (idia / chpc / node)')
+        sys.exit()
 
-# Miscellaneous
-#XCASA_EXEC = '/home/ianh/Software/casa-release-4.7.2-el7/bin/casa'
-XCASA_EXEC = 'casa'
-TRICOLOUR_VENV = '/users/ianh/venv/tricolour/bin/activate'
-PLOT_SCRIPTS = '/users/ianh/Software/plot_utils'
+    if args[1].lower() == 'idia':
+        infrastructure = 'idia'
+        CONTAINER_PATH = cfg.IDIA_CONTAINER_PATH
+    elif args[1].lower() == 'chpc':
+        infrastructure = 'chpc'
+        CONTAINER_PATH = cfg.CHPC_CONTAINER_PATH
+    elif args[1].lower() == 'node':
+        infrastructure = 'node'
+        CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
 
-
-#
-#
-# ------------------------------------------------------------------------
+    return infrastructure,CONTAINER_PATH
 
 
 def setup_dir(DIR):
 
     # Make scripts folder if it doesn't exist
 
-    if not os.path.isdir(DIR):
+    if not o.isdir(DIR):
         os.mkdir(DIR)
 
 
@@ -86,12 +79,25 @@ def get_code(myms):
     # Last three digits of the data set ID
 
     myms = myms.split('/')[-1]
-
     code = myms.split('_')[0][-3:]
-
     code = code.replace('-','_')
-
     return code
+
+
+def get_target_code(targetname):
+
+    # Last three digits of the target name
+
+    code = targetname.replace('-','_').replace('.','p').replace(' ','')[-3:]
+    return code
+
+
+def scrub_target_name(targetname):
+
+    # Replace + with p and space with underscore
+
+    scrubbed = targetname.replace('+','p').replace(' ','_')[-3:]
+    return scrubbed
 
 
 def make_executable(infile):
@@ -111,34 +117,115 @@ def is_odd(xx):
     return odd
 
 
-def write_slurm(opfile,
+def job_handler(syscall,
                 jobname,
-                logfile,
-                syscall,
-                time='24:00:00',  
-                partition='Main',
-                ntasks='1',
-                nodes='1',
-                cpus='32',
-                mem='236GB'):
+                infrastructure,
+                dependency = None,
+                slurm_config = cfg.SLURM_DEFAULTS,
+                pbs_config = cfg.PBS_DEFAULTS):
+                # slurm_time=cfg.SLURM_TIME,
+                # slurm_partition=cfg.SLURM_PARTITION,
+                # slurm_ntasks=cfg.SLURM_NTASKS,
+                # slurm_nodes=cfg.SLURM_NODES,
+                # slurm_cpus=cfg.SLURM_CPUS,
+                # slurm_mem=cfg.SLURM_MEM,
+                # pbs_program=cfg.PBS_PROGRAM,
+                # pbs_walltime=cfg.PBS_WALLTIME,
+                # pbs_queue=cfg.PBS_QUEUE,
+                # pbs_nodes=cfg.PBS_NODES,
+                # pbs_ppn=cfg.PBS_PPN,
+                # pbs_mem=cfg.PBS_MEM):
 
-    f = open(opfile,'w')
-    f.writelines(['#!/bin/bash\n',
-        '#file: '+opfile+':\n',
-        '#SBATCH --job-name='+jobname+'\n',
-        '#SBATCH --time='+time+'\n',
-        '#SBATCH --partition='+partition+'\n'
-        '#SBATCH --ntasks='+ntasks+'\n',
-        '#SBATCH --nodes='+nodes+'\n',
-        '#SBATCH --cpus-per-task='+cpus+'\n',
-        '#SBATCH --mem='+mem+'\n',
-        '#SBATCH --output='+logfile+'\n',
-        syscall+'\n',
-#        'singularity exec '+container+' '+syscall+'\n',
-        'sleep 10\n'])
-    f.close()
+    if infrastructure == 'idia':
 
-    make_executable(opfile)
+        slurm_time = slurm_config['TIME']
+        slurm_partition = slurm_config['PARTITION']
+        slurm_ntasks = slurm_config['NTASKS']
+        slurm_nodes = slurm_config['NODES']
+        slurm_cpus = slurm_config['CPUS']
+        slurm_mem = slurm_config['MEM']
+
+        slurm_runfile = cfg.SCRIPTS+'/slurm_'+jobname+'.sh'
+        slurm_logfile = cfg.LOGS+'/slurm_'+jobname+'.log'
+
+        run_command = jobname+"=`sbatch "
+        if dependency:
+          run_command += "-d afterok:${"+dependency+"} "
+        run_command += slurm_runfile+" | awk '{print $4}'`"
+
+        f = open(slurm_runfile,'w')
+        f.writelines(['#!/bin/bash\n',
+            '#file: '+slurm_runfile+':\n',
+            '#SBATCH --job-name='+jobname+'\n',
+            '#SBATCH --time='+slurm_time+'\n',
+            '#SBATCH --partition='+slurm_partition+'\n'
+            '#SBATCH --ntasks='+slurm_ntasks+'\n',
+            '#SBATCH --nodes='+slurm_nodes+'\n',
+            '#SBATCH --cpus-per-task='+slurm_cpus+'\n',
+            '#SBATCH --mem='+slurm_mem+'\n',
+            '#SBATCH --output='+slurm_logfile+'\n',
+            'SECONDS=0\n',
+            syscall+'\n',
+            'echo "****ELAPSED "$SECONDS" '+jobname+'"\n',
+            'sleep 10\n'])
+        f.close()
+
+        make_executable(slurm_runfile)
+
+    elif infrastructure == 'chpc':
+
+        pbs_program = pbs_config['PROGRAM']
+        pbs_walltime = pbs_config['WALLTIME']
+        pbs_queue = pbs_config['QUEUE']
+        pbs_nodes = pbs_config['NODES']
+        pbs_ppn = pbs_config['PPN']
+        pbs_mem = pbs_config['MEM']
+
+        pbs_runfile = cfg.SCRIPTS+'/pbs_'+jobname+'.sh'
+        pbs_logfile = cfg.LOGS+'/pbs_'+jobname+'.log'
+        pbs_errfile = cfg.LOGS+'/pbs_'+jobname+'.err'
+
+        run_command = jobname+"=`qsub "
+        if dependency:
+          run_command += "-W depend=afterok:${"+dependency+"} "
+        run_command += pbs_runfile+" | awk '{print $1}'`"
+
+        f = open(pbs_runfile,'w')
+        f.writelines(['#!/bin/bash\n',
+            '#PBS -N '+jobname+'\n',
+            '#PBS -P '+pbs_program+'\n'
+            '#PBS -l walltime='+pbs_walltime+'\n',
+            '#PBS -l nodes='+pbs_nodes+':ppn='+pbs_ppn+',mem='+pbs_mem+'\n',
+            '#PBS -q '+pbs_queue+'\n'
+            '#PBS -o '+pbs_logfile+'\n'
+            '#PBS -e '+pbs_errfile+'\n'
+            'SECONDS=0\n'
+            'module load chpc/singularity\n'
+            'cd '+cfg.CWD+'\n',
+            syscall+'\n',
+            'echo "****ELAPSED "$SECONDS" "'+jobname+'"\n',
+            'sleep 10\n'])
+        f.close()
+
+        make_executable(pbs_runfile)
+
+    elif infrastructure == 'node':
+
+        run_command = syscall
+
+    return run_command+'\n'
+
+
+def generate_syscall_casa(casascript,casalogfile,extra_args=''):
+
+    syscall = 'casa -c '+casascript+' '
+    syscall += '--logfile '+casalogfile+' '
+    syscall += '--nogui '
+    if extra_args != '':
+      syscall += extra_args+' '
+    syscall += '\n'
+
+    return syscall
 
 
 def generate_syscall_cubical(parset,myms,prefix):
@@ -160,25 +247,18 @@ def generate_syscall_cubical(parset,myms,prefix):
     return syscall
 
 
-def generate_syscall_tricolour(myms='',
-                          config='',
-                          datacol='DATA',
-                          fields='all',
-                          fs='polarisation',
-                          runfile='run_tricolour.sh'):
+def generate_syscall_tricolour(myms = '',
+                          config = '',
+                          datacol = 'DATA',
+                          fields = 'all',
+                          strategy = 'polarisation'):
 
-#    syscall = 'bash -c "source '+TRICOLOUR_VENV+' ; '
-
-    syscall = 'python '+OXKAT+'/run_tricolour.py '
-    if config != '':
-        syscall += '--config='+config+' '
-    syscall += '--col='+datacol+' '
-    syscall += '--fields='+fields+' '
-    syscall += '--fs='+fs+' '
-    syscall += '--runfile='+runfile+' '
+    syscall = 'tricolour '
+    syscall += '--config '+config+' '
+    syscall += '--data-column '+datacol+' '
+    syscall += '--field-names '+fields+' '
+    syscall += '--flagging-strategy '+strategy+' '
     syscall += myms
-
-#   syscall += '; deactivate"'
 
     return syscall
 
@@ -186,40 +266,56 @@ def generate_syscall_tricolour(myms='',
 def generate_syscall_wsclean(mslist,
                           imgname,
                           datacol,
-                          startchan=-1,
-                          endchan=-1,
-                          chanout=8,
-                          imsize=10240,
-                          cellsize='1.1asec',
-                          briggs=-0.3,
-                          niter=120000,
-                          multiscale=False,
-                          scales='0,3,9',
-                          sourcelist=True,
-                          bda=False,
-                          nomodel=False,
-                          mask='auto',
-                          fitspectralpol=4):
+                          continueclean = cfg.WSC_CONTINUE,
+                          startchan = cfg.WSC_STARTCHAN,
+                          endchan = cfg.WSC_ENDCHAN,
+                          chanout = cfg.WSC_CHANNELSOUT,
+                          imsize = cfg.WSC_IMSIZE,
+                          cellsize = cfg.WSC_CELLSIZE,
+                          briggs = cfg.WSC_BRIGGS,
+                          niter = cfg.WSC_NITER,
+                          multiscale = cfg.WSC_MULTISCALE,
+                          scales = cfg.WSC_SCALES,
+                          sourcelist = cfg.WSC_SOURCELIST,
+                          bda = cfg.WSC_BDA,
+                          bdafactor = cfg.WSC_BDAFACTOR,
+                          nomodel = cfg.WSC_BDA,
+                          mask = cfg.WSC_MASK,
+                          autothreshold = cfg.WSC_AUTOTHRESHOLD,
+                          automask = cfg.WSC_AUTOMASK,
+                          fitspectralpol = cfg.WSC_FITSPECTRALPOL,
+                          mem = cfg.WSC_MEM,
+                          useidg = cfg.WSC_USEIDG,
+                          idgmode = cfg.WSC_IDGMODE,
+                          paralleldeconvolution = cfg.WSC_PARALLELDECONVOLUTION):
 
     # Generate system call to run wsclean
 
 
     if is_odd(imsize):
-        print('Do not use odd image sizes with wsclean')
+        print(now()+'Do not use odd image sizes with wsclean')
         sys.exit()
 
+    if continueclean and bda:
+        print(now()+'Cannot continue deconvolution with wsclean if BDA is enabled')
+        sys.exit()
 
     syscall = 'wsclean '
     syscall += '-log-time '
+    if continueclean:
+        syscall += '-continue '
     if sourcelist and fitspectralpol != 0:
         syscall += '-save-source-list '
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
-    if bda:
-        syscall += '-baseline-averaging 24 '
+    if bda and not useidg:
+        syscall += '-baseline-averaging '+str(bdafactor)+' '
         syscall += '-no-update-model-required '
     elif not bda and nomodel:
         syscall += '-no-update-model-required '
+    if useidg:
+        syscall += '-use-idg '
+        syscall += '-idg-mode '+idgmode+' '
     if multiscale:
         syscall += '-multiscale '
         syscall += '-multiscale-scales '+scales+' '
@@ -228,6 +324,8 @@ def generate_syscall_wsclean(mslist,
     syscall += '-mgain 0.85 '
     syscall += '-weight briggs '+str(briggs)+' '
     syscall += '-data-column '+datacol+' '
+    if paralleldeconvolution != 0:
+        syscall += '-parallel-deconvolution '+str(paralleldeconvolution)+' '
     if startchan != -1 and endchan != -1:
         syscall += '-channel-range '+str(startchan)+' '+str(endchan)+' '
     if mask.lower() == 'fits':
@@ -237,8 +335,8 @@ def generate_syscall_wsclean(mslist,
         syscall += ''
     elif mask.lower() == 'auto':
         syscall += '-local-rms '
-        syscall += '-auto-threshold 0.3 '
-        syscall += '-auto-mask 5.0 '
+        syscall += '-auto-threshold '+str(autothreshold)+' '
+        syscall += '-auto-mask '+str(automask)+' '
     else:
         syscall += '-fits-mask '+mask+' '
     syscall += '-name '+imgname+' '
@@ -247,7 +345,7 @@ def generate_syscall_wsclean(mslist,
         syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
     syscall += '-join-channels '
     syscall += '-padding 1.3 '
-    syscall += '-mem 90 '
+    syscall += '-mem '+str(mem)+' '
 
     for myms in mslist:
         syscall += myms+' '
@@ -257,250 +355,197 @@ def generate_syscall_wsclean(mslist,
 
 def generate_syscall_predict(msname,
                             imgbase,
-                            channelsout=8,
-                            imsize=10240,
-                            cellsize='1.1asec',
-                            predictchannels=64):
+                            chanout = cfg.WSC_CHANNELSOUT,
+                            imsize = cfg.WSC_IMSIZE,
+                            cellsize = cfg.WSC_CELLSIZE,
+                            predictchannels = cfg.WSC_PREDICTCHANNELS,
+                            mem = cfg.WSC_MEM):
 
     # Generate system call to run wsclean in predict mode
 
     syscall = 'wsclean '
     syscall += '-log-time '
     syscall += '-predict '
-    syscall += '-channelsout '+str(channelsout)+' '
+    syscall += '-channelsout '+str(chanout)+' '
     syscall += ' -size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
-    syscall += '-mem 90 '
+    syscall += '-mem '+str(mem)+' '
     syscall += '-predict-channels '+str(predictchannels)+' '
     syscall += msname
 
     return syscall 
 
 
-def generate_syscall_makemask(prefix,thresh=6.0):
+def generate_syscall_makemask(restoredimage,
+                            suffix = '',
+                            thresh = cfg.MAKEMASK_THRESH,
+                            dilation = cfg.MAKEMASK_DILATION,
+                            zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
-    
-    fitsmask = prefix+'-MFS-image.fits.mask.fits'
+  
+    if suffix == '':
+        fitsmask = restoredimage+'.mask.fits'
+    else: 
+        fitsmask = restoredimage+'.'+suffix+'.fits'
 
     syscall = 'bash -c "'
-    syscall += 'MakeMask.py --Th='+str(thresh)+' --RestoredIm='+prefix+'-MFS-image.fits && '
-    syscall += 'python '+TOOLS+'/dilate_FITS_mask.py '+fitsmask+' 3 && '
-    syscall += 'fitstool.py -z 10125 '+prefix+'-MFS-image.fits.mask.fits '
+    syscall += 'python3 '+cfg.TOOLS+'/pyMakeMask.py '
+    syscall += '--threshold='+str(thresh)+' '
+    syscall += '--dilate='+str(dilation)+' '
+    if suffix != '':
+        syscall += '--suffix='+str(suffix)+' '
+    syscall += restoredimage
+    if zoompix != '':
+        zoomfits = fitsmask.replace('.fits','.zoom'+str(zoompix)+'.fits')
+        syscall += '&& fitstool.py -z '+str(zoompix)+' -o '+zoomfits+' '
+        syscall += fitsmask
     syscall += '"'
-#    syscall2 = 'python '+OXKAT+'/merge_FITS_masks.py '+prefix+' '+opfits+'\n'
 
- #   return syscall1,syscall2
     return syscall,fitsmask
 
 
 def generate_syscall_ddfacet(mspattern,
                           imgname,
-                          ddid='D*',
-                          field='F0',
-                          chunkhours=1,
-                          colname='CORRECTED_DATA',
-                          ncpu=32,
-                          maxminoriter=120000,
-                          maxmajoriter=3,
-                          robust=-0.3,
-                          npix=10215,
-                          cell=1.1,
-                          nfacets=32,
-                          ndegridband=8,
-                          beam='',
-                          beamnband=10,
-#                          beamsmooth=False,
-                          dtbeammin=1,
-                          FITSParAngleIncDeg=0.5,
-                          nband=8,
-                          mask='auto',
-                          masksigma=5.5,
-                          cachereset=0,
-                          ddsols='',
-                          initdicomodel=''):
-
-    # Generate system call to run DDFacet
-
-# Output key:
-# Also                    =                   # Save also these images (i.e. adds to the default set of --Output-Images) #metavar:CODES #type:str
-# Cubes       =                   # Also save cube versions for these images (only MmRrIi codes recognized) #metavar:CODES #type:str
-# Images            = DdPAMRIikz        # Combination of letter codes indicating what images to save.
-#     Uppercase for intrinsic flux scale [D]irty, [M]odel, [C]onvolved model, [R]esiduals, restored [I]mage;
-#     Lowercase for apparent flux scale  [d]irty, [m]odel, [c]onvolved model, [r]esiduals, restored [i]mage;
-#     Other images: [P]SF,
-#     [N]orm, [n]orm facets,
-#     [S] flux scale,
-#     [A]lpha (spectral index),
-#     [X] mixed-scale (intrinsic model, apparent residuals, i.e. Cyrils original output),
-#     [o] intermediate mOdels (Model_i),
-#     [e] intermediate rEsiduals (Residual_i),
-#     [k] intermediate masK image,
-#     [z] intermediate auto mask-related noiZe image,
-#     [g] intermediate dirty images (only if [Debugging] SaveIntermediateDirtyImages is enabled).
-#     Use "all" to save all.
-
-
-    syscall = 'DDF.py '
-    syscall += '--Output-Name='+imgname+' '
-    syscall += '--Data-MS '+mspattern+'//'+ddid+'//'+field+' '
-    syscall += '--Data-ChunkHours '+str(chunkhours)+' '
-    syscall += '--Deconv-PeakFactor 0.001000 '
-    syscall += '--Data-ColName '+colname+' '
-    syscall += '--Predict-ColName MODEL_DATA '
-    syscall += '--Parallel-NCPU='+str(ncpu)+' '
-    syscall += '--Output-Mode=Clean '
-    syscall += '--Deconv-CycleFactor=0 '
-    syscall += '--Deconv-MaxMajorIter='+str(maxmajoriter)+' '
-    syscall += '--Deconv-MaxMinorIter='+str(maxminoriter)+' '
-    syscall += '--Deconv-Mode SSD '
-    syscall += '--Weight-Robust '+str(robust)+' '
-    syscall += '--Image-NPix='+str(npix)+' '
-    syscall += '--CF-wmax 0 '
-    syscall += '--CF-Nw 100 '
-    syscall += '--Output-Also nNs '
-    syscall += '--Image-Cell '+str(cell)+' '
-    syscall += '--Facets-NFacets='+str(nfacets)+' '
-    syscall += '--Facets-PSFOversize=1.5 '
-    syscall += '--SSDClean-NEnlargeData 0 '
-    syscall += '--Freq-NDegridBand '+str(ndegridband)+' '
-    if beam == '':
-        syscall += '--Beam-Model=None '
-    else:
-        syscall += '--Beam-Model=FITS '
-        syscall += "--Beam-FITSFile=\'"+str(beam)+"\' "
-        syscall += '--Beam-NBand '+str(beamnband)+' '
-        syscall += '--Beam-DtBeamMin='+str(dtbeammin)+' '
-        syscall += '--Beam-FITSParAngleIncDeg='+str(FITSParAngleIncDeg)+' '
-        syscall += '--Beam-CenterNorm=True '
-    syscall += '--Deconv-RMSFactor=3.000000 '
-    syscall += '--Data-Sort 1 '
-    syscall += '--Cache-Dir=. '
-    syscall += '--Cache-HMP 1 '
-    syscall += '--Freq-NBand='+str(nband)+' '
-    if mask.lower() == 'fits':
-        mymask = glob.glob('*mask.fits')[0]
-        syscall += '--Mask-Auto=0 '
-        syscall += '--Mask-External='+mymask+' '
-    elif mask.lower() == 'auto':
-        syscall += '--Mask-Auto=1 '
-        syscall += '--Mask-SigTh='+str(masksigma)+' '
-    else:
-        syscall += '--Mask-Auto=0 '
-        syscall += '--Mask-External='+mask+' '
-    syscall += '--Cache-Reset '+str(cachereset)+' '
-    syscall += '--Comp-GridDecorr=0.01 '
-    syscall += '--Comp-DegridDecorr=0.01 '
-    #syscall += '--SSDClean-MinSizeInit=10 '
-    syscall += '--Facets-DiamMax .25 '
-    syscall += '--Facets-DiamMin 0.05 '
-    syscall += '--Misc-ConserveMemory 1 '
-    syscall += '--Log-Memory 1 '
-    if initdicomodel != '':
-        syscall += '--Predict-InitDicoModel '+initdicomodel+' '
-    if ddsols != '':
-        syscall += '--DDESolutions-DDSols '+ddsols
-
-    return syscall
-
-
-def generate_syscall_ddfacet_hogbom(mspattern,
-                          imgname,
-                          ddid='D*',
-                          field='F0',
-                          chunkhours=1,
-                          colname='CORRECTED_DATA',
-                          ncpu=72,
-                          maxminoriter=50000,
-                          maxmajoriter=10,
-                          polyfitorder=4,
-                          deconvpeakfactor=0.4,
-                          robust=-0.3,
-                          npix=10215,
-                          cell=1.1,
-                          nfacets=32,
-                          ndegridband=64,
-                          beam='',
-                          beamnband=10,
-                          feedswap=1,
-#                          beamsmooth=False,
-                          dtbeammin=1.0,
-                          FITSParAngleIncDeg=0.5,
-                          nband=8,
-                          mask='auto',
-                          masksigma=5.5,
-                          cachereset=0,
-                          ddsols='',
-                          initdicomodel=''):
-
-    # Generate system call to run DDFacet with Hogbom clean
+                          ddid = cfg.DDF_DDID,
+                          field = cfg.DDF_FIELD,
+                          colname = cfg.DDF_COLNAME,
+                          chunkhours = cfg.DDF_CHUNKHOURS,
+                          datasort = cfg.DDF_DATASORT,
+                          predictcolname = cfg.DDF_PREDICTCOLNAME,
+                          initdicomodel = cfg.DDF_INITDICOMODEL,
+                          outputalso = cfg.DDF_OUTPUTALSO,
+                          outputimages = cfg.DDF_OUTPUTIMAGES,
+                          outputcubes = cfg.DDF_OUTPUTCUBES,
+                          npix = cfg.DDF_NPIX,
+                          cell = cfg.DDF_CELL,
+                          diammax = cfg.DDF_DIAMMAX,
+                          diammin = cfg.DDF_DIAMMIN,
+                          nfacets =cfg.DDF_NFACETS,
+                          psfoversize = cfg.DDF_PSFOVERSIZE,
+                          robust = cfg.DDF_ROBUST,
+                          sparsification = cfg.DDF_SPARSIFICATION,
+                          ncpu = cfg.DDF_NCPU,
+                          cachereset = cfg.DDF_CACHERESET,
+                          cachedir = cfg.DDF_CACHEDIR,
+                          cachehmp = cfg.DDF_CACHEHMP,
+                          beam = cfg.DDF_BEAM,
+                          beamnband = cfg.DDF_BEAMNBAND,
+                          dtbeammin = cfg.DDF_DTBEAMMIN,
+                          fitsparangleincdeg = cfg.DDF_FITSPARANGLEINCDEG,
+                          beamcentrenorm = cfg.DDF_BEAMCENTRENORM,
+                          beamsmooth = cfg.DDF_BEAMSMOOTH,
+                          feedswap = cfg.DDF_FEEDSWAP,
+                          nband = cfg.DDF_NBAND,
+                          ndegridband = cfg.DDF_NDEGRIDBAND,
+                          ddsols = cfg.DDF_DDSOLS,
+                          ddmodegrid = cfg.DDF_DDMODEGRID,
+                          ddmodedegrid = cfg.DDF_DDMODEDEGRID,
+                          deconvmode = cfg.DDF_DECONVMODE,
+                          ssd_deconvpeakfactor = cfg.DDF_SSD_DECONVPEAKFACTOR,
+                          ssd_maxminoriter = cfg.DDF_SSD_MAXMINORITER,
+                          ssd_maxmajoriter = cfg.DDF_SSD_MAXMAJORITER,
+                          ssd_enlargedata = cfg.DDF_SSD_ENLARGEDATA,
+                          hogbom_deconvpeakfactor = cfg.DDF_HOGBOM_DECONVPEAKFACTOR,
+                          hogbom_maxminoriter = cfg.DDF_HOGBOM_MAXMINORITER,
+                          hogbom_maxmajoriter = cfg.DDF_HOGBOM_MAXMAJORITER,
+                          hogbom_polyfitorder = cfg.DDF_HOGBOM_POLYFITORDER,
+                          mask = cfg.DDF_MASK,
+                          masksigma = cfg.DDF_MASKSIGMA,
+                          conservememory = cfg.DDF_CONSERVEMEMORY):
 
     syscall = 'DDF.py '
-    syscall += '--Output-Name='+imgname+' '
+    # [Data]
     syscall += '--Data-MS '+mspattern+'//'+ddid+'//'+field+' '
-    syscall += '--Data-ChunkHours '+str(chunkhours)+' '
-    syscall += '--Deconv-PeakFactor 0.001000 '
     syscall += '--Data-ColName '+colname+' '
-    syscall += '--Predict-ColName MODEL_DATA '
-    syscall += '--Parallel-NCPU='+str(ncpu)+' '
-    syscall += '--Output-Mode=Clean '
-    syscall += '--Deconv-CycleFactor=0 '
-    syscall += '--Deconv-MaxMajorIter='+str(maxmajoriter)+' '
-    syscall += '--Deconv-MaxMinorIter='+str(maxminoriter)+' '
-    syscall += '--Deconv-Mode Hogbom '
-    syscall += '--Deconv-PeakFactor '+str(deconvpeakfactor)+' '
-    syscall += '--Hogbom-PolyFitOrder '+str(polyfitorder)+' '
-    syscall += '--Weight-Robust '+str(robust)+' '
-    syscall += '--Image-NPix='+str(npix)+' '
-    syscall += '--CF-wmax 0 '
-    syscall += '--CF-Nw 100 '
-    syscall += '--Output-Also nNs '
-    syscall += '--Image-Cell '+str(cell)+' '
-    syscall += '--Facets-NFacets='+str(nfacets)+' '
-    syscall += '--Facets-PSFOversize=1.5 '
-#    syscall += '--SSDClean-NEnlargeData 0 '
-    syscall += '--Freq-NDegridBand '+str(ndegridband)+' '
-    if beam == '':
-        syscall += '--Beam-Model=None '
-    else:
-        syscall += '--Beam-Model=FITS '
-        syscall += "--Beam-FITSFile=\'"+str(beam)+"\' "
-        syscall += '--Beam-NBand '+str(beamnband)+' '
-        syscall += '--Beam-DtBeamMin='+str(dtbeammin)+' '
-        syscall += '--Beam-FITSParAngleIncDeg='+str(FITSParAngleIncDeg)+' '
-        syscall += '--Beam-CenterNorm=True '
-        syscall += '--Beam-FITSFeedSwap='+str(feedswap)+' '
-    syscall += '--Deconv-RMSFactor=3.000000 '
-    syscall += '--Data-Sort 1 '
-    syscall += '--Cache-Dir=. '
-    syscall += '--Cache-HMP 1 '
-    syscall += '--Freq-NBand='+str(nband)+' '
-    if mask.lower() == 'fits':
-        mymask = glob.glob('*mask.fits')[0]
-        syscall += '--Mask-Auto=0 '
-        syscall += '--Mask-External='+mymask+' '
-    elif mask.lower() == 'auto':
-        syscall += '--Mask-Auto=1 '
-        syscall += '--Mask-SigTh='+str(masksigma)+' '
-    else:
-        syscall += '--Mask-Auto=0 '
-        syscall += '--Mask-External='+mask+' '
-    syscall += '--Cache-Reset '+str(cachereset)+' '
-    syscall += '--Comp-GridDecorr=0.01 '
-    syscall += '--Comp-DegridDecorr=0.01 '
-    #syscall += '--SSDClean-MinSizeInit=10 '
-    syscall += '--Facets-DiamMax .25 '
-    syscall += '--Facets-DiamMin 0.05 '
-    syscall += '--Misc-ConserveMemory 1 '
-    syscall += '--Log-Memory 1 '
+    syscall += '--Data-ChunkHours '+str(chunkhours)+' '
+    syscall += '--Data-Sort '+str(datasort)+' '
+    # [Predict]
+    syscall += '--Predict-ColName '+predictcolname+' '
     if initdicomodel != '':
         syscall += '--Predict-InitDicoModel '+initdicomodel+' '
+    # [Output]
+    syscall += '--Output-Name '+imgname+' '
+    syscall += '--Output-Mode Clean '
+    syscall += '--Output-Also '+outputalso+' '
+    syscall += '--Output-Images '+outputimages+' '
+    syscall += '--Output-Cubes '+outputcubes+' '
+    # [Image]
+    syscall += '--Image-NPix '+str(npix)+' '
+    syscall += '--Image-Cell '+str(cell)+' '
+    # [Facets]
+    syscall += '--Facets-DiamMax '+str(diammax)+' '
+    syscall += '--Facets-DiamMin '+str(diammin)+' '
+    syscall += '--Facets-NFacets '+str(nfacets)+' '
+    syscall += '--Facets-PSFOversize '+str(psfoversize)+' '
+    # [Weight]
+    syscall += '--Weight-Robust '+str(robust)+' '
+    # [CF]
+    # syscall += '--CF-wmax 0 '
+    # syscall += '--CF-Nw 100 '
+    # [Comp]
+    syscall += '--Comp-GridDecorr 0.01 '
+    syscall += '--Comp-DegridDecorr 0.01 '
+    syscall += '--Comp-Sparsification '+str(sparsification)+' '
+    # [Parallel]
+    syscall += '--Parallel-NCPU '+str(ncpu)+' '
+    # [Cache]    
+    syscall += '--Cache-Reset '+str(cachereset)+' '
+    syscall += '--Cache-Dir '+str(cachedir)+' '
+    syscall += '--Cache-HMP '+str(cachehmp)+' '
+    # [Beam]
+    if beam == '':
+        syscall += '--Beam-Model None '
+    else:
+        syscall += '--Beam-Model FITS '
+        syscall += "--Beam-FITSFile \'"+str(beam)+"\' "
+        syscall += '--Beam-NBand '+str(beamnband)+' '
+        syscall += '--Beam-DtBeamMin '+str(dtbeammin)+' '
+        syscall += '--Beam-FITSParAngleIncDeg '+str(fitsparangleincdeg)+' '
+        syscall += '--Beam-CenterNorm '+str(beamcentrenorm)+' '
+        syscall += '--Beam-FITSFeedSwap '+str(feedswap)+' '
+        syscall += '--Beam-Smooth '+str(beamsmooth)+' '
+    # [Freq]
+    syscall += '--Freq-NBand '+str(nband)+' '
+    syscall += '--Freq-NDegridBand '+str(ndegridband)+' '
+    # [DDESolutions]
     if ddsols != '':
-        syscall += '--DDESolutions-DDSols '+ddsols
+        syscall += '--DDESolutions-DDSols '+ddsols+' '
+        syscall += '--DDESolutions-DDModeGrid '+ddmodegrid+' '
+        syscall += '--DDESolutions-DDModeDeGrid '+ddmodedegrid+' '
+    # [Deconv]
+    syscall += '--Deconv-CycleFactor 0 '
+    syscall += '--Deconv-RMSFactor 3.000000 '
+    if deconvmode.lower() == 'ssd':
+        syscall += '--Deconv-Mode SSD '
+        syscall += '--Deconv-PeakFactor '+str(ssd_deconvpeakfactor)+' '
+        syscall += '--Deconv-MaxMajorIter '+str(ssd_maxmajoriter)+' '
+        syscall += '--Deconv-MaxMinorIter '+str(ssd_maxminoriter)+' '
+        syscall += '--SSDClean-NEnlargeData '+str(ssd_enlargedata)
+    elif deconvmode.lower() == 'hogbom':
+        syscall += '--Deconv-Mode Hogbom '
+        syscall += '--Deconv-PeakFactor '+str(hogbom_deconvpeakfactor)+' '
+        syscall += '--Deconv-MaxMajorIter '+str(hogbom_maxmajoriter)+' '
+        syscall += '--Deconv-MaxMinorIter '+str(hogbom_maxminoriter)+' '    
+        syscall += '--Hogbom-PolyFitOrder '+str(hogbom_polyfitorder)+' '
+    # [Mask]
+    if mask.lower() == 'fits':
+        mymask = sorted(glob.glob('*mask.fits')[0])
+        syscall += '--Mask-Auto 0 '
+        syscall += '--Mask-External '+mymask+' '
+    elif mask.lower() == 'auto':
+        syscall += '--Mask-Auto 1 '
+        syscall += '--Mask-SigTh '+str(masksigma)+' '
+    else:
+        syscall += '--Mask-Auto 0 '
+        syscall += '--Mask-External '+mask+' '
+    # [Misc]
+    syscall += '--Misc-ConserveMemory '+str(conservememory)+' '
+    syscall += '--Log-Memory 1 '
+    syscall += '--Log-Boring 1 '
 
     return syscall
-
 
 
 def generate_syscall_killms(myms,
@@ -508,50 +553,81 @@ def generate_syscall_killms(myms,
                         outsols,
                         nodesfile,
                         dicomodel,
-                        incol='CORRECTED_DATA',
-                        tchunk=0.2,
-                        dt=12,
-                        beam=''):
+                        tchunk = cfg.KMS_TCHUNK,
+                        incol = cfg.KMS_INCOL,
+                        outcol = cfg.KMS_OUTCOL,
+                        beam = cfg.KMS_BEAM,
+                        beamat = cfg.KMS_BEAMAT,
+                        dtbeammin = cfg.KMS_DTBEAMMIN,
+                        centrenorm = cfg.KMS_CENTRENORM,
+                        nchanbeamperms = cfg.KMS_NCHANBEAMPERMS,
+                        fitsparangleincdeg = cfg.KMS_FITSPARANGLEINCDEG,
+                        fitsfeedswap = cfg.KMS_FITSFEEDSWAP,
+                        maxfacetsize = cfg.KMS_MAXFACETSIZE,
+                        uvminmax = cfg.KMS_UVMINMAX,
+                        fieldid = cfg.KMS_FIELDID,
+                        ddid = cfg.KMS_DDID,
+                        ncpu = cfg.KMS_NCPU,
+                        dobar = cfg.KMS_DOBAR,
+                        solvertype= cfg.KMS_SOLVERTYPE,
+                        dt = cfg.KMS_DT,
+                        nchansols = cfg.KMS_NCHANSOLS,
+                        niterkf = cfg.KMS_NITERKF,
+                        covq = cfg.KMS_COVQ):
 
     # Generate system call to run killMS
 
     syscall = 'kMS.py '
+    # [VisData]
     syscall+= '--MSName '+myms+' '
-    syscall+= '--SolverType CohJones '
-    syscall+= '--PolMode Scalar '
-    syscall+= '--BaseImageName '+baseimg+' '
     syscall+= '--TChunk '+str(tchunk)+' '
-    syscall+= '--dt '+str(dt)+' '
-    syscall+= '--NCPU 32 '
-    syscall+= '--OutSolsName '+outsols+' '
-    syscall+= '--NChanSols 4 '
-    syscall+= '--NIterKF 9 '
-    syscall+= '--CovQ 0.05 '
-    syscall+= '--UVMinMax=0.15,8500.0 '
-    if beam == '':
-        syscall+= '--BeamModel=None '
-    else:
-        syscall+= '--BeamModel=FITS '
-        syscall+= '--BeamAt Facet '
-        syscall+= "--FITSFile=\'"+str(beam)+"\' "
-    syscall+= '--NChanBeamPerMS 95 '
-    syscall+= '--FITSParAngleIncDeg 1 '
-    syscall+= '--DtBeamMin 1 '
     syscall+= '--InCol '+incol+' '
-    syscall+= '--OutCol '+incol+' '
-    syscall+= '--Weighting Natural '
-    syscall+= '--NodesFile '+nodesfile+' '
+    syscall+= '--OutCol '+outcol+' '
+    # [Beam]
+    if beam == '':
+        syscall+= '--BeamModel None '
+    else:
+        syscall+= '--BeamModel FITS '
+        syscall+= '--BeamAt '+beamat+' '
+        syscall+= '--DtBeamMin '+str(dtbeammin)+' '
+        syscall+= '--CenterNorm '+str(centrenorm)+' '
+        syscall+= '--NChanBeamPerMS '+str(nchanbeamperms)+' '
+        syscall+= "--FITSFile \'"+str(beam)+"\' "
+        syscall+= '--FITSParAngleIncDeg '+str(fitsparangleincdeg)+' '
+        syscall+= '--FITSFeedSwap '+str(fitsfeedswap)+' '
+    # [ImageSkyModel]
+    syscall+= '--BaseImageName '+baseimg+' '
     syscall+= '--DicoModel '+dicomodel+' '
-    syscall+= '--MaxFacetSize .25 '
+    syscall+= '--NodesFile '+nodesfile+' '
+    syscall+= '--MaxFacetSize '+str(maxfacetsize)+' '
+    # [DataSelection]
+    syscall+= '--UVMinMax '+uvminmax+' '
+    syscall+= '--FieldID '+str(fieldid)+' '
+    syscall+= '--DDID '+str(ddid)+' '
+    # [Weighting]
+    syscall+= '--Weighting Natural '
+    # [Actions]
+    syscall+= '--NCPU '+str(ncpu)+' '
+    syscall+= '--DoBar '+str(dobar)+' '
+    # [Solutions]
+    syscall+= '--OutSolsName '+outsols+' '
+    # [Solvers]
+    syscall+= '--SolverType '+solvertype+' '
+    syscall+= '--PolMode Scalar '
+    syscall+= '--dt '+str(dt)+' '
+    syscall+= '--NChanSols '+str(nchansols)+' '
+    # [KAFCA]
+    syscall+= '--NIterKF '+str(niterkf)+' '
+    syscall+= '--CovQ '+str(covq)+' '
 
     return syscall
 
 
 def generate_syscall_pybdsf(fitsfile,
-                        thresh_pix=5.0,
-                        thresh_isl=3.0,
-                        catalogtype='srl',
-                        catalogformat='fits'):
+                        thresh_pix = cfg.PYBDSF_THRESH_PIX,
+                        thresh_isl = cfg.PYBDSF_THRESH_ISL,
+                        catalogtype = cfg.PYBDSF_CATALOGTYPE,
+                        catalogformat = cfg.PYBDSF_CATALOGFORMAT):
 
     if catalogtype == 'srl':
         opfile = fitsfile+'.srl'
@@ -576,11 +652,11 @@ def generate_syscall_pybdsf(fitsfile,
 
 
 def generate_syscall_clustercat(srl,
-                        ndir=7,
-                        centralradius=0.15,
-                        ngen=100,
-                        fluxmin=0.000001,
-                        ncpu=32):
+                        ndir = cfg.CLUSTERCAT_NDIR,
+                        centralradius = cfg.CLUSTERCAT_CENTRALRADIUS,
+                        ngen = cfg.CLUSTERCAT_NGEN,
+                        fluxmin = cfg.CLUSTERCAT_FLUXMIN,
+                        ncpu = cfg.CLUSTERCAT_NCPU):
 
     opfile = srl.replace('.srl.fits','.srl.fits.'+str(ndir)+'.dirs.ClusterCat.npy')
     syscall = 'ClusterCat.py --SourceCat '+srl+' '

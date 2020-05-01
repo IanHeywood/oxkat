@@ -46,6 +46,3 @@ mstransform(vis=myms,
 	timebin='8s',
 	realmodelcol=True,
 	usewtspectrum=True)
-
-
-#fixvis(vis=opms,reuse=False)

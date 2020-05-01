@@ -37,7 +37,8 @@ def main():
 	infits = sys.argv[1]
 	thresh = float(sys.argv[2])
 
-	opfits = infits.replace('.fits','_mask.fits')
+	thresh_str = '.thresh'+str(thresh).replace('.','p')+'.mask.fits'
+	opfits = infits.replace('.fits',thresh_str)
 
 	copyfile(infits,opfits)
 
@@ -46,7 +47,7 @@ def main():
 	mask = img > thresh
 	maskimg[mask] = 1.0
 
-	maskimg = binary_dilation(maskimg)
+	maskimg = binary_dilation(maskimg,iterations=2)
 
 	flushFits(maskimg,opfits)
 

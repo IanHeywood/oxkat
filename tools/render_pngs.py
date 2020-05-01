@@ -9,8 +9,8 @@ def write_slurm(opfile,
                 syscall,
                 ntasks='1',
                 nodes='1',
-                cpus='32',
-                mem='230GB'):
+                cpus='8',
+                mem='32GB'):
 
     f = open(opfile,'w')
     f.writelines(['#!/bin/bash\n',
@@ -33,17 +33,16 @@ def generate_syscall_mviewer(infits):
     syscall += '-grid Equatorial J2000 '
     syscall += '-ct 0 '
     syscall += '-gray '+infits+' '
-#    syscall += '-3s max gaussian-log '
-    syscall += '-1e-5 5e-5 '
+    syscall += '-2s max gaussian-log '
+#    syscall += '-2s 5e-5 '
     syscall += '-png '+outpng+' '
-    syscall += '; '
     return syscall
 
 
 def main():
 
 
-    KERN_CONTAINER = '/data/exp_soft/containers/kern4-2018-11-28.simg'
+    KERN_CONTAINER = '/data/exp_soft/containers/kern5.simg'
 
 
     pattern = sys.argv[1]
@@ -62,7 +61,7 @@ def main():
 
     for infits in fitslist:
         print(infits)
-        syscall += 'srun singularity exec '+KERN_CONTAINER+' '+generate_syscall_mviewer(infits)+'\n'
+        syscall += 'singularity exec '+KERN_CONTAINER+' '+generate_syscall_mviewer(infits)+'\n'
 
     write_slurm(opfile=slurmfile,
             jobname='makepngs',

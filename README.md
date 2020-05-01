@@ -85,7 +85,7 @@ The IDIA slurm head node does not have singularity available, so the containers 
 
 ## Beam models
 
-Models for the MeerKAT primary beam at L-band can be downloaded from [here](https://entangled.physics.ox.ac.uk/index.php/s/MkchfHfbI4GUhOg). These are FITS files containing direction and frequency dependent Jones matrices in full polarisation, generated using the (https://github.com/ratt-ru/eidos) package ([Asad et al., 2018](https://ui.adsabs.harvard.edu/abs/2019arXiv190407155A/abstract)).
+Models for the MeerKAT primary beam at L-band can be downloaded from [here](https://entangled.physics.ox.ac.uk/index.php/s/MkchfHfbI4GUhOg). These are FITS files containing direction and frequency dependent Jones matrices in full polarisation, generated using the [Eidos](https://github.com/ratt-ru/eidos) package ([Asad et al., 2018](https://ui.adsabs.harvard.edu/abs/2019arXiv190407155A/abstract)).
 
 ## Software package roll-call
 

@@ -108,10 +108,10 @@ Models for the MeerKAT primary beam at L-band can be downloaded from [here](http
 * This was originally just a place to store my MeerKAT processing recipes. The procedures have improved a lot over time. Busyness, laziness, and the always-present goal of speeding up the experimentation cycle has led to increased automation of these procedures.
 
 
-* Several people have since found these scripts useful, and I hope that you do too. I have spent time on text such as this and improved user-friendliness in that hope.
+* Several people have since found these scripts useful, and I hope that you do too. I have spent time on text such as this and tried to improve user-friendliness in that hope.
 
 
-* I think the underlying recipes are pretty good, and for fields without anything apocalyptically bright or extended you should hopefully get a science-grade map after the 2GC stage without trying.
+* I think the underlying recipes are pretty good, and for fields without anything apocalyptically bright or extended you should hopefully get decent map after the 2GC stage without trying.
 
 
 * Many parameters can be adjusted in the [config](oxkat/config.py) file, however many others are still buried, and things like naming schemes are fairly hard-wired. 

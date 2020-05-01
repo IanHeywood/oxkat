@@ -98,7 +98,7 @@ def main():
         # Continue wsclean on CORRECTED_DATA column with additional scale
 
 
-        id_wsclean = 'WSCMA'+code
+        id_wsclean = 'WSCM2'+code
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],

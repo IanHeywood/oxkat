@@ -211,7 +211,7 @@ def main():
         syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
                                 suffix = 'mask1',
                                 thresh = 5.0,
-                                zoompix = '')[0]
+                                zoompix = cfg.DDF_NPIX)[0]
 
         id_makemask = 'MASK1'+code
         id_list.append(id_makemask)

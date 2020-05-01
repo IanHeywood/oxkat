@@ -29,7 +29,7 @@
 
 ## Usage
 
-1. If you have your [containers all set up](file:///Users/heywood/Astro/Scripts/oxkat/README.md#getting-containers) then log into your machine or cluster, e.g.:
+1. If you have your [containers all set up](README.md#getting-containers) then log into your machine or cluster, e.g.:
 
    ```ssh ianh@slurm.ilifu.ac.za```
 
@@ -79,7 +79,7 @@
 
 The easiest way to get the necessary containers is to use singularity to download and build containers from [Docker Hub](https://hub.docker.com/). There's a [script](https://github.com/IanHeywood/oxkat/blob/master/tools/pull_containers.sh) included to download them for you. [@SpheMakh](https://github.com/sphemakh)'s [stimela](https://hub.docker.com/u/stimela) repository hosts suitable ones for most applications. 
 
-The default container path is `~/containers`. The containers can be quite large, so if you want to store them elsewhere then just change the location in the [config.py](...) file accordingly. You only have to download the containers once. The scripts will select the required containers via pattern matching so if you need to replace a container with a newer version it should be seamless.
+The default container path is `~/containers`. The containers can be quite large, so if you want to store them elsewhere then just change the location in the [config.py](oxkat/config.py) file accordingly. You only have to download the containers once. The scripts will select the required containers via pattern matching so if you need to replace a container with a newer version it should be seamless.
 
 The IDIA slurm head node does not have singularity available, so the containers must be pulled either via a standalone node or a worker node, or otherwise copied over via the `transfer.ilifu.ac.za` node. Note that on Lengau the default container location is `~/lustre/containers`. You will not be able to use the `pull_containers.sh` script on the head node, and the worker nodes do not have external connectivity, so you will have to build the containers elsewhere and then transfer them to CHPC via their `scp.chpc.ac.za` node.
 
@@ -120,7 +120,7 @@ Models for the MeerKAT primary beam at L-band can be downloaded from [here](http
 * 3GC calibration is a pain in the neck, and certainly not a panacea. Most things here are constantly evolving, but that part is in particular.
 
 
-* Please file bugs / suggestions etc. as (issues)[https://github.com/IanHeywood/oxkat/issues].
+* Please file bugs / suggestions etc. as [issues](https://github.com/IanHeywood/oxkat/issues).
 
 
 Thanks for visiting.

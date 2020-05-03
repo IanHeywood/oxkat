@@ -130,7 +130,7 @@ def main():
                     pbs_config = cfg.PBS_WSCLEAN)
 
 
-        f.write(run_command+'\n')
+        f.write(run_command)
 
 
         # ------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ def main():
                     pbs_config = cfg.PBS_WSCLEAN)
 
 
-        f.write(run_command+'\n')
+        f.write(run_command)
 
 
         # ------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ def main():
                     infrastructure=INFRASTRUCTURE,
                     dependency=id_predict1)
 
-        f.write(run_command+'\n')
+        f.write(run_command)
 
 
         # ------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ def main():
                     pbs_config = cfg.PBS_WSCLEAN)
 
 
-        f.write(run_command+'\n')
+        f.write(run_command)
 
 
         # ------------------------------------------------------------------------------
@@ -222,7 +222,7 @@ def main():
                                 infrastructure = INFRASTRUCTURE,
                                 dependency = id_wsclean2)
 
-        f.write(run_command+'\n')
+        f.write(run_command)
 
 
         # ------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ def main():
                     pbs_config = cfg.PBS_WSCLEAN)
 
 
-        f.write(run_command+'\n')
+        f.write(run_command)
 
 
         # ------------------------------------------------------------------------------

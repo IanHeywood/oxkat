@@ -119,6 +119,9 @@ def main():
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                     imgname=data_img_prefix,
+                    multiscale = True,
+                    scales = '0,3,9',
+                    niter = 250000,
                     datacol='DATA',
                     bda=True,
                     mask=mask)
@@ -189,6 +192,9 @@ def main():
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                     imgname=corr_img_prefix,
+                    multiscale = True,
+                    scales = '0,3,9',
+                    niter = 250000,
                     datacol='CORRECTED_DATA',
                     bda=True,
                     mask=mask)

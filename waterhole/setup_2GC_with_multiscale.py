@@ -94,7 +94,7 @@ def main():
         print(gen.now()+'MS:         '+myms)
         print(gen.now()+'Using mask: '+mask)
 
-        f.write('# '+targetname)
+        f.write('# '+targetname+'\n')
     
         kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
 

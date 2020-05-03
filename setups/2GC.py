@@ -94,7 +94,7 @@ def main():
         print(gen.now()+'MS:         '+myms)
         print(gen.now()+'Using mask: '+mask)
 
-        f.write('# '+targetname+'\n')
+        f.write('\n# '+targetname+'\n')
     
         kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
 
@@ -254,7 +254,6 @@ def main():
             kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
             f.write(kill+'\n')
 
-        f.write('# ----------------- \n\n')
 
     f.close()
 

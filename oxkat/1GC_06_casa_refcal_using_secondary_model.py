@@ -296,6 +296,9 @@ shutil.copytree(gtab2,gtab3)
 # ------- Looping over secondaries
 
 
+solve_delays = []
+
+
 for i in range(0,len(pcals)):
 
 
@@ -354,21 +357,27 @@ for i in range(0,len(pcals)):
 
     # --- K2 (secondary)
 
+    if iflux > 5.0: # Don't solve for delays on weak secondaries
 
-    gaincal(vis= myms,
-        field = pcal,
-    #   uvrange = myuvrange,
-        caltable = ktab1,
-        refant = str(ref_ant),
-    #   spw = delayspw,
-        gaintype = 'K',
-        solint = 'inf',
-        parang = False,
-        gaintable = [gtab1,bptab1,gtab2],
-        gainfield = [bpcal,bpcal,pcal],
-        interp = ['nearest','linear','linear','linear'],
-        append = True)
+        gaincal(vis= myms,
+            field = pcal,
+        #   uvrange = myuvrange,
+            caltable = ktab1,
+            refant = str(ref_ant),
+        #   spw = delayspw,
+            gaintype = 'K',
+            solint = 'inf',
+            parang = False,
+            gaintable = [gtab1,bptab1,gtab2],
+            gainfield = [bpcal,bpcal,pcal],
+            interp = ['nearest','linear','linear','linear'],
+            append = True)
 
+        solve_delays.append(True)
+
+    else:
+
+        solve_delays.append(False)
 
 
 # ------- Looping over secondaries
@@ -475,19 +484,21 @@ for i in range(0,len(pcals)):
     # --- K3 secondary
 
 
-    gaincal(vis= myms,
-        field = pcal,
-    #   uvrange = myuvrange,
-        caltable = ktab3,
-        refant = str(ref_ant),
-    #   spw = delayspw,
-        gaintype = 'K',
-        solint = 'inf',
-        parang = False,
-        gaintable = [gtab1,bptab1,gtab3],
-        gainfield = [bpcal,bpcal,bpcal,pcal],
-        interp = ['linear','linear','linear'],
-        append = True)
+    if solve_delays[i]:
+
+        gaincal(vis= myms,
+            field = pcal,
+        #   uvrange = myuvrange,
+            caltable = ktab3,
+            refant = str(ref_ant),
+        #   spw = delayspw,
+            gaintype = 'K',
+            solint = 'inf',
+            parang = False,
+            gaintable = [gtab1,bptab1,gtab3],
+            gainfield = [bpcal,bpcal,bpcal,pcal],
+            interp = ['linear','linear','linear'],
+            append = True)
 
 
 

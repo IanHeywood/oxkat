@@ -274,6 +274,8 @@ def generate_syscall_wsclean(mslist,
                           cellsize = cfg.WSC_CELLSIZE,
                           briggs = cfg.WSC_BRIGGS,
                           niter = cfg.WSC_NITER,
+                          gain = cfg.WSC_GAIN,
+                          mgain = cfg.WSC_MGAIN,
                           multiscale = cfg.WSC_MULTISCALE,
                           scales = cfg.WSC_SCALES,
                           sourcelist = cfg.WSC_SOURCELIST,
@@ -320,8 +322,8 @@ def generate_syscall_wsclean(mslist,
         syscall += '-multiscale '
         syscall += '-multiscale-scales '+scales+' '
     syscall += '-niter '+str(niter)+' '
-    syscall += '-gain 0.1 '
-    syscall += '-mgain 0.85 '
+    syscall += '-gain '+str(gain)+' '
+    syscall += '-mgain '+str(mgain)+' '
     syscall += '-weight briggs '+str(briggs)+' '
     syscall += '-data-column '+datacol+' '
     if paralleldeconvolution != 0:

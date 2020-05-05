@@ -35,13 +35,12 @@ def main():
         ('--xaxis FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY')]
 
 
-    shadems_base = 'shadms --dir '+VISPLOTS+' '
+    shadems_base = 'shadems --dir '+VISPLOTS+' '
 
     for field in fields:
         for plot in plots:
             syscall = shadems_base+' '+plot+' --field '+field+' '+myms
-            print(syscall)
-#            subprocess.run([syscall],shell=True)
+            subprocess.run([syscall],shell=True)
 
 
 if __name__ == "__main__":

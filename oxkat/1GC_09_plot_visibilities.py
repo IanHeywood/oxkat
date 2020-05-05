@@ -20,7 +20,7 @@ def main():
     gen.setup_dir(VISPLOTS)
 
 
-    project_info = pickle.load(open('project_info.p','rb'))
+    project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
     myms = project_info['master_ms']
     bpcal = project_info['primary'][1]
     pcals = project_info['secondary']

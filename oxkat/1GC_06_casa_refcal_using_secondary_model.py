@@ -20,7 +20,7 @@ def stamp():
 
 myuvrange = '>150m'
 delaycut = 2.5 # don't solve for delays on secondaries weaker than this
-gapfill = 8
+gapfill = 24
 
 
 project_info = pickle.load(open('project_info.p','rb'))

@@ -16,7 +16,7 @@ from oxkat import config as cfg
 def main():
 
 
-    VISPLOTS = cfg.GAINPLOTS
+    VISPLOTS = cfg.VISPLOTS
     gen.setup_dir(VISPLOTS)
 
 

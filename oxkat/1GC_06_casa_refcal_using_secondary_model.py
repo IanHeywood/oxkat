@@ -19,6 +19,7 @@ def stamp():
 
 
 myuvrange = '>150m'
+delaycut = 2.5 # don't solve for delays on secondaries weaker than this
 gapfill = 8
 
 
@@ -357,7 +358,7 @@ for i in range(0,len(pcals)):
 
     # --- K2 (secondary)
 
-    if iflux > 5.0: # Don't solve for delays on weak secondaries
+    if iflux > delaycut: # Don't solve for delays on weak secondaries
 
         gaincal(vis= myms,
             field = pcal,

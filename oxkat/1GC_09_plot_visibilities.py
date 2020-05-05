@@ -28,7 +28,7 @@ def main():
 
     fields = [bpcal]
     for pcal in pcals:
-        fields.append(pcals[i][1])
+        fields.append(pcal[1])
 
     plots = [('--xaxis CORRECTED_DATA:real:XX,CORRECTED_DATA:real:YY --yaxis CORRECTED_DATA:imag:XX,CORRECTED_DATA:imag:YY'),
 #        ('--xaxis FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY --iter-scan --colour-by ANTENNA1')

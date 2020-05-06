@@ -102,13 +102,13 @@ def main():
                                 bda = True,
                                 mask = 'none')
 
-        id_wsclean = 'WSCBL'+code
-        id_list.append(id_wsclean)
-
         if len(id_list) > 0:
             dependency = id_list[-1]
         else:
             dependency = None
+
+        id_wsclean = 'WSCBL'+code
+        id_list.append(id_wsclean)
 
         run_command = gen.job_handler(syscall = syscall,
                                 jobname = id_wsclean,

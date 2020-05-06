@@ -48,11 +48,7 @@ def main():
     myms = project_info['master_ms']
     pcals = project_info['secondary']
 
-    for pcal in pcals:
-        fields.append(pcal[1])
-    targets = project_info['target_list'] 
  
-
     # Set names of the run file, open for writing
 
     submit_file = 'submit_image-cal_jobs.sh'

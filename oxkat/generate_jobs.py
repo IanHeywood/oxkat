@@ -96,7 +96,7 @@ def scrub_target_name(targetname):
 
     # Replace + with p and space with underscore
 
-    scrubbed = targetname.replace('+','p').replace(' ','_')[-3:]
+    scrubbed = targetname.replace('+','p').replace(' ','_')
     return scrubbed
 
 

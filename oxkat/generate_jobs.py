@@ -267,6 +267,7 @@ def generate_syscall_wsclean(mslist,
                           imgname,
                           datacol,
                           continueclean = cfg.WSC_CONTINUE,
+                          field = cfg.WSC_FIELD,
                           startchan = cfg.WSC_STARTCHAN,
                           endchan = cfg.WSC_ENDCHAN,
                           chanout = cfg.WSC_CHANNELSOUT,
@@ -306,6 +307,7 @@ def generate_syscall_wsclean(mslist,
     syscall += '-log-time '
     if continueclean:
         syscall += '-continue '
+    syscall += '-field '+str(field)+' '
     if sourcelist and fitspectralpol != 0:
         syscall += '-save-source-list '
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '
@@ -373,7 +375,7 @@ def generate_syscall_predict(msname,
     syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
     syscall += '-mem '+str(mem)+' '
-    syscall += '-predict-channels '+str(predictchannels)+' '
+    syscall += '-predictchannelsedict-channels '+str(predictchannels)+' '
     syscall += msname
 
     return syscall 

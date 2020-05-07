@@ -13,7 +13,7 @@ from astropy.coordinates import SkyCoord
 
 def calcsep(ra0,dec0,ra1,dec1):
     c1 = SkyCoord(str(ra0)+'deg',str(dec0)+'deg',frame='fk5')
-    c2 = SkyCoord(str(ra1)+'deg',str(dec0)+'deg',frame='fk5')
+    c2 = SkyCoord(str(ra1)+'deg',str(dec1)+'deg',frame='fk5')
     sep = c1.separation(c2)
     return sep.value
 

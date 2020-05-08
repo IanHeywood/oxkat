@@ -129,6 +129,15 @@ PBS_WSCLEAN = {
 
 # ------------------------------------------------------------------------
 #
+# 1GC defaults
+#
+
+
+
+
+
+# ------------------------------------------------------------------------
+#
 # wsclean defaults
 #
 
@@ -151,7 +160,7 @@ WSC_BDA = False
 WSC_BDAFACTOR = 24
 WSC_NOMODEL = False
 WSC_MASK = 'auto'
-WSC_AUTOTHRESHOLD = 0.3
+WSC_AUTOTHRESHOLD = 1.5
 WSC_AUTOMASK = 5.0
 WSC_FITSPECTRALPOL = 4
 WSC_PREDICTCHANNELS = 64

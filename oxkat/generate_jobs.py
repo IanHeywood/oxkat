@@ -332,14 +332,14 @@ def generate_syscall_wsclean(mslist,
         syscall += '-parallel-deconvolution '+str(paralleldeconvolution)+' '
     if startchan != -1 and endchan != -1:
         syscall += '-channel-range '+str(startchan)+' '+str(endchan)+' '
+    syscall += '-local-rms '
+    syscall += '-auto-threshold '+str(autothreshold)+' '
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fits-mask '+mymask+' '
     elif mask.lower() == 'none':    
         syscall += ''
     elif mask.lower() == 'auto':
-        syscall += '-local-rms '
-        syscall += '-auto-threshold '+str(autothreshold)+' '
         syscall += '-auto-mask '+str(automask)+' '
     else:
         syscall += '-fits-mask '+mask+' '

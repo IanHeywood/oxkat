@@ -126,6 +126,8 @@ def main():
                                 imgname = img_prefix,
                                 datacol = 'DATA',
                                 bda = True,
+                                niter = 100000,
+                                autothreshold = 6.0,
                                 mask = 'none')
 
         id_wsclean = 'WSDBL'+code

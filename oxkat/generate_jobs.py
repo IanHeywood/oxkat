@@ -212,7 +212,8 @@ def job_handler(syscall,
 
     elif infrastructure == 'node':
 
-        run_command = syscall
+        node_logfile = cfg.LOGS+'/oxk_'+jobname+'.log'
+        run_command = syscall+' | tee '+node_logfile
 
     return run_command+'\n'
 

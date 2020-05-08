@@ -133,6 +133,7 @@ PBS_WSCLEAN = {
 #
 
 
+PRE_FIELDS = '' # comma-separated list of fields to select from raw MS
 
 
 

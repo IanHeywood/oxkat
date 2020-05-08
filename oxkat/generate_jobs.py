@@ -474,7 +474,8 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Output-Mode Clean '
     syscall += '--Output-Also '+outputalso+' '
     syscall += '--Output-Images '+outputimages+' '
-    syscall += '--Output-Cubes '+outputcubes+' '
+    if outputcubes != ''
+        syscall += '--Output-Cubes '+outputcubes+' '
     # [Image]
     syscall += '--Image-NPix '+str(npix)+' '
     syscall += '--Image-Cell '+str(cell)+' '
@@ -526,7 +527,7 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--Deconv-PeakFactor '+str(ssd_deconvpeakfactor)+' '
         syscall += '--Deconv-MaxMajorIter '+str(ssd_maxmajoriter)+' '
         syscall += '--Deconv-MaxMinorIter '+str(ssd_maxminoriter)+' '
-        syscall += '--SSDClean-NEnlargeData '+str(ssd_enlargedata)
+        syscall += '--SSDClean-NEnlargeData '+str(ssd_enlargedata)+' '
     elif deconvmode.lower() == 'hogbom':
         syscall += '--Deconv-Mode Hogbom '
         syscall += '--Deconv-PeakFactor '+str(hogbom_deconvpeakfactor)+' '

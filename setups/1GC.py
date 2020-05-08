@@ -40,6 +40,7 @@ def main():
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
+    SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN)
 
  
     # Set names of the run and kill files, open run file for writing
@@ -276,6 +277,26 @@ def main():
 
 
     # ------------------------------------------------------------------------------
+    # STEP 9: 
+    # Make visibility plots
+                                         
+
+    id_gainplots = 'PLVIS'+code
+    id_list.append(id_visplots)
+
+    syscall = 'singularity exec '+SHADEMS_CONTAINER+' '
+    syscall += 'python3 '+OXKAT+'/1GC_09_plot_visibilities.py\n'
+
+    run_command = gen.job_handler(syscall=syscall,
+                jobname=id_visplots,
+                infrastructure=INFRASTRUCTURE,
+                dependency=id_splittargets)
+
+    f.write(run_command+'\n')
+
+
+    # ------------------------------------------------------------------------------
+
 
 
     if INFRASTRUCTURE in ['idia','chpc']:

@@ -474,7 +474,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Output-Mode Clean '
     syscall += '--Output-Also '+outputalso+' '
     syscall += '--Output-Images '+outputimages+' '
-    if outputcubes != ''
+    if outputcubes != '':
         syscall += '--Output-Cubes '+outputcubes+' '
     # [Image]
     syscall += '--Image-NPix '+str(npix)+' '

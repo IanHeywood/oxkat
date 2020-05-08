@@ -76,7 +76,8 @@ def main():
 
 
         if not o.isdir(myms):
-
+            
+            print('------------------------------------------------------')
             print(gen.now()+myms+' not found, skipping '+targetname)
 
         else:

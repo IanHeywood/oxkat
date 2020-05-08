@@ -29,6 +29,7 @@ def get_container(path,pattern):
 
     path = path.rstrip('/')+'/'
     ll = sorted(glob.glob(path+'*'+pattern+'*img'))
+    ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
     if len(ll) == 0:
         print(now()+'Failed to find container for '+pattern+' in '+path)
         sys.exit()

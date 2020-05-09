@@ -377,7 +377,7 @@ def generate_syscall_predict(msname,
     syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
     syscall += '-mem '+str(mem)+' '
-    syscall += '-predictchannels '+str(predictchannels)+' '
+    syscall += '-predict-channels '+str(predictchannels)+' '
     syscall += msname
 
     return syscall 

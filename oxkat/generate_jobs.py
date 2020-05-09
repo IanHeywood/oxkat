@@ -215,7 +215,9 @@ def job_handler(syscall,
         node_logfile = cfg.LOGS+'/oxk_'+jobname+'.log'
         run_command = syscall+' | tee '+node_logfile
 
-    return run_command+'\n'
+    run_command += '\n'
+
+    return run_command
 
 
 def generate_syscall_casa(casascript,casalogfile,extra_args=''):
@@ -224,8 +226,8 @@ def generate_syscall_casa(casascript,casalogfile,extra_args=''):
     syscall += '--logfile '+casalogfile+' '
     syscall += '--nogui '
     if extra_args != '':
-      syscall += extra_args+' '
-    syscall += '\n'
+      syscall += extra_args
+#    syscall += '\n'
 
     return syscall
 

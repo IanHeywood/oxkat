@@ -82,7 +82,7 @@ def main():
                 jobname=id_average,
                 infrastructure=INFRASTRUCTURE)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------

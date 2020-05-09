@@ -281,7 +281,7 @@ def main():
     # Make visibility plots
                                          
 
-    id_gainplots = 'PLVIS'+code
+    id_visplots = 'PLVIS'+code
     id_list.append(id_visplots)
 
     syscall = 'singularity exec '+SHADEMS_CONTAINER+' '

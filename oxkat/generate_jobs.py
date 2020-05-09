@@ -284,6 +284,7 @@ def generate_syscall_wsclean(mslist,
                           sourcelist = cfg.WSC_SOURCELIST,
                           bda = cfg.WSC_BDA,
                           bdafactor = cfg.WSC_BDAFACTOR,
+                          nwlayersfactor = cfg.WSC_NWLAYERSFACTOR,
                           nomodel = cfg.WSC_BDA,
                           mask = cfg.WSC_MASK,
                           autothreshold = cfg.WSC_AUTOTHRESHOLD,
@@ -319,6 +320,7 @@ def generate_syscall_wsclean(mslist,
         syscall += '-no-update-model-required '
     elif not bda and nomodel:
         syscall += '-no-update-model-required '
+    syscall += '-nwlayers-factor '+str(nwlayersfactor)+' '
     if useidg:
         syscall += '-use-idg '
         syscall += '-idg-mode '+idgmode+' '

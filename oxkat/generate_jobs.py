@@ -372,12 +372,12 @@ def generate_syscall_predict(msname,
     syscall = 'wsclean '
     syscall += '-log-time '
     syscall += '-predict '
-    syscall += '-channelsout '+str(chanout)+' '
+    syscall += '-channels-out '+str(chanout)+' '
     syscall += ' -size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
     syscall += '-mem '+str(mem)+' '
-    syscall += '-predictchannelsedict-channels '+str(predictchannels)+' '
+    syscall += '-predictchannels '+str(predictchannels)+' '
     syscall += msname
 
     return syscall 

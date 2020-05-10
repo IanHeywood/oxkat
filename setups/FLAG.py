@@ -135,7 +135,7 @@ def main():
                                     datacol = 'DATA',
                                     bda = True,
                                     niter = 100000,
-                                    autothreshold = 6.0,
+                                    autothreshold = 1.0,
                                     mask = 'none')
 
             id_wsclean = 'WSDBL'+code

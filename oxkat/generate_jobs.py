@@ -289,6 +289,7 @@ def generate_syscall_wsclean(mslist,
                           nwlayersfactor = cfg.WSC_NWLAYERSFACTOR,
                           nomodel = cfg.WSC_NOMODEL,
                           mask = cfg.WSC_MASK,
+                          threshold = cfg.WSC_threshold,
                           autothreshold = cfg.WSC_AUTOTHRESHOLD,
                           automask = cfg.WSC_AUTOMASK,
                           fitspectralpol = cfg.WSC_FITSPECTRALPOL,
@@ -338,17 +339,18 @@ def generate_syscall_wsclean(mslist,
         syscall += '-parallel-deconvolution '+str(paralleldeconvolution)+' '
     if startchan != -1 and endchan != -1:
         syscall += '-channel-range '+str(startchan)+' '+str(endchan)+' '
-    syscall += '-local-rms '
-    syscall += '-auto-threshold '+str(autothreshold)+' '
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fits-mask '+mymask+' '
     elif mask.lower() == 'none':    
-        syscall += ''
+        syscall += '-threshold '+str(threshold)+' '
     elif mask.lower() == 'auto':
+        syscall += '-local-rms '
         syscall += '-auto-mask '+str(automask)+' '
+        syscall += '-auto-threshold '+str(autothreshold)+' '
     else:
         syscall += '-fits-mask '+mask+' '
+        syscall += '-threshold '+str(threshold)+' '
     syscall += '-name '+imgname+' '
     syscall += '-channels-out '+str(chanout)+' '
     if fitspectralpol != 0:

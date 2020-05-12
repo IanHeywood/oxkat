@@ -94,10 +94,8 @@ def get_target_code(targetname):
 
 
 def scrub_target_name(targetname):
-
-    # Replace + with p and space with underscore
-
-    scrubbed = targetname.replace('+','p').replace(' ','_')
+#    scrubbed = targetname.replace('+','p').replace(' ','_')
+    scrubbed = targetname.replace(' ','_')
     return scrubbed
 
 

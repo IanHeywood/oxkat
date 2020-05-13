@@ -15,7 +15,7 @@
 * At the core is a set of  functions that generate calls to various pieces of radio astronomy software, a semi-modular bunch of CASA scripts for performing reference calibration, and a fairly sizeable list of default parameters (at present suitable for full-band Stokes I continuum imaging).
 
 
-* Job script generation and dependency chains are automatically handled when running on either the [IDIA](https://www.idia.ac.za/) cluster or the [CHPC](https://www.chpc.ac.za/)'s [Lengau](https://www.chpc.ac.za/index.php/resources/lengau-cluster) cluster.
+* Job script generation and dependency chains are automatically handled when running on either the [IDIA](https://www.idia.ac.za/) (slurm) cluster or the [CHPC](https://www.chpc.ac.za/)'s (PBS) [Lengau](https://www.chpc.ac.za/index.php/resources/lengau-cluster) cluster.
 
 
 * Setup scripts glue the above components together into a processing recipe. The default procedure is broken down into stages, after each of which it is advisable to pause and examine the state of the process before continuing.  
@@ -31,7 +31,9 @@
 
 1. If you have your [containers all set up](README.md#getting-containers) then log into your machine or cluster, e.g.:
 
-   ```ssh ianh@slurm.ilifu.ac.za```
+   ```
+   ssh ianh@slurm.ilifu.ac.za
+   ```
 
 2. Clone this repo somewhere:
 
@@ -111,7 +113,7 @@ Models for the MeerKAT primary beam at L-band can be downloaded from [here](http
 * Several people have since found these scripts useful, and I hope that you do too. I have spent time on text such as this and tried to improve user-friendliness in that hope.
 
 
-* I think the underlying recipes are pretty good, and for fields without anything apocalyptically bright or extended you should hopefully get decent map after the 2GC stage without trying.
+* I think the underlying recipes are pretty good, and for fields without anything apocalyptically bright or extended you should hopefully get a decent map after the 2GC stage without trying.
 
 
 * Many parameters can be adjusted in the [config](oxkat/config.py) file, however many others are still buried, and things like naming schemes are fairly hard-wired. 

@@ -285,6 +285,7 @@ def generate_syscall_wsclean(mslist,
                           bda = cfg.WSC_BDA,
                           bdafactor = cfg.WSC_BDAFACTOR,
                           nwlayersfactor = cfg.WSC_NWLAYERSFACTOR,
+                          padding = cfg.WSC_PADDING,
                           nomodel = cfg.WSC_NOMODEL,
                           mask = cfg.WSC_MASK,
                           threshold = cfg.WSC_THRESHOLD,
@@ -354,7 +355,7 @@ def generate_syscall_wsclean(mslist,
     if fitspectralpol != 0:
         syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
     syscall += '-join-channels '
-    syscall += '-padding 1.3 '
+    syscall += '-padding '+str(padding)+' '
     syscall += '-mem '+str(mem)+' '
 
     for myms in mslist:

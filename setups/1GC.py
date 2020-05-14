@@ -40,6 +40,7 @@ def main():
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
+    SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN)
 
  
     # Set names of the run and kill files, open run file for writing
@@ -81,7 +82,7 @@ def main():
                 jobname=id_average,
                 infrastructure=INFRASTRUCTURE)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
@@ -93,14 +94,14 @@ def main():
     id_list.append(id_setup)
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
-    syscall += 'python '+OXKAT+'/1GC_00_setup.py '+myms+'\n'
+    syscall += 'python '+OXKAT+'/1GC_00_setup.py '+myms
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_setup,
                 infrastructure=INFRASTRUCTURE,
                 dependency=id_average)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
@@ -122,7 +123,7 @@ def main():
                 infrastructure=INFRASTRUCTURE,
                 dependency=id_setup)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
@@ -144,7 +145,7 @@ def main():
                 infrastructure=INFRASTRUCTURE,
                 dependency=id_fixvis)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
@@ -166,7 +167,7 @@ def main():
                 infrastructure=INFRASTRUCTURE,
                 dependency=id_basic)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
@@ -188,7 +189,7 @@ def main():
                 infrastructure=INFRASTRUCTURE,
                 dependency=id_autoflagcals)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
@@ -210,7 +211,7 @@ def main():
                 infrastructure=INFRASTRUCTURE,
                 dependency=id_splitcals)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
@@ -231,7 +232,7 @@ def main():
                 infrastructure=INFRASTRUCTURE,
                 dependency=id_secondarymodel)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
@@ -243,14 +244,14 @@ def main():
     id_list.append(id_gainplots)
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/1GC_07_plot_gaintables.py\n'
+    syscall += 'python3 '+OXKAT+'/1GC_07_plot_gaintables.py'
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_gainplots,
                 infrastructure=INFRASTRUCTURE,
                 dependency=id_1GC)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
@@ -272,15 +273,35 @@ def main():
                 infrastructure=INFRASTRUCTURE,
                 dependency=id_1GC)
 
-    f.write(run_command+'\n')
+    f.write(run_command)
+
+
+    # ------------------------------------------------------------------------------
+    # STEP 9: 
+    # Make visibility plots
+                                         
+
+    id_visplots = 'PLVIS'+code
+    id_list.append(id_visplots)
+
+    syscall = 'singularity exec '+SHADEMS_CONTAINER+' '
+    syscall += 'python3 '+OXKAT+'/1GC_09_plot_visibilities.py'
+
+    run_command = gen.job_handler(syscall=syscall,
+                jobname=id_visplots,
+                infrastructure=INFRASTRUCTURE,
+                dependency=id_splittargets)
+
+    f.write(run_command)
 
 
     # ------------------------------------------------------------------------------
 
 
+
     if INFRASTRUCTURE in ['idia','chpc']:
-        kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
-        f.write(kill+'\n')
+        kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        f.write(kill)
     
 
     f.close()

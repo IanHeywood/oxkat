@@ -3,8 +3,12 @@
 import glob
 
 
+execfile('oxkat/config.py')
+
+myfields = PRE_FIELDS
+
+
 myms = glob.glob('*.ms')[0]
-opms = myms.replace('.MS','.ms')
 opms = myms.replace('.ms','_wtspec.ms')
 
 
@@ -20,18 +24,19 @@ else:
 	mychanave = True
 
 
-mstransform(vis=myms,
-	outputvis=opms,
-	datacolumn='data',
-	chanaverage=mychanave,
-	chanbin=mychanbin,
-	timeaverage=True,
-	timebin='8s',
-	realmodelcol=True,
-	usewtspectrum=True)
+mstransform(vis = myms,
+	outputvis = opms,
+	field = myfields,
+	datacolumn = 'data',
+	chanaverage = mychanave,
+	chanbin = mychanbin,
+	timeaverage = True,
+	timebin = '8s',
+	realmodelcol = True,
+	usewtspectrum = True)
 
 
-flagmanager(vis=opms,mode='save',versionname='observatory')
+flagmanager(vis = opms, mode = 'save', versionname = 'observatory')
 
 
 clearstat()

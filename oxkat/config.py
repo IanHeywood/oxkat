@@ -129,6 +129,16 @@ PBS_WSCLEAN = {
 
 # ------------------------------------------------------------------------
 #
+# 1GC defaults
+#
+
+
+PRE_FIELDS = '' # comma-separated list of fields to select from raw MS
+
+
+
+# ------------------------------------------------------------------------
+#
 # wsclean defaults
 #
 
@@ -149,8 +159,10 @@ WSC_SCALES = '0,3,9'
 WSC_SOURCELIST = True
 WSC_BDA = False
 WSC_BDAFACTOR = 24
+WSC_NWLAYERSFACTOR = 3
 WSC_NOMODEL = False
 WSC_MASK = 'auto'
+WSC_THRESHOLD = 1e-6
 WSC_AUTOTHRESHOLD = 0.3
 WSC_AUTOMASK = 5.0
 WSC_FITSPECTRALPOL = 4
@@ -188,7 +200,7 @@ DDF_PREDICTCOLNAME = 'MODEL_DATA'
 DDF_INITDICOMODEL = ''
 # [Output]
 DDF_OUTPUTALSO = 'oenNS'
-DDF_OUTPUTIMAGES = 'DdPMRIikz' # add 'A' to re-include spectral index map
+DDF_OUTPUTIMAGES = 'DdPMmRrIikz' # add 'A' to re-include spectral index map
 DDF_OUTPUTCUBES = 'MmRi' # output intrinsic and apparent resid and model cubes
 # [Image]
 DDF_NPIX = 10125

@@ -29,6 +29,7 @@ def get_container(path,pattern):
 
     path = path.rstrip('/')+'/'
     ll = sorted(glob.glob(path+'*'+pattern+'*img'))
+    ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
     if len(ll) == 0:
         print(now()+'Failed to find container for '+pattern+' in '+path)
         sys.exit()
@@ -93,10 +94,8 @@ def get_target_code(targetname):
 
 
 def scrub_target_name(targetname):
-
-    # Replace + with p and space with underscore
-
-    scrubbed = targetname.replace('+','p').replace(' ','_')
+#    scrubbed = targetname.replace('+','p').replace(' ','_')
+    scrubbed = targetname.replace(' ','_')
     return scrubbed
 
 
@@ -211,9 +210,12 @@ def job_handler(syscall,
 
     elif infrastructure == 'node':
 
-        run_command = syscall
+        node_logfile = cfg.LOGS+'/oxk_'+jobname+'.log'
+        run_command = syscall+' | tee '+node_logfile
 
-    return run_command+'\n'
+    run_command += '\n'
+
+    return run_command
 
 
 def generate_syscall_casa(casascript,casalogfile,extra_args=''):
@@ -222,8 +224,8 @@ def generate_syscall_casa(casascript,casalogfile,extra_args=''):
     syscall += '--logfile '+casalogfile+' '
     syscall += '--nogui '
     if extra_args != '':
-      syscall += extra_args+' '
-    syscall += '\n'
+      syscall += extra_args
+#    syscall += '\n'
 
     return syscall
 
@@ -282,8 +284,11 @@ def generate_syscall_wsclean(mslist,
                           sourcelist = cfg.WSC_SOURCELIST,
                           bda = cfg.WSC_BDA,
                           bdafactor = cfg.WSC_BDAFACTOR,
-                          nomodel = cfg.WSC_BDA,
+                          nwlayersfactor = cfg.WSC_NWLAYERSFACTOR,
+                          padding = cfg.WSC_PADDING,
+                          nomodel = cfg.WSC_NOMODEL,
                           mask = cfg.WSC_MASK,
+                          threshold = cfg.WSC_THRESHOLD,
                           autothreshold = cfg.WSC_AUTOTHRESHOLD,
                           automask = cfg.WSC_AUTOMASK,
                           fitspectralpol = cfg.WSC_FITSPECTRALPOL,
@@ -317,6 +322,7 @@ def generate_syscall_wsclean(mslist,
         syscall += '-no-update-model-required '
     elif not bda and nomodel:
         syscall += '-no-update-model-required '
+    syscall += '-nwlayers-factor '+str(nwlayersfactor)+' '
     if useidg:
         syscall += '-use-idg '
         syscall += '-idg-mode '+idgmode+' '
@@ -336,19 +342,20 @@ def generate_syscall_wsclean(mslist,
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fits-mask '+mymask+' '
     elif mask.lower() == 'none':    
-        syscall += ''
+        syscall += '-threshold '+str(threshold)+' '
     elif mask.lower() == 'auto':
         syscall += '-local-rms '
-        syscall += '-auto-threshold '+str(autothreshold)+' '
         syscall += '-auto-mask '+str(automask)+' '
+        syscall += '-auto-threshold '+str(autothreshold)+' '
     else:
         syscall += '-fits-mask '+mask+' '
+        syscall += '-threshold '+str(threshold)+' '
     syscall += '-name '+imgname+' '
     syscall += '-channels-out '+str(chanout)+' '
     if fitspectralpol != 0:
         syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
     syscall += '-join-channels '
-    syscall += '-padding 1.3 '
+    syscall += '-padding '+str(padding)+' '
     syscall += '-mem '+str(mem)+' '
 
     for myms in mslist:
@@ -370,12 +377,12 @@ def generate_syscall_predict(msname,
     syscall = 'wsclean '
     syscall += '-log-time '
     syscall += '-predict '
-    syscall += '-channelsout '+str(chanout)+' '
+    syscall += '-channels-out '+str(chanout)+' '
     syscall += ' -size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
     syscall += '-mem '+str(mem)+' '
-    syscall += '-predictchannelsedict-channels '+str(predictchannels)+' '
+    syscall += '-predict-channels '+str(predictchannels)+' '
     syscall += msname
 
     return syscall 

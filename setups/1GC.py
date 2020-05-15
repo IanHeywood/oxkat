@@ -56,7 +56,7 @@ def main():
 
     original_ms = glob.glob('*.ms')[0]
     code = gen.get_code(original_ms)
-    myms = original_ms.replace('.ms','_wtspec.ms')
+    myms = original_ms.replace('.ms','_'+str(gen.PRE_NCHANS)+'ch.ms')
 
 
     # Initialise a list to hold all the job IDs

@@ -114,7 +114,7 @@ PBS_TRICOLOUR = {
 	'QUEUE': 'serial',
 	'NODES': '1',
 	'PPN': '23',
-	'MEM': '128gb'
+	'MEM': '120gb'
 }
 
 PBS_WSCLEAN = {
@@ -123,7 +123,7 @@ PBS_WSCLEAN = {
 	'QUEUE': 'serial',
 	'NODES': '1',
 	'PPN': '23',
-	'MEM': '128gb'
+	'MEM': '120gb'
 }
 
 

@@ -134,7 +134,8 @@ PBS_WSCLEAN = {
 
 
 PRE_FIELDS = '' # comma-separated list of fields to select from raw MS
-
+PRE_NCHANS = 1024 # integer number of channels in working MS
+PRE_TIMEBIN = '8s' # integration time in working MS
 
 
 # ------------------------------------------------------------------------

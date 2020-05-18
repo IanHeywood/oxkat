@@ -69,7 +69,7 @@ def get_field_info(myms,
     field_tab = table(myms+'/FIELD',ack=False)
     names = field_tab.getcol('NAME')
     dirs = field_tab.getcol('REFERENCE_DIR')
-    field_tab.close()
+    field_tab.close()   
 
 
     primary_candidates = []
@@ -93,7 +93,8 @@ def get_field_info(myms,
         primary_dir = primary_candidate[2]
         for cal in cals:
             sep = calcsep(primary_dir[0],primary_dir[1],cal[1],cal[2])
-            if sep < 1e-4: # and project_info['primary_name'] == 'UNKNOWN':
+            if sep < 3e-3: # and project_info['primary_name'] == 'UNKNOWN':
+                print('Matched '+cal[0]+' (separation: '+str(sep)+'deg)')
                 primary_field = (primary_candidate[0],primary_candidate[1])
                 primary_tag = cal[0]
 

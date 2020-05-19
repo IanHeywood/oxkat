@@ -435,6 +435,7 @@ def generate_syscall_ddfacet(mspattern,
                           diammin = cfg.DDF_DIAMMIN,
                           nfacets =cfg.DDF_NFACETS,
                           psfoversize = cfg.DDF_PSFOVERSIZE,
+                          padding = cfg.DDF_PADDING,
                           robust = cfg.DDF_ROBUST,
                           sparsification = cfg.DDF_SPARSIFICATION,
                           ncpu = cfg.DDF_NCPU,
@@ -491,6 +492,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Facets-DiamMin '+str(diammin)+' '
     syscall += '--Facets-NFacets '+str(nfacets)+' '
     syscall += '--Facets-PSFOversize '+str(psfoversize)+' '
+    syscall += '--Facets-Padding '+str(padding)+' '
     # [Weight]
     syscall += '--Weight-Robust '+str(robust)+' '
     # [CF]

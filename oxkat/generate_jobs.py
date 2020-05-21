@@ -397,9 +397,9 @@ def generate_syscall_makemask(restoredimage,
     # Generate call to MakeMask.py and dilate the result
   
     if suffix == '':
-        fitsmask = restoredimage+'.mask.fits'
+        fitsmask = restoredimage.replace('.fits','.mask.fits')
     else: 
-        fitsmask = restoredimage+'.'+suffix+'.fits'
+        fitsmask = restoredimage.replace('.fits','.'+suffix+'.fits')
 
     syscall = 'bash -c "'
     syscall += 'python3 '+cfg.TOOLS+'/pyMakeMask.py '

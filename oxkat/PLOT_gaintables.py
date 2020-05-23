@@ -22,8 +22,15 @@ def main():
     gen.setup_dir(GAINPLOTS)
 
 
-    caltabs = sorted([item for item in glob.glob(GAINTABLES+'/cal_1GC_*') if not os.path.basename(item).endswith('flagversions')])
-    exclude = glob.glob('cal_1GC_*calibrators*')
+    include = sys.argv[1]
+    if len(sys.argv) > 2:
+        exclude = sys.argv[2]
+    else:
+        exclude = ''
+
+    caltabs = sorted([item for item in glob.glob(GAINTABLES+'/'+include) if not os.path.basename(item).endswith('flagversions')])
+    if exclude != '':
+        exclude = glob.glob(GAINTABLES+'/'+exclude)
 
     for caltab in caltabs:
         if caltab not in exclude:

@@ -244,7 +244,7 @@ def main():
     id_list.append(id_gainplots)
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/1GC_07_plot_gaintables.py'
+    syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_1GC_* cal_1GC_*calibrators.ms*'
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_gainplots,
@@ -265,7 +265,7 @@ def main():
     casalog = LOGS+'/casa_1GC_'+id_splittargets+'.log'
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_08_casa_split_targets.py',
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_07_casa_split_targets.py',
                 casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
@@ -285,7 +285,7 @@ def main():
     id_list.append(id_visplots)
 
     syscall = 'singularity exec '+SHADEMS_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/1GC_09_plot_visibilities.py'
+    syscall += 'python3 '+OXKAT+'/1GC_08_plot_visibilities.py'
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_visplots,

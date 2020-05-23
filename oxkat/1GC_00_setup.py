@@ -8,6 +8,7 @@ import glob
 import pickle
 from pyrap.tables import table
 from astropy.coordinates import SkyCoord
+from oxkat import config as cfg
 
 
 
@@ -34,9 +35,9 @@ def get_antnames(myms):
 
 
 def get_field_info(myms,
-                target='TARGET',
-                primary='BANDPASS',
-                secondary='PHASE'):
+                target=cfg.PRE_TARGET_INTENT,
+                primary=cfg.PRE_PRIMARY_INTENT,
+                secondary=cfg.PRE_SECONDARY_INTENT):
 
 
     # Tags and positions for the preferred primary calibrators

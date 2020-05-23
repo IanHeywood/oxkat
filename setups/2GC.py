@@ -278,10 +278,12 @@ def main():
             # ------------------------------------------------------------------------------
 
 
-            if INFRASTRUCTURE in ['idia','chpc']:
-                kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
-                f.write(kill+'\n')
-
+            if INFRASTRUCTURE == 'idia':
+                kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+                f.write(kill)
+            elif INFRASTRUCTURE == 'chpc':
+                kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+                f.write(kill)
 
     f.close()
 

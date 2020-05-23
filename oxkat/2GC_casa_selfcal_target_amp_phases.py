@@ -13,6 +13,8 @@ def stamp():
     return str(time.time()).replace('.','')
 
 myuvrange = ''
+psolint = ''
+apsolint = ''
 
 args = sys.argv
 for item in sys.argv:
@@ -21,9 +23,17 @@ for item in sys.argv:
         mslist = parts[1].split(',')
     if parts[0] == 'uvmin':
         myuvrange = '>'+parts[1]
+    if parts[0] == 'psolint':
+        psolint = parts[1]
+    if parts[0] == 'asolint':
+        apsolint = parts[1]
 
 if myuvrange == '':
     myuvrange = '>150m'
+if psolint = '':
+    psolint = '64s'
+if apsolint = '':
+    apsolint = 'inf'
 
 
 project_info = pickle.load(open('project_info.p','rb'))
@@ -36,8 +46,8 @@ for myms in mslist:
     clearstat()
 
 
-    gptab = GAINTABLES+'/cal_'+myms+'_'+stamp()+'.GP0'
-    gatab = GAINTABLES+'/cal_'+myms+'_'+stamp()+'.GA0'
+    gptab = GAINTABLES+'/cal_2GC_'+myms+'_'+stamp()+'.GP0'
+    gatab = GAINTABLES+'/cal_2GC_'+myms+'_'+stamp()+'.GA0'
 
 
     gaincal(vis=myms,

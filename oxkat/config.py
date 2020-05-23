@@ -15,16 +15,17 @@ HOME = os.path.expanduser('~')
 #
 
 
-IDIA_CONTAINER_PATH = HOME+'/containers/'
+#IDIA_CONTAINER_PATH = HOME+'/containers/'
+IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'
 CHPC_CONTAINER_PATH = HOME+'/lustre/containers'
 NODE_CONTAINER_PATH = HOME+'/containers/'
 
 
-CASA_PATTERN = 'casa'
-CLUSTERCAT_PATTERN = 'ddfacet-0.4.1'
+CASA_PATTERN = 'casa_'
+CLUSTERCAT_PATTERN = 'ddfacet'
 CODEX_PATTERN = 'codex-africanus'
 CUBICAL_PATTERN = 'cubical'
-DDFACET_PATTERN = 'ddfacet-0.5.2'
+DDFACET_PATTERN = 'ddfacet'
 KILLMS_PATTERN = 'killms'
 PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
@@ -93,14 +94,24 @@ SLURM_WSCLEAN = {
     'MEM': '230GB'
 }
 
+SLURM_HIGHMEM = {
+    'TIME': '36:00:00',
+    'PARTITION': 'HighMem',
+    'NTASKS': '1',
+    'NODES': '1',
+    'CPUS': '32',
+    'MEM': '480GB'
+}
 
 # ------------------------------------------------------------------------
 #
 # PBS settings
 #
 
+CHPC_ALLOCATION = 'ASTR1301'
+
 PBS_DEFAULTS = {
-	'PROGRAM': 'ASTR1301',
+	'PROGRAM': CHPC_ALLOCATION,
 	'WALLTIME': '12:00:00',
 	'QUEUE': 'serial',
 	'NODES': '1',
@@ -109,7 +120,7 @@ PBS_DEFAULTS = {
 }
 
 PBS_TRICOLOUR = {
-	'PROGRAM': 'ASTR1301',
+	'PROGRAM': CHPC_ALLOCATION,
 	'WALLTIME': '06:00:00',
 	'QUEUE': 'serial',
 	'NODES': '1',
@@ -118,7 +129,7 @@ PBS_TRICOLOUR = {
 }
 
 PBS_WSCLEAN = {
-	'PROGRAM': 'ASTR1301',
+	'PROGRAM': CHPC_ALLOCATION,
 	'WALLTIME': '12:00:00',
 	'QUEUE': 'serial',
 	'NODES': '1',
@@ -136,6 +147,11 @@ PBS_WSCLEAN = {
 PRE_FIELDS = '' # comma-separated list of fields to select from raw MS
 PRE_NCHANS = 1024 # integer number of channels in working MS
 PRE_TIMEBIN = '8s' # integration time in working MS
+
+PRE_TARGET_INTENT = 'TARGET' # (partial) strings to match scan intents
+PRE_PRIMARY_INTENT = 'BANDPASS'
+PRE_SECONDARY_INTENT = 'PHASE'
+
 
 
 

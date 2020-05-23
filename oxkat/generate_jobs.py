@@ -35,7 +35,7 @@ def get_container(path,pattern):
         sys.exit()
     elif len(ll) > 1:
         print(now()+'Warning, more than one match for '+pattern+' in '+path)
-    container = ll[0]
+    container = ll[-1]
     print(now()+'Using container: '+container)
     return container
 

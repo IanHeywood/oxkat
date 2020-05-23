@@ -35,9 +35,9 @@ def get_antnames(myms):
 
 
 def get_field_info(myms,
-                target=cfg.PRE_TARGET_INTENT,
-                primary=cfg.PRE_PRIMARY_INTENT,
-                secondary=cfg.PRE_SECONDARY_INTENT):
+                target=cfg.CAL_TARGET_INTENT,
+                primary=cfg.CAL_PRIMARY_INTENT,
+                secondary=cfg.CAL_SECONDARY_INTENT):
 
 
     # Tags and positions for the preferred primary calibrators
@@ -128,7 +128,7 @@ def get_refant(myms,field_id):
     ant_names = get_antnames(myms)
     main_tab = table(myms,ack='False')
     
-    ref_pool = ['m000','m001','m002','m003','m004','m006']
+    ref_pool = cfg.CAL_REF_POOL
     
     pc_list = []
     idx_list = []

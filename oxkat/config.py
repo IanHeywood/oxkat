@@ -148,11 +148,10 @@ PRE_FIELDS = '' # comma-separated list of fields to select from raw MS
 PRE_NCHANS = 1024 # integer number of channels in working MS
 PRE_TIMEBIN = '8s' # integration time in working MS
 
-PRE_TARGET_INTENT = 'TARGET' # (partial) strings to match scan intents
-PRE_PRIMARY_INTENT = 'BANDPASS'
-PRE_SECONDARY_INTENT = 'PHASE'
-
-
+CAL_TARGET_INTENT = 'TARGET' # (partial) strings to match scan intents
+CAL_PRIMARY_INTENT = 'BANDPASS'
+CAL_SECONDARY_INTENT = 'PHASE'
+CAL_REF_POOL = ['m000','m001','m002','m003','m004','m006'] # list to select refant from
 
 
 # ------------------------------------------------------------------------

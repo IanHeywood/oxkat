@@ -49,24 +49,24 @@ ref_ant = project_info['ref_ant']
 tt = stamp()
 
 
-ktab0 = GAINTABLES+'/cal_'+myms+'_'+tt+'.K0'
-bptab0 = GAINTABLES+'/cal_'+myms+'_'+tt+'.B0'
-gtab0 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G0'
+ktab0 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.K0'
+bptab0 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.B0'
+gtab0 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G0'
 
 
-ktab1 = GAINTABLES+'/cal_'+myms+'_'+tt+'.K1'
-bptab1 = GAINTABLES+'/cal_'+myms+'_'+tt+'.B1'
-gtab1 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G1'
+ktab1 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.K1'
+bptab1 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.B1'
+gtab1 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G1'
 
 
-ktab2 = GAINTABLES+'/cal_'+myms+'_'+tt+'.K2'
-gtab2 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G2'
-ftab2 = GAINTABLES+'/cal_'+myms+'_'+tt+'.flux2'
+ktab2 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.K2'
+gtab2 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G2'
+ftab2 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux2'
 
 
-ktab3 = GAINTABLES+'/cal_'+myms+'_'+tt+'.K3'
-gtab3 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G3'
-ftab3 = GAINTABLES+'/cal_'+myms+'_'+tt+'.flux3'
+ktab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.K3'
+gtab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G3'
+ftab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux3'
 
 
 secondary_pickle = GAINTABLES+'/secondary_models_final_'+tt+'.p'

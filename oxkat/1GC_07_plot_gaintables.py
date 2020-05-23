@@ -22,18 +22,18 @@ def main():
     gen.setup_dir(GAINPLOTS)
 
 
-    caltabs = sorted([item for item in glob.glob(GAINTABLES+'/cal_*') if not os.path.basename(item).endswith('flagversions')])
-
+    caltabs = sorted([item for item in glob.glob(GAINTABLES+'/cal_1GC_*') if not os.path.basename(item).endswith('flagversions')])
+    exclude = glob.glob('cal_1GC_*calibrators*')
 
     for caltab in caltabs:
-
-        gaintype = caltab.split('.')[-1][0].upper()
-        opfile = GAINPLOTS+'/'+caltab.split('/')[-1]
-        if not os.path.isfile(opfile):
-            syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
-            subprocess.run([syscall],shell=True)
-        else:
-            print(opfile+' exists, skipping')
+        if caltab not in exclude:
+            gaintype = caltab.split('.')[-1][0].upper()
+            opfile = GAINPLOTS+'/'+caltab.split('/')[-1]
+            if not os.path.isfile(opfile):
+                syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
+                subprocess.run([syscall],shell=True)
+            else:
+                print(opfile+' exists, skipping')
 
 if __name__ == "__main__":
 

@@ -188,7 +188,26 @@ def main():
 
 
             # ------------------------------------------------------------------------------
-            # STEP 4:
+            # STEP 4: 
+            # Make gain table plots
+                                                 
+
+            id_gainplots = 'PLTAB'+code
+            id_list.append(id_gainplots)
+
+            syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
+            syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_2GC_*'+myms+'*'
+
+            run_command = gen.job_handler(syscall=syscall,
+                        jobname=id_gainplots,
+                        infrastructure=INFRASTRUCTURE,
+                        dependency=id_1GC)
+
+            f.write(run_command)
+
+
+            # ------------------------------------------------------------------------------
+            # STEP 5:
             # Masked wsclean on CORRECTED_DATA column
 
 
@@ -214,7 +233,7 @@ def main():
 
 
             # ------------------------------------------------------------------------------
-            # STEP 5:
+            # STEP 6:
             # Make a FITS mask 
 
             syscall = 'singularity exec '+DDFACET_CONTAINER+' '
@@ -235,7 +254,7 @@ def main():
 
 
             # ------------------------------------------------------------------------------
-            # STEP 6:
+            # STEP 7:
             # Predict MODEL_DATA
 
 

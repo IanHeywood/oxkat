@@ -138,6 +138,7 @@ PRE_NCHANS = 1024 # integer number of channels in working MS
 PRE_TIMEBIN = '8s' # integration time in working MS
 
 
+
 # ------------------------------------------------------------------------
 #
 # wsclean defaults
@@ -210,13 +211,13 @@ DDF_CELL = 1.1
 # [Facets]
 DDF_DIAMMAX = 0.25
 DDF_DIAMMIN = 0.05
-DDF_NFACETS = 8 # crank this up (32?) to get better beam correction if FITS beam is used
+DDF_NFACETS = 8 # crank this up (32?) to get better beam resolution if FITS beam is used
 DDF_PSFOVERSIZE = 1.5
-DDF_PADDING = 1.7 # padding needs increasing from default if NFacets is raised to prevent aliasing?
+DDF_PADDING = 1.7 # padding needs increasing from default if NFacets is raised to prevent aliasing
 # [Weight]
 DDF_ROBUST = -0.3
 # [Comp]
-DDF_SPARSIFICATION = '0' # [100,30,10]
+DDF_SPARSIFICATION = '0' # [100,30,10] grids every 100th visibility on major cycle 1, every 30th on cycle 2, etc.
 # [Parallel]
 DDF_NCPU = 32
 # [Cache]
@@ -239,14 +240,18 @@ DDF_DDSOLS = ''
 DDF_DDMODEGRID = 'AP'
 DDF_DDMODEDEGRID = 'AP'
 # [Deconv]
+DDF_GAIN = 0.12
+DDF_THRESHOLD = 0.0
+DDF_CYCLEFACTOR = 0
+DDF_RMSFACTOR = 3.0	
 DDF_DECONVMODE = 'hogbom'
 DDF_SSD_DECONVPEAKFACTOR = 0.001
 DDF_SSD_MAXMAJORITER = 3
 DDF_SSD_MAXMINORITER = 120000
 DDF_SSD_ENLARGEDATA = 0
-DDF_HOGBOM_DECONVPEAKFACTOR = 0.4
+DDF_HOGBOM_DECONVPEAKFACTOR = 0.15
 DDF_HOGBOM_MAXMAJORITER = 10
-DDF_HOGBOM_MAXMINORITER = 40000
+DDF_HOGBOM_MAXMINORITER = 100000
 DDF_HOGBOM_POLYFITORDER = 4
 # [Mask]
 DDF_MASK = 'auto' # 'auto' enables automasking 

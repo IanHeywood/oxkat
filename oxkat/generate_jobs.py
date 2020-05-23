@@ -454,6 +454,10 @@ def generate_syscall_ddfacet(mspattern,
                           ddsols = cfg.DDF_DDSOLS,
                           ddmodegrid = cfg.DDF_DDMODEGRID,
                           ddmodedegrid = cfg.DDF_DDMODEDEGRID,
+                          gain = cfg.DDF_GAIN,
+                          threshold = cfg.DDF_THRESHOLD,
+                          cyclefactor = cfg.DDF_CYCLEFACTOR,
+                          rmsfactor = cfg.DDF_RMSFACTOR,
                           deconvmode = cfg.DDF_DECONVMODE,
                           ssd_deconvpeakfactor = cfg.DDF_SSD_DECONVPEAKFACTOR,
                           ssd_maxminoriter = cfg.DDF_SSD_MAXMINORITER,
@@ -529,8 +533,10 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--DDESolutions-DDModeGrid '+ddmodegrid+' '
         syscall += '--DDESolutions-DDModeDeGrid '+ddmodedegrid+' '
     # [Deconv]
-    syscall += '--Deconv-CycleFactor 0 '
-    syscall += '--Deconv-RMSFactor 3.000000 '
+    syscall += '--Deconv-Gain '+str(gain)+' '
+    syscall += '--Deconv-Threshold '+str(threshold)+' '
+    syscall += '--Deconv-CycleFactor '+str(cyclefactor)+' '
+    syscall += '--Deconv-RMSFactor '+str(rmsfactor)+' '
     if deconvmode.lower() == 'ssd':
         syscall += '--Deconv-Mode SSD '
         syscall += '--Deconv-PeakFactor '+str(ssd_deconvpeakfactor)+' '

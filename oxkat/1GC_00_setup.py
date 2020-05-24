@@ -5,9 +5,13 @@
 import numpy
 import sys
 import glob
+import os.path as o
 import pickle
 from pyrap.tables import table
 from astropy.coordinates import SkyCoord
+
+
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 from oxkat import config as cfg
 
 

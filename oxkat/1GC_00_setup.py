@@ -2,25 +2,28 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-import numpy
-import sys
 import glob
+import numpy
 import os.path as o
 import pickle
+import sys
 import time
-
 
 from astropy.coordinates import SkyCoord
 from pyrap.tables import table
 
-
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 from oxkat import config as cfg
 
+
 def myprint(msg):
+
+    """ Print a message with a timestamp """
+
     stamp = time.strftime('[%Y-%m-%d %H:%M:%S]:')
     print(stamp+' '+msg)
     return stamp
+
 
 def get_dummy():
 
@@ -39,7 +42,7 @@ def get_dummy():
         'target_ids':[2],
         'target_dirs':[(180.0,-56.8)],
         'target_cal_map':[0],
-        'target_ms':['mytarget.ms']},
+        'target_ms':['mytarget.ms']}
 
     return project_info
 
@@ -272,7 +275,6 @@ def get_primary_tag(candidate_dirs,
         for cal in preferred_cals:
             primary_sep = calcsep(candidate_dir[0],candidate_dir[1],cal[1],cal[2])
             if primary_sep < 3e-3:
-                # print('Matched '+cal[0]+' (separation: '+str(primary_sep)+'deg)')
                 primary_name = candidate_name
                 primary_id = candidate_id
                 primary_tag = cal[0]
@@ -301,7 +303,7 @@ def target_cal_pairs(target_dirs,target_names,target_ids,
         separations = numpy.array(separations)
         secondary_index = numpy.where(separations == numpy.min(separations))[0][0]
 
-        target_cal_map.append(secondary_index)
+        target_cal_map.append(secondary_ids[secondary_index])
         target_cal_separations.append(round(separations[secondary_index],3))
 
     return target_cal_map,target_cal_separations
@@ -322,7 +324,6 @@ def target_ms_list(myms,target_names):
 
 def main():
 
-
     myms = sys.argv[1].rstrip('/')
 
     myprint('Examining '+myms)
@@ -338,10 +339,11 @@ def main():
     CAL_1GC_SECONDARIES = cfg.CAL_1GC_SECONDARIES
     CAL_1GC_TARGETS = cfg.CAL_1GC_TARGETS
 
+    CAL_1GC_REF_ANT = cfg.CAL_1GC_REF_ANT
+
     CAL_1GC_PRIMARY_INTENT = cfg.CAL_1GC_PRIMARY_INTENT
     CAL_1GC_SECONDARY_INTENT = cfg.CAL_1GC_SECONDARY_INTENT
     CAL_1GC_TARGET_INTENT = cfg.CAL_1GC_TARGET_INTENT
-    CAL_1GC_TARGET_CAL_MAP = cfg.CAL_1GC_TARGET_CAL_MAP
 
 
     # ------------------------------------------------------------------------------
@@ -386,6 +388,22 @@ def main():
 
     primary_name, primary_id, primary_tag, primary_sep = get_primary_tag(candidate_dirs, candidate_names, candidate_ids)
 
+    myprint('Primary calibrator:    '+str(primary_id)+': '+primary_name)
+    myprint('                       '+str(round((primary_sep/3600.0),4))+'" from nominal position')
+    myprint('')
+
+
+    # ------------------------------------------------------------------------------
+    #
+    # REFERENCE ANTENNAS
+
+    if CAL_1GC_REF_ANT == 'auto':
+        ref_ant = get_refant(myms,primary_id)
+        myprint('Ranked reference antenna ordering: '+str(ref_ant))
+    else:
+        ref_ant = CAL_1GC_REF_ANT
+        myprint('User requested reference antenna ordering: '+str(ref_ant))
+
 
     # ------------------------------------------------------------------------------
     #
@@ -393,8 +411,9 @@ def main():
 
     if CAL_1GC_SECONDARIES != 'auto':
         secondary_ids = [int(x) for x in CAL_1GC_SECONDARIES.split(',')]
+        secondary_ids = list(dict.fromkeys(secondary_ids)) # 
         secondary_names = [field_names[i] for i in secondary_ids]
-        secondary_dirs = [field_dirs[i][0] for i in secondary_ids]
+        secondary_dirs = [field_dirs[i] for i in secondary_ids]
     else:
         secondary_dirs, secondary_names, secondary_ids = get_secondaries(myms,
                                                             secondary_state,
@@ -423,17 +442,17 @@ def main():
     #
     # MATCH TARGET-CAL PAIRS BASED ON SEPARATION
 
-    if CAL_1GC_TARGET_CAL_MAP == 'auto':
+    if CAL_1GC_SECONDARIES == 'auto':
         target_cal_map,target_cal_separations = target_cal_pairs(target_dirs,target_names,target_ids,
                                                     secondary_dirs,secondary_names,secondary_ids)
     else:
-        target_cal_map = [int(x) for x in CAL_1GC_TARGET_CAL_MAP.split(',')]
-        if len(target_cal_map) != len(target_dirs):
-            myprint('Target-cal mapping is ambiguous, reverting to auto')
+        target_cal_map = [int(x) for x in CAL_1GC_SECONDARIES.split(',')]
+        if len(target_cal_map) != len(target_dirs) and len(target_cal_map) > 1:
+            myprint('Target-secondary mapping is ambiguous, reverting to auto')
             target_cal_map,target_cal_separations = target_cal_pairs(target_dirs,target_names,target_ids,
                                                     secondary_dirs,secondary_names,secondary_ids)
         elif len(target_cal_map) == 1:
-            myprint('Using field '+str(target_cal_map)+' as secondary calibrator for all targets')
+            myprint('User requested field '+str(target_cal_map)+' as secondary calibrator for all targets')
             target_cal_map = target_cal_map * len(target_dirs)
 
 
@@ -446,37 +465,57 @@ def main():
 
     # ------------------------------------------------------------------------------
     #
-    # REFERENCE ANTENNAS
-
-    ref_ant = get_refant(myms,primary_id)
-    myprint('Ranked ref ant list: '+str(ref_ant))
-
-    # ------------------------------------------------------------------------------
-    #
     # PRINT FIELD SUMMARY
 
 
     myprint('')
-    myprint('Primary calibrator:    '+str(primary_id)+': '+primary_name)
-    myprint('                       '+str(round((primary_sep/3600.0),4))+'" from nominal position')
-    myprint('')
-    myprint('Target           Secondary        Separation')
+
+    myprint('Target                   Secondary                Separation')
     for i in range(0,len(target_dirs)):
         targ = str(target_ids[i])+': '+target_names[i]
         j = target_cal_map[i]
-        pcal = str(secondary_ids[j])+': '+secondary_names[j]
+        k = secondary_ids.index(j)
+        pcal = str(secondary_ids[k])+': '+secondary_names[k]
 
         # Re-calculate separations in case of user-specified pairings that don't invoke 
         # the automatic calculation
         ra_target = target_dirs[i][0][0]
         dec_target = target_dirs[i][0][1]
         separations = []
-        ra_cal = secondary_dirs[j][0][0]
-        dec_cal = secondary_dirs[j][0][1]
+        ra_cal = secondary_dirs[k][0][0]
+        dec_cal = secondary_dirs[k][0][1]
         sep = round(calcsep(ra_target,dec_target,ra_cal,dec_cal),3)
         sep = str(sep)+' deg'
 
-        myprint('%-16s %-16s %-6s' % (targ, pcal, sep))
+        myprint('%-24s %-24s %-9s' % (targ, pcal, sep))
+    
+    myprint('')
+
+    myprint('Target                   Eventual MS name')
+    for i in range(0,len(target_dirs)):
+        targ = str(target_ids[i])+': '+target_names[i]
+        myprint('%-24s %-50s' % (targ, target_ms[i]))
+    
+    myprint('')
+    myprint('Writing '+outpick)
+
+    project_info['master_ms'] = myms
+    project_info['nchan'] = nchan
+    project_info['ref_ant'] = ref_ant
+    project_info['primary_name'] = primary_name
+    project_info['primary_id'] = primary_id
+    project_info['primary_tag'] = primary_tag
+    project_info['secondary_names'] = secondary_names
+    project_info['secondary_ids'] = secondary_ids
+    project_info['secondary_dirs'] = secondary_dirs
+    project_info['target_names'] = target_names
+    project_info['target_dirs'] = target_dirs
+    project_info['target_cal_map'] = target_cal_map
+    project_info['target_ms'] = target_ms
+
+    pickle.dump(project_info,open(outpick,'wb'))
+
+    myprint('Done')
 
 
 if __name__ == "__main__":

@@ -232,9 +232,9 @@ def get_targets(myms,
 
     """ Automatically identify secondary calibrators from myms"""
 
-    secondary_ids = []
-    secondary_names = []
-    secondary_dirs = []
+    target_ids = []
+    target_names = []
+    target_dirs = []
 
     main_tab = table(myms,ack=False)
     for i in range(0,len(field_ids)):
@@ -244,13 +244,13 @@ def get_targets(myms,
         sub_tab = main_tab.query(query='FIELD_ID=='+str(field_id))
         state = numpy.unique(sub_tab.getcol('STATE_ID'))
         if state == target_state:
-            secondary_dirs.append(field_dir)
-            secondary_names.append(field_name)
-            secondary_ids.append(field_id)
+            target_dirs.append(field_dir)
+            target_names.append(field_name)
+            target_ids.append(field_id)
         sub_tab.close()
     main_tab.close()
 
-    return secondary_dirs, secondary_names, secondary_ids
+    return target_dirs, target_names, target_ids
 
 
 def get_primary_tag(candidate_dirs,
@@ -289,6 +289,8 @@ def get_primary_tag(candidate_dirs,
 def target_cal_pairs(target_dirs,target_names,target_ids,
                 secondary_dirs,secondary_names,secondary_ids):
 
+    # The target_cal_map is a list of secondary field IDs of length target_ids
+    # It links a specific secondary to a specific target
     target_cal_map = []
     target_cal_separations = []
 
@@ -510,6 +512,7 @@ def main():
     project_info['secondary_dirs'] = secondary_dirs
     project_info['target_names'] = target_names
     project_info['target_dirs'] = target_dirs
+    project_info['target_ids'] = target_ids
     project_info['target_cal_map'] = target_cal_map
     project_info['target_ms'] = target_ms
 

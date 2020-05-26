@@ -61,19 +61,23 @@ def main():
 
     project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
 
-    targets = project_info['target_list'] 
-
+    target_ids = project_info['target_list'] 
+    target_names = project_info['target_names']
+    target_ms = project_info['target_ms']
 
     # Loop over targets
 
     codes = []
     ii = 1
 
-    for target in targets:
+
+    for tt in range(0,len(target_ids)):
 
 
-        targetname = target[0]
-        myms = target[2].rstrip('/')
+        targetname = target_names[tt]
+        myms = target_ms[tt]
+
+
 
 
         if not o.isdir(myms):

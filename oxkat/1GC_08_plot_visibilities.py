@@ -22,13 +22,13 @@ def main():
 
     project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
     myms = project_info['master_ms']
-    bpcal = project_info['primary'][1]
-    pcals = project_info['secondary']
-    targets = project_info['target_list'] 
+    bpcal = project_info['primary_id']
+    pcals = project_info['secondary_ids']
+    targets = project_info['target_ids'] 
 
     fields = [bpcal]
     for pcal in pcals:
-        fields.append(pcal[1])
+        fields.append(pcal)
 
     plots = [('--xaxis CORRECTED_DATA:real:XX,CORRECTED_DATA:real:YY --yaxis CORRECTED_DATA:imag:XX,CORRECTED_DATA:imag:YY'),
 #        ('--xaxis FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY --iter-scan --colour-by ANTENNA1')

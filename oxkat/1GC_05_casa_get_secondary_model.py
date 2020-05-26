@@ -416,7 +416,7 @@ pickle.dump((secondary_models,secondary_mapping),open(interim_pickle,'wb'))
 for i in range(0,len(pcal_names)):
 
 
-    pcal = pcals[i] # Using field names
+    pcal = pcal_names[i] # Using field names
     pcal_idx = getfieldid(myms,pcal)
 
 

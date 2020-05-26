@@ -11,7 +11,7 @@ elif primary_tag == '1934':
 
 
 fixvis(vis = myms,
-    field = primary_field,
+    field = bpcal,
     phasecenter = newphasecentre,
     refcode = 'J2000',
     datacolumn = 'DATA')

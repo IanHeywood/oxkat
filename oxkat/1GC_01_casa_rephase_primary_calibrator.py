@@ -1,15 +1,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-import pickle
-
-
-project_info = pickle.load(open('project_info.p','rb'))
-
-
-myms = project_info['master_ms']
-primary_field = project_info['primary'][1]
-primary_tag = project_info['primary_tag']
+execfile('oxkat/casa_read_project_info.py')
 
 
 if primary_tag == '0408':

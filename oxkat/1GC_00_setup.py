@@ -513,7 +513,7 @@ def main():
     project_info['target_cal_map'] = target_cal_map
     project_info['target_ms'] = target_ms
 
-    pickle.dump(project_info,open(outpick,'wb'))
+    pickle.dump(project_info,open(outpick,'wb'),protocol=2)
 
     myprint('Done')
 

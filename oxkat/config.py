@@ -143,16 +143,25 @@ PBS_WSCLEAN = {
 # 1GC defaults
 #
 
+# Pre-processing
+PRE_FIELDS = '' # Comma-separated list of fields to select from raw MS
+PRE_NCHANS = 1024 # Integer number of channels in working MS
+PRE_TIMEBIN = '8s' # Integration time in working MS
 
-PRE_FIELDS = '' # comma-separated list of fields to select from raw MS
-PRE_NCHANS = 1024 # integer number of channels in working MS
-PRE_TIMEBIN = '8s' # integration time in working MS
+CAL_1GC_TARGET_INTENT = 'TARGET' # (partial) string to match for target intents
+CAL_1GC_PRIMARY_INTENT = 'BANDPASS' # (partial) string to match for primary intents
+CAL_1GC_SECONDARY_INTENT = 'PHASE' # (partial) string to match for secondary intents
 
-CAL_TARGET_INTENT = 'TARGET' # (partial) strings to match scan intents
-CAL_PRIMARY_INTENT = 'BANDPASS'
-CAL_SECONDARY_INTENT = 'PHASE'
-CAL_REF_POOL = ['m000','m001','m002','m003','m004','m006'] # list to select refant from
+CAL_1GC_REF_POOL = ['m000','m001','m002','m003','m004','m006'] # Pool to re-order for reference antenna selection
+CAL_1GC_REF_ANT = 'auto' # Comma-separated list to manually specify refant(s)
 
+# Field IDs only at present. Use tools/ms_info.py.
+CAL_1GC_PRIMARY = 'auto' # Primary calibrator field ID
+CAL_1GC_TARGETS = 'auto' # Comma-separated target field IDs
+CAL_1GC_SECONDARIES = 'auto' # Comma-separated secondary IDs. 
+                             # Lists of equal length in targets and secondaries maps cals to targets.
+                             # A single ID in uses same secondary for all targets.
+                             # A length mismatch reverts to auto, so double check!
 
 # ------------------------------------------------------------------------
 #
@@ -186,9 +195,9 @@ WSC_AUTOMASK = 5.0
 WSC_FITSPECTRALPOL = 4
 WSC_PREDICTCHANNELS = 64
 WSC_MEM = 95
-WSC_USEIDG = False # use image-domain gridder
+WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'
-WSC_PARALLELDECONVOLUTION = 0 # 0 or specify max facet size
+WSC_PARALLELDECONVOLUTION = 0 # 0 or specify max facet size (not useable yet)
 
 
 # ------------------------------------------------------------------------

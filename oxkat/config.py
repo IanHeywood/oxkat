@@ -17,7 +17,8 @@ HOME = os.path.expanduser('~')
 
 #IDIA_CONTAINER_PATH = HOME+'/containers/'
 IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'
-CHPC_CONTAINER_PATH = HOME+'/lustre/containers'
+#CHPC_CONTAINER_PATH = HOME+'/lustre/containers'
+CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
 NODE_CONTAINER_PATH = HOME+'/containers/'
 
 

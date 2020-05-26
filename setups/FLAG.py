@@ -49,7 +49,9 @@ def main():
 
     project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
 
-    targets = project_info['target_list'] 
+    target_ids = project_info['target_list'] 
+    target_names = project_info['target_names']
+    target_ms = project_info['target_ms']
  
 
     # Set names of the run file, open for writing
@@ -64,11 +66,12 @@ def main():
 
     # Loop over targets
 
-    for target in targets:
+
+    for tt in range(0,len(target_ids)):
 
 
-        myms = target[2].rstrip('/')
-        targetname = target[0]
+        targetname = target_names[tt]
+        myms = target_ms[tt]
 
 
         if not o.isdir(myms):

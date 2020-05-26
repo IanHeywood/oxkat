@@ -1,12 +1,13 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-import pickle
 import sys
 import time
 
 
 execfile('oxkat/config.py')
+execfile('oxkat/casa_read_project_info.py')
+
 
 
 def stamp():
@@ -29,15 +30,12 @@ for item in sys.argv:
         apsolint = parts[1]
 
 if myuvrange == '':
-    myuvrange = '>150m'
+    myuvrange = CAL_2GC_UVRANGE
 if psolint = '':
-    psolint = '64s'
+    psolint = CAL_2GC_PSOLINT
 if apsolint = '':
-    apsolint = 'inf'
+    apsolint = CAL_2GC_APSOLINT
 
-
-project_info = pickle.load(open('project_info.p','rb'))
-ref_ant = project_info['ref_ant']
 
 
 for myms in mslist:

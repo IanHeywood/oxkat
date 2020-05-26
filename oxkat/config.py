@@ -144,28 +144,46 @@ PBS_WSCLEAN = {
 #
 
 # Pre-processing
-PRE_FIELDS = '' # Comma-separated list of fields to select from raw MS
-PRE_NCHANS = 1024 # Integer number of channels in working MS
-PRE_TIMEBIN = '8s' # Integration time in working MS
+PRE_FIELDS = ''                      # Comma-separated list of fields to select from raw MS
+PRE_NCHANS = 1024                    # Integer number of channels in working MS
+PRE_TIMEBIN = '8s'                   # Integration time in working MS
 
-CAL_1GC_TARGET_INTENT = 'TARGET' # (partial) string to match for target intents
-CAL_1GC_PRIMARY_INTENT = 'BANDPASS' # (partial) string to match for primary intents
-CAL_1GC_SECONDARY_INTENT = 'PHASE' # (partial) string to match for secondary intents
+# Scan intents
+CAL_1GC_TARGET_INTENT = 'TARGET'     # (partial) string to match for target intents
+CAL_1GC_PRIMARY_INTENT = 'BANDPASS'  # (partial) string to match for primary intents
+CAL_1GC_SECONDARY_INTENT = 'PHASE'   # (partial) string to match for secondary intents
 
-CAL_1GC_REF_POOL = ['m000','m001','m002','m003','m004','m006'] # Pool to re-order for reference antenna selection
-CAL_1GC_REF_ANT = 'auto' # Comma-separated list to manually specify refant(s)
+# Reference antennas
+CAL_1GC_REF_ANT = 'auto'             # Comma-separated list to manually specify refant(s)
+CAL_1GC_REF_POOL = ['m000','m001','m002','m003','m004','m006'] 
+                                     # Pool to re-order for reference antenna list for 'auto'
 
-# Field selection, IDs only at present. Use tools/ms_info.py.
-CAL_1GC_PRIMARY = 'auto' # Primary calibrator field ID
-CAL_1GC_TARGETS = 'auto' # Comma-separated target field IDs
-CAL_1GC_SECONDARIES = 'auto' # Comma-separated secondary IDs. 
-                             # Lists of equal length in targets and secondaries maps cals to targets.
-                             # A single ID in uses same secondary for all targets.
-                             # A length mismatch reverts to auto, so double check!
+# Field selection, IDs only at present. (Use tools/ms_info.py.)
+CAL_1GC_PRIMARY = 'auto'             # Primary calibrator field ID
+CAL_1GC_TARGETS = 'auto'             # Comma-separated target field IDs
+CAL_1GC_SECONDARIES = 'auto'         # Comma-separated secondary IDs
+                                     # - Lists of equal length in targets and secondaries maps cals to targets
+                                     # - A single ID in uses same secondary for all targets
+                                     # - A length mismatch reverts to auto, so double check!
 
-CAL_1GC_UVRANGE = '>150m' # Selection for baselines to include during 1GC solving (delays excluded)
-CAL_1GC_DELAYCUT = 2.5 # Jy. Do not solve for delays on secondaries weaker than this
-CAL_1GC_FILLGAPS = 24 # Maximum channel gap over which to interpolate bandpass solutions
+# GBK settings
+CAL_1GC_UVRANGE = '>150m'            # Selection for baselines to include during 1GC B/G solving (K excluded)
+CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on secondaries weaker than this
+CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
+
+
+
+# ------------------------------------------------------------------------
+#
+# 2GC defaults
+#
+
+
+# G settings
+CAL_2GC_UVRANGE = '>150m'            # Selection for baselines to include during G solving
+CAL_2GC_PSOLINT = '64s'              # Solution interval for phase-only selfcal
+CAL_2GC_APSOLINT = 'inf'             # Solution interval for amplitude and phase selfcal
+
 
 # ------------------------------------------------------------------------
 #

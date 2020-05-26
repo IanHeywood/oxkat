@@ -124,7 +124,7 @@ PBS_TRICOLOUR = {
 	'WALLTIME': '06:00:00',
 	'QUEUE': 'serial',
 	'NODES': '1',
-	'PPN': '23',
+	'PPN': '24',
 	'MEM': '120gb'
 }
 
@@ -133,7 +133,7 @@ PBS_WSCLEAN = {
 	'WALLTIME': '12:00:00',
 	'QUEUE': 'serial',
 	'NODES': '1',
-	'PPN': '23',
+	'PPN': '24',
 	'MEM': '120gb'
 }
 
@@ -155,13 +155,17 @@ CAL_1GC_SECONDARY_INTENT = 'PHASE' # (partial) string to match for secondary int
 CAL_1GC_REF_POOL = ['m000','m001','m002','m003','m004','m006'] # Pool to re-order for reference antenna selection
 CAL_1GC_REF_ANT = 'auto' # Comma-separated list to manually specify refant(s)
 
-# Field IDs only at present. Use tools/ms_info.py.
+# Field selection, IDs only at present. Use tools/ms_info.py.
 CAL_1GC_PRIMARY = 'auto' # Primary calibrator field ID
 CAL_1GC_TARGETS = 'auto' # Comma-separated target field IDs
 CAL_1GC_SECONDARIES = 'auto' # Comma-separated secondary IDs. 
                              # Lists of equal length in targets and secondaries maps cals to targets.
                              # A single ID in uses same secondary for all targets.
                              # A length mismatch reverts to auto, so double check!
+
+CAL_1GC_UVRANGE = '>150m' # Selection for baselines to include during 1GC solving (delays excluded)
+CAL_1GC_DELAYCUT = 2.5 # Jy. Do not solve for delays on secondaries weaker than this
+CAL_1GC_FILLGAPS = 24 # Maximum channel gap over which to interpolate bandpass solutions
 
 # ------------------------------------------------------------------------
 #

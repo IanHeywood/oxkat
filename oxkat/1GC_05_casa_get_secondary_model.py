@@ -34,18 +34,11 @@ def getfieldid(myms,field):
 # ------- Parameters
 
 
-myuvrange = '>150m'
+myuvrange = CAL_1GC_UVRANGE
+gapfill = CAL_1GC_FILLGAPS
 
 myms = glob.glob('*calibrators.ms')[0]
 
-
-project_info = pickle.load(open('project_info.p','rb'))
-#myms = project_info['master_ms']
-
-bpcal = project_info['primary'][0] # Using field names because targets will be removed
-pcals = project_info['secondary']
-primary_tag = project_info['primary_tag']
-ref_ant = project_info['ref_ant']
 
 
 # ------- Setup names
@@ -140,7 +133,7 @@ bandpass(vis=myms,
     minblperant=4,
     minsnr=3.0,
     bandtype='B',
-    fillgaps=64,
+    fillgaps=gapfill,
     parang=False,
     gainfield=[bpcal_name,bpcal_name],
     interp = ['nearest'],
@@ -240,7 +233,7 @@ bandpass(vis=myms,
     minblperant=4,
     minsnr=3.0,
     bandtype='B',
-    fillgaps=64,
+    fillgaps=gapfill,
     parang=False,
     gainfield=[bpcal_name],
     interp = ['nearest'],

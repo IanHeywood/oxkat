@@ -20,9 +20,9 @@ def stamp():
 # ------- Parameters
 
 
-myuvrange = '>150m'
-delaycut = 2.5 # don't solve for delays on secondaries weaker than this
-gapfill = 24
+myuvrange = CAL_1GC_UVRANGE
+delaycut = CAL_1GC_DELAYCUT
+gapfill = CAL_1GC_FILLGAPS
 
 
 

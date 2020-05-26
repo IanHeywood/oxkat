@@ -28,7 +28,7 @@ for item in sys.argv:
 if not mslist:
     mslist = []
     for targ in target_ms:
-        mslist.append(targ[2])
+        mslist.append(targ)
 
 
 for myms in mslist:

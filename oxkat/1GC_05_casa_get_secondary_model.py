@@ -339,6 +339,8 @@ secondary_mapping = [] # To link field names to IDs in model dict, as different 
 
 
 for i in range(0,len(pcal_names)):
+
+
     pcal = pcal_names[i] # Using field names
     pcal_idx = getfieldid(myms,pcal)
     secondary_mapping.append((pcal,pcal_idx))

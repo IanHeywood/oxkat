@@ -7,7 +7,10 @@ import shutil
 import time
 
 
+
+execfile('oxkat/casa_read_project_info.py')
 execfile('oxkat/config.py')
+
 
 # def stamp():
 #     return str(time.time()).replace('.','')
@@ -33,10 +36,12 @@ def getfieldid(myms,field):
 
 myuvrange = '>150m'
 
+myms = glob.glob('*calibrators.ms')[0]
+
 
 project_info = pickle.load(open('project_info.p','rb'))
 #myms = project_info['master_ms']
-myms = glob.glob('*calibrators.ms')[0]
+
 bpcal = project_info['primary'][0] # Using field names because targets will be removed
 pcals = project_info['secondary']
 primary_tag = project_info['primary_tag']
@@ -69,6 +74,7 @@ gtab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G3'
 ftab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux3'
 
 
+interim_pickle = GAINTABLES+'/secondary_models_interim_'+tt+'.p'
 secondary_pickle = GAINTABLES+'/secondary_models_final_'+tt+'.p'
 
 
@@ -84,7 +90,7 @@ secondary_pickle = GAINTABLES+'/secondary_models_final_'+tt+'.p'
 
 if primary_tag == '1934':
     setjy(vis=myms,
-        field=bpcal,
+        field=bpcal_name,
         standard='Perley-Butler 2010',
         scalebychan=True,
         usescratch=True)
@@ -93,7 +99,7 @@ if primary_tag == '1934':
 elif primary_tag == '0408':
     bpcal_mod = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
     setjy(vis=myms,
-        field=bpcal,
+        field=bpcal_name,
         standard='manual',
         fluxdensity=bpcal_mod[0],
         spix=bpcal_mod[1],
@@ -107,7 +113,7 @@ elif primary_tag == '0408':
 
 
 gaincal(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     uvrange=myuvrange,
     caltable=gtab0,
     gaintype='G',
@@ -124,7 +130,7 @@ gaincal(vis=myms,
 
 
 bandpass(vis=myms,
-    field=bpcal, 
+    field=bpcal_name, 
     uvrange=myuvrange,
     caltable=bptab0,
     refant = str(ref_ant),
@@ -136,7 +142,7 @@ bandpass(vis=myms,
     bandtype='B',
     fillgaps=64,
     parang=False,
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp = ['nearest'],
 #    spwmap = [[0,0,0,0,0,0,0,0],[]],
     gaintable=[gtab0])
@@ -153,10 +159,10 @@ bandpass(vis=myms,
 applycal(vis=myms,
     gaintable=[gtab0,bptab0],
 #    applymode='calonly',
-    field=bpcal,
+    field=bpcal_name,
 #    calwt=False,
     parang=False,
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp = ['nearest','nearest'])
 
 
@@ -166,13 +172,13 @@ applycal(vis=myms,
 flagdata(vis=myms,
     mode='rflag',
     datacolumn='residual',
-    field=bpcal)
+    field=bpcal_name)
 
 
 flagdata(vis=myms,
     mode='tfcrop',
     datacolumn='residual',
-    field=bpcal)
+    field=bpcal_name)
 
 
 flagmanager(vis=myms,
@@ -192,7 +198,6 @@ flagmanager(vis=myms,
 
 # gaincal(vis=myms,
 #     field=bpcal,
-#     uvrange=myuvrange,
 #     caltable=ktab1,
 #     refant = str(ref_ant),
 #     gaintype = 'K',
@@ -208,14 +213,14 @@ flagmanager(vis=myms,
 
 
 gaincal(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     uvrange=myuvrange,
     caltable=gtab1,
     gaintype='G',
     solint='inf',
     calmode='p',
     minsnr=5,
-    gainfield=[bpcal],
+    gainfield=[bpcal_name],
     interp = ['nearest'],
 #    spwmap = [[0,0,0,0,0,0,0,0],[]],
     gaintable=[bptab0])
@@ -225,7 +230,7 @@ gaincal(vis=myms,
 
 
 bandpass(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     uvrange=myuvrange,
     caltable=bptab1,
     refant = str(ref_ant),
@@ -237,7 +242,7 @@ bandpass(vis=myms,
     bandtype='B',
     fillgaps=64,
     parang=False,
-    gainfield=[bpcal],
+    gainfield=[bpcal_name],
     interp = ['nearest'],
 #    spwmap = [[0,0,0,0,0,0,0,0],[]],
     gaintable=[gtab1])
@@ -249,10 +254,10 @@ bandpass(vis=myms,
 applycal(vis=myms,
     gaintable=[gtab1,bptab1],
 #    applymode='calonly',
-    field=bpcal,
+    field=bpcal_name,
 #    calwt=False,
     parang=False,
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
 #    spwmap = [[0,0,0,0,0,0,0,0],[],[]],
     interp = ['nearest','nearest'])
 
@@ -268,7 +273,7 @@ applycal(vis=myms,
 
 
 gaincal(vis = myms,
-    field = bpcal,
+    field = bpcal_name,
     uvrange = myuvrange,
     caltable = gtab2,
     refant = str(ref_ant),
@@ -279,7 +284,7 @@ gaincal(vis = myms,
     calmode = 'ap',
     parang = False,
     gaintable = [gtab1,bptab1],
-    gainfield = [bpcal,bpcal],
+    gainfield = [bpcal_name,bpcal_name],
     interp = ['nearest','nearest'],
     append = False)
 
@@ -293,10 +298,10 @@ shutil.copytree(gtab2,gtab3)
 # ------- Looping over secondaries
 
 
-for i in range(0,len(pcals)):
+for i in range(0,len(pcal_names)):
 
 
-    pcal = pcals[i][0] # Using field names
+    pcal = pcal_names[i] # Using field names
 
 
     # --- G2 (secondary)
@@ -317,7 +322,7 @@ for i in range(0,len(pcals)):
         calmode = 'ap',
         parang = False,
         gaintable=[gtab1,bptab1],
-        gainfield=[bpcal,bpcal],
+        gainfield=[bpcal_name,bpcal_name],
         interp=['linear','linear'],
 #        spwmap = [[0,0,0,0,0,0,0,0],[],[]],
         append=True)
@@ -329,7 +334,7 @@ for i in range(0,len(pcals)):
 secondary_models = fluxscale(vis=myms,
     caltable = gtab2,
     fluxtable = ftab2,
-    reference = bpcal,
+    reference = bpcal_name,
     append = False,
     transfer = '')
 
@@ -340,8 +345,8 @@ secondary_models = fluxscale(vis=myms,
 secondary_mapping = [] # To link field names to IDs in model dict, as different from master MS
 
 
-for i in range(0,len(pcals)):
-    pcal = pcals[i][0] # Using field names
+for i in range(0,len(pcal_names)):
+    pcal = pcal_names[i] # Using field names
     pcal_idx = getfieldid(myms,pcal)
     secondary_mapping.append((pcal,pcal_idx))
 
@@ -355,7 +360,7 @@ for i in range(0,len(pcals)):
         field = pcal,
         calwt = False,
         parang = False,
-        gainfield = [bpcal,bpcal,pcal],
+        gainfield = [bpcal_name,bpcal_name,pcal],
 #        spwmap = [[0,0,0,0,0,0,0,0],[],[],[]],
         interp = ['nearest','nearest','linear'])
 
@@ -401,6 +406,10 @@ for i in range(0,len(pcals)):
 flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
 
 
+
+pickle.dump((secondary_models,secondary_mapping),open(interim_pickle,'wb'))
+
+
 # --------------------------------------------------------------- #
 # --------------------------------------------------------------- #
 # --------------------------- STAGE 3 --------------------------- #
@@ -411,10 +420,10 @@ flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
 # ------- Looping over secondaries
 
 
-for i in range(0,len(pcals)):
+for i in range(0,len(pcal_names)):
 
 
-    pcal = pcals[i][0] # Using field names
+    pcal = pcals[i] # Using field names
     pcal_idx = getfieldid(myms,pcal)
 
 
@@ -436,7 +445,7 @@ for i in range(0,len(pcals)):
         calmode = 'ap',
         parang = False,
         gaintable=[gtab1,bptab1],
-        gainfield=[bpcal,bpcal],
+        gainfield=[bpcal_name,bpcal_name],
         interp=['nearest','nearest'],
 #        spwmap = [[0,0,0,0,0,0,0,0],[],[]],
         append=True)
@@ -449,7 +458,7 @@ for i in range(0,len(pcals)):
 secondary_models_final = fluxscale(vis=myms,
     caltable = gtab3,
     fluxtable = ftab3,
-    reference = bpcal,
+    reference = bpcal_name,
     append = False,
     transfer = '')
 

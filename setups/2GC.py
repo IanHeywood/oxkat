@@ -78,8 +78,6 @@ def main():
         myms = target_ms[tt]
 
 
-
-
         if not o.isdir(myms):
 
             print('------------------------------------------------------')

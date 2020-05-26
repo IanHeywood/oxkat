@@ -7,7 +7,9 @@ import shutil
 import time
 
 
+execfile('oxkat/casa_read_project_info.py')
 execfile('oxkat/config.py')
+
 
 
 def stamp():
@@ -22,14 +24,6 @@ myuvrange = '>150m'
 delaycut = 2.5 # don't solve for delays on secondaries weaker than this
 gapfill = 24
 
-
-project_info = pickle.load(open('project_info.p','rb'))
-myms = project_info['master_ms']
-bpcal = project_info['primary'][1]
-pcals = project_info['secondary']
-targets = project_info['target_list'] 
-primary_tag = project_info['primary_tag']
-ref_ant = project_info['ref_ant']
 
 
 # ------- Setup names
@@ -303,8 +297,8 @@ solve_delays = []
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][1] 
-    pcal_name = pcals[i][0] # name
+    pcal = pcals[i]
+    pcal_name = pcal_names[i] # name
 
 
     for item in secondary_mapping:
@@ -387,7 +381,7 @@ for i in range(0,len(pcals)):
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][1] 
+    pcal = pcals[i]
 
 
     # --- Correct secondaries with K2, G1, B1, G2
@@ -457,7 +451,7 @@ shutil.copytree(ktab1,ktab3)
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][1]
+    pcal = pcals[i]
 
 
     # --- G3 (secondary)
@@ -509,7 +503,7 @@ for i in range(0,len(pcals)):
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][1]
+    pcal = pcals[i]
 
 
     # --- Correct secondaries with K3, G1, B1, G3
@@ -528,10 +522,11 @@ for i in range(0,len(pcals)):
 # ------- Apply final tables to targets
 
 
-for targ in targets:
+for i in range(0,len(targets)):
 
-    target = targ[1]
-    related_pcal = pcals[targ[3]][1]
+
+    target = targets[i]
+    related_pcal = target_cal_map[i]
 
 
     # --- Correct targets with K3, G1, B1, G3

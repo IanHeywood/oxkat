@@ -49,7 +49,7 @@ def main():
 
     project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
 
-    target_ids = project_info['target_list'] 
+    target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']
     target_ms = project_info['target_ms']
  

@@ -40,7 +40,7 @@ def main():
 
     for field in fields:
         for plot in plots:
-            syscall = shadems_base+' '+plot+' --field '+field+' '+myms
+            syscall = shadems_base+' '+plot+' --field '+str(field)+' '+myms
             subprocess.run([syscall],shell=True)
 
 

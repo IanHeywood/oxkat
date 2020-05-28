@@ -204,7 +204,7 @@ def main():
             run_command = gen.job_handler(syscall=syscall,
                         jobname=id_gainplots,
                         infrastructure=INFRASTRUCTURE,
-                        dependency=id_1GC)
+                        dependency=id_selfcal)
 
             f.write(run_command)
 

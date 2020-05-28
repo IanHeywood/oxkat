@@ -172,7 +172,7 @@ def main():
             # Self-calibrate phases then amplitudes
 
 
-            id_selfcal = 'CLSLF'+code
+            id_selfcal = 'CL2GC'+code
             id_list.append(id_selfcal)
 
             casalog = LOGS+'/casa_2GC_'+id_selfcal+'.log'

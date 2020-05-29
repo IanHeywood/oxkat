@@ -31,9 +31,9 @@ for item in sys.argv:
 
 if myuvrange == '':
     myuvrange = CAL_2GC_UVRANGE
-if psolint = '':
+if psolint == '':
     psolint = CAL_2GC_PSOLINT
-if apsolint = '':
+if apsolint == '':
     apsolint = CAL_2GC_APSOLINT
 
 

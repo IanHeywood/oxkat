@@ -26,7 +26,7 @@ for item in sys.argv:
         myuvrange = '>'+parts[1]
     if parts[0] == 'psolint':
         psolint = parts[1]
-    if parts[0] == 'asolint':
+    if parts[0] == 'apsolint':
         apsolint = parts[1]
 
 if myuvrange == '':

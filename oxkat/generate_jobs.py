@@ -35,7 +35,7 @@ def get_container(path,pattern):
         sys.exit()
     elif len(ll) > 1:
         print(now()+'Warning, more than one match for '+pattern+' in '+path)
-    container = ll[0]
+    container = ll[-1]
     print(now()+'Using container: '+container)
     return container
 
@@ -389,29 +389,27 @@ def generate_syscall_predict(msname,
 
 
 def generate_syscall_makemask(restoredimage,
-                            suffix = '',
+                            outfile = '',
                             thresh = cfg.MAKEMASK_THRESH,
                             dilation = cfg.MAKEMASK_DILATION,
                             zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
   
-    if suffix == '':
-        fitsmask = restoredimage+'.mask.fits'
-    else: 
-        fitsmask = restoredimage+'.'+suffix+'.fits'
+    if outfile == '':
+        outfile = restoredimage.replace('.fits','.mask.fits')
 
     syscall = 'bash -c "'
     syscall += 'python3 '+cfg.TOOLS+'/pyMakeMask.py '
     syscall += '--threshold='+str(thresh)+' '
     syscall += '--dilate='+str(dilation)+' '
-    if suffix != '':
-        syscall += '--suffix='+str(suffix)+' '
+    syscall += '--outfile='+str(outfile)+' '
     syscall += restoredimage
+
     if zoompix != '':
-        zoomfits = fitsmask.replace('.fits','.zoom'+str(zoompix)+'.fits')
-        syscall += '&& fitstool.py -z '+str(zoompix)+' -o '+zoomfits+' '
-        syscall += fitsmask
+        zoomfits = outfile.replace('.fits','.zoom'+str(zoompix)+'.fits')
+        syscall += ' && fitstool.py -z '+str(zoompix)+' -o '+zoomfits+' '
+        syscall += outfile
     syscall += '"'
 
     return syscall,fitsmask
@@ -435,6 +433,7 @@ def generate_syscall_ddfacet(mspattern,
                           diammin = cfg.DDF_DIAMMIN,
                           nfacets =cfg.DDF_NFACETS,
                           psfoversize = cfg.DDF_PSFOVERSIZE,
+                          padding = cfg.DDF_PADDING,
                           robust = cfg.DDF_ROBUST,
                           sparsification = cfg.DDF_SPARSIFICATION,
                           ncpu = cfg.DDF_NCPU,
@@ -453,6 +452,10 @@ def generate_syscall_ddfacet(mspattern,
                           ddsols = cfg.DDF_DDSOLS,
                           ddmodegrid = cfg.DDF_DDMODEGRID,
                           ddmodedegrid = cfg.DDF_DDMODEDEGRID,
+                          gain = cfg.DDF_GAIN,
+                          threshold = cfg.DDF_THRESHOLD,
+                          cyclefactor = cfg.DDF_CYCLEFACTOR,
+                          rmsfactor = cfg.DDF_RMSFACTOR,
                           deconvmode = cfg.DDF_DECONVMODE,
                           ssd_deconvpeakfactor = cfg.DDF_SSD_DECONVPEAKFACTOR,
                           ssd_maxminoriter = cfg.DDF_SSD_MAXMINORITER,
@@ -491,6 +494,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Facets-DiamMin '+str(diammin)+' '
     syscall += '--Facets-NFacets '+str(nfacets)+' '
     syscall += '--Facets-PSFOversize '+str(psfoversize)+' '
+    syscall += '--Facets-Padding '+str(padding)+' '
     # [Weight]
     syscall += '--Weight-Robust '+str(robust)+' '
     # [CF]
@@ -527,8 +531,10 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--DDESolutions-DDModeGrid '+ddmodegrid+' '
         syscall += '--DDESolutions-DDModeDeGrid '+ddmodedegrid+' '
     # [Deconv]
-    syscall += '--Deconv-CycleFactor 0 '
-    syscall += '--Deconv-RMSFactor 3.000000 '
+    syscall += '--Deconv-Gain '+str(gain)+' '
+    syscall += '--Deconv-Threshold '+str(threshold)+' '
+    syscall += '--Deconv-CycleFactor '+str(cyclefactor)+' '
+    syscall += '--Deconv-RMSFactor '+str(rmsfactor)+' '
     if deconvmode.lower() == 'ssd':
         syscall += '--Deconv-Mode SSD '
         syscall += '--Deconv-PeakFactor '+str(ssd_deconvpeakfactor)+' '

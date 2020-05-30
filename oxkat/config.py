@@ -15,16 +15,18 @@ HOME = os.path.expanduser('~')
 #
 
 
-IDIA_CONTAINER_PATH = HOME+'/containers/'
-CHPC_CONTAINER_PATH = HOME+'/lustre/containers'
+#IDIA_CONTAINER_PATH = HOME+'/containers/'
+IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'
+#CHPC_CONTAINER_PATH = HOME+'/lustre/containers'
+CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
 NODE_CONTAINER_PATH = HOME+'/containers/'
 
 
-CASA_PATTERN = 'casa'
-CLUSTERCAT_PATTERN = 'ddfacet-0.4.1'
+CASA_PATTERN = 'casa_'
+CLUSTERCAT_PATTERN = 'ddfacet'
 CODEX_PATTERN = 'codex-africanus'
 CUBICAL_PATTERN = 'cubical'
-DDFACET_PATTERN = 'ddfacet-0.5.2'
+DDFACET_PATTERN = 'ddfacet'
 KILLMS_PATTERN = 'killms'
 PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
@@ -93,14 +95,24 @@ SLURM_WSCLEAN = {
     'MEM': '230GB'
 }
 
+SLURM_HIGHMEM = {
+    'TIME': '36:00:00',
+    'PARTITION': 'HighMem',
+    'NTASKS': '1',
+    'NODES': '1',
+    'CPUS': '32',
+    'MEM': '480GB'
+}
 
 # ------------------------------------------------------------------------
 #
 # PBS settings
 #
 
+CHPC_ALLOCATION = 'ASTR1301'
+
 PBS_DEFAULTS = {
-	'PROGRAM': 'ASTR1301',
+	'PROGRAM': CHPC_ALLOCATION,
 	'WALLTIME': '12:00:00',
 	'QUEUE': 'serial',
 	'NODES': '1',
@@ -109,21 +121,21 @@ PBS_DEFAULTS = {
 }
 
 PBS_TRICOLOUR = {
-	'PROGRAM': 'ASTR1301',
+	'PROGRAM': CHPC_ALLOCATION,
 	'WALLTIME': '06:00:00',
 	'QUEUE': 'serial',
 	'NODES': '1',
-	'PPN': '23',
-	'MEM': '128gb'
+	'PPN': '24',
+	'MEM': '120gb'
 }
 
 PBS_WSCLEAN = {
-	'PROGRAM': 'ASTR1301',
+	'PROGRAM': CHPC_ALLOCATION,
 	'WALLTIME': '12:00:00',
 	'QUEUE': 'serial',
 	'NODES': '1',
-	'PPN': '23',
-	'MEM': '128gb'
+	'PPN': '24',
+	'MEM': '120gb'
 }
 
 
@@ -132,9 +144,46 @@ PBS_WSCLEAN = {
 # 1GC defaults
 #
 
+# Pre-processing
+PRE_FIELDS = ''                      # Comma-separated list of fields to select from raw MS
+PRE_NCHANS = 1024                    # Integer number of channels in working MS
+PRE_TIMEBIN = '8s'                   # Integration time in working MS
 
-PRE_FIELDS = '' # comma-separated list of fields to select from raw MS
+# Scan intents
+CAL_1GC_TARGET_INTENT = 'TARGET'     # (partial) string to match for target intents
+CAL_1GC_PRIMARY_INTENT = 'BANDPASS'  # (partial) string to match for primary intents
+CAL_1GC_SECONDARY_INTENT = 'PHASE'   # (partial) string to match for secondary intents
 
+# Reference antennas
+CAL_1GC_REF_ANT = 'auto'             # Comma-separated list to manually specify refant(s)
+CAL_1GC_REF_POOL = ['m000','m001','m002','m003','m004','m006'] 
+                                     # Pool to re-order for reference antenna list for 'auto'
+
+# Field selection, IDs only at present. (Use tools/ms_info.py.)
+CAL_1GC_PRIMARY = 'auto'             # Primary calibrator field ID
+CAL_1GC_TARGETS = 'auto'             # Comma-separated target field IDs
+CAL_1GC_SECONDARIES = 'auto'         # Comma-separated secondary IDs
+                                     # - Lists of equal length in targets and secondaries maps cals to targets
+                                     # - A single ID in uses same secondary for all targets
+                                     # - A length mismatch reverts to auto, so double check!
+
+# GBK settings
+CAL_1GC_UVRANGE = '>150m'            # Selection for baselines to include during 1GC B/G solving (K excluded)
+CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on secondaries weaker than this
+CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
+
+
+
+# ------------------------------------------------------------------------
+#
+# 2GC defaults
+#
+
+
+# G settings
+CAL_2GC_UVRANGE = '>150m'            # Selection for baselines to include during G solving
+CAL_2GC_PSOLINT = '64s'              # Solution interval for phase-only selfcal
+CAL_2GC_APSOLINT = 'inf'             # Solution interval for amplitude and phase selfcal
 
 
 # ------------------------------------------------------------------------
@@ -169,9 +218,9 @@ WSC_AUTOMASK = 5.0
 WSC_FITSPECTRALPOL = 4
 WSC_PREDICTCHANNELS = 64
 WSC_MEM = 95
-WSC_USEIDG = False # use image-domain gridder
+WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'
-WSC_PARALLELDECONVOLUTION = 0 # 0 or specify max facet size
+WSC_PARALLELDECONVOLUTION = 0 # 0 or specify max facet size (not useable yet)
 
 
 # ------------------------------------------------------------------------
@@ -207,14 +256,15 @@ DDF_OUTPUTCUBES = 'MmRi' # output intrinsic and apparent resid and model cubes
 DDF_NPIX = 10125
 DDF_CELL = 1.1
 # [Facets]
-DDF_DIAMMAX = 0.25
+DDF_DIAMMAX = 1.5
 DDF_DIAMMIN = 0.05
-DDF_NFACETS = 32
+DDF_NFACETS = 8 # crank this up (32?) to get better beam resolution if FITS beam is used
 DDF_PSFOVERSIZE = 1.5
+DDF_PADDING = 1.7 # padding needs increasing from default if NFacets is raised to prevent aliasing
 # [Weight]
 DDF_ROBUST = -0.3
 # [Comp]
-DDF_SPARSIFICATION = '0' # [100,30,10]
+DDF_SPARSIFICATION = '0' # [100,30,10] grids every 100th visibility on major cycle 1, every 30th on cycle 2, etc.
 # [Parallel]
 DDF_NCPU = 32
 # [Cache]
@@ -237,14 +287,18 @@ DDF_DDSOLS = ''
 DDF_DDMODEGRID = 'AP'
 DDF_DDMODEDEGRID = 'AP'
 # [Deconv]
+DDF_GAIN = 0.12
+DDF_THRESHOLD = 0.0
+DDF_CYCLEFACTOR = 0
+DDF_RMSFACTOR = 3.0	
 DDF_DECONVMODE = 'hogbom'
 DDF_SSD_DECONVPEAKFACTOR = 0.001
 DDF_SSD_MAXMAJORITER = 3
 DDF_SSD_MAXMINORITER = 120000
 DDF_SSD_ENLARGEDATA = 0
-DDF_HOGBOM_DECONVPEAKFACTOR = 0.4
+DDF_HOGBOM_DECONVPEAKFACTOR = 0.15
 DDF_HOGBOM_MAXMAJORITER = 10
-DDF_HOGBOM_MAXMINORITER = 40000
+DDF_HOGBOM_MAXMINORITER = 100000
 DDF_HOGBOM_POLYFITORDER = 4
 # [Mask]
 DDF_MASK = 'auto' # 'auto' enables automasking 

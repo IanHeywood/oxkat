@@ -7,7 +7,9 @@ import shutil
 import time
 
 
+execfile('oxkat/casa_read_project_info.py')
 execfile('oxkat/config.py')
+
 
 
 def stamp():
@@ -18,18 +20,10 @@ def stamp():
 # ------- Parameters
 
 
-myuvrange = '>150m'
-delaycut = 2.5 # don't solve for delays on secondaries weaker than this
-gapfill = 24
+myuvrange = CAL_1GC_UVRANGE
+delaycut = CAL_1GC_DELAYCUT
+gapfill = CAL_1GC_FILLGAPS
 
-
-project_info = pickle.load(open('project_info.p','rb'))
-myms = project_info['master_ms']
-bpcal = project_info['primary'][1]
-pcals = project_info['secondary']
-targets = project_info['target_list'] 
-primary_tag = project_info['primary_tag']
-ref_ant = project_info['ref_ant']
 
 
 # ------- Setup names
@@ -38,24 +32,24 @@ ref_ant = project_info['ref_ant']
 tt = stamp()
 
 
-ktab0 = GAINTABLES+'/cal_'+myms+'_'+tt+'.K0'
-bptab0 = GAINTABLES+'/cal_'+myms+'_'+tt+'.B0'
-gtab0 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G0'
+ktab0 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.K0'
+bptab0 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.B0'
+gtab0 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G0'
 
 
-ktab1 = GAINTABLES+'/cal_'+myms+'_'+tt+'.K1'
-bptab1 = GAINTABLES+'/cal_'+myms+'_'+tt+'.B1'
-gtab1 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G1'
+ktab1 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.K1'
+bptab1 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.B1'
+gtab1 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G1'
 
 
-ktab2 = GAINTABLES+'/cal_'+myms+'_'+tt+'.K2'
-gtab2 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G2'
-ftab2 = GAINTABLES+'/cal_'+myms+'_'+tt+'.flux2'
+ktab2 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.K2'
+gtab2 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G2'
+ftab2 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux2'
 
 
-ktab3 = GAINTABLES+'/cal_'+myms+'_'+tt+'.K3'
-gtab3 = GAINTABLES+'/cal_'+myms+'_'+tt+'.G3'
-ftab3 = GAINTABLES+'/cal_'+myms+'_'+tt+'.flux3'
+ktab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.K3'
+gtab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G3'
+ftab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux3'
 
 
 secondary_pickle = pickle.load(open(glob.glob(GAINTABLES+'/secondary_models_final*.p')[0],'rb'))
@@ -303,8 +297,8 @@ solve_delays = []
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][1] 
-    pcal_name = pcals[i][0] # name
+    pcal = pcals[i]
+    pcal_name = pcal_names[i] # name
 
 
     for item in secondary_mapping:
@@ -387,7 +381,7 @@ for i in range(0,len(pcals)):
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][1] 
+    pcal = pcals[i]
 
 
     # --- Correct secondaries with K2, G1, B1, G2
@@ -457,7 +451,7 @@ shutil.copytree(ktab1,ktab3)
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][1]
+    pcal = pcals[i]
 
 
     # --- G3 (secondary)
@@ -509,7 +503,7 @@ for i in range(0,len(pcals)):
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][1]
+    pcal = pcals[i]
 
 
     # --- Correct secondaries with K3, G1, B1, G3
@@ -528,10 +522,11 @@ for i in range(0,len(pcals)):
 # ------- Apply final tables to targets
 
 
-for targ in targets:
+for i in range(0,len(targets)):
 
-    target = targ[1]
-    related_pcal = pcals[targ[3]][1]
+
+    target = targets[i]
+    related_pcal = target_cal_map[i]
 
 
     # --- Correct targets with K3, G1, B1, G3

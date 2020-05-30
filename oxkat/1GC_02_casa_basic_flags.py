@@ -1,14 +1,10 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-import pickle
 import numpy
 
 
-project_info = pickle.load(open('project_info.p','rb'))
-
-
-myms = project_info['master_ms']
+execfile('oxkat/casa_read_project_info.py')
 
 
 clearstat()

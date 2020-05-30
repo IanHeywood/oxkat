@@ -1,13 +1,7 @@
 # ian.heywood@physics.ox.ac.uk
 
-import pickle
 
-
-project_info = pickle.load(open('project_info.p','rb'))
-myms = project_info['master_ms']
-bpcal = project_info['primary'][1]
-pcals = project_info['secondary']
-targets = project_info['target_list'] 
+execfile('oxkat/casa_read_project_info.py')
 
 
 code = myms.split('/')[-1].split('_')[0]
@@ -17,7 +11,7 @@ opms = code+'_calibrators.ms'
 
 field_selection = [bpcal]
 for pcal in pcals:
-	field_selection.append(pcal[1])
+	field_selection.append(pcal)
 
 field_selection = ','.join(sorted(field_selection))
 

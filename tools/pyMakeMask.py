@@ -57,15 +57,15 @@ def main():
     parser = OptionParser(usage = '%prog [options] restored_image')
     parser.add_option('--threshold', dest = 'threshold', help = 'Sigma threshold for masking (default = 6.5)', default = 6.5)
     parser.add_option('--boxsize', dest = 'boxsize', help = 'Box size over which to compute stats (default = 50)', default = 50)
-    parser.add_option('--suffix', dest = 'suffix', help = 'Suffix for mask image (default = mask)', default = 'mask')
     parser.add_option('--dilate', dest = 'dilate', help = 'Number of iterations of binary dilation (default = 0)', default = 0)
     parser.add_option('--savenoise', dest = 'savenoise', help = 'Enable to export noise image as FITS file (default = do not save noise image', action = 'store_true', default = False)
+    parser.add_option('--outfile', dest = 'outfile', help = 'Suffix for mask image (default = restored_image.replace(".fits",".mask.fits"))', default = '')
     (options,args) = parser.parse_args()
     threshold = float(options.threshold)
     boxsize = int(options.boxsize)
-    suffix = options.suffix
     dilate = int(options.dilate)
     savenoise = options.savenoise
+    outfile = options.outfile
 
     if len(args) != 1:
         print('Please specify a FITS file')
@@ -93,7 +93,10 @@ def main():
         dilated = binary_dilation(input = mask_image, iterations = dilate)
         mask_image = dilated
 
-    mask_fits = input_fits.replace('.fits', '.'+suffix+'.fits')
+    if outfile == '':
+        mask_fits = input_fits.replace('.fits', '.mask.fits')
+    else:
+        mask_fits = outfile
     shutil.copyfile(input_fits, mask_fits)
 
     flush_fits(mask_image,mask_fits)

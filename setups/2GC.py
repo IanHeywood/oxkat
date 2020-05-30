@@ -241,7 +241,7 @@ def main():
 
             syscall = 'singularity exec '+DDFACET_CONTAINER+' '
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
-                                    suffix = 'mask1',
+                                    outfile = corr_img_prefix+'-MFS-image.mask1.fits',
                                     thresh = 5.5,
                                     zoompix = cfg.DDF_NPIX)[0]
 

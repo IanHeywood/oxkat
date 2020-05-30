@@ -160,7 +160,7 @@ def main():
 
             syscall = 'singularity exec '+DDFACET_CONTAINER+' '
             syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
-                                    suffix = 'mask0',
+                                    outfile = img_prefix+'-MFS-image.mask0.fits',
                                     zoompix = '')[0]
 
             id_makemask = 'MASK0'+code

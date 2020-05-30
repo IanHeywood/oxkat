@@ -83,7 +83,7 @@ Please see the [setups README](setups/README.md) for more details. The [config](
 
 Singularity can be used to download and build containers from [Docker Hub](https://hub.docker.com/). There's a [script](https://github.com/IanHeywood/oxkat/blob/master/tools/pull_containers.sh) included to download them for you. [@SpheMakh](https://github.com/sphemakh)'s [stimela](https://hub.docker.com/u/stimela) project maintains containers for most radio astronomy applications, and repository of pre-built containers is now available at both IDIA and CHPC (in support of the [CARACal](https://github.com/caracal-pipeline) software).
 
-The default container paths are specified in the [config.py](oxkat/config.py) file. You only have to download the containers once. The scripts will select the required containers via pattern matching so if a container is replaced with a newer version it should be seamless.
+The default container paths are specified in the [config.py](oxkat/config.py) file. The scripts will select the required containers via pattern matching so if a container is replaced with a newer version it should be seamless.
 
 The IDIA slurm head node does not have singularity available, so if you are pulling your own containers that must be done either via a standalone node or a worker node, or otherwise copied over via the `transfer.ilifu.ac.za` node. You will not be able to use the `pull_containers.sh` script on the Lengau head node, and the worker nodes at CHPC do not have external connectivity, so you will have to build the containers elsewhere and then transfer them to CHPC via their `scp.chpc.ac.za` node.
 

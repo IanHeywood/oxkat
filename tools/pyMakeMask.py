@@ -93,7 +93,7 @@ def main():
         dilated = binary_dilation(input = mask_image, iterations = dilate)
         mask_image = dilated
 
-    if outfile == ''
+    if outfile == '':
         mask_fits = input_fits.replace('.fits', '.mask.fits')
     else:
         mask_fits = outfile

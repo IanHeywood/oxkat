@@ -36,7 +36,7 @@ def main():
         ('--xaxis UV,UV,UV,UV --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY,CORRECTED_DATA:phase:XX,CORRECTED_DATA:phase:YY')]
 
 
-    shadems_base = 'shadems --dir '+VISPLOTS+' '
+    shadems_base = 'shadems --profile --dir '+VISPLOTS+' '
 
     for field in fields:
         for plot in plots:

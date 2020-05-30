@@ -389,29 +389,27 @@ def generate_syscall_predict(msname,
 
 
 def generate_syscall_makemask(restoredimage,
-                            suffix = '',
+                            outfile = '',
                             thresh = cfg.MAKEMASK_THRESH,
                             dilation = cfg.MAKEMASK_DILATION,
                             zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
   
-    if suffix == '':
-        fitsmask = restoredimage.replace('.fits','.mask.fits')
-    else: 
-        fitsmask = restoredimage.replace('.fits','.'+suffix+'.fits')
+    if outfile == '':
+        outfile = restoredimage.replace('.fits','.mask.fits')
 
     syscall = 'bash -c "'
     syscall += 'python3 '+cfg.TOOLS+'/pyMakeMask.py '
     syscall += '--threshold='+str(thresh)+' '
     syscall += '--dilate='+str(dilation)+' '
-    if suffix != '':
-        syscall += '--suffix='+str(suffix)+' '
+    syscall += '--outfile='+str(outfile)+' '
     syscall += restoredimage
+
     if zoompix != '':
-        zoomfits = fitsmask.replace('.fits','.zoom'+str(zoompix)+'.fits')
-        syscall += '&& fitstool.py -z '+str(zoompix)+' -o '+zoomfits+' '
-        syscall += fitsmask
+        zoomfits = outfile.replace('.fits','.zoom'+str(zoompix)+'.fits')
+        syscall += ' && fitstool.py -z '+str(zoompix)+' -o '+zoomfits+' '
+        syscall += outfile
     syscall += '"'
 
     return syscall,fitsmask

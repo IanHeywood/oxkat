@@ -41,6 +41,7 @@ def main():
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
+    MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN)
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
 
@@ -158,7 +159,7 @@ def main():
             # STEP 3:
             # Make a FITS mask 
 
-            syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+            syscall = 'singularity exec '+MAKEMASK_CONTAINER+' '
             syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
                                     outfile = img_prefix+'-MFS-image.mask0.fits',
                                     zoompix = '')[0]

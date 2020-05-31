@@ -400,7 +400,7 @@ def generate_syscall_makemask(restoredimage,
         outfile = restoredimage.replace('.fits','.mask.fits')
 
     syscall = 'bash -c "'
-    syscall += 'python3 '+cfg.TOOLS+'/pyMakeMask.py '
+    syscall += 'python '+cfg.TOOLS+'/pyMakeMask.py '
     syscall += '--threshold='+str(thresh)+' '
     syscall += '--dilate='+str(dilation)+' '
     syscall += '--outfile='+str(outfile)+' '

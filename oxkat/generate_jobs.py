@@ -412,7 +412,7 @@ def generate_syscall_makemask(restoredimage,
         syscall += outfile
     syscall += '"'
 
-    return syscall,fitsmask
+    return syscall,outfile
 
 
 def generate_syscall_ddfacet(mspattern,

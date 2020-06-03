@@ -41,6 +41,7 @@ def main():
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
     SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN)
+    TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN)
 
  
     # Set names of the run and kill files, open run file for writing
@@ -56,7 +57,7 @@ def main():
 
     original_ms = glob.glob('*.ms')[0]
     code = gen.get_code(original_ms)
-    myms = original_ms.replace('.ms','_wtspec.ms')
+    myms = original_ms.replace('.ms','_'+str(cfg.PRE_NCHANS)+'ch.ms')
 
 
     # Initialise a list to hold all the job IDs
@@ -93,7 +94,7 @@ def main():
     id_setup = 'SETUP'+code
     id_list.append(id_setup)
 
-    syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
+    syscall = 'singularity exec '+TRICOLOUR_CONTAINER+' '
     syscall += 'python '+OXKAT+'/1GC_00_setup.py '+myms
 
     run_command = gen.job_handler(syscall=syscall,
@@ -244,7 +245,7 @@ def main():
     id_list.append(id_gainplots)
 
     syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/1GC_07_plot_gaintables.py'
+    syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_1GC_* cal_1GC_*calibrators.ms*'
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_gainplots,
@@ -265,7 +266,7 @@ def main():
     casalog = LOGS+'/casa_1GC_'+id_splittargets+'.log'
 
     syscall = 'singularity exec '+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_08_casa_split_targets.py',
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_07_casa_split_targets.py',
                 casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
@@ -285,7 +286,7 @@ def main():
     id_list.append(id_visplots)
 
     syscall = 'singularity exec '+SHADEMS_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/1GC_09_plot_visibilities.py'
+    syscall += 'python3 '+OXKAT+'/1GC_08_plot_visibilities.py'
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_visplots,
@@ -299,8 +300,11 @@ def main():
 
 
 
-    if INFRASTRUCTURE in ['idia','chpc']:
+    if INFRASTRUCTURE == 'idia':
         kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        f.write(kill)
+    elif INFRASTRUCTURE == 'chpc':
+        kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
         f.write(kill)
     
 

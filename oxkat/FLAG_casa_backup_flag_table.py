@@ -1,12 +1,18 @@
 # ian.heywood@physics.ox.ac.uk
 # 
 # set versionname=... on command line call to CASA
-# can also specify csv mslist=...,... otherwise project_info.p will be relied upon
+# can also specify csv mslist=...,... otherwise project_info.p will be
+# used and the operation will proceed on all available target Measurement Sets.
+#
+# versionname must be supplied
 #
 
-
-import pickle
+import os
 import sys
+
+
+execfile('oxkat/casa_read_project_info.py')
+
 
 mslist = False
 
@@ -20,14 +26,15 @@ for item in sys.argv:
 
 
 if not mslist:
-    project_info = pickle.load(open('project_info.p','rb'))
-    targets = project_info['target_list'] 
     mslist = []
-    for targ in targets:
-        mslist.append(targ[2])
+    for targ in target_ms:
+        mslist.append(targ)
 
 
 for myms in mslist:
-    flagmanager(vis=myms,
-        mode='save',
-        versionname=versionname)
+    if os.path.isdir(myms):
+        flagmanager(vis=myms,
+            mode='save',
+            versionname=versionname)
+    else:
+        print(myms+' not found')

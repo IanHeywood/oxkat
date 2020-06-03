@@ -1,19 +1,13 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-import pickle
+
+execfile('oxkat/casa_read_project_info.py')
 
 
-project_info = pickle.load(open('project_info.p','rb'))
-
-
-myms = project_info['master_ms']
-targets = project_info['target_list'] 
-
-
-for targ in targets:
-    target = targ[1]
-    opms = targ[2]
+for i in range(0,len(targets)):
+    target = targets[i]
+    opms = target_ms[i]
 
 
     mstransform(vis=myms,

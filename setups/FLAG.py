@@ -41,6 +41,7 @@ def main():
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
+    MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN)
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
 
@@ -49,7 +50,9 @@ def main():
 
     project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
 
-    targets = project_info['target_list'] 
+    target_ids = project_info['target_ids'] 
+    target_names = project_info['target_names']
+    target_ms = project_info['target_ms']
  
 
     # Set names of the run file, open for writing
@@ -64,11 +67,12 @@ def main():
 
     # Loop over targets
 
-    for target in targets:
+
+    for tt in range(0,len(target_ids)):
 
 
-        myms = target[2].rstrip('/')
-        targetname = target[0]
+        targetname = target_names[tt]
+        myms = target_ms[tt]
 
 
         if not o.isdir(myms):
@@ -155,9 +159,9 @@ def main():
             # STEP 3:
             # Make a FITS mask 
 
-            syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+            syscall = 'singularity exec '+MAKEMASK_CONTAINER+' '
             syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
-                                    suffix = 'mask0',
+                                    outfile = img_prefix+'-MFS-image.mask0.fits',
                                     zoompix = '')[0]
 
             id_makemask = 'MASK0'+code

@@ -44,6 +44,8 @@ def main():
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
+    MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN)
+    RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
  
@@ -60,19 +62,21 @@ def main():
 
     project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
 
-    targets = project_info['target_list'] 
-
+    target_ids = project_info['target_ids'] 
+    target_names = project_info['target_names']
+    target_ms = project_info['target_ms']
 
     # Loop over targets
 
     codes = []
     ii = 1
 
-    for target in targets:
+
+    for tt in range(0,len(target_ids)):
 
 
-        targetname = target[0]
-        myms = target[2].rstrip('/')
+        targetname = target_names[tt]
+        myms = target_ms[tt]
 
 
         if not o.isdir(myms):
@@ -169,7 +173,7 @@ def main():
             # Self-calibrate phases then amplitudes
 
 
-            id_selfcal = 'CLSLF'+code
+            id_selfcal = 'CL2GC'+code
             id_list.append(id_selfcal)
 
             casalog = LOGS+'/casa_2GC_'+id_selfcal+'.log'
@@ -188,7 +192,26 @@ def main():
 
 
             # ------------------------------------------------------------------------------
-            # STEP 4:
+            # STEP 4: 
+            # Make gain table plots
+                                                 
+
+            id_gainplots = 'PLTAB'+code
+            id_list.append(id_gainplots)
+
+            syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
+            syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_2GC_*'+myms+'*'
+
+            run_command = gen.job_handler(syscall=syscall,
+                        jobname=id_gainplots,
+                        infrastructure=INFRASTRUCTURE,
+                        dependency=id_selfcal)
+
+            f.write(run_command)
+
+
+            # ------------------------------------------------------------------------------
+            # STEP 5:
             # Masked wsclean on CORRECTED_DATA column
 
 
@@ -214,12 +237,12 @@ def main():
 
 
             # ------------------------------------------------------------------------------
-            # STEP 5:
+            # STEP 6:
             # Make a FITS mask 
 
-            syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+            syscall = 'singularity exec '+MAKEMASK_CONTAINER+' '
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
-                                    suffix = 'mask1',
+                                    outfile = corr_img_prefix+'-MFS-image.mask1.fits',
                                     thresh = 5.5,
                                     zoompix = cfg.DDF_NPIX)[0]
 
@@ -235,7 +258,7 @@ def main():
 
 
             # ------------------------------------------------------------------------------
-            # STEP 6:
+            # STEP 7:
             # Predict MODEL_DATA
 
 
@@ -259,10 +282,12 @@ def main():
             # ------------------------------------------------------------------------------
 
 
-            if INFRASTRUCTURE in ['idia','chpc']:
-                kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
-                f.write(kill+'\n')
-
+            if INFRASTRUCTURE == 'idia':
+                kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+                f.write(kill)
+            elif INFRASTRUCTURE == 'chpc':
+                kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+                f.write(kill)
 
     f.close()
 

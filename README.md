@@ -12,16 +12,16 @@
 * A set of Python scripts with the aim of (semi-)automatically processing [MeerKAT](https://www.sarao.ac.za/science-engineering/meerkat/) data. 
 
 
-* At the core is a set of  functions that generate calls to various pieces of radio astronomy software, a semi-modular bunch of CASA scripts for performing reference calibration, and a fairly sizeable list of default parameters (at present suitable for full-band Stokes I continuum imaging).
+* At the core is a set of functions that generate calls to various pieces of radio astronomy software, a semi-modular bunch of CASA scripts for performing reference calibration, and a fairly sizeable list of default parameters (at present suitable for full-band Stokes I continuum imaging).
 
 
-* Job script generation and dependency chains are automatically handled when running on either the [IDIA](https://www.idia.ac.za/) (slurm) cluster or the [CHPC](https://www.chpc.ac.za/)'s (PBS) [Lengau](https://www.chpc.ac.za/index.php/resources/lengau-cluster) cluster.
+* Job script generation and dependency chains are automatically handled when running on either the [IDIA](https://www.idia.ac.za/) (slurm) cluster or the [CHPC](https://www.chpc.ac.za/)'s [Lengau](https://www.chpc.ac.za/index.php/resources/lengau-cluster) (PBS) cluster.
 
 
 * Setup scripts glue the above components together into a processing recipe. The default procedure is broken down into stages, after each of which it is advisable to pause and examine the state of the process before continuing.  
 
 
-* The intention is that the bar to entry is low. If you have stock Python then nothing else needs directly installing apart from [Singularity](https://singularity.lbl.gov/), which is available on both of the clusters mentioned above. All the underlying radio astronomy packages are containerised.
+* The intention is that the bar to entry is low. If you have stock Python then (at least up to and including the 2GC stage) nothing else needs directly installing apart from [Singularity](https://singularity.lbl.gov/), which is available on both of the clusters mentioned above. All the underlying radio astronomy packages are containerised. 
 
 
 
@@ -73,17 +73,19 @@
    $ source SCRIPTS/kill_1GC_jobs.sh
    ```
 
-8. Once this has completed then examine the products, and move to the next steps in the same fashion. Please see the [setups README](setups/README.md) for more details.
+8. Once this has completed then examine the products, and move to the next steps in the same fashion. 
+
+Please see the [setups README](setups/README.md) for more details. The [config](oxkat/config.py) 
 
 ---
 
 ## Getting containers
 
-The easiest way to get the necessary containers is to use singularity to download and build containers from [Docker Hub](https://hub.docker.com/). There's a [script](https://github.com/IanHeywood/oxkat/blob/master/tools/pull_containers.sh) included to download them for you. [@SpheMakh](https://github.com/sphemakh)'s [stimela](https://hub.docker.com/u/stimela) repository hosts suitable ones for most applications. 
+Singularity can be used to download and build containers from [Docker Hub](https://hub.docker.com/). There's a [script](https://github.com/IanHeywood/oxkat/blob/master/tools/pull_containers.sh) included to download them for you. [@SpheMakh](https://github.com/sphemakh)'s [stimela](https://hub.docker.com/u/stimela) project maintains containers for most radio astronomy applications, and repository of pre-built containers is now available at both IDIA and CHPC (in support of the [CARACal](https://github.com/caracal-pipeline) software).
 
-The default container path is `~/containers`. The containers can be quite large, so if you want to store them elsewhere then just change the location in the [config.py](oxkat/config.py) file accordingly. You only have to download the containers once. The scripts will select the required containers via pattern matching so if you need to replace a container with a newer version it should be seamless.
+The default container paths are specified in the [config.py](oxkat/config.py) file. The scripts will select the required containers via pattern matching so if a container is replaced with a newer version it should be seamless.
 
-The IDIA slurm head node does not have singularity available, so the containers must be pulled either via a standalone node or a worker node, or otherwise copied over via the `transfer.ilifu.ac.za` node. Note that on Lengau the default container location is `~/lustre/containers`. You will not be able to use the `pull_containers.sh` script on the head node, and the worker nodes do not have external connectivity, so you will have to build the containers elsewhere and then transfer them to CHPC via their `scp.chpc.ac.za` node.
+The IDIA slurm head node does not have singularity available, so if you are pulling your own containers that must be done either via a standalone node or a worker node, or otherwise copied over via the `transfer.ilifu.ac.za` node. You will not be able to use the `pull_containers.sh` script on the Lengau head node, and the worker nodes at CHPC do not have external connectivity, so you will have to build the containers elsewhere and then transfer them to CHPC via their `scp.chpc.ac.za` node.
 
 ## Beam models
 
@@ -107,19 +109,13 @@ Models for the MeerKAT primary beam at L-band can be downloaded from [here](http
 
 ## Notes
 
-* This was originally just a place to store my MeerKAT processing recipes. The procedures have improved a lot over time. Busyness, laziness, and the always-present goal of speeding up the experimentation cycle has led to increased automation of these procedures.
+* This was originally just a place to store my MeerKAT processing recipes. Several people have since found these scripts useful, and I hope that you do too. I have spent time on text such as this and tried to improve user-friendliness in that hope. But please note that everything here is subject to change.
 
 
-* Several people have since found these scripts useful, and I hope that you do too. I have spent time on text such as this and tried to improve user-friendliness in that hope.
+* The standard setup scripts should do a decent job on fields that are dominated by compact sources (e.g. extragalactic deep fields). Pointings that contain morphologically complex emission (e.g. the Galactic Plane) benefit from iterative deconvolution runs with manual or thresholded masking.
 
 
-* I think the underlying recipes are pretty good, and for fields without anything apocalyptically bright or extended you should hopefully get a decent map after the 2GC stage without trying.
-
-
-* Many parameters can be adjusted in the [config](oxkat/config.py) file, however many others are still buried, and things like naming schemes are fairly hard-wired. 
-
-
-* 3GC calibration is a pain in the neck, and certainly not a panacea. Most things here are constantly evolving, but that part is in particular.
+* A revised setup script for 3GC calibration is pending.
 
 
 * Please file bugs / suggestions etc. as [issues](https://github.com/IanHeywood/oxkat/issues).

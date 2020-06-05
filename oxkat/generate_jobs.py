@@ -587,6 +587,7 @@ def generate_syscall_killms(myms,
                         ddid = cfg.KMS_DDID,
                         ncpu = cfg.KMS_NCPU,
                         dobar = cfg.KMS_DOBAR,
+                        debugpdb = cfg.KMS_DEBUGPDB,
                         solvertype= cfg.KMS_SOLVERTYPE,
                         dt = cfg.KMS_DT,
                         nchansols = cfg.KMS_NCHANSOLS,
@@ -627,6 +628,7 @@ def generate_syscall_killms(myms,
     # [Actions]
     syscall+= '--NCPU '+str(ncpu)+' '
     syscall+= '--DoBar '+str(dobar)+' '
+    syscall+= '--DebugPdb '+str(debugpdb)+' '
     # [Solutions]
     syscall+= '--OutSolsName '+outsols+' '
     # [Solvers]

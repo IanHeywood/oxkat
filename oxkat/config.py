@@ -221,7 +221,7 @@ WSC_PREDICTCHANNELS = 64
 WSC_MEM = 95
 WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'
-WSC_PARALLELDECONVOLUTION = 0 # 0 or specify max facet size (not useable yet)
+WSC_PARALLELDECONVOLUTION = 2560 # 
 
 
 # ------------------------------------------------------------------------
@@ -337,6 +337,7 @@ KMS_DDID = 0
 # [Actions]
 KMS_NCPU = 32
 KMS_DOBAR = 0
+KMS_DEBUGPDB = 0
 # [Solvers]
 KMS_SOLVERTYPE = 'CohJones'
 KMS_DT = 12

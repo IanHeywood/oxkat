@@ -282,7 +282,7 @@ DDF_FEEDSWAP = 1
 DDF_BEAMSMOOTH = False
 # [Freq]
 DDF_NBAND = 8
-DDF_NDEGRIDBAND = 8
+DDF_NDEGRIDBAND = 16
 # [DDESolutions]
 DDF_DDSOLS = ''
 DDF_DDMODEGRID = 'AP'
@@ -306,7 +306,7 @@ DDF_MASK = 'auto' # 'auto' enables automasking
                   # 'fits' uses the first *.mask.fits in the current folder
                   # otherwise pass a filename to use a specific FITS image
 # [Misc]
-DDF_MASKSIGMA = 5.5
+DDF_MASKSIGMA = 4.5
 DDF_CONSERVEMEMORY = 1
 
 

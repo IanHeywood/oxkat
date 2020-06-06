@@ -3,6 +3,7 @@
 
 execfile('oxkat/casa_read_project_info.py')
 
+myoutputchans = int(PRE_NCHANS)
 
 code = myms.split('/')[-1].split('_')[0]
 
@@ -21,11 +22,12 @@ nchan = tb.getcol('NUM_CHAN')[0]
 tb.done()
 
 
-mychanbin = int(nchan/1024)
+mychanbin = int(nchan/myoutputchans)
 if mychanbin == 1:
 	mychanave = False
 else:
 	mychanave = True
+
 
 mstransform(vis=myms,
 	outputvis=opms,

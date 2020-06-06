@@ -2,6 +2,7 @@
 
 
 execfile('oxkat/casa_read_project_info.py')
+execfile('oxkat/config.py')
 
 myoutputchans = int(PRE_NCHANS)
 

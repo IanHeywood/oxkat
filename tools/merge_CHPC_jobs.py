@@ -7,7 +7,10 @@ sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), ".."
 from oxkat import config as cfg
 
 
-pbs_config = cfg.PBS_DEFAULTS
+submit_file = sys.argv[1]
+
+
+pbs_config = cfg.PBS_WSCLEAN
 pbs_program = pbs_config['PROGRAM']
 pbs_walltime = '48:00:00'
 pbs_queue = pbs_config['QUEUE']
@@ -16,34 +19,35 @@ pbs_ppn = pbs_config['PPN']
 pbs_mem = pbs_config['MEM']
 
 
-outfile = 'pbs_merged_1GC_jobs.sh'
-pbs_logfile = cfg.LOGS+'/pbs_merged_1GC_jobs.log'
+outfile = submit_file.replace('submit','pbs_merged')
+pbs_logfile = cfg.LOGS+'/'+outfile.replace('.sh','.log')
 pbs_errfile = pbs_logfile.replace('.log','.err')
 
 
+
 pbs_list = []
-f = open('submit_1GC_jobs.sh','r')
+f = open(submit_file,'r')
 line = f.readline()
 while line:
-	if line[0] != '#':
-		cols = line.split()
-		for col in cols:
-		    if '/pbs_' in col:
-				pbs_list.append(col)
-	line = f.readline()
+    if line[0] != '#':
+        cols = line.split()
+        for col in cols:
+            if '/pbs_' in col:
+                pbs_list.append(col)
+    line = f.readline()
 f.close()
 
 
 singularity_calls = []
 for pbs_file in pbs_list:
-	f = open(pbs_file,'r')
-	line = f.readline()
-	while line:
-		cols = line.split()
-		for col in cols:
-			if 'exec' in col:
-				singularity_calls.append(line)
-	    line = f.readline()
+    f = open(pbs_file,'r')
+    line = f.readline()
+    while line:
+        cols = line.split()
+        for col in cols:
+            if 'exec' in col:
+                singularity_calls.append(line)
+        line = f.readline()
 f.close()
 
 
@@ -59,7 +63,7 @@ f.writelines(['#!/bin/bash\n',
     'module load chpc/singularity\n',
     'cd '+cfg.CWD+'\n'])
 for ii in singularity_calls:
-	f.writelines([ii])
+    f.writelines([ii])
 f.writelines(['sleep 10\n'])
 
 

@@ -15,6 +15,7 @@ from oxkat import config as cfg
 
 submit_file = sys.argv[1]
 
+jobname = submit_file.split('_')[1]
 
 pbs_config = cfg.PBS_WSCLEAN
 pbs_program = pbs_config['PROGRAM']
@@ -59,7 +60,7 @@ f.close()
 
 f = open(outfile,'w')
 f.writelines(['#!/bin/bash\n',
-    '#PBS -N 1GC \n',
+    '#PBS -N '+jobname+' \n',
     '#PBS -P '+pbs_program+'\n',
     '#PBS -l walltime='+pbs_walltime+'\n',
     '#PBS -l nodes='+pbs_nodes+':ppn='+pbs_ppn+',mem='+pbs_mem+'\n',

@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
+
+# Usage: python tools/merge_CHPC_1GC_jobs.py <submit_jobs.sh>
+# Will merge all the sequential jobs in the submit_jobs.sh script into a single submission
+# in an attempt to get around the haunted job queue.
+
+
 import sys
 import os.path as o
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))

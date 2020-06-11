@@ -184,11 +184,12 @@ def get_primary_candidates(myms,
         field_name = field_names[i]
         field_id = field_ids[i]
         sub_tab = main_tab.query(query='FIELD_ID=='+str(field_id))
-        state = numpy.unique(sub_tab.getcol('STATE_ID'))
-        if state == primary_state or state == unknown_state:
-            candidate_dirs.append(field_dir)
-            candidate_names.append(field_name)
-            candidate_ids.append(field_id)
+        states = numpy.unique(sub_tab.getcol('STATE_ID'))
+        for state in states:
+            if state == primary_state or state == unknown_state:
+                candidate_dirs.append(field_dir)
+                candidate_names.append(field_name)
+                candidate_ids.append(field_id)
         sub_tab.close()
     main_tab.close()
 
@@ -213,11 +214,12 @@ def get_secondaries(myms,
         field_name = field_names[i]
         field_id = field_ids[i]
         sub_tab = main_tab.query(query='FIELD_ID=='+str(field_id))
-        state = numpy.unique(sub_tab.getcol('STATE_ID'))
-        if state == secondary_state:
-            secondary_dirs.append(field_dir)
-            secondary_names.append(field_name)
-            secondary_ids.append(field_id)
+        states = numpy.unique(sub_tab.getcol('STATE_ID'))
+        for state in states:
+            if state == secondary_state:
+                secondary_dirs.append(field_dir)
+                secondary_names.append(field_name)
+                secondary_ids.append(field_id)
         sub_tab.close()
     main_tab.close()
 
@@ -242,11 +244,12 @@ def get_targets(myms,
         field_name = field_names[i]
         field_id = field_ids[i]
         sub_tab = main_tab.query(query='FIELD_ID=='+str(field_id))
-        state = numpy.unique(sub_tab.getcol('STATE_ID'))
-        if state == target_state:
-            target_dirs.append(field_dir)
-            target_names.append(field_name)
-            target_ids.append(field_id)
+        states = numpy.unique(sub_tab.getcol('STATE_ID'))
+        for state in states:
+            if state == target_state:
+                target_dirs.append(field_dir)
+                target_names.append(field_name)
+                target_ids.append(field_id)
         sub_tab.close()
     main_tab.close()
 

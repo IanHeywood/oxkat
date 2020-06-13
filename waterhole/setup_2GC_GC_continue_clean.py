@@ -52,12 +52,12 @@ def main():
     SLURM_WSCLEAN_MOD['TIME'] = '18:00:00'
 
     PBS_WSCLEAN_MOD = cfg.PBS_WSCLEAN
-    PBS_WSCLEAN_MOD['TIME'] = '18:00:00'
+    PBS_WSCLEAN_MOD['WALLTIME'] = '18:00:00'
 
 
     # Set names of the run file, open for writing
 
-    submit_file = 'submit_2GC_jobs.sh'
+    submit_file = 'submit_2GC_continue_clean_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

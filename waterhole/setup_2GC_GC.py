@@ -67,7 +67,7 @@ def main():
     SLURM_WSCLEAN_MOD['TIME'] = '18:00:00'
 
     PBS_WSCLEAN_MOD = cfg.PBS_WSCLEAN
-    PBS_WSCLEAN_MOD['TIME'] = '18:00:00'
+    PBS_WSCLEAN_MOD['WALLTIME'] = '18:00:00'
 
 
     # Set names of the run file, open for writing

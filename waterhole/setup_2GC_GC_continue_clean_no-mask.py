@@ -84,7 +84,7 @@ def main():
         myms = target_ms[tt]
         filename_targetname = gen.scrub_target_name(targetname)
         code = gen.get_target_code(targetname)
-        myms = target[2].rstrip('/')
+
 
         print('------------------------------------------------------')
         print(gen.now()+'Target:     '+targetname)

@@ -179,7 +179,7 @@ def main():
 
         print('Reading       : '+fits_file)
 
-        dir1_fits = fits_file.replace('.fits','_'+suffix+'.fits')
+        dir1_fits = fits_file.replace(model_pattern,model_pattern+'-'+suffix)
         backup_fits = fits_file.replace('.fits','.fits.backup')
 
         img = get_image(fits_file)

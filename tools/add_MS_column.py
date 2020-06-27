@@ -7,16 +7,16 @@ from pyrap.tables import table
 
 
 def add_data_col(msname,colname):
-	tt = table(msname,readonly=False,ack=False)
-	colnames = tt.colnames()
-	if colname in colnames:
-		print(col_name+' already exists, will not be created')
-	else:
-		desc = tt.getcoldesc('DATA')
-		desc['name'] = colname
-		desc['comment'] = desc['comment'].replace(' ','_')
-		tt.addcols(desc)
-	tt.done()
+    tt = table(msname,readonly=False,ack=False)
+    colnames = tt.colnames()
+    if colname in colnames:
+        print(col_name+' already exists, will not be created')
+    else:
+        desc = tt.getcoldesc('DATA')
+        desc['name'] = colname
+        desc['comment'] = desc['comment'].replace(' ','_')
+        tt.addcols(desc)
+    tt.done()
 
 
 def main():
@@ -32,7 +32,7 @@ def main():
     else:
         msname = args[0].rstrip('/')
 
-	add_data_col(msname,colname)
+    add_data_col(msname,colname)
 
 
 if __name__ == '__main__':

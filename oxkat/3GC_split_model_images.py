@@ -173,7 +173,7 @@ def main():
     print('Model suffix  : '+suffix)
     spacer()
 
-    model_list = sorted(glob.glob('*'+model_pattern+'*'))
+    model_list = sorted(glob.glob('*'+model_pattern+'-0*model*fits'))
 
     for fits_file in model_list:
 

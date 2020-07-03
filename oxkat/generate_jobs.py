@@ -272,10 +272,13 @@ def generate_syscall_wsclean(mslist,
                           field = cfg.WSC_FIELD,
                           startchan = cfg.WSC_STARTCHAN,
                           endchan = cfg.WSC_ENDCHAN,
+                          minuvl = cfg.WSC_MINUVL,
+                          maxuvl = cfg.WSC_MAXUVL,
                           chanout = cfg.WSC_CHANNELSOUT,
                           imsize = cfg.WSC_IMSIZE,
                           cellsize = cfg.WSC_CELLSIZE,
                           briggs = cfg.WSC_BRIGGS,
+                          tapergaussian = cfg.WSC_TAPERGAUSSIAN,
                           niter = cfg.WSC_NITER,
                           gain = cfg.WSC_GAIN,
                           mgain = cfg.WSC_MGAIN,
@@ -285,6 +288,7 @@ def generate_syscall_wsclean(mslist,
                           bda = cfg.WSC_BDA,
                           bdafactor = cfg.WSC_BDAFACTOR,
                           nwlayersfactor = cfg.WSC_NWLAYERSFACTOR,
+                          joinchannels = cfg.WSC_JOINCHANNELS,
                           padding = cfg.WSC_PADDING,
                           nomodel = cfg.WSC_NOMODEL,
                           mask = cfg.WSC_MASK,
@@ -333,11 +337,17 @@ def generate_syscall_wsclean(mslist,
     syscall += '-gain '+str(gain)+' '
     syscall += '-mgain '+str(mgain)+' '
     syscall += '-weight briggs '+str(briggs)+' '
+    if tapergaussian != '':
+        syscall += '-taper-gaussian '+str(tapergaussian)+' '
     syscall += '-data-column '+datacol+' '
     if paralleldeconvolution != 0:
         syscall += '-parallel-deconvolution '+str(paralleldeconvolution)+' '
     if startchan != -1 and endchan != -1:
         syscall += '-channel-range '+str(startchan)+' '+str(endchan)+' '
+    if minuvl != '':
+        syscall += str(minuvl)+' '
+    if maxuvl != '':
+        syscall += str(maxuvl)+' '
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fits-mask '+mymask+' '
@@ -354,7 +364,8 @@ def generate_syscall_wsclean(mslist,
     syscall += '-channels-out '+str(chanout)+' '
     if fitspectralpol != 0:
         syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
-    syscall += '-join-channels '
+    if joinchannels:
+        syscall += '-join-channels '
     syscall += '-padding '+str(padding)+' '
     syscall += '-mem '+str(mem)+' '
 

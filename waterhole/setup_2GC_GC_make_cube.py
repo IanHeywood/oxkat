@@ -106,18 +106,22 @@ def main():
         # Continue wsclean on CORRECTED_DATA column with additional scale
 
 
-        id_wsclean = 'WSCM2'+code
+        id_wsclean = 'WCUBE'+code
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                    imgname=corr_img_prefix,
+                    imgname=cube_prefix,
                     datacol='CORRECTED_DATA',
+                    chanout = 16,
                     briggs = -1.5,
                     multiscale = True,
-                    scales = '0,3,9,18',
+                    scales = '0,3,9',
+                    minuvl = 164,
+                    tapergaussian = 8,
+                    joinchannels = False,
                     niter = 400000,
-                    bda=False,
-                    mask=mask)
+                    bda = True,
+                    mask = mask)
 
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_wsclean,

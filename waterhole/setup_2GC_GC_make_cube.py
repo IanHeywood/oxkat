@@ -112,7 +112,7 @@ def main():
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
                     imgname=cube_prefix,
                     datacol='CORRECTED_DATA',
-                    sourceslist = False,
+                    sourcelist = False,
                     chanout = 16,
                     briggs = -1.5,
                     multiscale = True,

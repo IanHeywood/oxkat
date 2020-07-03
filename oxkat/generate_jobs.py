@@ -345,9 +345,9 @@ def generate_syscall_wsclean(mslist,
     if startchan != -1 and endchan != -1:
         syscall += '-channel-range '+str(startchan)+' '+str(endchan)+' '
     if minuvl != '':
-        syscall += str(minuvl)+' '
+        syscall += '-minuv-l '+str(minuvl)+' '
     if maxuvl != '':
-        syscall += str(maxuvl)+' '
+        syscall += '-maxuv-l '+str(maxuvl)+' '
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fits-mask '+mymask+' '

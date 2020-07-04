@@ -268,6 +268,8 @@ def get_primary_tag(candidate_dirs,
     preferred_cals = [('1934',294.85427795833334,-63.71267375),
         ('0408',62.084911833333344,-65.75252238888889)]
 
+    print(candidate_names)
+
     primary_tag = ''
 
     for i in range(0,len(candidate_dirs)):

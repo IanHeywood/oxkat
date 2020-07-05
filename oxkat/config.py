@@ -266,7 +266,7 @@ DDF_DIAMMAX = 0.25
 DDF_DIAMMIN = 0.05
 DDF_NFACETS = 16 # crank this up (32?) to get better beam resolution if FITS beam is used
 DDF_PSFOVERSIZE = 1.5
-DDF_PADDING = 1.7 # padding needs increasing from default if NFacets is raised to prevent aliasing
+DDF_PADDING = 2.0 # padding needs increasing from default if NFacets is raised to prevent aliasing
 # [Weight]
 DDF_ROBUST = -0.3
 # [Comp]

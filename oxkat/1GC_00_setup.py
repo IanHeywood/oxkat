@@ -261,7 +261,8 @@ def get_primary_tag(candidate_dirs,
                 candidate_ids):
 
     """ Use a positional match to identify whether a source is 1934 or 0408 
-    from a list of candidates
+    from a list of candidates. Manual model required for 0408, and different
+    flux scale standards required in setjy for 0408 and everything else.
     """
 
     # Tags and positions for the preferred primary calibrators
@@ -283,8 +284,11 @@ def get_primary_tag(candidate_dirs,
                 primary_tag = cal[0]
 
     if primary_tag == '':
-        myprint('Automated processing only works when the primary calibrator is PKS B1934-638 or PKS 0408-645.')
-        sys.exit()
+        primary_name = candidate_names[0]
+        primary_id = candidate_ids[0]
+        primary_tag = 'other'
+        primary_sep = 0.0
+
 
     return primary_name,primary_id,primary_tag,primary_sep
 
@@ -394,7 +398,8 @@ def main():
     primary_name, primary_id, primary_tag, primary_sep = get_primary_tag(candidate_dirs, candidate_names, candidate_ids)
 
     myprint('Primary calibrator:    '+str(primary_id)+': '+primary_name)
-    myprint('                       '+str(round((primary_sep/3600.0),4))+'" from nominal position')
+    if primary_sep != 0.0:
+        myprint('                       '+str(round((primary_sep/3600.0),4))+'" from nominal position')
     myprint('')
 
 

@@ -180,7 +180,6 @@ def main():
         print('Reading       : '+fits_file)
 
         dir1_fits = fits_file.replace(model_pattern,model_pattern+'-'+suffix)
-        backup_fits = fits_file.replace('.fits','.fits.backup')
 
         img = get_image(fits_file)
         mask = img*0.0
@@ -205,15 +204,10 @@ def main():
             mask = apply_circle(mask,xpix,ypix,rpix)
 
         dir1 = img*mask
-        rest = img*(1.0-mask)
 
-        print('Backing up    : '+fits_file)
-        shutil.copyfile(fits_file,backup_fits)
         print('Writing       : '+dir1_fits)
         shutil.copyfile(fits_file,dir1_fits)
         flush_fits(dir1,dir1_fits)
-        print('Writing       : '+fits_file)
-        flush_fits(rest,fits_file)
 
         spacer()
 

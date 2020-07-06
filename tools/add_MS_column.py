@@ -22,7 +22,7 @@ def add_data_col(msname,colname):
 def main():
 
     parser = OptionParser(usage = '%prog [options] msname')
-    parser.add_option('--colname', dest = 'colname', default = 'DIR1', help = 'Name of new data column (default = DIR1)')
+    parser.add_option('--colname', dest = 'colname', default = 'DIR1_DATA', help = 'Name of new data column (default = DIR1)')
     (options,args) = parser.parse_args()
     colname = options.colname
 

@@ -41,7 +41,7 @@ casa-gaintables = True
 
 [model]
 _Help = Calibration model options
-list = MODEL_DATA:DIR1
+list = MODEL_DATA+-DIR1_DATA:DIR1_DATA
 ddes = auto
 beam-pattern = None
 beam-l-axis = None

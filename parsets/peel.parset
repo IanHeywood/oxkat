@@ -35,7 +35,7 @@ weight-column =
 reinit-column = False
 subtract-model = 0
 subtract-dirs = 1
-correct-dir = -1
+correct-dir = 0
 plots = 1
 casa-gaintables = True
 
@@ -47,7 +47,7 @@ beam-pattern = None
 beam-l-axis = None
 beam-m-axis = None
 feed-rotate = auto
-pa-rotate = True
+pa-rotate = False
 
 [montblanc]
 _Help = Montblanc simulation options

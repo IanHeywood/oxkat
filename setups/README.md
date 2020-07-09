@@ -22,7 +22,7 @@ This script will perform the following steps. This stage mostly involves using `
 
 * [Duplicate your source MS](), averaging it down to 1,024 channels (if necessary).	
 
-* [Examine the contents]() of the MS to identify target and calibrator fields. The primary calibrator must be either PKS B1934-608 or PKS B0408-65. Targets are paired with the secondary calibrator that is closest to them on the sky.
+* [Examine the contents]() of the MS to identify target and calibrator fields. The preferred primary calibrator is either PKS B1934-608 or PKS B0408-65, but others should work as long as `CASA` knows about them. Targets are paired with the secondary calibrator that is closest to them on the sky.
 
 * [Rephase]() the visibilities of the primary calibrator to correct for erroneous positions that were present in the open time data (this has no effect on observations that did not have this issue).
 
@@ -38,7 +38,7 @@ This script will perform the following steps. This stage mostly involves using `
 
 * [Plot the gain tables]() using `ragavi-gains`.
 
-* [Plot visibilities]() of the corrected calibrator data using `shadeMS` [**PENDING**]
+* [Plot visibilities]() of the corrected calibrator data using `shadeMS`.
 
 * [Split the target data]() out into individual Measurement Sets, with the reference calibrated data in the `DATA` column of the MS. Note that only basic flagging commands will have been applied to the target data at this stage.
 

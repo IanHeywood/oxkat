@@ -16,16 +16,13 @@ def stamp():
 # ------- Parameters
 
 
+execfile('oxkat/casa_read_project_info.py')
+execfile('oxkat/config.py')
+
+
 myuvrange = '>300m'
 myspw = '850~900MHz'
-
-
-project_info = pickle.load(open('project_info.p','rb'))
-myms = project_info['master_ms']
-bpcal = project_info['primary'][0] # Using field names because targets will be removed
-pcals = project_info['secondary']
-primary_tag = project_info['primary_tag']
-ref_ant = project_info['ref_ant']
+delaycut = CAL_1GC_DELAYCUT
 
 
 # ------- Setup names
@@ -54,8 +51,8 @@ ftab1 = 'cal_'+myms+'_'+tt+'.flux'
 
 if primary_tag == '1934':
     setjy(vis=myms,
-        field=bpcal,
-        standard='Perley-Butler 2010',
+        field=bpcal_name,
+        standard='Stevens-Reynolds 2016',
         scalebychan=True,
         usescratch=True)
     
@@ -63,11 +60,19 @@ if primary_tag == '1934':
 elif primary_tag == '0408':
     bpcal_mod = ([27.907,0.0,0.0,0.0],[-1.205],'850MHz')
     setjy(vis=myms,
-        field=bpcal,
+        field=bpcal_name,
         standard='manual',
         fluxdensity=bpcal_mod[0],
         spix=bpcal_mod[1],
         reffreq=bpcal_mod[2],
+        scalebychan=True,
+        usescratch=True)
+
+
+elif primary_tag == 'other':
+    setjy(vis=myms,
+        field=bpcal_name,
+        standard='Perley-Butler 2010',
         scalebychan=True,
         usescratch=True)
 
@@ -153,8 +158,8 @@ gaincal(vis = myms,
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][0] # Using field names
-
+    pcal = pcals[i]
+    pcal_name = pcal_names[i] # name
 
     # --- G2 (secondary)
 
@@ -197,7 +202,7 @@ fluxscale(vis=myms,
 for i in range(0,len(pcals)):
 
 
-    pcal = pcals[i][1]
+    pcal = pcals[i]
 
 
     # --- Correct secondaries with K0, G0, B0, F1
@@ -216,8 +221,9 @@ for i in range(0,len(pcals)):
 
 for targ in targets:
 
-    target = targ[1]
-    related_pcal = pcals[targ[3]][1]
+
+    target = targets[i]
+    related_pcal = target_cal_map[i]
 
 
     # --- Correct targets with K0, G0, B0, F1

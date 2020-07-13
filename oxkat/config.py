@@ -258,9 +258,9 @@ DDF_OUTPUTCUBES = 'MmRi' # output intrinsic and apparent resid and model cubes
 DDF_NPIX = 10125
 DDF_CELL = 1.1
 # [Facets]
-DDF_DIAMMAX = 1.5
+DDF_DIAMMAX = 0.25
 DDF_DIAMMIN = 0.05
-DDF_NFACETS = 8 # crank this up (32?) to get better beam resolution if FITS beam is used
+DDF_NFACETS = 16 # crank this up (32?) to get better beam resolution if FITS beam is used
 DDF_PSFOVERSIZE = 1.5
 DDF_PADDING = 1.7 # padding needs increasing from default if NFacets is raised to prevent aliasing
 # [Weight]

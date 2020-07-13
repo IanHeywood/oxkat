@@ -230,21 +230,24 @@ def generate_syscall_casa(casascript,casalogfile,extra_args=''):
     return syscall
 
 
-def generate_syscall_cubical(parset,myms,prefix):
+def generate_syscall_cubical(parset,myms):#,prefix):
 
-    now = timenow()
-    outname = 'cube_'+prefix+'_'+myms.split('/')[-1]+'_'+now
+    # now = timenow()
+    # outname = 'cube_'+prefix+'_'+myms.split('/')[-1]+'_'+now
 
-    # Debugging stuff
-    syscall = 'bash -c "/sbin/sysctl vm.max_map_count ; '
-    syscall += 'df -h /dev/shm ; '
+    # # Debugging stuff
+    # syscall = 'bash -c "/sbin/sysctl vm.max_map_count ; '
+    # syscall += 'df -h /dev/shm ; '
 
-    syscall += 'gocubical '+parset+' '
+    # syscall += 'gocubical '+parset+' '
+    # syscall += '--data-ms='+myms+' '
+    # syscall += '--out-name='+outname
+
+    # # Move output to logs...
+    # syscall += ' ; mv '+outname+'* '+LOGS+'"'
+
+    syscall = 'gocubical '+parset+' '
     syscall += '--data-ms='+myms+' '
-    syscall += '--out-name='+outname
-
-    # Move output to logs...
-    syscall += ' ; mv '+outname+'* '+LOGS+'"'
 
     return syscall
 

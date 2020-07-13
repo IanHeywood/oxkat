@@ -43,7 +43,7 @@ def main():
     # Get containers needed for this script
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
-    CUBICAL_CONTAINER = get.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN)
+    CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN)
     DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
     MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)

@@ -194,8 +194,10 @@ CAL_2GC_APSOLINT = 'inf'             # Solution interval for amplitude and phase
 # 3GC peeling defaults
 #
 
-CAL_3GC_PEEL_REGION = 'PKS0326-288.reg'
-CAL_3GC_PEEL_PARSET = 'peel.parset'
+CAL_3GC_PEEL_NCHAN = 32
+CAL_3GC_PEEL_DIR1COLNAME = 'DIR1_DATA'
+CAL_3GC_PEEL_REGION = PARSETS+'/PKS0326-288.reg'
+CAL_3GC_PEEL_PARSET = PARSETS+'/peel.parset'
 
 
 # ------------------------------------------------------------------------

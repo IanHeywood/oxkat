@@ -129,7 +129,7 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=prepeel_img_prefix,
                         datacol='CORRECTED_DATA',
-                        chanout=cfg.CAL_3GC_NCHAN,
+                        chanout=cfg.CAL_3GC_PEEL_NCHAN,
                         bda=True,
                         mask=mask)
 
@@ -175,7 +175,7 @@ def main():
             id_list.append(id_predict1)
 
             syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=dir1_img_prefix,chanout=cfg.CAL_3GC_NCHAN)
+            syscall += gen.generate_syscall_predict(msname=myms,imgbase=dir1_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
 
             run_command = gen.job_handler(syscall=syscall,
                         jobname=id_predict1,
@@ -240,7 +240,7 @@ def main():
             id_list.append(id_predict2)
 
             syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=prepeel_img_prefix,chanout=cfg.CAL_3GC_NCHAN)
+            syscall += gen.generate_syscall_predict(msname=myms,imgbase=prepeel_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
 
             run_command = gen.job_handler(syscall=syscall,
                         jobname=id_predict2,

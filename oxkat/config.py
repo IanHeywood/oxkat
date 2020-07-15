@@ -11,13 +11,14 @@ HOME = os.path.expanduser('~')
 
 # ------------------------------------------------------------------------
 #
-# Singularity containers
+# Singularity
 #
 
 
-#IDIA_CONTAINER_PATH = HOME+'/containers/'
+BIND = '$PWD' # comma separated list of paths to mount for singularity environment
+
+
 IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'
-#CHPC_CONTAINER_PATH = HOME+'/lustre/containers'
 CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
 NODE_CONTAINER_PATH = HOME+'/containers/'
 
@@ -190,6 +191,15 @@ CAL_2GC_APSOLINT = 'inf'             # Solution interval for amplitude and phase
 
 # ------------------------------------------------------------------------
 #
+# 3GC peeling defaults
+#
+
+CAL_3GC_PEEL_REGION = 'PKS0326-288.reg'
+CAL_3GC_PEEL_PARSET = 'peel.parset'
+
+
+# ------------------------------------------------------------------------
+#
 # wsclean defaults
 #
 
@@ -214,7 +224,7 @@ WSC_NWLAYERSFACTOR = 3
 WSC_PADDING = 1.2
 WSC_NOMODEL = False
 WSC_MASK = 'auto'
-WSC_THRESHOLD = 1e-6
+WSC_THRESHOLD = 5e-6
 WSC_AUTOTHRESHOLD = 0.3
 WSC_AUTOMASK = 5.0
 WSC_FITSPECTRALPOL = 4

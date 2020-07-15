@@ -121,7 +121,8 @@ def job_handler(syscall,
                 infrastructure,
                 dependency = None,
                 slurm_config = cfg.SLURM_DEFAULTS,
-                pbs_config = cfg.PBS_DEFAULTS):
+                pbs_config = cfg.PBS_DEFAULTS,
+                bind = cfg.BIND):
                 # slurm_time=cfg.SLURM_TIME,
                 # slurm_partition=cfg.SLURM_PARTITION,
                 # slurm_ntasks=cfg.SLURM_NTASKS,
@@ -134,6 +135,11 @@ def job_handler(syscall,
                 # pbs_nodes=cfg.PBS_NODES,
                 # pbs_ppn=cfg.PBS_PPN,
                 # pbs_mem=cfg.PBS_MEM):
+
+
+    if bind != '':
+        syscall = syscall.replace('exec','exec --bind '+bind)
+
 
     if infrastructure == 'idia':
 

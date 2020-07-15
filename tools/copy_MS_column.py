@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
+
 import sys
 from optparse import OptionParser
 from pyrap.tables import table
@@ -44,7 +45,6 @@ def main():
 
     copycol(msname,fromcol,tocol)
 
-    copycol('1583662427_sdp_l0_wtspec_J033230-280757_2GC.ms',fromcol,tocol)
 
 
 if __name__ == '__main__':

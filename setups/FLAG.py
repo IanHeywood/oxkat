@@ -112,7 +112,7 @@ def main():
 
             syscall = 'singularity exec '+TRICOLOUR_CONTAINER+' '
             syscall += gen.generate_syscall_tricolour(myms = myms,
-                                    config = PARSETS+'/target_flagging_1_narrow.yaml',
+                                    config = PARSETS+'/tricolour/target_flagging_1_narrow.yaml',
                                     datacol = 'DATA',
                                     fields = '0',
                                     strategy = 'polarisation')

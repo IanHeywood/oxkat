@@ -179,7 +179,7 @@ def main():
 
 
             syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
-            syscall += gen.generate_syscall_cubical(parset=PARSETS+'/selfcal.parset',myms=myms)
+            syscall += gen.generate_syscall_cubical(parset=PARSETS+'/cubical/phasecal.parset',myms=myms)
 
             run_command = gen.job_handler(syscall=syscall,
                         jobname=id_selfcal,

@@ -119,7 +119,7 @@ def main():
 
             # ------------------------------------------------------------------------------
             # STEP 1: 
-            # Masked wsclean on CORRECTED_DATA column with high frequency resolution
+            # Masked wsclean on CORRECTED_DATA column with high (frequency) resolution
 
 
             id_wsclean = 'WSDMA'+code
@@ -129,6 +129,7 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=prepeel_img_prefix,
                         datacol='CORRECTED_DATA',
+                        briggs=-1.0,
                         chanout=cfg.CAL_3GC_PEEL_NCHAN,
                         bda=True,
                         mask=mask)

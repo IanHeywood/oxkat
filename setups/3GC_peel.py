@@ -91,7 +91,7 @@ def main():
             codes.append(code)
 
 
-            mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
+            mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask1.fits'))
             if len(mask0) > 0:
                 mask = mask0[0]
             else:

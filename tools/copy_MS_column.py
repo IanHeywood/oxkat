@@ -16,7 +16,7 @@ def copycol(msname,fromcol,tocol):
         print('One or more requested columns not present in MS')
         sys.exit()
 
-    total_rows = tab.nrows()
+    total_rows = tt.nrows()
     chunk = total_rows // 10
     for start_row in range(0, total_rows, chunk):
         num_rows = min(chunk, total_rows - start_row)

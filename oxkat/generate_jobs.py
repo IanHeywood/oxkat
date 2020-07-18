@@ -375,6 +375,7 @@ def generate_syscall_wsclean(mslist,
 
 def generate_syscall_predict(msname,
                             imgbase,
+                            nwlayersfactor = cfg.WSC_NWLAYERSFACTOR,
                             chanout = cfg.WSC_CHANNELSOUT,
                             imsize = cfg.WSC_IMSIZE,
                             cellsize = cfg.WSC_CELLSIZE,
@@ -386,8 +387,9 @@ def generate_syscall_predict(msname,
     syscall = 'wsclean '
     syscall += '-log-time '
     syscall += '-predict '
+    syscall += '-nwlayers-factor '+str(nwlayersfactor)+' '
     syscall += '-channels-out '+str(chanout)+' '
-    syscall += ' -size '+str(imsize)+' '+str(imsize)+' '
+    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
     syscall += '-mem '+str(mem)+' '

@@ -2,7 +2,7 @@
 _Help = Visibility data options
 ms = 
 column = DATA
-time-chunk = 72
+time-chunk = 288
 freq-chunk = 256
 rebin-time = 1
 rebin-freq = 1

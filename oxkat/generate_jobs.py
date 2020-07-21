@@ -153,6 +153,8 @@ def job_handler(syscall,
         # HACK: Override idia settings if hippo here
         # (really this should be broken down as slurm vs. non-slurm scheduler
         if infrastructure == 'hippo':
+            if int(slurm_cpus) > 20:
+                slurm_cpus='20'
             if int(slurm_cpus) < 20:
                 slurm_mem = '60000'
             else:

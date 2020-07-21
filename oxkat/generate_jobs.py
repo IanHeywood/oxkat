@@ -157,6 +157,7 @@ def job_handler(syscall,
                 slurm_mem = '60000'
             else:
                 slurm_mem = '64000'
+            slurm_partition = 'debug'
 
         slurm_runfile = cfg.SCRIPTS+'/slurm_'+jobname+'.sh'
         slurm_logfile = cfg.LOGS+'/slurm_'+jobname+'.log'

@@ -29,6 +29,7 @@ CUBICAL_PATTERN = 'cubical'
 DDFACET_PATTERN = 'ddfacet'
 KILLMS_PATTERN = 'killms'
 MAKEMASK_PATTERN = 'meqtrees'
+MEQTREES_PATTERN = 'meqtrees'
 PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
 SHADEMS_PATTERN = 'shadems'
@@ -197,10 +198,14 @@ WSC_CONTINUE = False
 WSC_FIELD = 0
 WSC_STARTCHAN = -1
 WSC_ENDCHAN = -1
+WSC_MINUVL = ''
+WSC_MAXUVL = ''
 WSC_CHANNELSOUT = 8
+WSC_JOINCHANNELS = True
 WSC_IMSIZE = 10240
 WSC_CELLSIZE = '1.1asec'
 WSC_BRIGGS = -0.3
+WSC_TAPERGAUSSIAN = ''
 WSC_NITER = 120000
 WSC_GAIN = 0.1
 WSC_MGAIN = 0.85
@@ -221,7 +226,7 @@ WSC_PREDICTCHANNELS = 64
 WSC_MEM = 95
 WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'
-WSC_PARALLELDECONVOLUTION = 0 # 0 or specify max facet size (not useable yet)
+WSC_PARALLELDECONVOLUTION = 2560 # 
 
 
 # ------------------------------------------------------------------------
@@ -247,7 +252,7 @@ DDF_COLNAME = 'CORRECTED_DATA'
 DDF_CHUNKHOURS = 2
 DDF_DATASORT = 1
 # [Predict]
-DDF_PREDICTCOLNAME = 'MODEL_DATA'
+DDF_PREDICTCOLNAME = '' # MODEL_DATA or leave empty to disable predict
 DDF_INITDICOMODEL = ''
 # [Output]
 DDF_OUTPUTALSO = 'oenNS'
@@ -257,11 +262,11 @@ DDF_OUTPUTCUBES = 'MmRi' # output intrinsic and apparent resid and model cubes
 DDF_NPIX = 10125
 DDF_CELL = 1.1
 # [Facets]
-DDF_DIAMMAX = 1.5
+DDF_DIAMMAX = 0.25
 DDF_DIAMMIN = 0.05
-DDF_NFACETS = 8 # crank this up (32?) to get better beam resolution if FITS beam is used
+DDF_NFACETS = 16 # crank this up (32?) to get better beam resolution if FITS beam is used
 DDF_PSFOVERSIZE = 1.5
-DDF_PADDING = 1.7 # padding needs increasing from default if NFacets is raised to prevent aliasing
+DDF_PADDING = 2.0 # padding needs increasing from default if NFacets is raised to prevent aliasing
 # [Weight]
 DDF_ROBUST = -0.3
 # [Comp]
@@ -282,7 +287,7 @@ DDF_FEEDSWAP = 1
 DDF_BEAMSMOOTH = False
 # [Freq]
 DDF_NBAND = 8
-DDF_NDEGRIDBAND = 8
+DDF_NDEGRIDBAND = 16
 # [DDESolutions]
 DDF_DDSOLS = ''
 DDF_DDMODEGRID = 'AP'
@@ -306,7 +311,7 @@ DDF_MASK = 'auto' # 'auto' enables automasking
                   # 'fits' uses the first *.mask.fits in the current folder
                   # otherwise pass a filename to use a specific FITS image
 # [Misc]
-DDF_MASKSIGMA = 5.5
+DDF_MASKSIGMA = 4.5
 DDF_CONSERVEMEMORY = 1
 
 
@@ -337,6 +342,7 @@ KMS_DDID = 0
 # [Actions]
 KMS_NCPU = 32
 KMS_DOBAR = 0
+KMS_DEBUGPDB = 0
 # [Solvers]
 KMS_SOLVERTYPE = 'CohJones'
 KMS_DT = 12

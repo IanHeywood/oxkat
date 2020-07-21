@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
-# Continue cleaning a GC pointing
+# Generate a cube for spectral index work
 
 
 import glob
@@ -49,15 +49,15 @@ def main():
     # Bump up the walltimes
 
     SLURM_WSCLEAN_MOD = cfg.SLURM_WSCLEAN
-    SLURM_WSCLEAN_MOD['TIME'] = '18:00:00'
+    SLURM_WSCLEAN_MOD['TIME'] = '36:00:00'
 
     PBS_WSCLEAN_MOD = cfg.PBS_WSCLEAN
-    PBS_WSCLEAN_MOD['WALLTIME'] = '18:00:00'
+    PBS_WSCLEAN_MOD['WALLTIME'] = '36:00:00'
 
 
     # Set names of the run file, open for writing
 
-    submit_file = 'submit_2GC_continue_clean_no_maskjobs.sh'
+    submit_file = 'submit_2GC_make_cube.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')
@@ -84,14 +84,21 @@ def main():
         myms = target_ms[tt]
         filename_targetname = gen.scrub_target_name(targetname)
         code = gen.get_target_code(targetname)
-
+        mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask.fits'))
 
         print('------------------------------------------------------')
         print(gen.now()+'Target:     '+targetname)
         print(gen.now()+'MS:         '+myms)
 
+        if len(mask0) > 0:
+            mask = mask0[0]
+        else:
+            mask = 'auto'
+
+        print(gen.now()+'Using mask: '+mask)
+
     
-        corr_img_prefix = IMAGES+'/img_'+myms+'_pcalmask'
+        cube_prefix = IMAGES+'/img_'+myms+'_subbands'
 
 
         # ------------------------------------------------------------------------------
@@ -99,19 +106,24 @@ def main():
         # Continue wsclean on CORRECTED_DATA column with additional scale
 
 
-        id_wsclean = 'WSCN3'+code
+        id_wsclean = 'WCUBE'+code
 
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                    imgname=corr_img_prefix,
-                    continueclean=True,
+                    imgname=cube_prefix,
                     datacol='CORRECTED_DATA',
+                    sourcelist = False,
+                    chanout = 16,
                     briggs = -1.5,
                     multiscale = True,
-                    scales = '0,3,9,18',
-                    niter = 300000,
-                    bda=False,
-                    mask='none')
+                    scales = '0,3,9',
+                    minuvl = 164,
+                    tapergaussian = 8,
+                    joinchannels = False,
+                    fitspectralpol = 0,
+                    niter = 400000,
+                    bda = True,
+                    mask = mask)
 
         run_command = gen.job_handler(syscall=syscall,
                     jobname=id_wsclean,

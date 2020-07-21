@@ -64,10 +64,10 @@ flagdata(vis = myms,
 # Clipping, quacking, zeros, autos
 # Note that clip will always flag NaN/Inf values even with a range 
 
-flagdata(vis = myms,
-	mode = 'quack',
-	quackinterval = 8.0,
-	quackmode = 'beg')
+#flagdata(vis = myms,
+#	mode = 'quack',
+#	quackinterval = 8.0,
+#	quackmode = 'beg')
 
 flagdata(vis = myms,
 	mode = 'manual',

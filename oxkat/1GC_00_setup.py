@@ -184,11 +184,12 @@ def get_primary_candidates(myms,
         field_name = field_names[i]
         field_id = field_ids[i]
         sub_tab = main_tab.query(query='FIELD_ID=='+str(field_id))
-        state = numpy.unique(sub_tab.getcol('STATE_ID'))
-        if state == primary_state or state == unknown_state:
-            candidate_dirs.append(field_dir)
-            candidate_names.append(field_name)
-            candidate_ids.append(field_id)
+        states = numpy.unique(sub_tab.getcol('STATE_ID'))
+        for state in states:
+            if state == primary_state or state == unknown_state:
+                candidate_dirs.append(field_dir)
+                candidate_names.append(field_name)
+                candidate_ids.append(field_id)
         sub_tab.close()
     main_tab.close()
 
@@ -213,11 +214,12 @@ def get_secondaries(myms,
         field_name = field_names[i]
         field_id = field_ids[i]
         sub_tab = main_tab.query(query='FIELD_ID=='+str(field_id))
-        state = numpy.unique(sub_tab.getcol('STATE_ID'))
-        if state == secondary_state:
-            secondary_dirs.append(field_dir)
-            secondary_names.append(field_name)
-            secondary_ids.append(field_id)
+        states = numpy.unique(sub_tab.getcol('STATE_ID'))
+        for state in states:
+            if state == secondary_state:
+                secondary_dirs.append(field_dir)
+                secondary_names.append(field_name)
+                secondary_ids.append(field_id)
         sub_tab.close()
     main_tab.close()
 
@@ -242,11 +244,12 @@ def get_targets(myms,
         field_name = field_names[i]
         field_id = field_ids[i]
         sub_tab = main_tab.query(query='FIELD_ID=='+str(field_id))
-        state = numpy.unique(sub_tab.getcol('STATE_ID'))
-        if state == target_state:
-            target_dirs.append(field_dir)
-            target_names.append(field_name)
-            target_ids.append(field_id)
+        states = numpy.unique(sub_tab.getcol('STATE_ID'))
+        for state in states:
+            if state == target_state:
+                target_dirs.append(field_dir)
+                target_names.append(field_name)
+                target_ids.append(field_id)
         sub_tab.close()
     main_tab.close()
 
@@ -258,7 +261,8 @@ def get_primary_tag(candidate_dirs,
                 candidate_ids):
 
     """ Use a positional match to identify whether a source is 1934 or 0408 
-    from a list of candidates
+    from a list of candidates. Manual model required for 0408, and different
+    flux scale standards required in setjy for 0408 and everything else.
     """
 
     # Tags and positions for the preferred primary calibrators
@@ -280,8 +284,11 @@ def get_primary_tag(candidate_dirs,
                 primary_tag = cal[0]
 
     if primary_tag == '':
-        myprint('Automated processing only works when the primary calibrator is PKS B1934-638 or PKS 0408-645.')
-        sys.exit()
+        primary_name = candidate_names[0]
+        primary_id = candidate_ids[0]
+        primary_tag = 'other'
+        primary_sep = 0.0
+
 
     return primary_name,primary_id,primary_tag,primary_sep
 
@@ -391,7 +398,8 @@ def main():
     primary_name, primary_id, primary_tag, primary_sep = get_primary_tag(candidate_dirs, candidate_names, candidate_ids)
 
     myprint('Primary calibrator:    '+str(primary_id)+': '+primary_name)
-    myprint('                       '+str(round((primary_sep/3600.0),4))+'" from nominal position')
+    if primary_sep != 0.0:
+        myprint('                       '+str(round((primary_sep/3600.0),4))+'" from nominal position')
     myprint('')
 
 

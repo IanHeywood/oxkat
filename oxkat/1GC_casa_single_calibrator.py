@@ -2,7 +2,6 @@
 
 
 import glob
-import pickle
 import shutil
 import time
 
@@ -52,9 +51,6 @@ gtab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G3'
 ftab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux3'
 
 
-secondary_pickle = pickle.load(open(glob.glob(GAINTABLES+'/secondary_models_final*.p')[0],'rb'))
-secondary_models = secondary_pickle[0]
-secondary_mapping = secondary_pickle[1]
 
 
 
@@ -71,8 +67,8 @@ secondary_mapping = secondary_pickle[1]
 
 if primary_tag == '1934':
     setjy(vis=myms,
-        field=bpcal_name,
-        standard='Stevens-Reynolds 2016',
+        field=bpcal,
+        standard='Perley-Butler 2010',
         scalebychan=True,
         usescratch=True)
     
@@ -80,19 +76,11 @@ if primary_tag == '1934':
 elif primary_tag == '0408':
     bpcal_mod = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
     setjy(vis=myms,
-        field=bpcal_name,
+        field=bpcal,
         standard='manual',
         fluxdensity=bpcal_mod[0],
         spix=bpcal_mod[1],
         reffreq=bpcal_mod[2],
-        scalebychan=True,
-        usescratch=True)
-
-
-elif primary_tag == 'other':
-    setjy(vis=myms,
-        field=bpcal_name,
-        standard='Perley-Butler 2010',
         scalebychan=True,
         usescratch=True)
 
@@ -288,245 +276,6 @@ gaincal(vis = myms,
     append = False)
 
 
-# ------- Duplicate K1
-# ------- Duplicate G2 (to save repetition of above step)
-
-
-shutil.copytree(ktab1,ktab2)
-shutil.copytree(gtab2,gtab3)
-
-
-# ------- Looping over secondaries
-
-
-solve_delays = []
-
-
-for i in range(0,len(pcals)):
-
-
-    pcal = pcals[i]
-    pcal_name = pcal_names[i] # name
-
-
-    for item in secondary_mapping:
-        if item[0] == pcal_name:
-            mod_idx = str(item[1])
-
-
-    iflux = secondary_models[mod_idx]['fitFluxd']
-    spidx = secondary_models[mod_idx]['spidx']
-    if len(spidx) == 2:
-        myspix = spidx[1] 
-    elif len(spidx) == 3:
-        alpha = spidx[1]        
-        beta = spidx[2]
-        myspix = [alpha,beta]
-    # alpha = secondary_models[mod_idx]['spidx'][1]
-    # beta = secondary_models[mod_idx]['spidx'][2]
-    ref_freq = str(secondary_models[mod_idx]['fitRefFreq'])+'Hz'
-
-
-    setjy(vis =myms,
-        field = pcal,
-        standard = 'manual',
-        fluxdensity = [iflux,0,0,0],
-        spix = myspix,
-        reffreq = ref_freq,
-        usescratch = True)
-
-
-    # --- G2 (secondary)
-
-
-    gaincal(vis = myms,
-        field = pcal,
-        uvrange = myuvrange,
-        caltable = gtab2,     
-        refant = str(ref_ant),
-        minblperant = 4,
-        minsnr = 3,
-        solint = 'inf',
-        solnorm = False,
-        gaintype = 'G',
-        combine = '',
-        calmode = 'ap',
-        parang = False,
-        gaintable=[ktab1,gtab1,bptab1],
-        gainfield=[bpcal,bpcal,bpcal],
-        interp=['nearest','linear','linear'],
-        append=True)
-
-
-    # --- K2 (secondary)
-
-    if iflux > delaycut: # Don't solve for delays on weak secondaries
-
-        gaincal(vis= myms,
-            field = pcal,
-        #   uvrange = myuvrange,
-            caltable = ktab1,
-            refant = str(ref_ant),
-        #   spw = delayspw,
-            gaintype = 'K',
-            solint = 'inf',
-            parang = False,
-            gaintable = [gtab1,bptab1,gtab2],
-            gainfield = [bpcal,bpcal,pcal],
-            interp = ['nearest','linear','linear','linear'],
-            append = True)
-
-        solve_delays.append(True)
-
-    else:
-
-        solve_delays.append(False)
-
-
-# ------- Looping over secondaries
-
-
-for i in range(0,len(pcals)):
-
-
-    pcal = pcals[i]
-
-
-    # --- Correct secondaries with K2, G1, B1, G2
-
-
-    applycal(vis = myms,
-        gaintable = [ktab2,gtab1,bptab1,gtab2],
-#        applymode='calonly',
-        field = pcal,
-#        calwt = False,
-        parang = False,
-        gainfield = ['','',bpcal,pcal],
-        interp = ['nearest','linear','linear','linear'])
-
-
-    # --- Flag secondaries on CORRECTED_DATA - MODEL_DATA
-
-
-    flagdata(vis = myms,
-        field = pcal,
-        mode = 'rflag',
-        datacolumn = 'residual')
-
-
-    flagdata(vis = myms,
-        field = pcal,
-        mode = 'tfcrop',
-        datacolumn = 'residual')
-
-
-flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
-
-
-# --------------------------------------------------------------- #
-# --------------------------------------------------------------- #
-# --------------------------- STAGE 3 --------------------------- #
-# --------------------------------------------------------------- #
-# --------------------------------------------------------------- #
-
-
-gaincal(vis = myms,
-    field = bpcal,
-    uvrange = myuvrange,
-    caltable = gtab3,
-    refant = str(ref_ant),
-    solint = 'inf',
-    solnorm = False,
-    combine = '',
-    minsnr = 3,
-    calmode = 'ap',
-    parang = False,
-    gaintable = [ktab1,gtab1,bptab1],
-    gainfield = [bpcal,bpcal,bpcal],
-    interp = ['nearest','nearest','nearest'],
-    append = False)
-
-
-# ------- Duplicate K1 table
-
-
-shutil.copytree(ktab1,ktab3)
-
-
-# ------- Looping over secondaries
-
-
-for i in range(0,len(pcals)):
-
-
-    pcal = pcals[i]
-
-
-    # --- G3 (secondary)
-
-
-    gaincal(vis = myms,
-        field = pcal,
-        uvrange = myuvrange,
-        caltable = gtab3,     
-        refant = str(ref_ant),
-        minblperant = 4,
-        minsnr = 3,
-        solint = 'inf',
-        solnorm = False,
-        gaintype = 'G',
-        combine = '',
-        calmode = 'ap',
-        parang = False,
-        gaintable=[ktab1,gtab1,bptab1],
-        gainfield=[bpcal,bpcal,bpcal],
-        interp=['nearest','linear','linear'],
-        append=True)
-
-
-    # --- K3 secondary
-
-
-    if solve_delays[i]:
-
-        gaincal(vis= myms,
-            field = pcal,
-        #   uvrange = myuvrange,
-            caltable = ktab3,
-            refant = str(ref_ant),
-        #   spw = delayspw,
-            gaintype = 'K',
-            solint = 'inf',
-            parang = False,
-            gaintable = [gtab1,bptab1,gtab3],
-            gainfield = [bpcal,bpcal,bpcal,pcal],
-            interp = ['linear','linear','linear'],
-            append = True)
-
-
-
-# ------- Apply final tables to secondaries
-
-
-for i in range(0,len(pcals)):
-
-
-    pcal = pcals[i]
-
-
-    # --- Correct secondaries with K3, G1, B1, G3
-
-
-    applycal(vis = myms,
-        gaintable = [ktab3,gtab1,bptab1,gtab3],
-#        applymode='calonly',
-        field = pcal,
-#        calwt = False,
-        parang = False,
-        gainfield = ['','',bpcal,pcal],
-        interp = ['nearest','linear','linear','linear'])
-
-
 # ------- Apply final tables to targets
 
 
@@ -541,12 +290,12 @@ for i in range(0,len(targets)):
 
 
     applycal(vis=myms,
-        gaintable=[ktab3,gtab1,bptab1,gtab3],
+        gaintable=[ktab1,gtab1,bptab1,gtab2],
 #        applymode='calonly',
         field=target,
 #        calwt=False,
         parang=False,
-        gainfield=['',bpcal,bpcal,related_pcal],
+        gainfield=[bpcal,bpcal,bpcal,bpcal],
         interp=['nearest','linear','linear','linear'])
 
 

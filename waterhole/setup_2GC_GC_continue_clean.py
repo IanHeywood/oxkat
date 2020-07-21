@@ -46,9 +46,18 @@ def main():
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
  
 
-    # Set names of the run and kill files, open run file for writing
+    # Bump up the walltimes
 
-    submit_file = 'submit_2GC_GC_continue_clean_job.sh'
+    SLURM_WSCLEAN_MOD = cfg.SLURM_WSCLEAN
+    SLURM_WSCLEAN_MOD['TIME'] = '18:00:00'
+
+    PBS_WSCLEAN_MOD = cfg.PBS_WSCLEAN
+    PBS_WSCLEAN_MOD['WALLTIME'] = '18:00:00'
+
+
+    # Set names of the run file, open for writing
+
+    submit_file = 'submit_2GC_continue_clean_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')
@@ -58,24 +67,23 @@ def main():
 
     project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
 
-    targets = project_info['target_list'] 
-
-
-    SLURM_WSCLEAN_MOD = cfg.SLURM_WSCLEAN
-    SLURM_WSCLEAN_MOD['TIME'] = '18:00:00'
-
-    PBS_WSCLEAN_MOD = cfg.PBS_WSCLEAN
-    PBS_WSCLEAN_MOD['TIME'] = '18:00:00'
-
+    target_ids = project_info['target_ids'] 
+    target_names = project_info['target_names']
+    target_ms = project_info['target_ms']
 
     # Loop over targets
 
-    for target in targets:
+    codes = []
+    ii = 1
 
-        targetname = target[0]
+
+    for tt in range(0,len(target_ids)):
+
+
+        targetname = target_names[tt]
+        myms = target_ms[tt]
         filename_targetname = gen.scrub_target_name(targetname)
         code = gen.get_target_code(targetname)
-        myms = target[2].rstrip('/')
         mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask.fits'))
 
         print('------------------------------------------------------')

@@ -41,7 +41,7 @@ def main():
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
     SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN)
-    TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN)
+    MEQTREES_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MEQTREES_PATTERN)
 
  
     # Set names of the run and kill files, open run file for writing
@@ -94,7 +94,7 @@ def main():
     id_setup = 'SETUP'+code
     id_list.append(id_setup)
 
-    syscall = 'singularity exec '+TRICOLOUR_CONTAINER+' '
+    syscall = 'singularity exec '+MEQTREES_CONTAINER+' '
     syscall += 'python '+OXKAT+'/1GC_00_setup.py '+myms
 
     run_command = gen.job_handler(syscall=syscall,

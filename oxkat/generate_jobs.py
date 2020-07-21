@@ -59,7 +59,7 @@ def set_infrastructure(args):
         infrastructure = 'node'
         CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
     elif args[1].lower() == 'hippo':
-        infrastructire = 'hippo'
+        infrastructure = 'hippo'
         CONTAINER_PATH = None
 
     return infrastructure,CONTAINER_PATH

@@ -24,9 +24,12 @@ def now():
 
 
 def get_container(path,pattern):
+    
+    # For running without containers
+    if path is None:
+        return ''
 
     # Search for a file matching pattern in path
-
     path = path.rstrip('/')+'/'
     ll = sorted(glob.glob(path+'*'+pattern+'*img'))
     ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
@@ -55,6 +58,9 @@ def set_infrastructure(args):
     elif args[1].lower() == 'node':
         infrastructure = 'node'
         CONTAINER_PATH = cfg.NODE_CONTAINER_PATH
+    elif args[1].lower() == 'hippo':
+        infrastructire = 'hippo'
+        CONTAINER_PATH = None
 
     return infrastructure,CONTAINER_PATH
 
@@ -135,7 +141,7 @@ def job_handler(syscall,
                 # pbs_ppn=cfg.PBS_PPN,
                 # pbs_mem=cfg.PBS_MEM):
 
-    if infrastructure == 'idia':
+    if infrastructure == 'idia' or infrastructure == 'hippo':
 
         slurm_time = slurm_config['TIME']
         slurm_partition = slurm_config['PARTITION']
@@ -143,6 +149,15 @@ def job_handler(syscall,
         slurm_nodes = slurm_config['NODES']
         slurm_cpus = slurm_config['CPUS']
         slurm_mem = slurm_config['MEM']
+        
+        # HACK: Override idia settings if hippo here
+        # (really this should be broken down as slurm vs. non-slurm scheduler
+        if infrastructure == 'hippo':
+            if slurm_cpus < 20:
+                slurm_mem = '60000'
+            else:
+                slurm_mem = '64000'
+            syscall
 
         slurm_runfile = cfg.SCRIPTS+'/slurm_'+jobname+'.sh'
         slurm_logfile = cfg.LOGS+'/slurm_'+jobname+'.log'
@@ -212,6 +227,7 @@ def job_handler(syscall,
 
         node_logfile = cfg.LOGS+'/oxk_'+jobname+'.log'
         run_command = syscall+' | tee '+node_logfile
+        
 
     run_command += '\n'
 

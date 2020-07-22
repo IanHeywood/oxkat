@@ -35,6 +35,11 @@ def main():
     gen.setup_dir(SCRIPTS)
     gen.setup_dir(GAINTABLES)
 
+    # Enable running without containers
+    if CONTAINER_PATH is not None:
+        CONTAINER_RUNNER='singularity exec '
+    else:
+        CONTAINER_RUNNER=''
 
     # Get containers needed for this script
 
@@ -75,7 +80,7 @@ def main():
 
     casalog = LOGS+'/casa_1GC_'+id_average+'.log'
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
     syscall += gen.generate_syscall_casa(casascript=OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py',
                 casalogfile=casalog)
 
@@ -94,7 +99,7 @@ def main():
     id_setup = 'SETUP'+code
     id_list.append(id_setup)
 
-    syscall = 'singularity exec '+MEQTREES_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' '
     syscall += 'python '+OXKAT+'/1GC_00_setup.py '+myms
 
     run_command = gen.job_handler(syscall=syscall,
@@ -115,7 +120,7 @@ def main():
 
     casalog = LOGS+'/casa_1GC_'+id_fixvis+'.log'
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
     syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_01_casa_rephase_primary_calibrator.py',
                 casalogfile=casalog)
 
@@ -137,7 +142,7 @@ def main():
 
     casalog = LOGS+'/casa_1GC_'+id_basic+'.log'
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
     syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_02_casa_basic_flags.py',
                 casalogfile=casalog)
 
@@ -159,7 +164,7 @@ def main():
 
     casalog = LOGS+'/casa_1GC_'+id_autoflagcals+'.log'
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
     syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_03_casa_autoflag_cals_DATA.py',
                 casalogfile=casalog)
 
@@ -181,7 +186,7 @@ def main():
 
     casalog = LOGS+'/casa_1GC_'+id_splitcals+'.log'
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
     syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_04_casa_split_calibrators.py',
                 casalogfile=casalog)
 
@@ -203,7 +208,7 @@ def main():
 
     casalog = LOGS+'/casa_1GC_'+id_secondarymodel+'.log'
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
     syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_05_casa_get_secondary_model.py',
                 casalogfile=casalog)
 
@@ -224,7 +229,7 @@ def main():
 
     casalog = LOGS+'/casa_1GC_'+id_1GC+'.log'
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
     syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_06_casa_refcal_using_secondary_model.py',
                 casalogfile=casalog)
 
@@ -244,7 +249,7 @@ def main():
     id_gainplots = 'PLTAB'+code
     id_list.append(id_gainplots)
 
-    syscall = 'singularity exec '+RAGAVI_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' '
     syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_1GC_* cal_1GC_*calibrators.ms*'
 
     run_command = gen.job_handler(syscall=syscall,
@@ -265,7 +270,7 @@ def main():
 
     casalog = LOGS+'/casa_1GC_'+id_splittargets+'.log'
 
-    syscall = 'singularity exec '+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
     syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_07_casa_split_targets.py',
                 casalogfile=casalog)
 
@@ -285,7 +290,7 @@ def main():
     id_visplots = 'PLVIS'+code
     id_list.append(id_visplots)
 
-    syscall = 'singularity exec '+SHADEMS_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' '
     syscall += 'python3 '+OXKAT+'/1GC_08_plot_visibilities.py'
 
     run_command = gen.job_handler(syscall=syscall,
@@ -300,7 +305,7 @@ def main():
 
 
 
-    if INFRASTRUCTURE == 'idia':
+    if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
         kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
         f.write(kill)
     elif INFRASTRUCTURE == 'chpc':

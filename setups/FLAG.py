@@ -36,6 +36,11 @@ def main():
     gen.setup_dir(SCRIPTS)
     gen.setup_dir(IMAGES)
 
+    # Enable running without containers
+    if CONTAINER_PATH is not None:
+        CONTAINER_RUNNER='singularity exec '
+    else:
+        CONTAINER_RUNNER=''
 
     # Get containers needed for this script
 
@@ -110,7 +115,7 @@ def main():
             # STEP 1: 
             # Run Tricolour on targets
 
-            syscall = 'singularity exec '+TRICOLOUR_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' '
             syscall += gen.generate_syscall_tricolour(myms = myms,
                                     config = PARSETS+'/target_flagging_1_narrow.yaml',
                                     datacol = 'DATA',
@@ -133,7 +138,7 @@ def main():
             # STEP 2: 
             # wsclean with blind deconvolution
 
-            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                                     imgname = img_prefix,
                                     datacol = 'DATA',
@@ -159,7 +164,7 @@ def main():
             # STEP 3:
             # Make a FITS mask 
 
-            syscall = 'singularity exec '+MAKEMASK_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' '
             syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
                                     outfile = img_prefix+'-MFS-image.mask0.fits',
                                     zoompix = '')[0]
@@ -178,7 +183,7 @@ def main():
             # STEP 4:
             # Backup the flag table 
 
-            syscall = 'singularity exec '+CASA_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
             syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
             syscall += 'versionname=tricolour1 '
 

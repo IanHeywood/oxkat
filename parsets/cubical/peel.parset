@@ -66,10 +66,10 @@ legacy-v1-2 = False
 
 [flags]
 _Help = General flagging options
-apply = -cubical
-auto-init = legacy
-save = cubical
-save-legacy = auto
+apply = FLAG
+auto-init = None
+save = 0
+save-legacy = 1
 reinit-bitflags = False
 warn-thr = 0.3
 see-no-evil = 0

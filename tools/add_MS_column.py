@@ -7,11 +7,12 @@ from pyrap.tables import table
 
 
 def add_data_col(msname,colname):
-    tt = table(msname,readonly=False,ack=False)
+    tt = table(msname,readonly=False)
     colnames = tt.colnames()
     if colname in colnames:
-        print(col_name+' already exists, will not be created')
+        print(colname+' already exists, will not be created')
     else:
+        print('Adding '+colname+' to '+msname)
         desc = tt.getcoldesc('DATA')
         desc['name'] = colname
         desc['comment'] = desc['comment'].replace(' ','_')

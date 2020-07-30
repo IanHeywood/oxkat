@@ -245,6 +245,7 @@ WSC_PARALLELDECONVOLUTION = 2560 #
 
 MAKEMASK_THRESH = 6.0
 MAKEMASK_DILATION = 2
+MAKEMASK_BOXSIZE = 100
 
 
 # ------------------------------------------------------------------------

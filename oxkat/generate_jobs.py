@@ -403,6 +403,7 @@ def generate_syscall_makemask(restoredimage,
                             outfile = '',
                             thresh = cfg.MAKEMASK_THRESH,
                             dilation = cfg.MAKEMASK_DILATION,
+                            boxsize = cfg.MAKEMASK_BOXSIZE,
                             zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
@@ -414,6 +415,7 @@ def generate_syscall_makemask(restoredimage,
     syscall += 'python '+cfg.TOOLS+'/pyMakeMask.py '
     syscall += '--threshold='+str(thresh)+' '
     syscall += '--dilate='+str(dilation)+' '
+    syscall += '--boxsize='+str(boxsize)+' '
     syscall += '--outfile='+str(outfile)+' '
     syscall += restoredimage
 

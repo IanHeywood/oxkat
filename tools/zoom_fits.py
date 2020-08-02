@@ -46,7 +46,7 @@ def main():
 
     for infits in fitslist:
         print(infits)
-        syscall += 'singularity exec '+MEQTREES_CONTAINER+' fitstool.py -z 5450 '+infits
+        syscall += 'singularity exec '+MEQTREES_CONTAINER+' fitstool.py -z 5450 '+infits+'\n'
 
     write_slurm(opfile=slurmfile,
             jobname='makepngs',

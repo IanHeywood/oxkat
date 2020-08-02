@@ -2,6 +2,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import glob
 import numpy
 import shutil
 import sys

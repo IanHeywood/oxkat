@@ -16,6 +16,7 @@ def write_slurm(opfile,
     f.writelines(['#!/bin/bash\n',
         '#file: '+opfile+':\n',
         '#SBATCH --job-name='+jobname+'\n',
+        '#SBATCH --time=01:00:00\n',
         '#SBATCH --ntasks='+ntasks+'\n',
         '#SBATCH --nodes='+nodes+'\n',
         '#SBATCH --cpus-per-task='+cpus+'\n',
@@ -49,7 +50,7 @@ def main():
         syscall += 'singularity exec '+MEQTREES_CONTAINER+' fitstool.py -z 5450 '+infits+'\n'
 
     write_slurm(opfile=slurmfile,
-            jobname='makepngs',
+            jobname='zoomfits',
             logfile=logfile,
             container=MEQTREES_CONTAINER,
             syscall=syscall)

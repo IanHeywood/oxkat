@@ -43,7 +43,7 @@ def main():
     parser.add_option('--pbfits', dest = 'pbfits', help = 'Primary beam FITS image')
     parser.add_option('--pattern', dest = 'pattern', help = 'Pattern for images to correct')
     parser.add_option('--threshold', dest = 'threshold', help = 'Primary beam cutoff (default = 0.3)')
-    parser.add_option('--doweight', dest = 'doweight', help = 'Save a weight image for mosaicking', action = store_true, default = False)
+    parser.add_option('--doweight', dest = 'doweight', help = 'Save a weight image for mosaicking', action = 'store_true', default = False)
 
     (options,args) = parser.parse_args()
     pbimage = options.pbimage

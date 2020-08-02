@@ -4,6 +4,7 @@
 
 import glob
 import numpy
+import os
 import shutil
 import sys
 from astropy.io import fits

@@ -46,7 +46,7 @@ def main():
     parser.add_option('--doweight', dest = 'doweight', help = 'Save a weight image for mosaicking', action = 'store_true', default = False)
 
     (options,args) = parser.parse_args()
-    pbimage = options.pbimage
+    pbfits = options.pbfits
     pattern = options.pattern
     threshold = float(options.threshold)
     doweight = options.doweight

@@ -20,6 +20,7 @@ BIND = '$PWD' # comma separated list of paths to mount for singularity environme
 
 IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'
 CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
+HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = HOME+'/containers/'
 
 
@@ -210,10 +211,14 @@ WSC_CONTINUE = False
 WSC_FIELD = 0
 WSC_STARTCHAN = -1
 WSC_ENDCHAN = -1
+WSC_MINUVL = ''
+WSC_MAXUVL = ''
 WSC_CHANNELSOUT = 8
+WSC_JOINCHANNELS = True
 WSC_IMSIZE = 10240
 WSC_CELLSIZE = '1.1asec'
 WSC_BRIGGS = -0.3
+WSC_TAPERGAUSSIAN = ''
 WSC_NITER = 120000
 WSC_GAIN = 0.1
 WSC_MGAIN = 0.85
@@ -275,7 +280,7 @@ DDF_DIAMMAX = 0.25
 DDF_DIAMMIN = 0.05
 DDF_NFACETS = 16 # crank this up (32?) to get better beam resolution if FITS beam is used
 DDF_PSFOVERSIZE = 1.5
-DDF_PADDING = 1.7 # padding needs increasing from default if NFacets is raised to prevent aliasing
+DDF_PADDING = 2.0 # padding needs increasing from default if NFacets is raised to prevent aliasing
 # [Weight]
 DDF_ROBUST = -0.3
 # [Comp]

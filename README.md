@@ -75,7 +75,7 @@
 
 8. Once this has completed then examine the products, and move to the next steps in the same fashion. 
 
-Please see the [setups README](setups/README.md) for more details. The [config](oxkat/config.py) 
+Please see the [setups README](setups/README.md) for more details. Most of the settings can be tuned via the [config.py](oxkat/config.py) file.
 
 ---
 
@@ -109,13 +109,13 @@ Models for the MeerKAT primary beam at L-band can be downloaded from [here](http
 
 ## Notes
 
-* This was originally just a place to store my MeerKAT processing recipes. Several people have since found these scripts useful, and I hope that you do too. I have spent time on text such as this and tried to improve user-friendliness in that hope. But please note that everything here is subject to change.
+* This was originally just a place to store my MeerKAT processing scripts. Several people have since found these scripts useful, and I hope that you do too. I have spent time on text such as this and tried to improve user-friendliness in that hope. But please note that everything here is subject to change.
 
 
-* The standard setup scripts should do a decent job on fields that are dominated by compact sources (e.g. extragalactic deep fields). Pointings that contain morphologically complex emission (e.g. the Galactic Plane) benefit from iterative deconvolution runs with manual or thresholded masking.
+* The standard setup scripts should do a decent job on fields that are dominated by compact sources (e.g. extragalactic deep fields). Pointings that contain morphologically complex emission (e.g. the Galactic Plane) benefit from iterative deconvolution runs with manual or thresholded masking. Fields that contain particularly strong compact sources also tend to require some more careful intervention.
 
 
-* A revised setup script for 3GC calibration is pending.
+* A revised approach to 3GC processing is pending.
 
 
 * Please file bugs / suggestions etc. as [issues](https://github.com/IanHeywood/oxkat/issues).

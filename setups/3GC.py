@@ -179,7 +179,7 @@ def main():
                         nodesfile=region+'.npy')
 
             run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_killms1,
+                        jobname=id_killms,
                         dependency=id_ddfacet1,
                         infrastructure=INFRASTRUCTURE,
                         slurm_config = cfg.SLURM_HIGHMEM,

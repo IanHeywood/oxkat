@@ -29,6 +29,7 @@ def main():
     else:
         myNCPU = 40
 
+
     # Get paths from config and setup folders
 
     CWD = cfg.CWD
@@ -55,7 +56,7 @@ def main():
     # Get containers needed for this script
 
     DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
-    KILLMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.KILLMS_CONTAINER)
+    KILLMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.KILLMS_PATTERN)
 
     # Set names of the run and kill files, open run file for writing
 

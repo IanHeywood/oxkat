@@ -610,7 +610,7 @@ def generate_syscall_killms(myms,
                         baseimg,
                         outsols,
                         nodesfile,
-                        dicomodel,
+                        dicomodel = cfg.KMS_DICOMODEL,
                         tchunk = cfg.KMS_TCHUNK,
                         incol = cfg.KMS_INCOL,
                         outcol = cfg.KMS_OUTCOL,
@@ -656,7 +656,8 @@ def generate_syscall_killms(myms,
         syscall+= '--FITSFeedSwap '+str(fitsfeedswap)+' '
     # [ImageSkyModel]
     syscall+= '--BaseImageName '+baseimg+' '
-    syscall+= '--DicoModel '+dicomodel+' '
+    if dicomodel != '':
+        syscall+= '--DicoModel '+dicomodel+' '
     syscall+= '--NodesFile '+nodesfile+' '
     syscall+= '--MaxFacetSize '+str(maxfacetsize)+' '
     # [DataSelection]

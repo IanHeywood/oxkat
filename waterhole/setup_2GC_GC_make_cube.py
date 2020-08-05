@@ -121,7 +121,7 @@ def main():
                     tapergaussian = 8,
                     joinchannels = False,
                     fitspectralpol = 0,
-                    niter = 400000,
+                    niter = 500000,
                     bda = True,
                     mask = mask)
 

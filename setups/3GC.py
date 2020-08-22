@@ -23,7 +23,7 @@ def main():
 
 
     if INFRASTRUCTURE == 'idia':
-        myNCPU = 32
+        myNCPU = 8
     elif INFRASTRUCTURE == 'chpc':
         myNCPU = 23
     else:

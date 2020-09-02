@@ -2,6 +2,7 @@ import numpy
 import scipy.ndimage
 import scipy.special
 import shutil
+import sys
 from astropy.io import fits
 from optparse import OptionParser
 from scipy.ndimage.morphology import binary_dilation

@@ -27,7 +27,7 @@ def copycol(msname,fromcol,tocol,rowchunk):
     nrows = tt.nrows()
     for start_row in range(0,nrows,rowchunk):
         nr = min(rowchunk,nrows-start_row)
-        print('Processing rows:',start_row,' to ',(start_row+num_rows))
+        print('Processing rows:',start_row,' to ',(start_row+nrows))
         tt.putcol(tocol,tt.getcol(fromcol,start_row,nr),start_row,nr)
 
 

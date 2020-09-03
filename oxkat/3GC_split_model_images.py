@@ -214,7 +214,7 @@ def main():
         flush_fits(dir1,dir1_fits)
 
         if subtract:
-            subt = img*~mask
+            subt = img*(1.0-mask)
             print('Writing       : '+subtract_fits)
             shutil.copyfile(fits_file,subtract_fits)
             flush_fits(subt,subtract_fits)

@@ -1,0 +1,13 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+circle(22:14:26.1809,-17:02:22.577,22.877")
+circle(22:14:24.8012,-17:01:00.156,20.303")
+circle(22:14:25.8171,-17:01:05.047,11.857")
+circle(22:14:25.2973,-17:01:23.452,8.239")
+circle(22:14:25.5627,-17:01:39.066,10.751")
+circle(22:14:26.0964,-17:01:49.316,10.572")
+circle(22:14:26.6480,-17:01:59.054,8.925")
+circle(22:14:25.7195,-17:02:05.934,11.152")
+circle(22:14:25.4536,-17:01:53.902,0.000")
+circle(22:14:26.7092,-17:01:03.283,0.000")

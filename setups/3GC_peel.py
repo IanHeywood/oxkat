@@ -34,7 +34,7 @@ def main():
     LOGS = cfg.LOGS
     SCRIPTS = cfg.SCRIPTS
 
-    BINDPATH = CWD+','+BIND
+    BINDPATH = '$PWD,'+CWD+','+BIND
 
     gen.setup_dir(LOGS)
     gen.setup_dir(SCRIPTS)

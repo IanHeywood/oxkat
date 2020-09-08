@@ -54,7 +54,7 @@ def main():
     doweight = options.doweight
 
     pbimg = getImage(pbfits)
-    mask = pbimg < 0.3
+    mask = pbimg < threshold
     pbimg[mask] = numpy.nan
 
     fitslist = glob.glob(pattern)

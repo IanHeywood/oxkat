@@ -492,7 +492,7 @@ def generate_syscall_ddfacet(mspattern,
                           ddmodegrid = cfg.DDF_DDMODEGRID,
                           ddmodedegrid = cfg.DDF_DDMODEDEGRID,
                           gain = cfg.DDF_GAIN,
-                          threshold = cfg.DDF_THRESHOLD,
+                          fluxthreshold = cfg.DDF_FLUXTHRESHOLD,
                           cyclefactor = cfg.DDF_CYCLEFACTOR,
                           rmsfactor = cfg.DDF_RMSFACTOR,
                           deconvmode = cfg.DDF_DECONVMODE,
@@ -572,7 +572,7 @@ def generate_syscall_ddfacet(mspattern,
         syscall += '--DDESolutions-DDModeDeGrid '+ddmodedegrid+' '
     # [Deconv]
     syscall += '--Deconv-Gain '+str(gain)+' '
-    syscall += '--Deconv-Threshold '+str(threshold)+' '
+    syscall += '--Deconv-FluxThreshold '+str(fluxthreshold)+' '
     syscall += '--Deconv-CycleFactor '+str(cyclefactor)+' '
     syscall += '--Deconv-RMSFactor '+str(rmsfactor)+' '
     if deconvmode.lower() == 'ssd':
@@ -610,7 +610,7 @@ def generate_syscall_killms(myms,
                         baseimg,
                         outsols,
                         nodesfile,
-                        dicomodel,
+                        dicomodel = cfg.KMS_DICOMODEL,
                         tchunk = cfg.KMS_TCHUNK,
                         incol = cfg.KMS_INCOL,
                         outcol = cfg.KMS_OUTCOL,
@@ -656,7 +656,8 @@ def generate_syscall_killms(myms,
         syscall+= '--FITSFeedSwap '+str(fitsfeedswap)+' '
     # [ImageSkyModel]
     syscall+= '--BaseImageName '+baseimg+' '
-    syscall+= '--DicoModel '+dicomodel+' '
+    if dicomodel != '':
+        syscall+= '--DicoModel '+dicomodel+' '
     syscall+= '--NodesFile '+nodesfile+' '
     syscall+= '--MaxFacetSize '+str(maxfacetsize)+' '
     # [DataSelection]

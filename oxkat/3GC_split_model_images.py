@@ -159,11 +159,12 @@ def main():
     parser = OptionParser(usage = '%prog [options]')
     parser.add_option('--region', dest = 'region_file', help = 'DS9 region file')
     parser.add_option('--prefix', dest = 'model_pattern', help = 'wsclean image prefix')
+    parser.add_option('--subtract', dest = 'subtract', help = 'Produce model image with components within region subtracted (default = False)', action = 'store_true', default = False)
     (options,args) = parser.parse_args()
     region_file = options.region_file
     model_pattern = options.model_pattern
+    subtract = options.subtract
 
-#    region_file = '/mnt/hgfs/heywood/Astro/Scripts/oxkat/parsets/PKS0326-288.reg'
     circles = process_region_file(region_file)
     suffix = region_file.split('/')[-1].split('.')[0]
 
@@ -180,6 +181,9 @@ def main():
         print('Reading       : '+fits_file)
 
         dir1_fits = fits_file.replace(model_pattern,model_pattern+'-'+suffix)
+
+        if subtract:
+            subtract_fits = fits_file.replace(model_pattern,model_pattern+'-'+suffix+'-subtracted')
 
         img = get_image(fits_file)
         mask = img*0.0
@@ -208,6 +212,13 @@ def main():
         print('Writing       : '+dir1_fits)
         shutil.copyfile(fits_file,dir1_fits)
         flush_fits(dir1,dir1_fits)
+
+        if subtract:
+            subt = img*(1.0-mask)
+            print('Writing       : '+subtract_fits)
+            shutil.copyfile(fits_file,subtract_fits)
+            flush_fits(subt,subtract_fits)
+
 
         spacer()
 

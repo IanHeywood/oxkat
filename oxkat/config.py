@@ -15,7 +15,7 @@ HOME = os.path.expanduser('~')
 #
 
 
-# CWD will be added to $SINGULARITY_BINDPATH by default.
+# $PWD and CWD will be added to $SINGULARITY_BINDPATH by default.
 # If your data are symlinked and located in a path that singularity
 # cannot see by default then set BIND to that path.
 # If you wish to bind multiple paths then use a comma-separated list.

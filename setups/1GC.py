@@ -25,11 +25,14 @@ def main():
     # Get paths from config and setup folders
 
     CWD = cfg.CWD
+    BIND = cfg.BIND
     OXKAT = cfg.OXKAT
     PARSETS = cfg.PARSETS
     GAINTABLES = cfg.GAINTABLES
     LOGS = cfg.LOGS
     SCRIPTS = cfg.SCRIPTS
+
+    BINDPATH = '$PWD,'+CWD+','+BIND
 
     gen.setup_dir(LOGS)
     gen.setup_dir(SCRIPTS)
@@ -56,6 +59,7 @@ def main():
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')
+    f.write('export SINGULARITY_BINDPATH='+BINDPATH+'\n')
 
 
     # Get the MS name

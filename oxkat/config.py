@@ -15,7 +15,11 @@ HOME = os.path.expanduser('~')
 #
 
 
-BIND = '$PWD' # comma separated list of paths to mount for singularity environment
+# $PWD and CWD will be added to $SINGULARITY_BINDPATH by default.
+# If your data are symlinked and located in a path that singularity
+# cannot see by default then set BIND to that path.
+# If you wish to bind multiple paths then use a comma-separated list.
+BIND = ''
 
 
 IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'

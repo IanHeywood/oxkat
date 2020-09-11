@@ -177,8 +177,7 @@ def main():
 
     print('Reading       : '+fits_file)
 
-    masked_fits = fits_file.replace(model_pattern,model_pattern+'-'+suffix)
-
+    masked_fits = fits_file.replace('.fits','-'+suffix+'.fits')
 
     img = get_image(fits_file)
     mask = img*0.0

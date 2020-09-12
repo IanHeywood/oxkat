@@ -33,7 +33,7 @@ else:
 mstransform(vis=myms,
 	outputvis=opms,
 	field=field_selection,
-	datacolumn='data',
+	datacolumn='all',
 	chanaverage=mychanave,
 	chanbin=mychanbin,
 	regridms=True,

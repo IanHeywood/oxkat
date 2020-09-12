@@ -172,7 +172,7 @@ CAL_1GC_SECONDARIES = 'auto'         # Comma-separated secondary IDs
                                      # - A length mismatch reverts to auto, so double check!
 
 # Sky model for primary calibrator --- EXPERIMENTAL
-CAL_1GC_PRIMARY_MODEL = ''           # setjy = use setjy component model only
+CAL_1GC_PRIMARY_MODEL = 'auto'           # setjy = use setjy component model only
                                      # auto = try to find a suitable model of the field sources, defer to setjy if not found
                                      # or specify the location/of/wsclean-prefix for an arbitrary model cube
 

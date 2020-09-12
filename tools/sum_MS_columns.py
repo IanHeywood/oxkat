@@ -6,7 +6,7 @@ import sys
 from optparse import OptionParser
 from pyrap.tables import table
 
-s
+
 def sumcol(msname,src,dest,subtract,rowchunk):
 
     tt = table(msname,readonly=False)
@@ -41,7 +41,7 @@ def main():
     parser = OptionParser(usage = '%prog [options] msname')
     parser.add_option('--src', dest = 'src', help = 'Name of source column.')
     parser.add_option('--dest', dest = 'dest', help = 'Name of destination column to which source column will be added.')
-    parser.add_option('--subtract' dest = 'subtract', default = False, help = 'Enable to subtract source column from destination column.', action = 'store_true')
+    parser.add_option('--subtract', dest = 'subtract', default = False, help = 'Enable to subtract source column from destination column.', action = 'store_true')
     parser.add_option('--rowchunk', dest = 'rowchunk', default = 500000, help = 'Number of chunks to process at once (default = 500000)')
     (options,args) = parser.parse_args()
     src = options.src

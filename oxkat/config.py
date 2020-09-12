@@ -15,11 +15,7 @@ HOME = os.path.expanduser('~')
 #
 
 
-# $PWD and CWD will be added to $SINGULARITY_BINDPATH by default.
-# If your data are symlinked and located in a path that singularity
-# cannot see by default then set BIND to that path.
-# If you wish to bind multiple paths then use a comma-separated list.
-BIND = ''
+BIND = '$PWD' # comma separated list of paths to mount for singularity environment
 
 
 IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'
@@ -51,7 +47,7 @@ WSCLEANIDG_PATTERN = 'wsclean*idg'
 
 
 OXKAT = CWD+'/oxkat'
-PARSETS = CWD+'/parsets'
+DATA = CWD+'/data'
 TOOLS = CWD+'/tools'
 
 GAINPLOTS = CWD+'/GAINPLOTS'
@@ -175,6 +171,11 @@ CAL_1GC_SECONDARIES = 'auto'         # Comma-separated secondary IDs
                                      # - A single ID in uses same secondary for all targets
                                      # - A length mismatch reverts to auto, so double check!
 
+# Sky model for primary calibrator --- EXPERIMENTAL
+CAL_1GC_PRIMARY_MODEL = ''           # setjy = use setjy component model only
+                                     # auto = try to find a suitable model of the field sources, defer to setjy if not found
+                                     # or specify the location/of/wsclean-prefix for an arbitrary model cube
+
 # GBK settings
 CAL_1GC_UVRANGE = '>150m'            # Selection for baselines to include during 1GC B/G solving (K excluded)
 CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on secondaries weaker than this
@@ -201,8 +202,8 @@ CAL_2GC_APSOLINT = 'inf'             # Solution interval for amplitude and phase
 
 CAL_3GC_PEEL_NCHAN = 32
 CAL_3GC_PEEL_DIR1COLNAME = 'DIR1_DATA'
-CAL_3GC_PEEL_REGION = PARSETS+'/peeling/PKS0326-288.reg'
-CAL_3GC_PEEL_PARSET = PARSETS+'/cubical/peel.parset'
+CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288.reg'
+CAL_3GC_PEEL_PARSET = DATA+'/cubical/peel.parset'
 
 
 # ------------------------------------------------------------------------

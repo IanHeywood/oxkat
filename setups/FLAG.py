@@ -27,7 +27,7 @@ def main():
     CWD = cfg.CWD
     BIND = cfg.BIND
     OXKAT = cfg.OXKAT
-    PARSETS = cfg.PARSETS
+    DATA = cfg.DATA
     TOOLS = cfg.TOOLS
     IMAGES = cfg.IMAGES
     LOGS = cfg.LOGS
@@ -121,7 +121,7 @@ def main():
 
             syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' '
             syscall += gen.generate_syscall_tricolour(myms = myms,
-                                    config = PARSETS+'/tricolour/target_flagging_1_narrow.yaml',
+                                    config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
                                     datacol = 'DATA',
                                     fields = '0',
                                     strategy = 'polarisation')

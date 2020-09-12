@@ -27,7 +27,7 @@ def main():
     CWD = cfg.CWD
     BIND = cfg.BIND
     OXKAT = cfg.OXKAT
-    PARSETS = cfg.PARSETS
+    DATA = cfg.DATA
     GAINTABLES = cfg.GAINTABLES
     LOGS = cfg.LOGS
     SCRIPTS = cfg.SCRIPTS

@@ -20,7 +20,7 @@ HOME = os.path.expanduser('~')
 # cannot see by default then set BIND to that path.
 # If you wish to bind multiple paths then use a comma-separated list.
 BIND = ''
-
+BINDPATH = '$PWD,'+CWD+','+BIND
 
 IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'
 CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'

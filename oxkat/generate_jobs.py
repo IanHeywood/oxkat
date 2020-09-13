@@ -239,10 +239,11 @@ def job_handler(syscall,
     return run_command
 
 
-def generate_syscall_casa(casascript,casalogfile,extra_args=''):
+def generate_syscall_casa(casascript,casalogfile='',extra_args=''):
 
     syscall = 'casa -c '+casascript+' '
-    syscall += '--logfile '+casalogfile+' '
+    if casalogfile != '':
+        syscall += '--logfile '+casalogfile+' '
     syscall += '--nogui '
     if extra_args != '':
       syscall += extra_args

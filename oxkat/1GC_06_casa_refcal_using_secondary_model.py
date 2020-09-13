@@ -67,34 +67,34 @@ secondary_mapping = secondary_pickle[1]
 
 
 # ------- Setup models
+# Now handled by separate scripts
 
-
-if primary_tag == '1934':
-    setjy(vis=myms,
-        field=bpcal_name,
-        standard='Stevens-Reynolds 2016',
-        scalebychan=True,
-        usescratch=True)
+# if primary_tag == '1934':
+#     setjy(vis=myms,
+#         field=bpcal_name,
+#         standard='Stevens-Reynolds 2016',
+#         scalebychan=True,
+#         usescratch=True)
     
     
-elif primary_tag == '0408':
-    bpcal_mod = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
-    setjy(vis=myms,
-        field=bpcal_name,
-        standard='manual',
-        fluxdensity=bpcal_mod[0],
-        spix=bpcal_mod[1],
-        reffreq=bpcal_mod[2],
-        scalebychan=True,
-        usescratch=True)
+# elif primary_tag == '0408':
+#     bpcal_mod = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
+#     setjy(vis=myms,
+#         field=bpcal_name,
+#         standard='manual',
+#         fluxdensity=bpcal_mod[0],
+#         spix=bpcal_mod[1],
+#         reffreq=bpcal_mod[2],
+#         scalebychan=True,
+#         usescratch=True)
 
 
-elif primary_tag == 'other':
-    setjy(vis=myms,
-        field=bpcal_name,
-        standard='Perley-Butler 2010',
-        scalebychan=True,
-        usescratch=True)
+# elif primary_tag == 'other':
+#     setjy(vis=myms,
+#         field=bpcal_name,
+#         standard='Perley-Butler 2010',
+#         scalebychan=True,
+#         usescratch=True)
 
 
 # ------- K0 (primary)

@@ -38,7 +38,7 @@ def main():
             tf.extractall(path=CALMODELPATH)
             fitslist = sorted(glob.glob(CALMODELPATH+'*'+primary_tag+'*.fits'))
             nchan = len(fitslist)
-            prefix = fitslist[0].split('-00')[-1]
+            prefix = fitslist[0].split('-00')[0]
             print('Prefix '+prefix+' has '+str(nchan)+' frequency planes')
         else:
             print('No model images found for '+primary_name)

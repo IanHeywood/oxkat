@@ -244,6 +244,8 @@ def generate_syscall_casa(casascript,casalogfile='',extra_args=''):
     syscall = 'casa -c '+casascript+' '
     if casalogfile != '':
         syscall += '--logfile '+casalogfile+' '
+    else:
+        syscall += '--log2term '
     syscall += '--nogui '
     if extra_args != '':
       syscall += extra_args

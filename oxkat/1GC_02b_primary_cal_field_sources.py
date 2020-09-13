@@ -56,7 +56,7 @@ def main():
             print('Prefix '+prefix+' has '+str(nchan)+' frequency planes')
 
     if prefix != '':
-        syscall = gen.generate_syscall_predict(msname=myms,imgbase=prefix,chanout=nchan)
+        syscall = gen.generate_syscall_predict(msname=myms,imgbase=prefix,field=primary_id,chanout=nchan)
         os.system(syscall)
 
 if __name__ == "__main__":

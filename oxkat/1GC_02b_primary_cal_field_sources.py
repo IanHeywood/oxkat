@@ -19,7 +19,7 @@ def main():
 
 
     DATA = cfg.DATA
-
+    CALMODELPATH = DATA+'/calmodels/'
 
     project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
     myms = project_info['master_ms']
@@ -29,13 +29,13 @@ def main():
 
 
     if cfg.CAL_1GC_PRIMARY_MODEL == 'auto':
-        caltar = glob.glob(DATA+'/calmodels/*'+primary_tag+'*.tar.gz')
+        caltar = glob.glob(CALMODELPATH+'*'+primary_tag+'*.tar.gz')
         if len(caltar) == 1:
             caltar = caltar[0]
             print('Found '+caltar+', untarring...')
             tf = tarfile.open(caltar)
-            tf.extractall()
-            fitslist = sorted(glob.glob(DATA+'/calmodels/*'+primary_tag+'*.fits'))
+            tf.extractall(path=CALMODELPATH)
+            fitslist = sorted(glob.glob(CALMODELPATH+'*'+primary_tag+'*.fits'))
             nchan = len(fitslist)
             prefix = fitslist[0].split('-00')[-1]
             print('Prefix '+prefix+' has '+str(nchan)+' frequency planes')

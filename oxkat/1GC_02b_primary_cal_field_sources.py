@@ -57,6 +57,7 @@ def main():
 
     if prefix != '':
         syscall = gen.generate_syscall_predict(msname=myms,imgbase=prefix,field=primary_id,chanout=nchan)
+        print(syscall)
         os.system(syscall)
 
 if __name__ == "__main__":

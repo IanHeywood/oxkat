@@ -23,28 +23,40 @@ def main():
 
     project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
     myms = project_info['master_ms']
-    bpcal = project_info['primary_id']
+    primary_id = project_info['primary_id']
+    primary_field = project_info['primary_field']
     primary_tag = project_info['primary_tag']
 
 
     if cfg.CAL_1GC_PRIMARY_MODEL == 'auto':
-        # Attempt to find a suitable model
+        caltar = glob.glob(DATA+'/calmodels/*'+primary_tag+'*.tar.gz')
+        if len(caltar) == 1:
+            caltar = caltar[0]
+            print('Found '+caltar+', untarring...')
+            tf = tarfile.open(caltar)
+            tf.extractall()
+            fitslist = sorted(glob.glob(DATA+'/calmodels/*'+primary_tag+'*.fits'))
+            nchan = len(fitslist)
+            prefix = fitslist[0].split('-00')[-1]
+            print('Prefix '+prefix+' has '+str(nchan)+' frequency planes')
+        else:
+            print('No model images found for '+primary_field)
+    elif cfg.CAL_1GC_PRIMARY_MODEL == 'setjy':
+        print('Component model for setjy requested, no additional image-based model prediction will be done.')
+        prefix = ''
+    else:
+        prefix = cfg.CAL_1GC_PRIMARY_MODEL
+        fitslist = sorted(glob.glob(prefix+'*.fits'))
+        if len(fitslist) == 0:
+            print('No FITS images found matching '+prefix+'*.fits')
+            prefix = ''
+        else:
+            nchan = len(fitslist)
+            print('Prefix '+prefix+' has '+str(nchan)+' frequency planes')
 
-
-
-    plots = [('--xaxis CORRECTED_DATA:real:XX,CORRECTED_DATA:real:YY --yaxis CORRECTED_DATA:imag:XX,CORRECTED_DATA:imag:YY'),
-#        ('--xaxis FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY --iter-scan --colour-by ANTENNA1')
-        ('--xaxis FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY'),
-        ('--xaxis UV,UV,UV,UV --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY,CORRECTED_DATA:phase:XX,CORRECTED_DATA:phase:YY')]
-
-
-    shadems_base = 'shadems --profile --dir '+VISPLOTS+' '
-
-    for field in fields:
-        for plot in plots:
-            syscall = shadems_base+' '+plot+' --field '+str(field)+' '+myms
-            subprocess.run([syscall],shell=True)
-
+    if prefix != '':
+        syscall = gen.generate_syscall_predict(msname=myms,imgbase=prefix,chanout=nchan)
+        os.system(syscall)
 
 if __name__ == "__main__":
 

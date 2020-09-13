@@ -186,19 +186,25 @@ def main():
         id_list.append(step_id)
         if step['dependency'] is not None:
             dependency = steps[step['dependency']]['id']
+        else:
+            dependency = None
         syscall = step['syscall']
-        if step['slurm_config'] in step.keys():
+        if 'slurm_config' in step.keys():
             slurm_config = step['slurm_config']
-        if step['pbs_config'] in step.keys():
+        else:
+            slurm_config = cfg.SLURM_DEFAULTS
+        if 'pbs_config' in step.keys():
             pbs_config = step['pbs_config']
+        else:
+            pbs_config = cfg.PBS_DEFAULTS
         comment = step['comment']
 
         run_command = gen.job_handler(syscall = syscall,
-                        jobname = id_wsclean,
+                        jobname = step_id,
                         infrastructure = INFRASTRUCTURE,
-                        dependency = id_tricolour,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
+                        dependency = dependency,
+                        slurm_config = slurm_config,
+                        pbs_config = pbs_config)
 
 
         f.write('\n# '+comment+'\n')

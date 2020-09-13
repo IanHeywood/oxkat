@@ -7,9 +7,13 @@ from optparse import OptionParser
 from pyrap.tables import table
 
 
-def sumcol(msname,src,dest,subtract,rowchunk):
+def sumcol(msname,src,dest,field,subtract,rowchunk):
 
-    tt = table(msname,readonly=False)
+    if field == '': 
+        tt = table(msname,readonly=False)
+    else:
+        t0 = table(msname,readonly=False)
+        tt = t0.query(query='FIELD_ID=='+str(field))
 
     colnames = tt.colnames()
     if src not in colnames or dest not in colnames:
@@ -34,6 +38,9 @@ def sumcol(msname,src,dest,subtract,rowchunk):
             dest_data += src_data
         tt.putcol(dest,dest_data,start_row,nr)
 
+    tt.done()
+    if field != '': t0.done()
+
 
 def main():
 
@@ -41,11 +48,13 @@ def main():
     parser = OptionParser(usage = '%prog [options] msname')
     parser.add_option('--src', dest = 'src', help = 'Name of source column.')
     parser.add_option('--dest', dest = 'dest', help = 'Name of destination column to which source column will be added.')
+    parser.add_option('--field', dest = 'field', default = '', help = 'Field selection (default = all fields)')
     parser.add_option('--subtract', dest = 'subtract', default = False, help = 'Enable to subtract source column from destination column.', action = 'store_true')
     parser.add_option('--rowchunk', dest = 'rowchunk', default = 500000, help = 'Number of chunks to process at once (default = 500000)')
     (options,args) = parser.parse_args()
     src = options.src
     dest = options.dest
+    field = options.field
     subtract = options.subtract
     rowchunk = int(options.rowchunk)
 
@@ -57,7 +66,7 @@ def main():
         msname = args[0].rstrip('/')
 
 
-    sumcol(msname,src,dest,subtract,rowchunk)
+    sumcol(msname,src,dest,field,subtract,rowchunk)
 
 
 

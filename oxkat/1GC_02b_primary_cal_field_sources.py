@@ -53,6 +53,7 @@ def main():
             prefix = ''
         else:
             nchan = len(fitslist)
+            prefix = fitslist[0].split('-00')[0]
             print('Prefix '+prefix+' has '+str(nchan)+' frequency planes')
 
     if prefix != '':

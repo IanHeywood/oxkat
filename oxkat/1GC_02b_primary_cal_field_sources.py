@@ -19,6 +19,9 @@ from oxkat import config as cfg
 def main():
 
 
+    remove_models = True
+
+
     DATA = cfg.DATA
     CALMODELPATH = DATA+'/calmodels/'
 
@@ -57,8 +60,13 @@ def main():
 
     if prefix != '':
         syscall = gen.generate_syscall_predict(msname=myms,imgbase=prefix,field=primary_id,chanout=nchan)
-        print(syscall)
+        print(syscal)
         os.system(syscall)
+        if remove_models:
+            for item in fitslist:
+                print('Removing '+item)
+                os.remove(item)
+
 
 if __name__ == "__main__":
 

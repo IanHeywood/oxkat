@@ -24,7 +24,7 @@ def main():
     project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
     myms = project_info['master_ms']
     primary_id = project_info['primary_id']
-    primary_field = project_info['primary_field']
+    primary_name = project_info['primary_name']
     primary_tag = project_info['primary_tag']
 
 
@@ -40,7 +40,7 @@ def main():
             prefix = fitslist[0].split('-00')[-1]
             print('Prefix '+prefix+' has '+str(nchan)+' frequency planes')
         else:
-            print('No model images found for '+primary_field)
+            print('No model images found for '+primary_name)
     elif cfg.CAL_1GC_PRIMARY_MODEL == 'setjy':
         print('Component model for setjy requested, no additional image-based model prediction will be done.')
         prefix = ''

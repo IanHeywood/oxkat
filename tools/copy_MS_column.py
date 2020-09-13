@@ -49,7 +49,7 @@ def main():
     (options,args) = parser.parse_args()
     fromcol = options.fromcol
     tocol = options.tocol
-    field = options.tocol
+    field = options.field
     rowchunk = int(options.rowchunk)
 
 

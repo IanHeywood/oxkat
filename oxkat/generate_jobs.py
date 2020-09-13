@@ -405,8 +405,8 @@ def generate_syscall_predict(msname,
                             field = cfg.WSC_FIELD,
                             nwlayersfactor = cfg.WSC_NWLAYERSFACTOR,
                             chanout = cfg.WSC_CHANNELSOUT,
-                            imsize = cfg.WSC_IMSIZE,
-                            cellsize = cfg.WSC_CELLSIZE,
+#                            imsize = cfg.WSC_IMSIZE,
+#                            cellsize = cfg.WSC_CELLSIZE,
 #                            predictchannels = cfg.WSC_PREDICTCHANNELS,
                             mem = cfg.WSC_MEM):
 
@@ -418,8 +418,8 @@ def generate_syscall_predict(msname,
     syscall += '-field '+str(field)+' '
     syscall += '-nwlayers-factor '+str(nwlayersfactor)+' '
     syscall += '-channels-out '+str(chanout)+' '
-    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
-    syscall += '-scale '+cellsize+' '
+#    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
+#    syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
     syscall += '-mem '+str(mem)+' '
 #    syscall += '-predict-channels '+str(predictchannels)+' '

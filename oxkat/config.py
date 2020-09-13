@@ -15,7 +15,11 @@ HOME = os.path.expanduser('~')
 #
 
 
-BIND = '$PWD' # comma separated list of paths to mount for singularity environment
+# $PWD and CWD will be added to $SINGULARITY_BINDPATH by default.
+# If your data are symlinked and located in a path that singularity
+# cannot see by default then set BIND to that path.
+# If you wish to bind multiple paths then use a comma-separated list.
+BIND = ''
 
 
 IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'
@@ -172,8 +176,8 @@ CAL_1GC_SECONDARIES = 'auto'         # Comma-separated secondary IDs
                                      # - A length mismatch reverts to auto, so double check!
 
 # Sky model for primary calibrator --- EXPERIMENTAL
-CAL_1GC_PRIMARY_MODEL = 'auto'           # setjy = use setjy component model only
-                                     # auto = try to find a suitable model of the field sources, defer to setjy if not found
+CAL_1GC_PRIMARY_MODEL = 'auto'       # setjy = use setjy component model only
+                                     # auto = try to find a suitable model of the field sources in data/calmodels, defer to setjy if not found
                                      # or specify the location/of/wsclean-prefix for an arbitrary model cube
 
 # GBK settings

@@ -16,6 +16,13 @@ from oxkat import config as cfg
 def main():
 
 
+    # ------------------------------------------------------------------------------
+    #
+    # Setup paths, required containers, infrastructure
+    #
+    # ------------------------------------------------------------------------------
+
+
     gen.setup_dir(cfg.LOGS)
     gen.setup_dir(cfg.SCRIPTS)
     gen.setup_dir(cfg.GAINTABLES)
@@ -27,32 +34,24 @@ def main():
     else:
         CONTAINER_RUNNER=''
 
-    # Get containers needed for this script
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
     SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN)
     MEQTREES_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MEQTREES_PATTERN)
-
  
-    # Set names of the run and kill files, open run file for writing
+ 
 
-    submit_file = 'submit_1GC_jobs.sh'
-    kill_file = cfg.SCRIPTS+'/kill_1GC_jobs.sh'
+    # ------------------------------------------------------------------------------
+    #
+    # 1GC recipe definition
+    #
+    # ------------------------------------------------------------------------------
 
-    f = open(submit_file,'w')
-    f.write('#!/usr/bin/env bash\n')
-    f.write('export SINGULARITY_BINDPATH='+cfg.BINDPATH+'\n')
-
-
-    # Get the MS name
 
     original_ms = glob.glob('*.ms')[0]
     code = gen.get_code(original_ms)
     myms = original_ms.replace('.ms','_'+str(cfg.PRE_NCHANS)+'ch.ms')
-
-
-    # ------------------------------------------------------------------------------
 
 
     steps = []
@@ -175,8 +174,20 @@ def main():
     step['syscall'] = syscall
     steps.append(step)
 
+
+
+    # ------------------------------------------------------------------------------
+    #
+    # Write the run file and kill file based on the recipe
+    #
     # ------------------------------------------------------------------------------
 
+    submit_file = 'submit_1GC_jobs.sh'
+    kill_file = cfg.SCRIPTS+'/kill_1GC_jobs.sh'
+
+    f = open(submit_file,'w')
+    f.write('#!/usr/bin/env bash\n')
+    f.write('export SINGULARITY_BINDPATH='+cfg.BINDPATH+'\n')
 
     id_list = []
 
@@ -218,11 +229,12 @@ def main():
         kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
         f.write(kill)
     
-
     f.close()
 
-
     gen.make_executable(submit_file)
+
+    # ------------------------------------------------------------------------------
+
 
 
 if __name__ == "__main__":

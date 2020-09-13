@@ -13,7 +13,7 @@ def copycol(msname,fromcol,tocol,field,rowchunk):
         tt = table(msname,readonly=False)
     else:
         t0 = table(msname,readonly=False)
-        tt = table.query(query='FIELD_ID=='+str(field))
+        tt = t0.query(query='FIELD_ID=='+str(field))
 
     colnames = tt.colnames()
     if fromcol not in colnames or tocol not in colnames:

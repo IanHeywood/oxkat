@@ -7,9 +7,13 @@ from optparse import OptionParser
 from pyrap.tables import table
 
 
-def copycol(msname,fromcol,tocol,rowchunk):
+def copycol(msname,fromcol,tocol,field,rowchunk):
 
-    tt = table(msname,readonly=False)
+    if field == '': 
+        tt = table(msname,readonly=False)
+    else:
+        t0 = table(msname,readonly=False)
+        tt = table.query(query='FIELD_ID=='+str(field))
 
     colnames = tt.colnames()
     if fromcol not in colnames or tocol not in colnames:
@@ -27,8 +31,11 @@ def copycol(msname,fromcol,tocol,rowchunk):
     nrows = tt.nrows()
     for start_row in range(0,nrows,rowchunk):
         nr = min(rowchunk,nrows-start_row)
-        print('Processing rows:',start_row,' to ',(start_row+nrows))
+        print('Processing rows:',start_row,' to ',(start_row+nr))
         tt.putcol(tocol,tt.getcol(fromcol,start_row,nr),start_row,nr)
+
+    tt.done()
+    if field != '': t0.done()
 
 
 def main():
@@ -37,10 +44,12 @@ def main():
     parser = OptionParser(usage = '%prog [options] msname')
     parser.add_option('--fromcol', dest = 'fromcol', default = 'MODEL_DATA', help = 'Name of source column (default = MODEL_DATA')
     parser.add_option('--tocol', dest = 'tocol', default = 'DIR1_DATA', help = 'Name of destination column (default = DIR1_DATA')
+    parser.add_option('--field', dest = 'field', default = '', help = 'Field selection (default = all fields)')
     parser.add_option('--rowchunk', dest = 'rowchunk', default = 500000, help = 'Number of chunks to process at once (default = 500000)')
     (options,args) = parser.parse_args()
     fromcol = options.fromcol
     tocol = options.tocol
+    field = options.tocol
     rowchunk = int(options.rowchunk)
 
 
@@ -51,7 +60,7 @@ def main():
         msname = args[0].rstrip('/')
 
 
-    copycol(msname,fromcol,tocol,rowchunk)
+    copycol(msname,fromcol,tocol,field,rowchunk)
 
 
 

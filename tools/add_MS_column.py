@@ -23,7 +23,7 @@ def add_data_col(msname,colname):
 def main():
 
     parser = OptionParser(usage = '%prog [options] msname')
-    parser.add_option('--colname', dest = 'colname', default = 'DIR1_DATA', help = 'Name of new data column (default = DIR1)')
+    parser.add_option('--colname', dest = 'colname', default = 'DIR1_DATA', help = 'Name (or comma-separated list) of new data column(s) (default = DIR1_DATA)')
     (options,args) = parser.parse_args()
     colname = options.colname
 
@@ -33,7 +33,8 @@ def main():
     else:
         msname = args[0].rstrip('/')
 
-    add_data_col(msname,colname)
+    for col in colname.split(','):
+        add_data_col(msname,col)
 
 
 if __name__ == '__main__':

@@ -60,7 +60,7 @@ def main():
 
     if prefix != '':
         syscall = gen.generate_syscall_predict(msname=myms,imgbase=prefix,field=primary_id,chanout=nchan)
-        print(syscal)
+        print(syscall)
         os.system(syscall)
         if remove_models:
             for item in fitslist:

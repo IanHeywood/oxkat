@@ -104,7 +104,7 @@ def main():
     step['comment'] = 'Add CORRECTED_DATA and MODEL_DATA columns'
     step['dependency'] = 3
     step['id'] = 'ADCOL'+code
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python3 '+cfg.TOOLS+'/add_MS_column.py --colname CORRECTED_DATA,MODEL_DATA '+myms
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python '+cfg.TOOLS+'/add_MS_column.py --colname CORRECTED_DATA,MODEL_DATA '+myms
     step['syscall'] = syscall
     steps.append(step)
 
@@ -114,7 +114,7 @@ def main():
     step['comment'] = 'Predict field sources for primary if required'
     step['dependency'] = 4
     step['id'] = 'SETCC'+code
-    syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' python3 '+cfg.OXKAT+'/1GC_03_primary_cal_field_sources.py'
+    syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' python '+cfg.OXKAT+'/1GC_03_primary_cal_field_sources.py'
     step['syscall'] = syscall
     steps.append(step)
 
@@ -124,7 +124,7 @@ def main():
     step['comment'] = 'Copy MODEL_DATA to CORRECTED_DATA (temp storage for primary field sources)'
     step['dependency'] = 5
     step['id'] = 'CPCOL'+code
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python3 '+cfg.TOOLS+'/copy_MS_column.py --fromcol MODEL_DATA --tocol CORRECTED_DATA '+myms
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python '+cfg.TOOLS+'/copy_MS_column.py --fromcol MODEL_DATA --tocol CORRECTED_DATA '+myms
     step['syscall'] = syscall
     steps.append(step)
 
@@ -145,7 +145,7 @@ def main():
     step['comment'] = 'Add field source model in CORRECTED_DATA to component model in MODEL_DATA'
     step['dependency'] = 7
     step['id'] = 'SMCOL'+code
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python3 '+cfg.TOOLS+'/sum_MS_column.py --src CORRECTED_DATA --dest MODEL_DATA '+myms
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python '+cfg.TOOLS+'/sum_MS_column.py --src CORRECTED_DATA --dest MODEL_DATA '+myms
     step['syscall'] = syscall
     steps.append(step)
 

@@ -15,14 +15,13 @@ HOME = os.path.expanduser('~')
 #
 
 
-# $PWD and CWD will be added to $SINGULARITY_BINDPATH by default.
 # If your data are symlinked and located in a path that singularity
 # cannot see by default then set BIND to that path.
 # If you wish to bind multiple paths then use a comma-separated list.
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = '/idia/software/containers/STIMELA_IMAGES/'
+IDIA_CONTAINER_PATH = '/software/astro/caracal/STIMELA_IMAGES_1.6.5/'
 CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = HOME+'/containers/'

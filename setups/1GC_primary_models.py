@@ -273,10 +273,10 @@ def main():
 
 
     if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
-        kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        kill = '\necho "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
         f.write(kill)
     elif INFRASTRUCTURE == 'chpc':
-        kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        kill = '\necho "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
         f.write(kill)
     
     f.close()

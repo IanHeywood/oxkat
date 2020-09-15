@@ -16,6 +16,9 @@ from oxkat import generate_jobs as gen
 from oxkat import config as cfg
 
 
+import oxkat.casa_read_project_info as pp
+
+
 def main():
 
 
@@ -25,11 +28,16 @@ def main():
     DATA = cfg.DATA
     CALMODELPATH = DATA+'/calmodels/'
 
-    project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
-    myms = project_info['master_ms']
-    primary_id = project_info['primary_id']
-    primary_name = project_info['primary_name']
-    primary_tag = project_info['primary_tag']
+    # project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
+    # myms = project_info['master_ms']
+    # primary_id = project_info['primary_id']
+    # primary_name = project_info['primary_name']
+    # primary_tag = project_info['primary_tag']
+
+    myms = pp.myms
+    primary_id = pp.primary_id
+    primary_name = pp.primary_name
+    primary_tag = pp.primary_tag
 
 
     if cfg.CAL_1GC_PRIMARY_MODEL == 'auto':

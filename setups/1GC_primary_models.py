@@ -114,6 +114,8 @@ def main():
     step['comment'] = 'Predict field sources for primary if required'
     step['dependency'] = 4
     step['id'] = 'SETCC'+code
+    step['slurm_config'] = cfg.SLURM_WSCLEAN
+    step['pbs_config'] = cfg.PBS_WSCLEAN
     syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' python '+cfg.OXKAT+'/1GC_03_primary_cal_field_sources.py'
     step['syscall'] = syscall
     steps.append(step)

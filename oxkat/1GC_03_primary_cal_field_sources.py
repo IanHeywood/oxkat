@@ -35,8 +35,8 @@ def main():
     # primary_tag = project_info['primary_tag']
 
     myms = pp.myms
-    primary_id = pp.primary_id
-    primary_name = pp.primary_name
+    primary_id = pp.bpcal
+    primary_name = pp.bpcal_name
     primary_tag = pp.primary_tag
 
 

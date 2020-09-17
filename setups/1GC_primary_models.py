@@ -147,7 +147,7 @@ def main():
     step['comment'] = 'Add field source model in CORRECTED_DATA to component model in MODEL_DATA'
     step['dependency'] = 7
     step['id'] = 'SMCOL'+code
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python '+cfg.TOOLS+'/sum_MS_column.py --src CORRECTED_DATA --dest MODEL_DATA '+myms
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python '+cfg.TOOLS+'/sum_MS_columns.py --src CORRECTED_DATA --dest MODEL_DATA '+myms
     step['syscall'] = syscall
     steps.append(step)
 

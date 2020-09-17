@@ -116,7 +116,7 @@ def main():
     step['id'] = 'SETCC'+code
     step['slurm_config'] = cfg.SLURM_WSCLEAN
     step['pbs_config'] = cfg.PBS_WSCLEAN
-    syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' python '+cfg.OXKAT+'/1GC_03_primary_cal_field_sources.py'
+    syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' python2 '+cfg.OXKAT+'/1GC_03_primary_cal_field_sources.py'
     step['syscall'] = syscall
     steps.append(step)
 

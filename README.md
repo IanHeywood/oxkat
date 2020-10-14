@@ -59,7 +59,11 @@
    ```
    $ ln -s /idia/projects/mightee/1538856059/1538856059_sdp_l0.full_1284.full_pol.ms .
    ```
-
+   If you are on the IDIA cluster then you will need to do the following (perhaps add this to your ~/.bashrc file):
+   ```
+   $ module load anaconda3
+   ```
+   
 6. Generate and submit (or run) the jobs required for the reference calibration (1GC):
 
    ```

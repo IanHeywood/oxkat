@@ -169,7 +169,7 @@ def main():
     casalog = LOGS+'/casa_1GC_'+id_autoflagcals+'.log'
 
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_03_casa_autoflag_cals_DATA.py',
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_05_casa_autoflag_cals_DATA.py',
                 casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
@@ -191,7 +191,7 @@ def main():
     casalog = LOGS+'/casa_1GC_'+id_splitcals+'.log'
 
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_04_casa_split_calibrators.py',
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_06_casa_split_calibrators.py',
                 casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
@@ -213,7 +213,7 @@ def main():
     casalog = LOGS+'/casa_1GC_'+id_secondarymodel+'.log'
 
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_05_casa_get_secondary_model.py',
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_07_casa_get_secondary_model.py',
                 casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
@@ -234,7 +234,7 @@ def main():
     casalog = LOGS+'/casa_1GC_'+id_1GC+'.log'
 
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_06_casa_refcal_using_secondary_model.py',
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_08_casa_refcal_using_secondary_model.py',
                 casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
@@ -275,7 +275,7 @@ def main():
     casalog = LOGS+'/casa_1GC_'+id_splittargets+'.log'
 
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_07_casa_split_targets.py',
+    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_09_casa_split_targets.py',
                 casalogfile=casalog)
 
     run_command = gen.job_handler(syscall=syscall,
@@ -295,7 +295,7 @@ def main():
     id_list.append(id_visplots)
 
     syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/1GC_08_plot_visibilities.py'
+    syscall += 'python3 '+OXKAT+'/1GC_10_plot_visibilities.py'
 
     run_command = gen.job_handler(syscall=syscall,
                 jobname=id_visplots,

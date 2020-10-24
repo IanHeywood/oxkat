@@ -27,7 +27,7 @@ HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = HOME+'/containers/'
 
 
-CASA_PATTERN = 'casa_'
+CASA_PATTERN = 'casa-1.2.6'
 CLUSTERCAT_PATTERN = 'ddfacet'
 CODEX_PATTERN = 'codex-africanus'
 CUBICAL_PATTERN = 'cubical'

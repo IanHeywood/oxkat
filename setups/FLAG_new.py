@@ -23,6 +23,12 @@ def main():
     # ------------------------------------------------------------------------------
 
 
+    OXKAT = cfg.OXKAT
+    DATA = cfg.DATA
+    IMAGES = cfg.IMAGES
+    SCRIPTS = cfg.SCRIPTS
+
+
     gen.setup_dir(IMAGES)
     gen.setup_dir(cfg.LOGS)
     gen.setup_dir(cfg.SCRIPTS)
@@ -33,12 +39,6 @@ def main():
         CONTAINER_RUNNER='singularity exec '
     else:
         CONTAINER_RUNNER=''
-
-
-    OXKAT = cfg.OXKAT
-    DATA = cfg.DATA
-    IMAGES = cfg.IMAGES
-    SCRIPTS = cfg.SCRIPTS
 
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)

@@ -35,6 +35,12 @@ def main():
         CONTAINER_RUNNER=''
 
 
+    OXKAT = cfg.OXKAT
+    DATA = cfg.DATA
+    IMAGES = cfg.IMAGES
+    SCRIPTS = cfg.SCRIPTS
+
+
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
     MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN)

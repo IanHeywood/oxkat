@@ -27,7 +27,7 @@ HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = HOME+'/containers/'
 
 
-CASA_PATTERN = 'casa-1.2.6'
+CASA_PATTERN = 'casa-1.2.6q'
 CLUSTERCAT_PATTERN = 'ddfacet'
 CODEX_PATTERN = 'codex-africanus'
 CUBICAL_PATTERN = 'cubical'
@@ -174,7 +174,7 @@ CAL_1GC_SECONDARIES = 'auto'         # Comma-separated secondary IDs
                                      # - A single ID in uses same secondary for all targets
                                      # - A length mismatch reverts to auto, so double check!
 
-# Sky model for primary calibrator --- EXPERIMENTAL
+# Sky model for primary calibrator --- EXPERIMENTAL (use 1GC_primaries.py setup)
 CAL_1GC_PRIMARY_MODEL = 'auto'       # setjy = use setjy component model only
                                      # auto = try to find a suitable model of the field sources in data/calmodels, defer to setjy if not found
                                      # or specify the location/of/wsclean-prefix for an arbitrary model cube

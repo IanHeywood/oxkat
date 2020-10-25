@@ -42,6 +42,15 @@ def main():
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
 
 
+    # Get target information from project pickle
+
+    project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
+
+    target_ids = project_info['target_ids'] 
+    target_names = project_info['target_names']
+    target_ms = project_info['target_ms']
+
+
     # ------------------------------------------------------------------------------
     #
     # FLAG recipe definition

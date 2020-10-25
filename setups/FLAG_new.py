@@ -167,7 +167,7 @@ def main():
     f.write('#!/usr/bin/env bash\n')
     f.write('export SINGULARITY_BINDPATH='+cfg.BINDPATH+'\n')
 
-    for content in targets_steps:  
+    for content in target_steps:  
         steps = content[0]
         kill_file = content[1]
 

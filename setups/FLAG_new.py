@@ -173,9 +173,9 @@ def main():
         targetname = content[2]
         id_list = []
 
-        f.write('\n---------------------------------------\n')
-        f.write('\n'+targetname+'\n')
-        f.write('\n---------------------------------------\n')
+        f.write('\n#---------------------------------------\n')
+        f.write('#'+targetname)
+        f.write('\n#---------------------------------------\n')
 
         for step in steps:
 

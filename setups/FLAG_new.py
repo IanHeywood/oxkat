@@ -153,7 +153,7 @@ def main():
             step['syscall'] = syscall
             steps.append(step)
 
-            target_steps.append((steps,kill_file))
+            target_steps.append((steps,kill_file,targetname))
 
     # ------------------------------------------------------------------------------
     #
@@ -170,8 +170,12 @@ def main():
     for content in target_steps:  
         steps = content[0]
         kill_file = content[1]
-
+        targetname = content[2]
         id_list = []
+
+        f.write('\n---------------------------------------\n')
+        f.write('\n'+targetname+'\n')
+        f.write('\n---------------------------------------\n')
 
         for step in steps:
 
@@ -203,6 +207,7 @@ def main():
             f.write('\n# '+comment+'\n')
             f.write(run_command)
 
+        f.write('\n# Generate kill script for this field\n')
         if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
             kill = '\necho "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
             f.write(kill)
@@ -210,7 +215,6 @@ def main():
             kill = '\necho "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
             f.write(kill)
 
-        f.write('\n--------------------\n')
         
     f.close()
 

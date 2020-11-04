@@ -102,7 +102,7 @@ def main():
             step['comment'] = 'Run Tricolour on '+myms
             step['dependency'] = None
             step['id'] = 'TRICO'+code
-            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' '
             syscall += gen.generate_syscall_tricolour(myms = myms,
                         config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
                         datacol = 'DATA',
@@ -174,7 +174,7 @@ def main():
         id_list = []
 
         f.write('\n#---------------------------------------\n')
-        f.write('#'+targetname)
+        f.write('# '+targetname)
         f.write('\n#---------------------------------------\n')
 
         for step in steps:

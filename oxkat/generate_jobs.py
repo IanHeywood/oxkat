@@ -301,6 +301,8 @@ def generate_syscall_wsclean(mslist,
                           endchan = cfg.WSC_ENDCHAN,
                           minuvl = cfg.WSC_MINUVL,
                           maxuvl = cfg.WSC_MAXUVL,
+                          even = cfg.WSC_EVEN,
+                          odd = cfg.WSC_ODD,
                           chanout = cfg.WSC_CHANNELSOUT,
                           imsize = cfg.WSC_IMSIZE,
                           cellsize = cfg.WSC_CELLSIZE,
@@ -339,6 +341,11 @@ def generate_syscall_wsclean(mslist,
         print(now()+'Cannot continue deconvolution with wsclean if BDA is enabled')
         sys.exit()
 
+    if even and odd:
+        print(now()+'Even and odd timeslots selections are both enabled, defaulting to all.')
+        even = False
+        odd = False
+
     syscall = 'wsclean '
     syscall += '-log-time '
     if continueclean:
@@ -375,6 +382,10 @@ def generate_syscall_wsclean(mslist,
         syscall += '-minuv-l '+str(minuvl)+' '
     if maxuvl != '':
         syscall += '-maxuv-l '+str(maxuvl)+' '
+    if even:
+        syscall += '-even-timesteps '
+    if odd:
+        syscall += '-odd-timesteps '
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fits-mask '+mymask+' '

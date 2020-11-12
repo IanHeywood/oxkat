@@ -131,7 +131,7 @@ def main():
 
             step = {}
             step['step'] = 2
-            step['comment'] = 'Make initial cleaning mask ('+myms+')'
+            step['comment'] = 'Make initial cleaning mask for '+targetname
             step['dependency'] = 1
             step['id'] = 'MASK0'+code
             syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' '
@@ -144,7 +144,7 @@ def main():
 
             step = {}
             step['step'] = 4
-            step['comment'] = 'Backup flag table ('+myms+')'
+            step['comment'] = 'Backup flag table for '+myms
             step['dependency'] = 3
             step['id'] = 'SAVFG'+code
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
@@ -207,12 +207,13 @@ def main():
             f.write('\n# '+comment+'\n')
             f.write(run_command)
 
-        f.write('\n# Generate kill script for this field\n')
+        if INFRASTRUCTURE != 'node':
+            f.write('\n# Generate kill script for '+targetname'+\n')
         if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
-            kill = '\necho "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+            kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
             f.write(kill)
         elif INFRASTRUCTURE == 'chpc':
-            kill = '\necho "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+            kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
             f.write(kill)
 
         

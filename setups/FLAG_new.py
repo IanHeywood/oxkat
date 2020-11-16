@@ -102,6 +102,8 @@ def main():
             step['comment'] = 'Run Tricolour on '+myms
             step['dependency'] = None
             step['id'] = 'TRICO'+code
+            step['slurm_config'] = cfg.SLURM_TRICOLOUR
+            step['pbs_config'] = cfg.PBS_TRICOLOUR
             syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' '
             syscall += gen.generate_syscall_tricolour(myms = myms,
                         config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
@@ -117,6 +119,8 @@ def main():
             step['comment'] = 'Blind wsclean on DATA column of '+myms
             step['dependency'] = 0
             step['id'] = 'WSDBL'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                                     imgname = img_prefix,

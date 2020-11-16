@@ -143,9 +143,9 @@ def main():
 
 
             step = {}
-            step['step'] = 4
+            step['step'] = 3
             step['comment'] = 'Backup flag table for '+myms
-            step['dependency'] = 3
+            step['dependency'] = 1
             step['id'] = 'SAVFG'+code
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
             syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '

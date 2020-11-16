@@ -212,7 +212,7 @@ def main():
             f.write(run_command)
 
         if INFRASTRUCTURE != 'node':
-            f.write('\n# Generate kill script for '+targetname'+\n')
+            f.write('\n# Generate kill script for '+targetname+'\n')
         if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
             kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
             f.write(kill)

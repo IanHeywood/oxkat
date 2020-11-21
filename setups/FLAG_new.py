@@ -63,6 +63,7 @@ def main():
     #
     # ------------------------------------------------------------------------------
 
+
     target_steps = []
     codes = []
     ii = 1
@@ -159,11 +160,13 @@ def main():
 
             target_steps.append((steps,kill_file,targetname))
 
+
     # ------------------------------------------------------------------------------
     #
     # Write the run file and kill file based on the recipe
     #
     # ------------------------------------------------------------------------------
+
 
     submit_file = 'submit_flag_jobs.sh'
 

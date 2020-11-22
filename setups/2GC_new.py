@@ -25,6 +25,7 @@ def main():
 
     OXKAT = cfg.OXKAT
     DATA = cfg.DATA
+    GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
 

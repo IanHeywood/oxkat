@@ -153,7 +153,6 @@ def main():
             step['id'] = 'CL2GC'+code
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
             syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
-                        casalogfile=casalog,
                         extra_args='mslist='+myms)
             step['syscall'] = syscall
             steps.append(step)

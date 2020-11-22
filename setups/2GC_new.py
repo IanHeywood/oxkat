@@ -160,7 +160,7 @@ def main():
 
             step = {}
             step['step'] = 3
-            step['comment'] = 'Plot the self-calibration gain solution'
+            step['comment'] = 'Plot the self-calibration gain solutions'
             step['dependency'] = 2
             step['id'] = 'PLTAB'+code
             syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' '
@@ -183,7 +183,7 @@ def main():
                         bda=True,
                         mask=mask)
             step['syscall'] = syscall
-
+            steps.append(step)
 
             step = {}
             step['step'] = 5

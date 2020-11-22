@@ -174,6 +174,8 @@ def main():
             step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA column of '+myms
             step['dependency'] = 2
             step['id'] = 'WSCMA'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=corr_img_prefix,

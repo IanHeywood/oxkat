@@ -15,49 +15,45 @@ from oxkat import config as cfg
 
 def main():
 
+    USE_SINGULARITY = cfg.USE_SINGULARITY
+
+    gen.print_spacer()
+    print(gen.now()+'oxkat: 3GC (peeling) setup')
+
+
     # ------------------------------------------------------------------------------
-    # Setup
+    #
+    # Setup paths, required containers, infrastructure
+    #
+    # ------------------------------------------------------------------------------
+
+
+    OXKAT = cfg.OXKAT
+    DATA = cfg.DATA
+    GAINTABLES = cfg.GAINTABLES
+    IMAGES = cfg.IMAGES
+    SCRIPTS = cfg.SCRIPTS
+
+    gen.setup_dir(GAINTABLES)
+    gen.setup_dir(IMAGES)
+    gen.setup_dir(cfg.LOGS)
+    gen.setup_dir(cfg.SCRIPTS)
 
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+    if CONTAINER_PATH is not None:
+        CONTAINER_RUNNER='singularity exec '
+    else:
+        CONTAINER_RUNNER=''
 
 
-    # Get paths from config and setup folders
-
-    CWD = cfg.CWD
-    BIND = cfg.BIND
-    OXKAT = cfg.OXKAT
-    DATA = cfg.DATA
-    TOOLS = cfg.TOOLS
-    GAINTABLES = cfg.GAINTABLES
-    IMAGES = cfg.IMAGES
-    LOGS = cfg.LOGS
-    SCRIPTS = cfg.SCRIPTS
-
-    BINDPATH = '$PWD,'+CWD+','+BIND
-
-    gen.setup_dir(LOGS)
-    gen.setup_dir(SCRIPTS)
-    gen.setup_dir(IMAGES)
-    gen.setup_dir(GAINTABLES)
-
-
-    # Get containers needed for this script
-
-    CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN)
+    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
+    MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN)
+    RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
- 
-
-    # Set names of the run and kill files, open run file for writing
-
-    submit_file = 'submit_3GC_peel_jobs.sh'
-
-    f = open(submit_file,'w')
-    f.write('#!/usr/bin/env bash\n')
-    f.write('export SINGULARITY_BINDPATH='+BINDPATH+'\n')
 
 
-    # Get target info from project_info.p
+    # Get target information from project pickle
 
     project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
 
@@ -65,232 +61,249 @@ def main():
     target_names = project_info['target_names']
     target_ms = project_info['target_ms']
 
-    # Loop over targets
 
+    # ------------------------------------------------------------------------------
+    #
+    # 3GC peeling recipe definition
+    #
+    # ------------------------------------------------------------------------------
+
+
+    target_steps = []
     codes = []
     ii = 1
 
+    # Loop over targets
 
     for tt in range(0,len(target_ids)):
-
 
         targetname = target_names[tt]
         myms = target_ms[tt]
 
-
         if not o.isdir(myms):
 
-            print('------------------------------------------------------')
+            gen.print_spacer()
             print(gen.now()+myms+' not found, skipping '+targetname)
 
+
+        elif not o.isfile(cfg.CAL_3GC_PEEL_REGION):
+
+            gen.print_spacer()
+            print(gen.now()+cfg.CAL_3GC_PEEL_REGION+' not found')
+            print(gen.now()+'Please provide a DS9 region file definining the source you wish to peel.')
+
+
         else:
-            
+
+            steps = []        
             filename_targetname = gen.scrub_target_name(targetname)
+
 
             code = gen.get_target_code(targetname)
             if code in codes:
+                print(gen.now()+'Adding suffix to '+targetname+' code to prevent job ID clashes')
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
+        
 
-
-            mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask1.fits'))
-            if len(mask0) > 0:
-                mask = mask0[0]
+            # Look for the FITS mask for this target
+            mask1 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask1.fits'))
+            if len(mask1) > 0:
+                mask = mask1[0]
             else:
                 mask = 'auto'
 
 
-            print('------------------------------------------------------')
+            gen.print_spacer()
             print(gen.now()+'Target:     '+targetname)
             print(gen.now()+'MS:         '+myms)
             print(gen.now()+'Using mask: '+mask)
-
-            f.write('\n# '+targetname+'\n')
-        
-            kill_file = SCRIPTS+'/kill_3GC_peel_jobs_'+filename_targetname+'.sh'
+            print(gen.now()+'Peeling:    '+cfg.CAL_3GC_PEEL_REGION)
 
 
+            # Image prefixes
             prepeel_img_prefix = IMAGES+'/img_'+myms+'_prepeel'
             dir1_img_prefix = prepeel_img_prefix+'-'+cfg.CAL_3GC_PEEL_REGION.split('/')[-1].split('.')[0]
 
-
-            # Initialise a list to hold all the job IDs
-
-            id_list = []
+            # Target-specific kill file
+            kill_file = SCRIPTS+'/kill_3GC_peel_jobs_'+filename_targetname+'.sh'
 
 
-            # ------------------------------------------------------------------------------
-            # STEP 1: 
-            # Masked wsclean on CORRECTED_DATA column with high (frequency) resolution
-
-
-            id_wsclean = 'WSDMA'+code
-            id_list.append(id_wsclean)
-
-            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+            step = {}
+            step['step'] = 0
+            step['comment'] = 'Run masked wsclean, high freq/angular resolution, on CORRECTED_DATA column of '+myms
+            step['dependency'] = None
+            step['id'] = 'WSDMA'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=prepeel_img_prefix,
                         datacol='CORRECTED_DATA',
-                        briggs=-0.6,
+                        briggs=-cfg.CAL_3GC_PEEL_BRIGGS,
                         chanout=cfg.CAL_3GC_PEEL_NCHAN,
                         bda=True,
                         mask=mask)
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_wsclean,
-                        infrastructure=INFRASTRUCTURE,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            f.write(run_command)
-
-
-            # ------------------------------------------------------------------------------
-            # STEP 2:
-            # Split model images
-
-
-            id_imsplit = 'IMSPL'+code
-            id_list.append(id_imsplit)
-
-            syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+            step = {}
+            step['step'] = 1
+            step['comment'] = 'Extract problem source defined by region into a separate set of model images'
+            step['dependency'] = 0
+            step['id'] = 'IMSPL'+code
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += 'python '+OXKAT+'/3GC_split_model_images.py '
             syscall += '--region '+cfg.CAL_3GC_PEEL_REGION+' '
             syscall += '--prefix '+prepeel_img_prefix+' '
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_imsplit,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_wsclean,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
-
-            f.write(run_command)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            # ------------------------------------------------------------------------------
-            # STEP 3:
-            # Predict DIR1 model into MODEL_DATA
-
-
-            id_predict1 = 'WS1PR'+code
-            id_list.append(id_predict1)
-
-            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+            step = {}
+            step['step'] = 2
+            step['comment'] = 'Predict problem source visibilities into MODEL_DATA column of '+myms
+            step['dependency'] = 1
+            step['id'] = 'WS1PR'+code
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_predict(msname=myms,imgbase=dir1_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_predict1,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_imsplit,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            f.write(run_command)
-
-
-            # ------------------------------------------------------------------------------
-            # STEP 4:
-            # Add extra data column
-
-
-            id_addcol = 'ADCOL'+code
-            id_list.append(id_addcol)
-
-            syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+            step = {}
+            step['step'] = 3
+            step['comment'] = 'Add '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' column to '+myms
+            step['dependency'] = 2
+            step['id'] = 'ADCOL'+code
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += 'python '+TOOLS+'/add_MS_column.py '
             syscall += '--colname '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
             syscall += myms
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_addcol,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_predict1)
-
-            f.write(run_command)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            # ------------------------------------------------------------------------------
-            # STEP 5:
-            # Copy MODEL_DATA to new column
-
-
-            id_copycol = 'CPCOL'+code
-            id_list.append(id_copycol)
-
-            syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+            step = {}
+            step['step'] = 4
+            step['comment'] = 'Copy MODEL_DATA to '+cfg.CAL_3GC_PEEL_DIR1COLNAME
+            step['dependency'] = 3
+            step['id'] = 'CPCOL'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += 'python '+TOOLS+'/copy_MS_column.py '
             syscall += '--fromcol MODEL_DATA '
             syscall += '--tocol '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
             syscall += myms
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_copycol,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_addcol)
-
-            f.write(run_command)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            # ------------------------------------------------------------------------------
-            # STEP 6:
-            # Predict full sky model into MODEL_DATA
-
-
-            id_predict2 = 'WS2PR'+code
-            id_list.append(id_predict2)
-
-            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+            step = {}
+            step['step'] = 5
+            step['comment'] = 'Predict full sky model visibilities into MODEL_DATA column of '+myms
+            step['dependency'] = 4
+            step['id'] = 'WS2PR'+code
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_predict(msname=myms,imgbase=prepeel_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_predict2,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_copycol,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            f.write(run_command)
-
-
-            # ------------------------------------------------------------------------------
-            # STEP 7:
-            # Run CubiCal
-
-
-            id_peel = 'CL3GC'+code
-            id_list.append(id_peel)
-
-
-            syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
+            step = {}
+            step['step'] = 6
+            step['comment'] = 'Run CubiCal to solve for G (full model) and dE (problem source), peel out problem source'
+            step['dependency'] = 5
+            step['id'] = 'CL3GC'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_cubical(parset=cfg.CAL_3GC_PEEL_PARSET,myms=myms)
+            step['syscall'] = syscall
+            steps.append(step)
 
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_peel,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_predict2,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
 
+            target_steps.append((steps,kill_file,targetname))
+
+
+
+
+    # ------------------------------------------------------------------------------
+    #
+    # Write the run file and kill file based on the recipe
+    #
+    # ------------------------------------------------------------------------------
+
+
+    submit_file = 'submit_3GC_peel_jobs.sh'
+
+    f = open(submit_file,'w')
+    f.write('#!/usr/bin/env bash\n')
+    f.write('export SINGULARITY_BINDPATH='+cfg.BINDPATH+'\n')
+
+    for content in target_steps:  
+        steps = content[0]
+        kill_file = content[1]
+        targetname = content[2]
+        id_list = []
+
+        f.write('\n#---------------------------------------\n')
+        f.write('# '+targetname)
+        f.write('\n#---------------------------------------\n')
+
+        for step in steps:
+
+            step_id = step['id']
+            id_list.append(step_id)
+            if step['dependency'] is not None:
+                dependency = steps[step['dependency']]['id']
+            else:
+                dependency = None
+            syscall = step['syscall']
+            if 'slurm_config' in step.keys():
+                slurm_config = step['slurm_config']
+            else:
+                slurm_config = cfg.SLURM_DEFAULTS
+            if 'pbs_config' in step.keys():
+                pbs_config = step['pbs_config']
+            else:
+                pbs_config = cfg.PBS_DEFAULTS
+            comment = step['comment']
+
+            run_command = gen.job_handler(syscall = syscall,
+                            jobname = step_id,
+                            infrastructure = INFRASTRUCTURE,
+                            dependency = dependency,
+                            slurm_config = slurm_config,
+                            pbs_config = pbs_config)
+
+
+            f.write('\n# '+comment+'\n')
             f.write(run_command)
 
+        if INFRASTRUCTURE != 'node':
+            f.write('\n# Generate kill script for '+targetname+'\n')
+        if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
+            kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+            f.write(kill)
+        elif INFRASTRUCTURE == 'chpc':
+            kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+            f.write(kill)
 
-
-            # ------------------------------------------------------------------------------
-
-
-            if INFRASTRUCTURE == 'idia':
-                kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
-                f.write(kill)
-            elif INFRASTRUCTURE == 'chpc':
-                kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
-                f.write(kill)
-
+        
     f.close()
+
+    gen.make_executable(submit_file)
+
+    gen.print_spacer()
+    print(gen.now()+'Created '+submit_file)
+    gen.print_spacer()
+
+    # ------------------------------------------------------------------------------
+
 
 
 if __name__ == "__main__":

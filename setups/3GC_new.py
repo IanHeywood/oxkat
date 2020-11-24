@@ -18,7 +18,7 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.print_spacer()
-    print(gen.now()+'oxkat: 3GC (peeling) setup')
+    print(gen.now()+'oxkat: 3GC (facet-based corrections) setup')
 
 
     # ------------------------------------------------------------------------------
@@ -41,16 +41,22 @@ def main():
 
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+
+    if INFRASTRUCTURE == 'idia':
+        myNCPU = 8  # Dial back the parallelism for IDIA nodes
+    elif INFRASTRUCTURE == 'chpc':
+        myNCPU = 23 # Kind of meaningless as this stuff probably won't ever run on CHPC
+    else:
+        myNCPU = 40 # Assumed NCPU for standalone nodes
+    
     if CONTAINER_PATH is not None:
         CONTAINER_RUNNER='singularity exec '
     else:
         CONTAINER_RUNNER=''
 
 
-    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
-    MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN)
-    RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
-    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
+    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
+    KILLMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.KILLMS_PATTERN)
 
 
     # Get target information from project pickle
@@ -86,13 +92,6 @@ def main():
             print(gen.now()+myms+' not found, skipping '+targetname)
 
 
-        elif not o.isfile(cfg.CAL_3GC_PEEL_REGION):
-
-            gen.print_spacer()
-            print(gen.now()+cfg.CAL_3GC_PEEL_REGION+' not found')
-            print(gen.now()+'Please provide a DS9 region file definining the source you wish to peel.')
-
-
         else:
 
             steps = []        
@@ -107,121 +106,97 @@ def main():
             codes.append(code)
         
 
-            # Look for the FITS mask for this target
-            mask1 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask1.fits'))
+            # Look for the zoomed FITS mask for this target
+            mask1 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask1.zoom*.fits'))
             if len(mask1) > 0:
                 mask = mask1[0]
             else:
                 mask = 'auto'
 
 
-            gen.print_spacer()
-            print(gen.now()+'Target:     '+targetname)
-            print(gen.now()+'MS:         '+myms)
-            print(gen.now()+'Using mask: '+mask)
-            print(gen.now()+'Peeling:    '+cfg.CAL_3GC_PEEL_REGION)
+            # Look for the DS9 region file that defines the tessel centres for this target
+            region = glob.glob('*'+targetname+'*.reg')
+            if len(region) == 0:
+                gen.print_spacer()
+                print(gen.now()+'Please provide a region file of the form:')
+                print(gen.now()+'*'+targetname+'*.reg')
+                sys.exit()
+            else:
+                region = region[0]
 
+
+            gen.print_spacer()
+            print(gen.now()+'Target:       '+targetname)
+            print(gen.now()+'MS:           '+myms)
+            print(gen.now()+'Using mask:   '+mask)
+            print(gen.now()+'Using region: '+region)
 
             # Image prefixes
-            prepeel_img_prefix = IMAGES+'/img_'+myms+'_prepeel'
-            dir1_img_prefix = prepeel_img_prefix+'-'+cfg.CAL_3GC_PEEL_REGION.split('/')[-1].split('.')[0]
+            ddf_img_prefix = IMAGES+'/img_'+myms+'_DDFpcal'
+            kms_img_prefix = IMAGES+'/img_'+myms+'_DDFkMS'
 
             # Target-specific kill file
-            kill_file = SCRIPTS+'/kill_3GC_peel_jobs_'+filename_targetname+'.sh'
+            kill_file = SCRIPTS+'/kill_3GC_facet_jobs_'+filename_targetname+'.sh'
 
 
             step = {}
             step['step'] = 0
-            step['comment'] = 'Run masked wsclean, high freq/angular resolution, on CORRECTED_DATA column of '+myms
+            step['comment'] = 'Run DDFacet, masked deconvolution of CORRECTED_DATA column of '+myms
             step['dependency'] = None
-            step['id'] = 'WSDMA'+code
+            step['id'] = 'DDCMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
-            syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=prepeel_img_prefix,
-                        datacol='CORRECTED_DATA',
-                        briggs=-cfg.CAL_3GC_PEEL_BRIGGS,
-                        chanout=cfg.CAL_3GC_PEEL_NCHAN,
-                        bda=True,
-                        mask=mask)
+            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall += gen.generate_syscall_ddfacet(mspattern=myms,
+                        imgname=ddf_img_prefix,
+                        ncpu=myNCPU,
+                        mask=mask,
+                        sparsification='50,20,5,2')
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 1
-            step['comment'] = 'Extract problem source defined by region into a separate set of model images'
+            step['comment'] = 'Convert the DS9 region into a numpy file that killMS will recognise'
             step['dependency'] = 0
-            step['id'] = 'IMSPL'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
-            syscall += 'python '+OXKAT+'/3GC_split_model_images.py '
-            syscall += '--region '+cfg.CAL_3GC_PEEL_REGION+' '
-            syscall += '--prefix '+prepeel_img_prefix+' '
+            step['id'] = 'RG2NP'+code
+            syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall += 'python3 '+TOOLS+'/reg2npy.py '+region+'\n '
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 2
-            step['comment'] = 'Predict problem source visibilities into MODEL_DATA column of '+myms
+            step['comment'] = 'Run killMS'
             step['dependency'] = 1
-            step['id'] = 'WS1PR'+code
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=dir1_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
+            step['id'] = 'KILMS'+code
+            syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall += gen.generate_syscall_killms(myms=myms,
+                        baseimg=ddf_img_prefix,
+                        ncpu=myNCPU,
+                        outsols='killms-cohjones',
+                        nodesfile=region+'.npy')
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 3
-            step['comment'] = 'Add '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' column to '+myms
+            step['comment'] = 'Run DDFacet on CORRECTED_DATA of '+myms+', applying killMS solutions'
             step['dependency'] = 2
-            step['id'] = 'ADCOL'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
-            syscall += 'python '+TOOLS+'/add_MS_column.py '
-            syscall += '--colname '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
-            syscall += myms
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 4
-            step['comment'] = 'Copy MODEL_DATA to '+cfg.CAL_3GC_PEEL_DIR1COLNAME
-            step['dependency'] = 3
-            step['id'] = 'CPCOL'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
-            syscall += 'python '+TOOLS+'/copy_MS_column.py '
-            syscall += '--fromcol MODEL_DATA '
-            syscall += '--tocol '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
-            syscall += myms
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 5
-            step['comment'] = 'Predict full sky model visibilities into MODEL_DATA column of '+myms
-            step['dependency'] = 4
-            step['id'] = 'WS2PR'+code
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=prepeel_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 6
-            step['comment'] = 'Run CubiCal to solve for G (full model) and dE (problem source), peel out problem source'
-            step['dependency'] = 5
-            step['id'] = 'CL3GC'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
-            syscall += gen.generate_syscall_cubical(parset=cfg.CAL_3GC_PEEL_PARSET,myms=myms)
+            step['id'] = 'DDKMA'+code
+            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall += gen.generate_syscall_ddfacet(mspattern=myms,
+                        imgname=kms_img_prefix,
+                        chunkhours=1,
+                        ncpu=myNCPU,
+                        initdicomodel=ddf_img_prefix+'.DicoModel',
+                        hogbom_maxmajoriter=0,
+                        hogbom_maxminoriter=1000,
+                        mask=mask,
+                        ddsols='killms-cohjones')
             step['syscall'] = syscall
             steps.append(step)
 
@@ -238,7 +213,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_3GC_peel_jobs.sh'
+    submit_file = 'submit_3GC_facet_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

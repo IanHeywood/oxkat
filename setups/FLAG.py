@@ -103,6 +103,9 @@ def main():
             # Target-specific kill file
             kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
 
+            gen.print_spacer()
+            print(gen.now()+'Target:     '+targetname)
+            print(gen.now()+'MS:         '+myms)
 
             step = {}
             step['step'] = 0

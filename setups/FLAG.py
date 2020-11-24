@@ -172,7 +172,7 @@ def main():
             step = {}
             step['step'] = 4
             step['comment'] = 'Copy DATA to CORRECTED_DATA for '+myms
-            step['dependency'] = 1
+            step['dependency'] = 3
             step['id'] = 'CPDAT'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN

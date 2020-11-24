@@ -23,7 +23,7 @@ USE_SINGULARITY = True
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = '/software/astro/caracal/STIMELA_IMAGES_1.6.5/'
+IDIA_CONTAINER_PATH = '/software/astro/caracal/STIMELA_IMAGES_1.6.8/'
 CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = HOME+'/containers/'
@@ -34,14 +34,14 @@ CODEX_PATTERN = 'codex-africanus'
 CUBICAL_PATTERN = 'cubical'
 DDFACET_PATTERN = 'ddfacet'
 KILLMS_PATTERN = 'killms'
-MAKEMASK_PATTERN = 'owlcat_1.6'
+MAKEMASK_PATTERN = 'owlcat'
 MEQTREES_PATTERN = 'meqtrees'
 PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
 SHADEMS_PATTERN = 'shadems'
 TRICOLOUR_PATTERN = 'tricolour'
 WSCLEAN_PATTERN = 'wsclean'
-WSCLEANIDG_PATTERN = 'wsclean*idg'
+#WSCLEANIDG_PATTERN = 'wsclean*idg'
 
 
 # ------------------------------------------------------------------------
@@ -234,7 +234,7 @@ WSC_NWLAYERSFACTOR = 3
 WSC_PADDING = 1.2
 WSC_NOMODEL = False
 WSC_MASK = 'auto'
-WSC_THRESHOLD = 1e-5
+WSC_THRESHOLD = 2e-5
 WSC_AUTOTHRESHOLD = 0.3
 WSC_AUTOMASK = 5.0
 WSC_FITSPECTRALPOL = 4

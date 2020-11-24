@@ -104,6 +104,7 @@ def get_code(myms):
     myms = myms.split('/')[-1]
     code = myms.split('_')[0][-3:]
     code = code.replace('-','_')
+    code = code.replace('.','X')
     return code
 
 

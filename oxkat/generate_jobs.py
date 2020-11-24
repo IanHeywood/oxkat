@@ -43,7 +43,7 @@ def get_container(path,pattern,use_singularity):
         print(now()+'Failed to find container for '+pattern+' in '+path)
         sys.exit()
     elif len(ll) > 1:
-        print(now()+'Warning, more than one match for '+pattern+' in '+path)
+        print(now()+'Warning: more than one match for '+pattern+' in '+path)
     container = ll[-1]
     print(now()+'Using container: '+container)
     return container

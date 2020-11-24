@@ -167,6 +167,23 @@ def main():
             step['syscall'] = syscall
             steps.append(step)
 
+
+            step = {}
+            step['step'] = 4
+            step['comment'] = 'Copy DATA to CORRECTED_DATA for '+myms
+            step['dependency'] = 1
+            step['id'] = 'CPDAT'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python '+TOOLS+'/copy_MS_column.py '
+            syscall += '--fromcol DATA '
+            syscall += '--tocol CORRECTED_DATA '
+            syscall += myms
+            step['syscall'] = syscall
+            steps.append(step)
+
+
             target_steps.append((steps,kill_file,targetname))
 
 

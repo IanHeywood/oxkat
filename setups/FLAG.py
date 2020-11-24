@@ -111,7 +111,7 @@ def main():
             step['id'] = 'TRICO'+code
             step['slurm_config'] = cfg.SLURM_TRICOLOUR
             step['pbs_config'] = cfg.PBS_TRICOLOUR
-            syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_tricolour(myms = myms,
                         config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
                         datacol = 'DATA',
@@ -128,7 +128,7 @@ def main():
             step['id'] = 'WSDBL'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                                     imgname = img_prefix,
                                     datacol = 'DATA',
@@ -145,7 +145,7 @@ def main():
             step['comment'] = 'Make initial cleaning mask for '+targetname
             step['dependency'] = 1
             step['id'] = 'MASK0'+code
-            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
                                     outfile = img_prefix+'-MFS-image.mask0.fits',
                                     zoompix = '')[0]
@@ -158,7 +158,7 @@ def main():
             step['comment'] = 'Backup flag table for '+myms
             step['dependency'] = 1
             step['id'] = 'SAVFG'+code
-            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
             syscall += 'versionname=tricolour1 '
             step['syscall'] = syscall

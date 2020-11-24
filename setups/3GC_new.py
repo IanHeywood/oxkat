@@ -146,7 +146,7 @@ def main():
             step['id'] = 'DDCMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_ddfacet(mspattern=myms,
                         imgname=ddf_img_prefix,
                         ncpu=myNCPU,
@@ -161,7 +161,7 @@ def main():
             step['comment'] = 'Convert the DS9 region into a numpy file that killMS will recognise'
             step['dependency'] = 0
             step['id'] = 'RG2NP'+code
-            syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+TOOLS+'/reg2npy.py '+region+'\n '
             step['syscall'] = syscall
             steps.append(step)
@@ -172,7 +172,7 @@ def main():
             step['comment'] = 'Run killMS'
             step['dependency'] = 1
             step['id'] = 'KILMS'+code
-            syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_killms(myms=myms,
                         baseimg=ddf_img_prefix,
                         ncpu=myNCPU,
@@ -187,7 +187,7 @@ def main():
             step['comment'] = 'Run DDFacet on CORRECTED_DATA of '+myms+', applying killMS solutions'
             step['dependency'] = 2
             step['id'] = 'DDKMA'+code
-            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_ddfacet(mspattern=myms,
                         imgname=kms_img_prefix,
                         chunkhours=1,

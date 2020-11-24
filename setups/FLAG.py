@@ -32,6 +32,7 @@ def main():
     DATA = cfg.DATA
     IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
+    TOOLS = cfg.TOOLS
 
 
     gen.setup_dir(IMAGES)

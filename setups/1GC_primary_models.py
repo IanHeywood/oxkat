@@ -17,11 +17,10 @@ def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
-    gen.print_spacer()
-    print(gen.now()+'oxkat: 1GC (referenced calibration) setup')
-    gen.print_spacer()
-    print(gen.now()+'Note that this uses a full-field model for PKS B1934-638.')
-    print(gen.now()+'This is somewhat experimental.')
+    gen.preamble()
+    print(gen.now()+'1GC (referenced calibration) setup')
+    print(gen.now()+'Note that this recipe uses a full-field model for PKS B1934-638.')
+    print(gen.now()+'This is somewhat experimental!')
 
     # ------------------------------------------------------------------------------
     #

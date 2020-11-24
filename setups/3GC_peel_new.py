@@ -15,6 +15,8 @@ from oxkat import config as cfg
 
 def main():
 
+    USE_SINGULARITY = cfg.USE_SINGULARITY
+
     gen.print_spacer()
     print(gen.now()+'oxkat: 3GC (peeling) setup')
 
@@ -135,7 +137,7 @@ def main():
             step['id'] = 'WSDMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=prepeel_img_prefix,
                         datacol='CORRECTED_DATA',
@@ -152,7 +154,7 @@ def main():
             step['comment'] = 'Extract problem source defined by region into a separate set of model images'
             step['dependency'] = 0
             step['id'] = 'IMSPL'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += 'python '+OXKAT+'/3GC_split_model_images.py '
             syscall += '--region '+cfg.CAL_3GC_PEEL_REGION+' '
             syscall += '--prefix '+prepeel_img_prefix+' '
@@ -165,7 +167,7 @@ def main():
             step['comment'] = 'Predict problem source visibilities into MODEL_DATA column of '+myms
             step['dependency'] = 1
             step['id'] = 'WS1PR'+code
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_predict(msname=myms,imgbase=dir1_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
             step['syscall'] = syscall
             steps.append(step)
@@ -176,7 +178,7 @@ def main():
             step['comment'] = 'Add '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' column to '+myms
             step['dependency'] = 2
             step['id'] = 'ADCOL'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += 'python '+TOOLS+'/add_MS_column.py '
             syscall += '--colname '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
             syscall += myms
@@ -191,7 +193,7 @@ def main():
             step['id'] = 'CPCOL'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += 'python '+TOOLS+'/copy_MS_column.py '
             syscall += '--fromcol MODEL_DATA '
             syscall += '--tocol '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
@@ -205,7 +207,7 @@ def main():
             step['comment'] = 'Predict full sky model visibilities into MODEL_DATA column of '+myms
             step['dependency'] = 4
             step['id'] = 'WS2PR'+code
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_predict(msname=myms,imgbase=prepeel_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
             step['syscall'] = syscall
             steps.append(step)
@@ -218,7 +220,7 @@ def main():
             step['id'] = 'CL3GC'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_cubical(parset=cfg.CAL_3GC_PEEL_PARSET,myms=myms)
             step['syscall'] = syscall
             steps.append(step)

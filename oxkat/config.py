@@ -14,6 +14,8 @@ HOME = os.path.expanduser('~')
 # Singularity
 #
 
+# Set to False to disable singularity entirely
+USE_SINGULARITY = True
 
 # If your data are symlinked and located in a path that singularity
 # cannot see by default then set BIND to that path.

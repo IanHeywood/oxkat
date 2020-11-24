@@ -15,6 +15,8 @@ from oxkat import config as cfg
 
 def main():
 
+    USE_SINGULARITY = cfg.USE_SINGULARITY
+    
     gen.print_spacer()
     print(gen.now()+'oxkat: 2GC (direction independent selfcal) setup')
 
@@ -126,7 +128,7 @@ def main():
             step['id'] = 'WSDMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=data_img_prefix,
                         datacol='DATA',
@@ -143,7 +145,7 @@ def main():
             step['id'] = 'WSDPR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_predict(msname=myms,imgbase=data_img_prefix)
             step['syscall'] = syscall
             steps.append(step)
@@ -154,7 +156,7 @@ def main():
             step['comment'] = 'Run CASA self-calibration script'
             step['dependency'] = 1
             step['id'] = 'CL2GC'+code
-            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
                         extra_args='mslist='+myms)
             step['syscall'] = syscall
@@ -166,7 +168,7 @@ def main():
             step['comment'] = 'Plot the self-calibration gain solutions'
             step['dependency'] = 2
             step['id'] = 'PLTAB'+code
-            syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_2GC_*'+myms+'*'
             step['syscall'] = syscall
             steps.append(step)
@@ -179,7 +181,7 @@ def main():
             step['id'] = 'WSCMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=corr_img_prefix,
                         datacol='CORRECTED_DATA',
@@ -193,7 +195,7 @@ def main():
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
             step['dependency'] = 4
             step['id'] = 'MASK1'+code
-            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
                                     outfile = corr_img_prefix+'-MFS-image.mask1.fits',
                                     thresh = 5.5,
@@ -209,7 +211,7 @@ def main():
             step['id'] = 'WSDPR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
             syscall += gen.generate_syscall_predict(msname=myms,imgbase=corr_img_prefix)
             step['syscall'] = syscall
             steps.append(step)

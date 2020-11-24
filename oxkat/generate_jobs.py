@@ -27,10 +27,12 @@ def print_spacer():
     print('-'*80)
 
 
-def get_container(path,pattern):
+def get_container(path,pattern,use_singularity):
     
     # For running without containers
-    if path is None:
+    if path is None: # Retain backwards compatibility with hippo fix
+        return ''
+    if not use_singularity:
         return ''
 
     # Search for a file matching pattern in path

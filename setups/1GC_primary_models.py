@@ -15,6 +15,13 @@ from oxkat import config as cfg
 
 def main():
 
+    USE_SINGULARITY = cfg.USE_SINGULARITY
+
+    gen.print_spacer()
+    print(gen.now()+'oxkat: 1GC (referenced calibration) setup')
+    gen.print_spacer()
+    print(gen.now()+'Note that this uses a full-field model for PKS B1934-638.')
+    print(gen.now()+'This is somewhat experimental.')
 
     # ------------------------------------------------------------------------------
     #
@@ -61,7 +68,7 @@ def main():
     step['comment'] = 'Split and average master MS'
     step['dependency'] = None
     step['id'] = 'SPPRE'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py')
     step['syscall'] = syscall
     steps.append(step)
@@ -72,7 +79,8 @@ def main():
     step['comment'] = 'Run setup script to generate project_info pickle'
     step['dependency'] = 0
     step['id'] = 'SETUP'+code
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python '+cfg.OXKAT+'/1GC_00_setup.py '+myms
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+    syscall += 'python '+cfg.OXKAT+'/1GC_00_setup.py '+myms
     step['syscall'] = syscall
     steps.append(step)
 
@@ -82,7 +90,7 @@ def main():
     step['comment'] = 'Rephase primary calibrator visibilties in case of open-time offset problems'
     step['dependency'] = 1
     step['id'] = 'UVFIX'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_01_casa_rephase_primary_calibrator.py')
     step['syscall'] = syscall
     steps.append(step)
@@ -93,7 +101,7 @@ def main():
     step['comment'] = 'Apply basic flagging steps to all fields'
     step['dependency'] = 2
     step['id'] = 'FGBAS'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_02_casa_basic_flags.py')
     step['syscall'] = syscall
     steps.append(step)
@@ -104,7 +112,8 @@ def main():
     step['comment'] = 'Add CORRECTED_DATA and MODEL_DATA columns'
     step['dependency'] = 3
     step['id'] = 'ADCOL'+code
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python '+cfg.TOOLS+'/add_MS_column.py --colname CORRECTED_DATA,MODEL_DATA '+myms
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+    syscall += 'python '+cfg.TOOLS+'/add_MS_column.py --colname CORRECTED_DATA,MODEL_DATA '+myms
     step['syscall'] = syscall
     steps.append(step)
 
@@ -116,7 +125,8 @@ def main():
     step['id'] = 'SETCC'+code
     step['slurm_config'] = cfg.SLURM_WSCLEAN
     step['pbs_config'] = cfg.PBS_WSCLEAN
-    syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' python2 '+cfg.OXKAT+'/1GC_03_primary_cal_field_sources.py'
+    syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+    syscall += 'python2 '+cfg.OXKAT+'/1GC_03_primary_cal_field_sources.py'
     step['syscall'] = syscall
     steps.append(step)
 
@@ -126,7 +136,8 @@ def main():
     step['comment'] = 'Copy MODEL_DATA to CORRECTED_DATA (temp storage for primary field sources)'
     step['dependency'] = 5
     step['id'] = 'CPCOL'+code
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python '+cfg.TOOLS+'/copy_MS_column.py --fromcol MODEL_DATA --tocol CORRECTED_DATA '+myms
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+    syscall += 'python '+cfg.TOOLS+'/copy_MS_column.py --fromcol MODEL_DATA --tocol CORRECTED_DATA '+myms
     step['syscall'] = syscall
     steps.append(step)
 
@@ -136,7 +147,7 @@ def main():
     step['comment'] = 'Run setjy for primary calibrator'
     step['dependency'] = 6
     step['id'] = 'SETJY'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_04_casa_setjy.py')
     step['syscall'] = syscall
     steps.append(step)
@@ -147,7 +158,8 @@ def main():
     step['comment'] = 'Add field source model in CORRECTED_DATA to component model in MODEL_DATA'
     step['dependency'] = 7
     step['id'] = 'SMCOL'+code
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' python '+cfg.TOOLS+'/sum_MS_columns.py --src CORRECTED_DATA --dest MODEL_DATA '+myms
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+    syscall += 'python '+cfg.TOOLS+'/sum_MS_columns.py --src CORRECTED_DATA --dest MODEL_DATA '+myms
     step['syscall'] = syscall
     steps.append(step)
 
@@ -157,7 +169,7 @@ def main():
     step['comment'] = 'Run auto-flaggers on calibrators'
     step['dependency'] = 8
     step['id'] = 'FGCAL'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_05_casa_autoflag_cals_DATA.py')
     step['syscall'] = syscall
     steps.append(step)
@@ -168,7 +180,7 @@ def main():
     step['comment'] = 'Split off calibrator MS with 8 SPWs'
     step['dependency'] = 9
     step['id'] = 'SPCAL'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_06_casa_split_calibrators.py')
     step['syscall'] = syscall
     steps.append(step)
@@ -179,7 +191,7 @@ def main():
     step['comment'] = 'Fit for intrinsic model of secondary calibrator'
     step['dependency'] = 10
     step['id'] = 'CLMOD'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_07_casa_get_secondary_model.py')
     step['syscall'] = syscall
     steps.append(step)
@@ -190,7 +202,7 @@ def main():
     step['comment'] = 'Generate reference calibration solutions and apply to target(s)'
     step['dependency'] = 11
     step['id'] = 'CL1GC'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_08_casa_refcal_using_secondary_model.py')
     step['syscall'] = syscall
     steps.append(step)
@@ -201,7 +213,8 @@ def main():
     step['comment'] = 'Plot the gain solutions'
     step['dependency'] = 12
     step['id'] = 'PLTAB'+code
-    syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' python3 '+cfg.OXKAT+'/PLOT_gaintables.py cal_1GC_* cal_1GC_*calibrators.ms*'
+    syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+    syscall += 'python3 '+cfg.OXKAT+'/PLOT_gaintables.py cal_1GC_* cal_1GC_*calibrators.ms*'
     step['syscall'] = syscall
     steps.append(step)
 
@@ -211,7 +224,7 @@ def main():
     step['comment'] = 'Split the corrected target data'
     step['dependency'] = 12
     step['id'] = 'SPTRG'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_09_casa_split_targets.py')
     step['syscall'] = syscall
     steps.append(step)
@@ -222,7 +235,8 @@ def main():
     step['comment'] = 'Plot the corrected calibrator visibilities'
     step['dependency'] = 14
     step['id'] = 'PLVIS'+code
-    syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' python3 '+cfg.OXKAT+'/1GC_10_plot_visibilities.py'
+    syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else syscall = ''
+    syscall += 'python3 '+cfg.OXKAT+'/1GC_10_plot_visibilities.py'
     step['syscall'] = syscall
     steps.append(step)
 
@@ -284,6 +298,10 @@ def main():
     f.close()
 
     gen.make_executable(submit_file)
+
+    gen.print_spacer()
+    print(gen.now()+'Created '+submit_file)
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
 

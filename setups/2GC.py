@@ -190,6 +190,7 @@ def main():
             step['syscall'] = syscall
             steps.append(step)
 
+
             step = {}
             step['step'] = 5
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'

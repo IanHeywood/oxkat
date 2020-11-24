@@ -47,7 +47,7 @@ def main():
         CONTAINER_RUNNER=''
 
 
-    CUBICAL_CONTAINER = get.get_container(CONTAINER_PATH,cfg.CUBICAL_CONTAINER)
+    CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_CONTAINER)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
 
 

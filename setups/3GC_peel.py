@@ -176,7 +176,7 @@ def main():
             step['step'] = 3
             step['comment'] = 'Add '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' column to '+myms
             step['dependency'] = 2
-            step['id'] = 'ADCOL'+code
+            step['id'] = 'ADDIR'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python '+TOOLS+'/add_MS_column.py '
             syscall += '--colname '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '

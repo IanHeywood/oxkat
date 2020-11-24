@@ -33,6 +33,8 @@ def main():
     GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
+    TOOLS = cfg.TOOLS
+
 
     gen.setup_dir(GAINTABLES)
     gen.setup_dir(IMAGES)

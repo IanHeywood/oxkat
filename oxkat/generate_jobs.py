@@ -14,17 +14,27 @@ from oxkat import config as cfg
 
 # ------------------------------------------------------------------------
 
+def preamble():
+    print('')
+    print('---------------------+----------------------------------------------------------')
+    print('                     |')
+    print('                     | v0.1')  
+    print('    o  x  k  a  t    | Please file an issue for bugs / help:')
+    print('                     | https://github.com/IanHeywood/oxkat')
+    print('                     |')
+    print('---------------------+----------------------------------------------------------')
+
 
 def now():
     # stamp = time.strftime('[%H:%M:%S] ')
-    stamp = time.strftime('[%Y-%m-%d %H:%M:%S]:')
+    stamp = time.strftime(' %Y-%m-%d %H:%M:%S |')
     # msg = '\033[92m'+stamp+'\033[0m' # time in green
     msg = stamp+' '
     return msg
 
 
 def print_spacer():
-    print('-'*80)
+    print('---------------------+----------------------------------------------------------')
 
 
 def get_container(path,pattern,use_singularity):
@@ -41,6 +51,7 @@ def get_container(path,pattern,use_singularity):
     ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
     if len(ll) == 0:
         print(now()+'Failed to find container for '+pattern+' in '+path)
+        print_spacer()
         sys.exit()
     elif len(ll) > 1:
         print(now()+'Warning: more than one match for '+pattern+' in '+path)

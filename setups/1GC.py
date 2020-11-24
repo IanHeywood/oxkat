@@ -17,8 +17,8 @@ def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
-    gen.print_spacer()
-    print(gen.now()+'oxkat: 1GC (referenced calibration) setup')
+    gen.preamble()
+    print(gen.now()+'1GC (referenced calibration) setup')
 
     # ------------------------------------------------------------------------------
     #

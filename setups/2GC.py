@@ -17,8 +17,8 @@ def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
     
-    gen.print_spacer()
-    print(gen.now()+'oxkat: 2GC (direction independent selfcal) setup')
+    gen.preamble()
+    print(gen.now()+'2GC (direction independent selfcal) setup')
 
 
     # ------------------------------------------------------------------------------

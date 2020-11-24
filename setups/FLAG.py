@@ -17,8 +17,8 @@ def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
-    gen.print_spacer()
-    print(gen.now()+'oxkat: FLAG (flagging & initial mask-making) setup')
+    gen.preamble()
+    print(gen.now()+'FLAG (flagging & initial mask-making) setup')
 
 
     # ------------------------------------------------------------------------------

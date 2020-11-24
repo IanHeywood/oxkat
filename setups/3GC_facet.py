@@ -17,8 +17,8 @@ def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
-    gen.print_spacer()
-    print(gen.now()+'oxkat: 3GC (facet-based corrections) setup')
+    gen.preamble()
+    print(gen.now()+'3GC (facet-based corrections) setup')
 
 
     # ------------------------------------------------------------------------------

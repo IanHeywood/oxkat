@@ -15,6 +15,9 @@ from oxkat import config as cfg
 
 def main():
 
+    gen.print_spacer()
+    print(gen.now()+'oxkat: 3GC (peeling) setup')
+
 
     # ------------------------------------------------------------------------------
     #
@@ -77,15 +80,15 @@ def main():
 
         if not o.isdir(myms):
 
-            print('------------------------------------------------------')
+            gen.print_spacer()
             print(gen.now()+myms+' not found, skipping '+targetname)
 
 
         elif not o.isfile(cfg.CAL_3GC_PEEL_REGION):
 
-            print('------------------------------------------------------')
+            gen.print_spacer()
             print(gen.now()+cfg.CAL_3GC_PEEL_REGION+' not found')
-            print(gen.now()+' Please provide a DS9 region file definining the source you wish to peel.')
+            print(gen.now()+'Please provide a DS9 region file definining the source you wish to peel.')
 
 
         else:
@@ -96,7 +99,7 @@ def main():
 
             code = gen.get_target_code(targetname)
             if code in codes:
-                print(gen.now()+' Adding suffix to '+targetname+' code to prevent job ID clashes')
+                print(gen.now()+'Adding suffix to '+targetname+' code to prevent job ID clashes')
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
@@ -110,7 +113,7 @@ def main():
                 mask = 'auto'
 
 
-            print('------------------------------------------------------')
+            gen.print_spacer()
             print(gen.now()+'Target:     '+targetname)
             print(gen.now()+'MS:         '+myms)
             print(gen.now()+'Using mask: '+mask)
@@ -293,9 +296,9 @@ def main():
 
     gen.make_executable(submit_file)
 
-    print('------------------------------------------------------')
-    print(gen.now()+' Created '+submitfile)
-    print('------------------------------------------------------')
+    gen.print_spacer()
+    print(gen.now()+'Created '+submit_file)
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
 

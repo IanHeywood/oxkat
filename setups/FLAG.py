@@ -15,6 +15,9 @@ from oxkat import config as cfg
 
 def main():
 
+    gen.print_spacer()
+    print(gen.now()+'oxkat: FLAG (flagging & initial mask-making) setup')
+
 
     # ------------------------------------------------------------------------------
     #
@@ -77,7 +80,7 @@ def main():
 
         if not o.isdir(myms):
 
-            print('------------------------------------------------------')
+            gen.print_spacer()
             print(gen.now()+myms+' not found, skipping '+targetname)
 
         else:
@@ -228,6 +231,10 @@ def main():
     f.close()
 
     gen.make_executable(submit_file)
+
+    gen.print_spacer()
+    print(gen.now()+'Created '+submit_file)
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
 

@@ -15,6 +15,9 @@ from oxkat import config as cfg
 
 def main():
 
+    gen.print_spacer()
+    print(gen.now()+'oxkat: 2GC (direction independent selfcal) setup')
+
 
     # ------------------------------------------------------------------------------
     #
@@ -77,7 +80,7 @@ def main():
 
         if not o.isdir(myms):
 
-            print('------------------------------------------------------')
+            gen.print_spacer()
             print(gen.now()+myms+' not found, skipping '+targetname)
 
         else:
@@ -102,7 +105,7 @@ def main():
                 mask = 'auto'
 
 
-            print('------------------------------------------------------')
+            gen.print_spacer()
             print(gen.now()+'Target:     '+targetname)
             print(gen.now()+'MS:         '+myms)
             print(gen.now()+'Using mask: '+mask)
@@ -283,6 +286,10 @@ def main():
     f.close()
 
     gen.make_executable(submit_file)
+
+    gen.print_spacer()
+    print(gen.now()+'Created '+submit_file)
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
 

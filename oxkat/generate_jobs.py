@@ -23,6 +23,10 @@ def now():
     return msg
 
 
+def print_spacer():
+    print('-'*80)
+
+
 def get_container(path,pattern):
     
     # For running without containers
@@ -46,7 +50,7 @@ def get_container(path,pattern):
 def set_infrastructure(args):
 
     if len(args) == 1:
-        print('Please specify infrastructure (idia / chpc / hippo / node)')
+        print(now()+'Please specify infrastructure (idia / chpc / hippo / node)')
         sys.exit()
 
     if args[1].lower() == 'idia':

@@ -15,6 +15,8 @@ from oxkat import config as cfg
 
 def main():
 
+    gen.print_spacer()
+    print(gen.now()+'oxkat: 1GC (referenced calibration) setup')
 
     # ------------------------------------------------------------------------------
     #
@@ -191,6 +193,7 @@ def main():
     #
     # ------------------------------------------------------------------------------
 
+
     submit_file = 'submit_1GC_jobs.sh'
     kill_file = cfg.SCRIPTS+'/kill_1GC_jobs.sh'
 
@@ -241,6 +244,10 @@ def main():
     f.close()
 
     gen.make_executable(submit_file)
+
+    gen.print_spacer()
+    print(gen.now()+'Created '+submit_file)
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
 

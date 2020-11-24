@@ -121,7 +121,8 @@ def main():
             if len(region) == 0:
                 gen.print_spacer()
                 print(gen.now()+'Please provide a region file of the form:')
-                print(gen.now()+'*'+targetname+'*.reg')
+                print(gen.now()+'       *'+targetname+'*.reg')
+                print(gen.now()+'for this field.')
                 sys.exit()
             else:
                 region = region[0]

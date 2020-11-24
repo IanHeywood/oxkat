@@ -190,8 +190,6 @@ def main():
             step['comment'] = 'Copy MODEL_DATA to '+cfg.CAL_3GC_PEEL_DIR1COLNAME
             step['dependency'] = 3
             step['id'] = 'CPMOD'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python '+TOOLS+'/copy_MS_column.py '
             syscall += '--fromcol MODEL_DATA '

@@ -174,8 +174,6 @@ def main():
             step['comment'] = 'Copy DATA to CORRECTED_DATA for '+myms
             step['dependency'] = 3
             step['id'] = 'CPDAT'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python '+TOOLS+'/copy_MS_column.py '
             syscall += '--fromcol DATA '

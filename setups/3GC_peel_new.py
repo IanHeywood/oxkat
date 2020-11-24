@@ -59,7 +59,7 @@ def main():
 
     # ------------------------------------------------------------------------------
     #
-    # 2GC recipe definition
+    # 3GC peeling recipe definition
     #
     # ------------------------------------------------------------------------------
 
@@ -80,6 +80,14 @@ def main():
             print('------------------------------------------------------')
             print(gen.now()+myms+' not found, skipping '+targetname)
 
+
+        elif not o.isfile(cfg.CAL_3GC_PEEL_REGION):
+
+            print('------------------------------------------------------')
+            print(gen.now()+cfg.CAL_3GC_PEEL_REGION+' not found')
+            print(gen.now()+' Please provide a DS9 region file definining the source you wish to peel.')
+
+
         else:
 
             steps = []        
@@ -95,9 +103,9 @@ def main():
         
 
             # Look for the FITS mask for this target
-            mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
-            if len(mask0) > 0:
-                mask = mask0[0]
+            mask1 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask1.fits'))
+            if len(mask1) > 0:
+                mask = mask1[0]
             else:
                 mask = 'auto'
 
@@ -106,27 +114,30 @@ def main():
             print(gen.now()+'Target:     '+targetname)
             print(gen.now()+'MS:         '+myms)
             print(gen.now()+'Using mask: '+mask)
+            print(gen.now()+'Peeling:    '+cfg.CAL_3GC_PEEL_REGION)
 
 
             # Image prefixes
-            data_img_prefix = IMAGES+'/img_'+myms+'_datamask'
-            corr_img_prefix = IMAGES+'/img_'+myms+'_pcalmask'
+            prepeel_img_prefix = IMAGES+'/img_'+myms+'_prepeel'
+            dir1_img_prefix = prepeel_img_prefix+'-'+cfg.CAL_3GC_PEEL_REGION.split('/')[-1].split('.')[0]
 
             # Target-specific kill file
-            kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
+            kill_file = SCRIPTS+'/kill_3GC_peel_jobs_'+filename_targetname+'.sh'
 
 
             step = {}
             step['step'] = 0
-            step['comment'] = 'Run wsclean, masked deconvolution of the DATA column of '+myms
+            step['comment'] = 'Run masked wsclean, high freq/angular resolution, on CORRECTED_DATA column of '+myms
             step['dependency'] = None
             step['id'] = 'WSDMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=data_img_prefix,
-                        datacol='DATA',
+                        imgname=prepeel_img_prefix,
+                        datacol='CORRECTED_DATA',
+                        briggs=-cfg.CAL_3GC_PEEL_BRIGGS,
+                        chanout=cfg.CAL_3GC_PEEL_NCHAN,
                         bda=True,
                         mask=mask)
             step['syscall'] = syscall
@@ -135,79 +146,77 @@ def main():
 
             step = {}
             step['step'] = 1
-            step['comment'] = 'Predict model visibilities from imaging of the DATA column'
+            step['comment'] = 'Extract problem source defined by region into a separate set of model images'
             step['dependency'] = 0
-            step['id'] = 'WSDPR'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=data_img_prefix)
+            step['id'] = 'IMSPL'+code
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' '
+            syscall += 'python '+OXKAT+'/3GC_split_model_images.py '
+            syscall += '--region '+cfg.CAL_3GC_PEEL_REGION+' '
+            syscall += '--prefix '+prepeel_img_prefix+' '
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 2
-            step['comment'] = 'Run CASA self-calibration script'
+            step['comment'] = 'Predict problem source visibilities into MODEL_DATA column of '+myms
             step['dependency'] = 1
-            step['id'] = 'CL2GC'+code
-            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-            syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
-                        extra_args='mslist='+myms)
+            step['id'] = 'WS1PR'+code
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
+            syscall += gen.generate_syscall_predict(msname=myms,imgbase=dir1_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 3
-            step['comment'] = 'Plot the self-calibration gain solutions'
+            step['comment'] = 'Add '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' column to '+myms
             step['dependency'] = 2
-            step['id'] = 'PLTAB'+code
-            syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' '
-            syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_2GC_*'+myms+'*'
+            step['id'] = 'ADCOL'+code
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' '
+            syscall += 'python '+TOOLS+'/add_MS_column.py '
+            syscall += '--colname '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
+            syscall += myms
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 4
-            step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA column of '+myms
-            step['dependency'] = 2
-            step['id'] = 'WSCMA'+code
+            step['comment'] = 'Copy MODEL_DATA to '+cfg.CAL_3GC_PEEL_DIR1COLNAME
+            step['dependency'] = 3
+            step['id'] = 'CPCOL'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
-            syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=corr_img_prefix,
-                        datacol='CORRECTED_DATA',
-                        bda=True,
-                        mask=mask)
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' '
+            syscall += 'python '+TOOLS+'/copy_MS_column.py '
+            syscall += '--fromcol MODEL_DATA '
+            syscall += '--tocol '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
+            syscall += myms
             step['syscall'] = syscall
             steps.append(step)
 
+
             step = {}
             step['step'] = 5
-            step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
+            step['comment'] = 'Predict full sky model visibilities into MODEL_DATA column of '+myms
             step['dependency'] = 4
-            step['id'] = 'MASK1'+code
-            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' '
-            syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
-                                    outfile = corr_img_prefix+'-MFS-image.mask1.fits',
-                                    thresh = 5.5,
-                                    zoompix = cfg.DDF_NPIX)[0]
+            step['id'] = 'WS2PR'+code
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
+            syscall += gen.generate_syscall_predict(msname=myms,imgbase=prepeel_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 6
-            step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
-            step['dependency'] = 4
-            step['id'] = 'WSDPR'+code
+            step['comment'] = 'Run CubiCal to solve for G (full model) and dE (problem source), peel out problem source'
+            step['dependency'] = 5
+            step['id'] = 'CL3GC'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=corr_img_prefix)
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' '
+            syscall += gen.generate_syscall_cubical(parset=cfg.CAL_3GC_PEEL_PARSET,myms=myms)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -224,7 +233,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_2GC_jobs.sh'
+    submit_file = 'submit_3GC_peel_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')
@@ -283,6 +292,10 @@ def main():
     f.close()
 
     gen.make_executable(submit_file)
+
+    print('------------------------------------------------------')
+    print(gen.now()+' Created '+submitfile)
+    print('------------------------------------------------------')
 
     # ------------------------------------------------------------------------------
 

@@ -26,7 +26,6 @@ CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = HOME+'/containers/'
 
-
 CASA_PATTERN = 'casa_'
 CLUSTERCAT_PATTERN = 'ddfacet'
 CODEX_PATTERN = 'codex-africanus'
@@ -59,15 +58,6 @@ IMAGES = CWD+'/IMAGES'
 LOGS = CWD+'/LOGS'
 SCRIPTS = CWD+'/SCRIPTS'
 VISPLOTS = CWD+'/VISPLOTS'
-
-
-# ------------------------------------------------------------------------
-#
-# MeerKAT primary beam models
-#
-
-
-BEAM_L = HOME+'/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
 
 
 # ------------------------------------------------------------------------
@@ -204,6 +194,7 @@ CAL_2GC_APSOLINT = 'inf'             # Solution interval for amplitude and phase
 #
 
 CAL_3GC_PEEL_NCHAN = 32
+CAL_3GC_PEEL_BRIGGS = -0.6
 CAL_3GC_PEEL_DIR1COLNAME = 'DIR1_DATA'
 CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288.reg'
 CAL_3GC_PEEL_PARSET = DATA+'/cubical/peel.parset'
@@ -400,3 +391,13 @@ CLUSTERCAT_CENTRALRADIUS = 0.15
 CLUSTERCAT_NGEN = 100
 CLUSTERCAT_FLUXMIN = 0.000001
 CLUSTERCAT_NCPU = 32
+
+
+# ------------------------------------------------------------------------
+#
+# MeerKAT primary beam models
+#
+
+
+BEAM_L = HOME+'/Beams/meerkat_pb_jones_cube_95channels_$(xy)_$(reim).fits'
+

@@ -15,37 +15,31 @@ from oxkat import config as cfg
 
 def main():
 
+
     # ------------------------------------------------------------------------------
-    # Setup
+    #
+    # Setup paths, required containers, infrastructure
+    #
+    # ------------------------------------------------------------------------------
+
+
+    OXKAT = cfg.OXKAT
+    DATA = cfg.DATA
+    IMAGES = cfg.IMAGES
+    SCRIPTS = cfg.SCRIPTS
+
+
+    gen.setup_dir(IMAGES)
+    gen.setup_dir(cfg.LOGS)
+    gen.setup_dir(cfg.SCRIPTS)
 
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
-
-
-    # Get paths from config and setup folders
-
-    CWD = cfg.CWD
-    BIND = cfg.BIND
-    OXKAT = cfg.OXKAT
-    DATA = cfg.DATA
-    TOOLS = cfg.TOOLS
-    IMAGES = cfg.IMAGES
-    LOGS = cfg.LOGS
-    SCRIPTS = cfg.SCRIPTS
-
-    BINDPATH = '$PWD,'+CWD+','+BIND
-
-    gen.setup_dir(LOGS)
-    gen.setup_dir(SCRIPTS)
-    gen.setup_dir(IMAGES)
-
-    # Enable running without containers
     if CONTAINER_PATH is not None:
         CONTAINER_RUNNER='singularity exec '
     else:
         CONTAINER_RUNNER=''
 
-    # Get containers needed for this script
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
     DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
@@ -61,28 +55,25 @@ def main():
     target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']
     target_ms = project_info['target_ms']
- 
 
-    # Set names of the run file, open for writing
 
-    submit_file = 'submit_flag_jobs.sh'
+    # ------------------------------------------------------------------------------
+    #
+    # FLAG recipe definition
+    #
+    # ------------------------------------------------------------------------------
 
-    f = open(submit_file,'w')
-    f.write('#!/usr/bin/env bash\n')
-    f.write('export SINGULARITY_BINDPATH='+BINDPATH+'\n')
 
+    target_steps = []
     codes = []
     ii = 1
 
     # Loop over targets
 
-
     for tt in range(0,len(target_ids)):
-
 
         targetname = target_names[tt]
         myms = target_ms[tt]
-
 
         if not o.isdir(myms):
 
@@ -90,58 +81,48 @@ def main():
             print(gen.now()+myms+' not found, skipping '+targetname)
 
         else:
-            
+
+            steps = []        
             filename_targetname = gen.scrub_target_name(targetname)
 
             code = gen.get_target_code(targetname)
             if code in codes:
+                print(gen.now()+' Adding suffix to '+targetname+' code to prevent job ID clashes')
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
-
         
             # Image prefix
-
             img_prefix = IMAGES+'/img_'+myms+'_datablind'
 
-
             # Target-specific kill file
-        
             kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
 
-        
-            # Initialise a list to hold all the job IDs
 
-            id_list = []
-
-
-            # ------------------------------------------------------------------------------
-            # STEP 1: 
-            # Run Tricolour on targets
-
+            step = {}
+            step['step'] = 0
+            step['comment'] = 'Run Tricolour on '+myms
+            step['dependency'] = None
+            step['id'] = 'TRICO'+code
+            step['slurm_config'] = cfg.SLURM_TRICOLOUR
+            step['pbs_config'] = cfg.PBS_TRICOLOUR
             syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' '
             syscall += gen.generate_syscall_tricolour(myms = myms,
-                                    config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
-                                    datacol = 'DATA',
-                                    fields = '0',
-                                    strategy = 'polarisation')
-
-            id_tricolour = 'TRICO'+code
-            id_list.append(id_tricolour)
-
-            run_command  = gen.job_handler(syscall = syscall,
-                                    jobname = id_tricolour,
-                                    infrastructure = INFRASTRUCTURE,
-                                    slurm_config = cfg.SLURM_TRICOLOUR,
-                                    pbs_config = cfg.PBS_TRICOLOUR)
-
-            f.write(run_command)
+                        config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
+                        datacol = 'DATA',
+                        fields = '0',
+                        strategy = 'polarisation')
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            # ------------------------------------------------------------------------------
-            # STEP 2: 
-            # wsclean with blind deconvolution
-
+            step = {}
+            step['step'] = 1
+            step['comment'] = 'Blind wsclean on DATA column of '+myms
+            step['dependency'] = 0
+            step['id'] = 'WSDBL'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' '
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                                     imgname = img_prefix,
@@ -150,70 +131,106 @@ def main():
                                     niter = 90000,
                                     autothreshold = 3.5,
                                     mask = 'none')
-
-            id_wsclean = 'WSDBL'+code
-            id_list.append(id_wsclean)
-
-            run_command = gen.job_handler(syscall = syscall,
-                                    jobname = id_wsclean,
-                                    infrastructure = INFRASTRUCTURE,
-                                    dependency = id_tricolour,
-                                    slurm_config = cfg.SLURM_WSCLEAN,
-                                    pbs_config = cfg.PBS_WSCLEAN)
-
-            f.write(run_command)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            # ------------------------------------------------------------------------------
-            # STEP 3:
-            # Make a FITS mask 
-
+            step = {}
+            step['step'] = 2
+            step['comment'] = 'Make initial cleaning mask for '+targetname
+            step['dependency'] = 1
+            step['id'] = 'MASK0'+code
             syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' '
             syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
                                     outfile = img_prefix+'-MFS-image.mask0.fits',
                                     zoompix = '')[0]
+            step['syscall'] = syscall
+            steps.append(step)
 
-            id_makemask = 'MASK0'+code
-            id_list.append(id_makemask)
 
-            run_command = gen.job_handler(syscall = syscall,
-                                    jobname = id_makemask,
-                                    infrastructure = INFRASTRUCTURE,
-                                    dependency = id_wsclean)
-
-            f.write(run_command)
-
-            # ------------------------------------------------------------------------------
-            # STEP 4:
-            # Backup the flag table 
-
+            step = {}
+            step['step'] = 3
+            step['comment'] = 'Backup flag table for '+myms
+            step['dependency'] = 1
+            step['id'] = 'SAVFG'+code
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
             syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
             syscall += 'versionname=tricolour1 '
+            step['syscall'] = syscall
+            steps.append(step)
 
-            id_saveflags = 'SAVFG'+code
-            id_list.append(id_saveflags)
+            target_steps.append((steps,kill_file,targetname))
+
+
+    # ------------------------------------------------------------------------------
+    #
+    # Write the run file and kill file based on the recipe
+    #
+    # ------------------------------------------------------------------------------
+
+
+    submit_file = 'submit_flag_jobs.sh'
+
+    f = open(submit_file,'w')
+    f.write('#!/usr/bin/env bash\n')
+    f.write('export SINGULARITY_BINDPATH='+cfg.BINDPATH+'\n')
+
+    for content in target_steps:  
+        steps = content[0]
+        kill_file = content[1]
+        targetname = content[2]
+        id_list = []
+
+        f.write('\n#---------------------------------------\n')
+        f.write('# '+targetname)
+        f.write('\n#---------------------------------------\n')
+
+        for step in steps:
+
+            step_id = step['id']
+            id_list.append(step_id)
+            if step['dependency'] is not None:
+                dependency = steps[step['dependency']]['id']
+            else:
+                dependency = None
+            syscall = step['syscall']
+            if 'slurm_config' in step.keys():
+                slurm_config = step['slurm_config']
+            else:
+                slurm_config = cfg.SLURM_DEFAULTS
+            if 'pbs_config' in step.keys():
+                pbs_config = step['pbs_config']
+            else:
+                pbs_config = cfg.PBS_DEFAULTS
+            comment = step['comment']
 
             run_command = gen.job_handler(syscall = syscall,
-                        jobname = id_saveflags,
-                        infrastructure  =INFRASTRUCTURE,
-                        dependency = id_wsclean)
+                            jobname = step_id,
+                            infrastructure = INFRASTRUCTURE,
+                            dependency = dependency,
+                            slurm_config = slurm_config,
+                            pbs_config = pbs_config)
 
+
+            f.write('\n# '+comment+'\n')
             f.write(run_command)
 
-            # ------------------------------------------------------------------------------
+        if INFRASTRUCTURE != 'node':
+            f.write('\n# Generate kill script for '+targetname+'\n')
+        if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
+            kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+            f.write(kill)
+        elif INFRASTRUCTURE == 'chpc':
+            kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+            f.write(kill)
 
-
-            if INFRASTRUCTURE in ['idia','chpc']:
-                kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
-                f.write(kill+'\n')
-            f.write('\n')
-
-
+        
     f.close()
 
-
     gen.make_executable(submit_file)
+
+    # ------------------------------------------------------------------------------
+
 
 
 if __name__ == "__main__":

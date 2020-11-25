@@ -8,6 +8,7 @@
 
 ## What is this?
 
+
 * A set of Python scripts with the aim of (semi-)automatically processing [MeerKAT](https://www.sarao.ac.za/science-engineering/meerkat/) data. 
 
 
@@ -20,7 +21,7 @@
 * Setup scripts glue the above components together into a processing recipe. The default procedure is broken down into stages, after each of which it is advisable to pause and examine the state of the process before continuing.  
 
 
-* The intention is that the bar to entry is low. If you have stock Python then nothing else needs installing apart from [Singularity](https://singularity.lbl.gov/), which is available on both the ilifu/IDIA and CHPC clusters, in which case all the underlying radio astronomy packages are containerised. The Singularity layer can also be disabled for running installations on your own machine, either directly, or inside a Python virtual environment.
+* The intention is that the bar to entry is low. If you have stock Python then nothing else needs installing apart from [Singularity](https://github.com/hpcng/singularity), which is available on both the ilifu/IDIA and CHPC clusters, in which case all the underlying radio astronomy packages are containerised. The Singularity layer can also be disabled for running installations on your own machine, either directly, or inside a Python virtual environment.
 
 
 * Please file bugs, suggestions, questions, etc. as [issues](https://github.com/IanHeywood/oxkat/issues).

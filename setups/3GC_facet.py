@@ -165,7 +165,7 @@ def main():
             step['dependency'] = 0
             step['id'] = 'RG2NP'+code
             syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python3 '+TOOLS+'/reg2npy.py '+region+'\n '
+            syscall += 'python3 '+TOOLS+'/reg2npy.py '+region
             step['syscall'] = syscall
             steps.append(step)
 

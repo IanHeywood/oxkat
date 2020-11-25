@@ -2,6 +2,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import numpy
 import sys
 from optparse import OptionParser
 from pyrap.tables import table
@@ -12,6 +13,7 @@ def copycol(msname,fromcol,tocol,field,rowchunk):
     if field == '': 
         tt = table(msname,readonly=False)
     else:
+        print('Selecting FIELD_ID '+str(field))
         t0 = table(msname,readonly=False)
         tt = t0.query(query='FIELD_ID=='+str(field))
 
@@ -20,21 +22,20 @@ def copycol(msname,fromcol,tocol,field,rowchunk):
         print('One or more requested columns not present in MS')
         sys.exit()
 
-    # total_rows = tt.nrows()
-    # chunk = total_rows // 10
-    # for start_row in range(0, total_rows, chunk):
-    #     num_rows = min(chunk, total_rows - start_row)
-    #     data = tt.getcol(fromcol, start_row, num_rows)
-    #     tt.putcol(tocol, data, start_row, num_rows)
-    # tt.close()
+    spws = numpy.unique(tt.getcol('DATA_DESC_ID'))
+    print('Spectral windows: '+str(spws))
 
-    nrows = tt.nrows()
-    for start_row in range(0,nrows,rowchunk):
-        nr = min(rowchunk,nrows-start_row)
-        print('Processing rows:',start_row,' to ',(start_row+nr))
-        tt.putcol(tocol,tt.getcol(fromcol,start_row,nr),start_row,nr)
-
+    for spw in spws:
+        spw_tab = tt.query(query='DATA_DESC_ID=='+str(spw))
+            
+        nrows = spw_tab.nrows()
+        for start_row in range(0,nrows,rowchunk):
+            nr = min(rowchunk,nrows-start_row)
+            print('Processing rows:',start_row,' to ',(start_row+nr),' for SPW ',spw)
+            spw_tab.putcol(tocol,spw_tab.getcol(fromcol,start_row,nr),start_row,nr)
+        spw_tab.done()
     tt.done()
+
     if field != '': t0.done()
 
 

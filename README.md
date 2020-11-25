@@ -67,15 +67,21 @@
    $ source SCRIPTS/kill_1GC_jobs.sh
    ```
 
-7. Once this has completed then examine the products, and move to the next steps in the same fashion. 
+7. Once all the jobs have completed then you can examine the products, and move on to the setup for the next steps in the same fashion. 
 
-Please see the [setups README](setups/README.md) for more details. Most of the settings can be tuned via the [`config.py`](oxkat/config.py) file. Note that for use on a cluster you might have to load a `python3` module. On the IDIA cluster this is achieved with:
+Please see the [setups README](setups/README.md) for more details. Most of the settings can be tuned via the [`config.py`](oxkat/config.py) file. Note that for use on a cluster you might have to load a `python3` module. On the ilifu/IDIA cluster this is achieved with:
 
    ```
    $ module load anaconda3
    ```
 
-which you can also add to your `~/.bashrc` file for simplicity.
+and on the CHPC's Lengau cluster:
+
+   ```
+   $ module load chpc/python/3.7.0
+   ```
+
+These can also be added to your `~/.bashrc` file for simplicity.
 
 ---
 

@@ -44,11 +44,18 @@ def get_container(path,pattern,use_singularity):
     if not use_singularity:
         return ''
 
+
     # Search for a file matching pattern in path
     path = path.rstrip('/')+'/'
-    pattern = '[!casa47][!casarest]'+pattern # ignore CASA 4.7 and casarest containers 
     ll = sorted(glob.glob(path+'*'+pattern+'*img'))
     ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
+
+    # Exclude stimela's casa4.7 and casarest containers
+    if 'casa' in pattern.lower():
+        for ii in ll:
+            if 'casa47' in ii or 'casarest' in ii:
+                ll.remove(ii)
+
     if len(ll) == 0:
         print(now()+'Failed to find container for '+pattern+' in '+path)
         print_spacer()

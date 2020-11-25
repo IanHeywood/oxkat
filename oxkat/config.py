@@ -28,7 +28,7 @@ CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = HOME+'/containers/'
 
-CASA_PATTERN = 'casa_'
+CASA_PATTERN = 'casa'
 CLUSTERCAT_PATTERN = 'ddfacet'
 CODEX_PATTERN = 'codex-africanus'
 CUBICAL_PATTERN = 'cubical'

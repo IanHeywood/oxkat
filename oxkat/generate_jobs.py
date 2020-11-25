@@ -46,6 +46,7 @@ def get_container(path,pattern,use_singularity):
 
     # Search for a file matching pattern in path
     path = path.rstrip('/')+'/'
+    pattern = '[!casa47][!casarest]'+pattern # ignore CASA 4.7 and casarest containers 
     ll = sorted(glob.glob(path+'*'+pattern+'*img'))
     ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
     if len(ll) == 0:

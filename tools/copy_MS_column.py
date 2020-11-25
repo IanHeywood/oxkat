@@ -31,7 +31,7 @@ def copycol(msname,fromcol,tocol,field,rowchunk):
         nrows = spw_tab.nrows()
         for start_row in range(0,nrows,rowchunk):
             nr = min(rowchunk,nrows-start_row)
-            print('Processing rows:',start_row,' to ',(start_row+nr),' for SPW ',spw)
+            print('Processing rows: '+str(start_row)+' to '+str(start_row+nr)+' for SPW '+str(spw))
             spw_tab.putcol(tocol,spw_tab.getcol(fromcol,start_row,nr),start_row,nr)
         spw_tab.done()
     tt.done()

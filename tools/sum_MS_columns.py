@@ -2,6 +2,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import numpy
 import sys
 from optparse import OptionParser
 from pyrap.tables import table
@@ -12,6 +13,7 @@ def sumcol(msname,src,dest,field,subtract,rowchunk):
     if field == '': 
         tt = table(msname,readonly=False)
     else:
+        print('Selecting FIELD_ID '+str(field))
         t0 = table(msname,readonly=False)
         tt = t0.query(query='FIELD_ID=='+str(field))
 
@@ -20,25 +22,32 @@ def sumcol(msname,src,dest,field,subtract,rowchunk):
         print('One or more requested columns not present in MS')
         sys.exit()
 
+    spws = numpy.unique(tt.getcol('DATA_DESC_ID'))
+    print('Spectral windows: '+str(spws))
+
     print(msname)
     if subtract:
         print('Subtracting '+src+' from '+dest)
     else:
         print('Adding '+src+' to '+dest)
 
-    nrows = tt.nrows()
-    for start_row in range(0,nrows,rowchunk):
-        nr = min(rowchunk,nrows-start_row)
-        print('Processing rows:',start_row,' to ',(start_row+nrows))
-        src_data = tt.getcol(src,start_row,nr)
-        dest_data = tt.getcol(dest,start_row,nr)
-        if subtract:
-            dest_data = dest_data - src_data
-        else:
-            dest_data += src_data
-        tt.putcol(dest,dest_data,start_row,nr)
+    for spw in spws:
+        spw_tab = tt.query(query='DATA_DESC_ID=='+str(spw))
 
+        nrows = spw_tab.nrows()
+        for start_row in range(0,nrows,rowchunk):
+            nr = min(rowchunk,nrows-start_row)
+            print('Processing rows: '+str(start_row)+' to '+str(start_row+nr)+' for SPW '+str(spw))
+            src_data = spw_tab.getcol(src,start_row,nr)
+            dest_data = spw_tab.getcol(dest,start_row,nr)
+            if subtract:
+                dest_data = dest_data - src_data
+            else:
+                dest_data += src_data
+            spw_tab.putcol(dest,dest_data,start_row,nr)
+        spw_tab.done()
     tt.done()
+
     if field != '': t0.done()
 
 

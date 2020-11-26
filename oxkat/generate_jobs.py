@@ -86,7 +86,7 @@ def get_container(path,pattern,use_singularity):
                 ll.remove(ii)
 
     if len(ll) == 0:
-        print(now()+'Failed to find required container for '+pattern+' in '+path)
+        print(now()+f'{pattern:<10}| not found!')
         print_spacer()
         sys.exit()
     container = ll[-1]

@@ -98,7 +98,7 @@ The default `oxkat` settings have automatically produced decent full-band contin
 
 At present, user input is required for both of the 3GC recipes, in the form of DS9 region files (circles only, at present). For peeling, the region file must defines the outline of a single problem source, and passed to the setup script via the `CAL_3GC_PEEL_REGION` parameter in [`config.py`](oxkat/config.py). Note that the default region file points to PKS 0326-288, which is the principal troublemaker in the CDFS field.
 
-For `3GC_facet.py` a region file that defines the centres of the tessels that receive a directional gain correction must be provided in the same folder of the MS. The setup script will automatically look for a file containing the field name with a `.reg` suffix in the working folder. Defaulting to an automatic method in the event that a region file is not found is pending.
+For `3GC_facet.py` a region file that defines the centres of the tessels that receive a directional gain correction must be provided in the same folder of the MS. The setup script will automatically look for a file containing the field name with a `.reg` suffix in the working folder. Defaulting to an automatic method in the event that a region file is not found is pending. Note that I've had no success running DDFacet or killMS on any of the supported cluster environments. Your mileage may vary everywhere, but especially here.
 
 ## 3GC_peel.py
 
@@ -127,4 +127,3 @@ The following steps will be performed for every target in the source MS:
 * [Re-image the `CORRECTED_DATA` column]() using `DDFacet` with the directional gains applied.
 
 ---
-

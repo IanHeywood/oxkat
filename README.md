@@ -6,6 +6,13 @@
 
 ---
 
+* [What is this?](README.md#what-is-this)
+* [Quick start](README.md#quick-start)
+* [Containers](README.md#containers)
+* [Software roll-call](README.md#software-package-roll-call)
+
+---
+
 ## What is this?
 
 
@@ -24,6 +31,9 @@
 * The intention is that the bar to entry is low. If you have stock Python then nothing else needs installing apart from [Singularity](https://github.com/hpcng/singularity), which is available on both the ilifu/IDIA and CHPC clusters, in which case all the underlying radio astronomy packages are containerised. The Singularity layer can also be disabled for running installations on your own machine, either directly, or inside a Python virtual environment.
 
 
+* If you publish results that have made use of `oxkat` then [please cite the ACSL entry](https://ui.adsabs.harvard.edu/abs/2020ascl.soft09003H/abstract), and (more importantly) the [underlying packages](README.md#software-package-roll-call) used.
+
+
 * Please file bugs, suggestions, questions, etc. as [issues](https://github.com/IanHeywood/oxkat/issues).
 
 
@@ -31,7 +41,7 @@
 
 ## Quick start
 
-1. If you have your [containers all set up](README.md#getting-containers) then log into your machine or cluster, e.g.:
+1. If you have your [containers all set up](README.md#containers) then log into your machine or cluster, e.g.:
 
    ```
    $ ssh ianh@slurm.ilifu.ac.za
@@ -86,7 +96,7 @@ These can also be added to your `~/.bashrc` file for simplicity.
 
 ---
 
-## Getting containers
+## Containers
 
 Singularity can be used to download and build containers from [Docker Hub](https://hub.docker.com/). There is a [script](https://github.com/IanHeywood/oxkat/blob/master/tools/pull_containers.sh) included to download them for you. [@SpheMakh](https://github.com/sphemakh)'s [stimela](https://hub.docker.com/u/stimela) project maintains containers for most radio astronomy applications, and repository of pre-built containers is now available at both IDIA and CHPC (in support of the [`CARACal`](https://github.com/caracal-pipeline) software).
 
@@ -98,7 +108,6 @@ The IDIA slurm head node does not have singularity available, so if you are pull
 
 ## Software package roll-call
 
-If you are publishing results that have made use of `oxkat` then [please cite the ACSL entry](https://ui.adsabs.harvard.edu/abs/2020ascl.soft09003H/abstract), and (more importantly) the references to any underlying packages used.
 
 | Package | Stage | Purpose | Reference |
 | --- | --- | --- | --- | 

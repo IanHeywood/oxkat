@@ -1,11 +1,12 @@
 # setups
 
-This is where 'setup' scripts live. These generate bash files containing sequential calls to various radio astronomy packages, or other Python tools that form part of `oxkat`. Executing the resulting script will run these calls in order or, if you are using a cluster, submit an interdependent batch of jobs to the queue.
+This is where 'setup' scripts live. These are Python scripts that generate bash files containing sequential calls to various radio astronomy packages, or other Python tools that form part of `oxkat`. Executing the resulting script will run these calls in order or, if you are using a cluster, submit an interdependent batch of jobs to the queue.
 
 The computing infrastructure must be specified when a setup script is run, for example:
 
 ```
 $ python setups/1GC.py idia
+...
 $ ./submit_1GC_jobs.sh
 ```
 
@@ -13,7 +14,7 @@ where `idia` can be replaced with `hippo`, `chpc`, or `node`, the latter being w
 
 Rather than having a single `go-pipeline` script, processing jobs are partitioned in stages ([1GC](README.md#1gcpy), [FLAG](README.md#flagpy), [2GC](README.md#2gcpy), [3GC](README.md#3gcpy)), after each of which it is prudent to pause and examine the state of the processing before continuing. If you are gung-ho and don't pay the electricity bill then you can just execute them in order and collect your map at the end.
 
-`oxkat` assumes that your starting point is a typical MeerKAT observation. To process your MeerKAT data they must be in a Measurement Set (MS), containing your target scans as well as suitable primary and secondary calibrator scans. Clone the contents of the root `oxkat` repo into an empty folder, then copy (or place a symlink to) your MS in the same folder and you will be ready to go. A Python pickle file called `project_info.p` will be created towards the start, which contains some deductions about the input MS. This pickle is relied upon throughout the standard workflow. It is possible to use the later stages of `oxkat` to ingest an MS that has been partially processed elsewhere, however it is fiddly, and usually requires some manual editing of the pickle file.
+`oxkat` assumes that your starting point is a typical MeerKAT observation. To process your MeerKAT data they must be in a Measurement Set (MS), containing your target scans as well as suitable primary and secondary calibrator scans. Clone the contents of the root `oxkat` repo into an empty folder, then copy (or place a symlink to) your MS in the same folder and you will be ready to go. A Python pickle file called `project_info.p` will be created towards the start, which contains some deductions about the input MS. This pickle is relied upon throughout the standard workflow. It is possible to use the later stages of `oxkat` to ingest an MS that has been partially processed elsewhere, however it is fiddly, and usually requires some manual editing of the pickle file. This is also part of the reason why the various stages cannot be run all at once, as setup scripts beyond `1GC.py` rely on the `project_info.p` file to generate their jobs.
 
 There follows a description of the available setup scripts, in the order in which they should be run. Technically only the 1GC and FLAG stages are required to obtain a calibrated image of your flagged target(s), however the resulting image can often be significantly improved by direction-independent and direction-dependent self-calibration using the 2GC and 3GC recipes.
 

@@ -84,13 +84,14 @@ def get_container(path,pattern,use_singularity):
         for ii in ll:
             if 'casa47' in ii or 'casarest' in ii:
                 ll.remove(ii)
-
     if len(ll) == 0:
-        print(now()+f'{pattern:<10}| not found!')
+#        print(now()+f'{pattern:<10}| not found!')
+        print(now()+'{:<10}| not found!'.format(pattern))
         print_spacer()
         sys.exit()
     container = ll[-1]
-    print(now()+f'{pattern:<10}| '+container.split('/')[-1])
+#    print(now()+f'{pattern:<10}| '+container.split('/')[-1])
+    print(now()+'{:<10}| '+container.split('/')[-1]+''.format(pattern))
     if len(ll) > 1:
         print(now()+'          | (multiple matches found)')
     return container

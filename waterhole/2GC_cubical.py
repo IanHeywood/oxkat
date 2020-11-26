@@ -28,6 +28,7 @@ def main():
     BIND = cfg.BIND
     OXKAT = cfg.OXKAT
     DATA = cfg.DATA
+    PARSETS = cfg.PARSETS
     TOOLS = cfg.TOOLS
     GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES

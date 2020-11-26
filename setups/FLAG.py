@@ -84,7 +84,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+myms+' not found, skipping '+targetname)
+            print(gen.now()+'Target    | '+targetname)
+            print(gen.now()+'MS        | not found, skipping')
 
         else:
 
@@ -93,7 +94,6 @@ def main():
 
             code = gen.get_target_code(targetname)
             if code in codes:
-                print(gen.now()+' Adding suffix to '+targetname+' code to prevent job ID clashes')
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
@@ -105,8 +105,8 @@ def main():
             kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
 
             gen.print_spacer()
-            print(gen.now()+'Target:     '+targetname)
-            print(gen.now()+'MS:         '+myms)
+            print(gen.now()+'Target    | '+targetname)
+            print(gen.now()+'MS        | '+myms)
 
             step = {}
             step['step'] = 0
@@ -134,12 +134,12 @@ def main():
             step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
-                                    imgname = img_prefix,
-                                    datacol = 'DATA',
-                                    bda = True,
-                                    niter = 90000,
-                                    autothreshold = 3.5,
-                                    mask = 'none')
+                        imgname = img_prefix,
+                        datacol = 'DATA',
+                        bda = True,
+                        niter = 90000,
+                        autothreshold = 3.5,
+                        mask = 'none')
             step['syscall'] = syscall
             steps.append(step)
 
@@ -151,8 +151,8 @@ def main():
             step['id'] = 'MASK0'+code
             syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
-                                    outfile = img_prefix+'-MFS-image.mask0.fits',
-                                    zoompix = '')[0]
+                        outfile = img_prefix+'-MFS-image.mask0.fits',
+                        zoompix = '')[0]
             step['syscall'] = syscall
             steps.append(step)
 

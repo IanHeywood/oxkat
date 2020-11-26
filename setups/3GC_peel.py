@@ -82,7 +82,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+myms+' not found, skipping '+targetname)
+            print(gen.now()+'Target    | '+targetname)
+            print(gen.now()+'MS        | not found, skipping')
 
 
         elif not o.isfile(cfg.CAL_3GC_PEEL_REGION):
@@ -90,7 +91,8 @@ def main():
             gen.print_spacer()
             print(gen.now()+cfg.CAL_3GC_PEEL_REGION+' not found')
             print(gen.now()+'Please provide a DS9 region file definining the source you wish to peel.')
-
+            gen.print_spacer()
+            sys.exit()
 
         else:
 
@@ -100,7 +102,6 @@ def main():
 
             code = gen.get_target_code(targetname)
             if code in codes:
-                print(gen.now()+'Adding suffix to '+targetname+' code to prevent job ID clashes')
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
@@ -115,10 +116,11 @@ def main():
 
 
             gen.print_spacer()
-            print(gen.now()+'Target:     '+targetname)
-            print(gen.now()+'MS:         '+myms)
-            print(gen.now()+'Using mask: '+mask)
-            print(gen.now()+'Peeling:    '+cfg.CAL_3GC_PEEL_REGION)
+            print(gen.now()+'Target    | '+targetname)
+            print(gen.now()+'MS        | '+myms)
+            print(gen.now()+'Code      | '+code)
+            print(gen.now()+'Mask      | '+mask.split('/'))
+            print(gen.now()+'Peeling   | '+cfg.CAL_3GC_PEEL_REGION)
 
 
             # Image prefixes

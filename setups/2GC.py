@@ -94,7 +94,6 @@ def main():
 
             code = gen.get_target_code(targetname)
             if code in codes:
-#                print(gen.now()+' Adding suffix to '+targetname+' code to prevent job ID clashes')
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
@@ -112,7 +111,7 @@ def main():
             print(gen.now()+'Target    | '+targetname)
             print(gen.now()+'MS        | '+myms)
             print(gen.now()+'Code      | '+code)
-            print(gen.now()+'Mask      | '+mask.split('/'[-1]))
+            print(gen.now()+'Mask      | '+mask)
 
 
             # Image prefixes

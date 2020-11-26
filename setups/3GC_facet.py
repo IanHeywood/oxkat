@@ -91,8 +91,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+myms+' not found, skipping '+targetname)
-
+            print(gen.now()+'Target    | '+targetname)
+            print(gen.now()+'MS        | not found, skipping')
 
         else:
 
@@ -102,7 +102,6 @@ def main():
 
             code = gen.get_target_code(targetname)
             if code in codes:
-                print(gen.now()+'Adding suffix to '+targetname+' code to prevent job ID clashes')
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
@@ -123,16 +122,19 @@ def main():
                 print(gen.now()+'Please provide a region file of the form:')
                 print(gen.now()+'       *'+targetname+'*.reg')
                 print(gen.now()+'for this field.')
+                gen.print_spacer()
                 sys.exit()
             else:
                 region = region[0]
 
 
             gen.print_spacer()
-            print(gen.now()+'Target:       '+targetname)
-            print(gen.now()+'MS:           '+myms)
-            print(gen.now()+'Using mask:   '+mask)
-            print(gen.now()+'Using region: '+region)
+            print(gen.now()+'Target    | '+targetname)
+            print(gen.now()+'MS        | '+myms)
+            print(gen.now()+'Code      | '+code)
+            print(gen.now()+'Mask      | '+mask)
+            print(gen.now()+'Region    | '+region)
+
 
             # Image prefixes
             ddf_img_prefix = IMAGES+'/img_'+myms+'_DDFpcal'

@@ -43,7 +43,7 @@ def set_infrastructure(args):
         print_spacer()
         sys.exit()
 
-    if argv[1].lower() not in ['idia','chpc','hippo','node']:
+    if args[1].lower() not in ['idia','chpc','hippo','node']:
         print(now()+'Please specify infrastructure (idia / chpc / hippo / node)')
         print_spacer()
         sys.exit()

@@ -119,7 +119,7 @@ def main():
             print(gen.now()+'Target    | '+targetname)
             print(gen.now()+'MS        | '+myms)
             print(gen.now()+'Code      | '+code)
-            print(gen.now()+'Mask      | '+mask.split('/'))
+            print(gen.now()+'Mask      | '+mask)
             print(gen.now()+'Peeling   | '+cfg.CAL_3GC_PEEL_REGION)
 
 

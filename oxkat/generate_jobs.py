@@ -36,41 +36,16 @@ def print_spacer():
     print('---------------------+----------------------------------------------------------')
 
 
-def get_container(path,pattern,use_singularity):
-    
-    # For running without containers
-    if path is None: # Retain backwards compatibility with hippo fix
-        return ''
-    if not use_singularity:
-        return ''
-
-
-    # Search for a file matching pattern in path
-    path = path.rstrip('/')+'/'
-    ll = sorted(glob.glob(path+'*'+pattern+'*img'))
-    ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
-
-    # Exclude stimela's casa4.7 and casarest containers
-    if 'casa' in pattern.lower():
-        for ii in ll:
-            if 'casa47' in ii or 'casarest' in ii:
-                ll.remove(ii)
-
-    if len(ll) == 0:
-        print(now()+'Failed to find container for '+pattern+' in '+path)
-        print_spacer()
-        sys.exit()
-    elif len(ll) > 1:
-        print(now()+'Warning: more than one match for '+pattern+' in '+path)
-    container = ll[-1]
-    print(now()+'Using container: '+container)
-    return container
-
-
 def set_infrastructure(args):
 
     if len(args) == 1:
         print(now()+'Please specify infrastructure (idia / chpc / hippo / node)')
+        print_spacer()
+        sys.exit()
+
+    if argv[1].lower() not in ['idia','chpc','hippo','node']:
+        print(now()+'Please specify infrastructure (idia / chpc / hippo / node)')
+        print_spacer()
         sys.exit()
 
     if args[1].lower() == 'idia':
@@ -86,7 +61,39 @@ def set_infrastructure(args):
         infrastructure = 'hippo'
         CONTAINER_PATH = None
 
+    print(now()+'Container path: '+CONTAINER_PATH)
+
     return infrastructure,CONTAINER_PATH
+
+
+def get_container(path,pattern,use_singularity):
+    
+    # For running without containers
+    if path is None: # Retain backwards compatibility with hippo fix
+        return ''
+    if not use_singularity:
+        return ''
+
+    # Search for a file matching pattern in path
+    path = path.rstrip('/')+'/'
+    ll = sorted(glob.glob(path+'*'+pattern+'*img'))
+    ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
+
+    # Exclude stimela's casa4.7 and casarest containers
+    if 'casa' in pattern.lower():
+        for ii in ll:
+            if 'casa47' in ii or 'casarest' in ii:
+                ll.remove(ii)
+
+    if len(ll) == 0:
+        print(now()+'Failed to find required container for '+pattern+' in '+path)
+        print_spacer()
+        sys.exit()
+    container = ll[-1]
+    print(now()+f'{pattern:<10}| '+container.split('/')[-1])
+    if len(ll) > 1:
+        print(now()+'          | (multiple matches found)')
+    return container
 
 
 def setup_dir(DIR):

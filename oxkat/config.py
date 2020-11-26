@@ -30,7 +30,6 @@ NODE_CONTAINER_PATH = HOME+'/containers/'
 
 CASA_PATTERN = 'casa'
 CLUSTERCAT_PATTERN = 'ddfacet'
-CODEX_PATTERN = 'codex-africanus'
 CUBICAL_PATTERN = 'cubical'
 DDFACET_PATTERN = 'ddfacet'
 KILLMS_PATTERN = 'killms'

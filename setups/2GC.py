@@ -83,7 +83,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+myms+' not found, skipping '+targetname)
+            print(gen.now()+'Target    | '+targetname)
+            print(gen.now()+'MS        | not found, skipping')
 
         else:
 
@@ -93,7 +94,7 @@ def main():
 
             code = gen.get_target_code(targetname)
             if code in codes:
-                print(gen.now()+' Adding suffix to '+targetname+' code to prevent job ID clashes')
+#                print(gen.now()+' Adding suffix to '+targetname+' code to prevent job ID clashes')
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
@@ -108,9 +109,10 @@ def main():
 
 
             gen.print_spacer()
-            print(gen.now()+'Target:     '+targetname)
-            print(gen.now()+'MS:         '+myms)
-            print(gen.now()+'Using mask: '+mask)
+            print(gen.now()+'Target    | '+targetname)
+            print(gen.now()+'MS        | '+myms)
+            print(gen.now()+'Code      | '+code)
+            print(gen.now()+'Mask      | '+mask.split('/'[-1]))
 
 
             # Image prefixes

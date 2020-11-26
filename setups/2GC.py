@@ -209,7 +209,7 @@ def main():
             step['step'] = 6
             step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
             step['dependency'] = 4
-            step['id'] = 'WSDPR'+code
+            step['id'] = 'WSCPR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''

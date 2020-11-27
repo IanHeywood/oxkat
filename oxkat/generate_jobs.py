@@ -91,7 +91,7 @@ def get_container(path,pattern,use_singularity):
         sys.exit()
     container = ll[-1]
 #    print(now()+f'{pattern:<10}| '+container.split('/')[-1])
-    print(now()+'{:<10}| '+container.split('/')[-1]+''.format(pattern))
+    print(now()+'{:<10}| '.format(pattern)+container.split('/')[-1])
     if len(ll) > 1:
         print(now()+'          | (multiple matches found)')
     return container

@@ -430,6 +430,7 @@ def generate_syscall_wsclean(mslist,
         syscall += '-auto-threshold '+str(autothreshold)+' '
     else:
         syscall += '-fits-mask '+mask+' '
+    if threshold.lower() != 'none':
         syscall += '-threshold '+str(threshold)+' '
     syscall += '-name '+imgname+' '
     syscall += '-channels-out '+str(chanout)+' '

@@ -137,8 +137,10 @@ def main():
                         imgname = img_prefix,
                         datacol = 'DATA',
                         bda = True,
-                        niter = 90000,
-                        autothreshold = 3.5,
+                        niter = 30000,
+                        gain = 0.2,
+                        mgain = 0.9,
+                        autothreshold = 4.0,
                         mask = 'none')
             step['syscall'] = syscall
             steps.append(step)

@@ -94,13 +94,15 @@ The default `oxkat` settings have automatically produced decent full-band contin
 
 ---
 
+## 3GC_*.py
+
 3GC scripts perform direction-dependent self-calibration. `oxkat` has two standard recipes in the form of the `3GC_peel.py` and `3GC_facet.py` script. The first script uses `wsclean` to model and `CubiCal` to peel a single, strong problem source from the visibilities and leave a residual set of visibilities to be subsequently imaged. The second script uses `killMS` to derive directional gain corrections that are then applied by `DDFacet` during imaging. This  is far more likely to be required than the peeling stage, however if both are required then the peeling stage must be done first.
 
-At present, user input is required for both of the 3GC recipes, in the form of DS9 region files (circles only, at present). For peeling, the region file must defines the outline of a single problem source, and passed to the setup script via the `CAL_3GC_PEEL_REGION` parameter in [`config.py`](oxkat/config.py). Note that the default region file points to PKS 0326-288, which is the principal troublemaker in the CDFS field.
+At present, user input is required for both of the 3GC recipes, in the form of DS9 region files (circles only, at present). For peeling, the region file must define the outline of a single problem source, and passed to the setup script via the `CAL_3GC_PEEL_REGION` parameter in [`config.py`](oxkat/config.py). Note that the default region file points to PKS 0326-288, which is the principal troublemaker in the CDFS field.
 
 For `3GC_facet.py` a region file that defines the centres of the tessels that receive a directional gain correction must be provided in the same folder of the MS. The setup script will automatically look for a file containing the field name with a `.reg` suffix in the working folder. Defaulting to an automatic method in the event that a region file is not found is pending. Note that I've had no success running DDFacet or killMS on any of the supported cluster environments. Your mileage may vary everywhere, but especially here.
 
-## 3GC_peel.py
+# 3GC_peel.py
 
 If your original MS has multiple fields then move the target Measurement Sets that you do not wish to process out of the working folder, leaving only the MS with the problem source. If you have defined the region file and set the relevant parameter in [`config.py`](oxkat/config.py), then the `3GC_peel.py` script will setup the following steps:
 
@@ -116,7 +118,7 @@ If your original MS has multiple fields then move the target Measurement Sets th
 
 The `CORRECTED_DATA` column must then be imaged, or the resulting MS can be passed to `3GC_facet.py` for further direction-dependent corrections.
 
-## 3GC_facet.py
+# 3GC_facet.py
 
 The following steps will be performed for every target in the source MS:
 

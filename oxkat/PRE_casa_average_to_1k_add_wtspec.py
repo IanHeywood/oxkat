@@ -32,13 +32,15 @@ mstransform(vis = myms,
 	datacolumn = 'data',
 	chanaverage = mychanave,
 	chanbin = mychanbin,
-	timeaverage = True,
-	timebin = '8s',
+	# timeaverage = True,
+	# timebin = '8s',
 	realmodelcol = True,
 	usewtspectrum = True)
 
 
 flagmanager(vis = opms, mode = 'save', versionname = 'observatory')
+
+clearcal(vis = opms, addmodel = True)
 
 
 clearstat()

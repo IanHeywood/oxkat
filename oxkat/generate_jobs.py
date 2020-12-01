@@ -312,12 +312,15 @@ def generate_syscall_cubical(parset,myms):#,prefix):
 def generate_syscall_tricolour(myms = '',
                           config = '',
                           datacol = 'DATA',
+                          subtractcol = '',
                           fields = 'all',
                           strategy = 'polarisation'):
 
     syscall = 'tricolour '
     syscall += '--config '+config+' '
     syscall += '--data-column '+datacol+' '
+    if subtractcol != '':
+        syscall += '--subtract-model-colum '+subtractcol+' '
     syscall += '--field-names '+fields+' '
     syscall += '--flagging-strategy '+strategy+' '
     syscall += myms

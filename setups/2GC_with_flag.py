@@ -16,9 +16,9 @@ from oxkat import config as cfg
 def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
-
+    
     gen.preamble()
-    print(gen.now()+'FLAG (flagging & initial mask-making) setup')
+    print(gen.now()+'2GC (direction independent selfcal) setup')
 
 
     # ------------------------------------------------------------------------------
@@ -30,11 +30,11 @@ def main():
 
     OXKAT = cfg.OXKAT
     DATA = cfg.DATA
+    GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
-    TOOLS = cfg.TOOLS
 
-
+    gen.setup_dir(GAINTABLES)
     gen.setup_dir(IMAGES)
     gen.setup_dir(cfg.LOGS)
     gen.setup_dir(cfg.SCRIPTS)
@@ -48,9 +48,8 @@ def main():
 
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
-    CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN,USE_SINGULARITY)
     MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN,USE_SINGULARITY)
-    TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
+    RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
@@ -65,7 +64,7 @@ def main():
 
     # ------------------------------------------------------------------------------
     #
-    # FLAG recipe definition
+    # 2GC recipe definition
     #
     # ------------------------------------------------------------------------------
 
@@ -92,33 +91,91 @@ def main():
             steps = []        
             filename_targetname = gen.scrub_target_name(targetname)
 
+
             code = gen.get_target_code(targetname)
             if code in codes:
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
         
-            # Image prefix
-            img_prefix = IMAGES+'/img_'+myms+'_datablind'
 
-            # Target-specific kill file
-            kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
+            # Look for the FITS mask for this target
+            mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
+            if len(mask0) > 0:
+                mask = mask0[0]
+            else:
+                mask = 'auto'
+
 
             gen.print_spacer()
             print(gen.now()+'Target    | '+targetname)
             print(gen.now()+'MS        | '+myms)
+            print(gen.now()+'Code      | '+code)
+            print(gen.now()+'Mask      | '+mask)
+
+
+            # Image prefixes
+            data_img_prefix = IMAGES+'/img_'+myms+'_datamask'
+            corr_img_prefix = IMAGES+'/img_'+myms+'_pcalmask'
+
+            # Target-specific kill file
+            kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
+
 
             step = {}
             step['step'] = 0
-            step['comment'] = 'Run Tricolour on '+myms
+            step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA (= DATA on first run) column of '+myms
             step['dependency'] = None
-            step['id'] = 'TRIC0'+code
+            step['id'] = 'WSDMA'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_wsclean(mslist=[myms],
+                        imgname=data_img_prefix,
+                        datacol='CORRECTED_DATA',
+                        bda=True,
+                        mask=mask)
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 1
+            step['comment'] = 'Predict model visibilities from imaging of the DATA column'
+            step['dependency'] = 0
+            step['id'] = 'WSDPR'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_predict(msname=myms,imgbase=data_img_prefix)
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 2
+            step['comment'] = 'Restore post-1GC flag table for '+myms
+            step['dependency'] = 1
+            step['id'] = 'RESFG'+code
+            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'casa -c '+OXKAT+'/FLAG_casa_restore_flag_table.py --nologger --log2term --nogui '
+            syscall += 'versionname=post-1GC mslist='+myms
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 3
+            step['comment'] = 'Run Tricolour (residual flagging) on '+myms
+            step['dependency'] = 2
+            step['id'] = 'TRIC1'+code
             step['slurm_config'] = cfg.SLURM_TRICOLOUR
             step['pbs_config'] = cfg.PBS_TRICOLOUR
             syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_tricolour(myms = myms,
                         config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
-                        datacol = 'DATA',
+                        datacol = 'CORRECTED_DATA',
+                        subtractcol = 'MODEL_DATA',
                         fields = '0',
                         strategy = 'polarisation')
             step['syscall'] = syscall
@@ -126,79 +183,87 @@ def main():
 
 
             step = {}
-            step['step'] = 1
-            step['comment'] = 'Blind wsclean on DATA column of '+myms
-            step['dependency'] = 0
-            step['id'] = 'WSDBL'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_wsclean(mslist = [myms],
-                        imgname = img_prefix,
-                        datacol = 'DATA',
-                        bda = True,
-                        niter = 30000,
-                        gain = 0.2,
-                        mgain = 0.9,
-                        autothreshold = 4.0,
-                        mask = 'none')
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 2
-            step['comment'] = 'Make initial cleaning mask for '+targetname
-            step['dependency'] = 1
-            step['id'] = 'MASK0'+code
-            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
-                        outfile = img_prefix+'-MFS-image.mask0.fits',
-                        zoompix = '')[0]
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 3
-            step['comment'] = 'Backup flag table for '+myms
-            step['dependency'] = 1
+            step['step'] = 4
+            step['comment'] = 'Backup new flag table for '+myms
+            step['dependency'] = 3
             step['id'] = 'SAVFG'+code
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
-            syscall += 'versionname=tricolour1 mslist='+myms
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 4
-            step['comment'] = 'Add CORRECTED_DATA column to '+myms
-            step['dependency'] = 3
-            step['id'] = 'ADCOR'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+TOOLS+'/add_MS_column.py '
-            syscall += '--colname CORRECTED_DATA '
-            syscall += myms
+            syscall += 'versionname=tricolour2 mslist='+myms
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 5
-            step['comment'] = 'Copy DATA to CORRECTED_DATA for '+myms
+            step['comment'] = 'Run CASA self-calibration script'
             step['dependency'] = 4
-            step['id'] = 'CPDAT'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+TOOLS+'/copy_MS_column.py '
-            syscall += '--fromcol DATA '
-            syscall += '--tocol CORRECTED_DATA '
-            syscall += myms
+            step['id'] = 'CL2GC'+code
+            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
+                        extra_args='mslist='+myms)
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 6
+            step['comment'] = 'Plot the self-calibration gain solutions'
+            step['dependency'] = 5
+            step['id'] = 'PLTAB'+code
+            syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_2GC_*'+myms+'*'
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 7
+            step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA column of '+myms
+            step['dependency'] = 5
+            step['id'] = 'WSCMA'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_wsclean(mslist=[myms],
+                        imgname=corr_img_prefix,
+                        datacol='CORRECTED_DATA',
+                        bda=True,
+                        mask=mask)
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 8
+            step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
+            step['dependency'] = 7
+            step['id'] = 'MASK1'+code
+            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
+                                    outfile = corr_img_prefix+'-MFS-image.mask1.fits',
+                                    thresh = 5.5,
+                                    zoompix = cfg.DDF_NPIX)[0]
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 9
+            step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
+            step['dependency'] = 7
+            step['id'] = 'WSCPR'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_predict(msname=myms,imgbase=corr_img_prefix)
             step['syscall'] = syscall
             steps.append(step)
 
 
             target_steps.append((steps,kill_file,targetname))
+
+
 
 
     # ------------------------------------------------------------------------------
@@ -208,7 +273,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_flag_jobs.sh'
+    submit_file = 'submit_2GC_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

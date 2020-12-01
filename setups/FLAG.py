@@ -166,7 +166,7 @@ def main():
             step['id'] = 'SAVFG'+code
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
-            syscall += 'versionname=tricolour1 '
+            syscall += 'versionname=tricolour1 mslist='+myms
             step['syscall'] = syscall
             steps.append(step)
 

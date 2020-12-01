@@ -106,21 +106,21 @@ def main():
     steps.append(step)
 
 
-    step = {}
-    step['step'] = 4
-    step['comment'] = 'Add CORRECTED_DATA and MODEL_DATA columns'
-    step['dependency'] = 3
-    step['id'] = 'ADCOL'+code
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += 'python '+cfg.TOOLS+'/add_MS_column.py --colname CORRECTED_DATA,MODEL_DATA '+myms
-    step['syscall'] = syscall
-    steps.append(step)
+    # step = {}
+    # step['step'] = 4
+    # step['comment'] = 'Add CORRECTED_DATA and MODEL_DATA columns'
+    # step['dependency'] = 3
+    # step['id'] = 'ADCOL'+code
+    # syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
+    # syscall += 'python '+cfg.TOOLS+'/add_MS_column.py --colname CORRECTED_DATA,MODEL_DATA '+myms
+    # step['syscall'] = syscall
+    # steps.append(step)
 
 
     step = {}
     step['step'] = 5
     step['comment'] = 'Predict field sources for primary if required'
-    step['dependency'] = 4
+    step['dependency'] = 3 # change back to 4 if above step is required
     step['id'] = 'SETCC'+code
     step['slurm_config'] = cfg.SLURM_WSCLEAN
     step['pbs_config'] = cfg.PBS_WSCLEAN

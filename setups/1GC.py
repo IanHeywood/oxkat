@@ -103,25 +103,24 @@ def main():
     steps.append(step)
 
 
-
     step = {}
     step['step'] = 4
-    step['comment'] = 'Run auto-flaggers on calibrators'
+    step['comment'] = 'Run setjy for primary calibrator'
     step['dependency'] = 3
-    step['id'] = 'FGCAL'+code
+    step['id'] = 'SETJY'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_05_casa_autoflag_cals_DATA.py')
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_04_casa_setjy.py')
     step['syscall'] = syscall
     steps.append(step)
 
 
     step = {}
     step['step'] = 5
-    step['comment'] = 'Run setjy for primary calibrator'
+    step['comment'] = 'Run auto-flaggers on calibrators'
     step['dependency'] = 4
-    step['id'] = 'SETJY'+code
+    step['id'] = 'FGCAL'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_04_casa_setjy.py')
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_05_casa_autoflag_cals_DATA.py')
     step['syscall'] = syscall
     steps.append(step)
 

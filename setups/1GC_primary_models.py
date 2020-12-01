@@ -118,7 +118,7 @@ def main():
 
 
     step = {}
-    step['step'] = 5
+    step['step'] = 4
     step['comment'] = 'Predict field sources for primary if required'
     step['dependency'] = 3 # change back to 4 if above step is required
     step['id'] = 'SETCC'+code
@@ -131,9 +131,9 @@ def main():
 
 
     step = {}
-    step['step'] = 6
+    step['step'] = 5
     step['comment'] = 'Copy MODEL_DATA to CORRECTED_DATA (temp storage for primary field sources)'
-    step['dependency'] = 5
+    step['dependency'] = 4
     step['id'] = 'CPCOL'+code
     syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python '+cfg.TOOLS+'/copy_MS_column.py --fromcol MODEL_DATA --tocol CORRECTED_DATA '+myms
@@ -142,9 +142,9 @@ def main():
 
 
     step = {}
-    step['step'] = 7
+    step['step'] = 6
     step['comment'] = 'Run setjy for primary calibrator'
-    step['dependency'] = 6
+    step['dependency'] = 5
     step['id'] = 'SETJY'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_04_casa_setjy.py')
@@ -153,9 +153,9 @@ def main():
 
 
     step = {}
-    step['step'] = 8
+    step['step'] = 7
     step['comment'] = 'Add field source model in CORRECTED_DATA to component model in MODEL_DATA'
-    step['dependency'] = 7
+    step['dependency'] = 6
     step['id'] = 'SMCOL'+code
     syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python '+cfg.TOOLS+'/sum_MS_columns.py --src CORRECTED_DATA --dest MODEL_DATA '+myms
@@ -164,9 +164,9 @@ def main():
 
 
     step = {}
-    step['step'] = 9
+    step['step'] = 8
     step['comment'] = 'Run auto-flaggers on calibrators'
-    step['dependency'] = 8
+    step['dependency'] = 7
     step['id'] = 'FGCAL'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_05_casa_autoflag_cals_DATA.py')
@@ -175,9 +175,9 @@ def main():
 
 
     step = {}
-    step['step'] = 10
+    step['step'] = 9
     step['comment'] = 'Split off calibrator MS with 8 SPWs'
-    step['dependency'] = 9
+    step['dependency'] = 8
     step['id'] = 'SPCAL'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_06_casa_split_calibrators.py')
@@ -186,9 +186,9 @@ def main():
 
 
     step = {}
-    step['step'] = 11
+    step['step'] = 10
     step['comment'] = 'Fit for intrinsic model of secondary calibrator'
-    step['dependency'] = 10
+    step['dependency'] = 9
     step['id'] = 'CLMOD'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_07_casa_get_secondary_model.py')
@@ -197,9 +197,9 @@ def main():
 
 
     step = {}
-    step['step'] = 12
+    step['step'] = 11
     step['comment'] = 'Generate reference calibration solutions and apply to target(s)'
-    step['dependency'] = 11
+    step['dependency'] = 10
     step['id'] = 'CL1GC'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_08_casa_refcal_using_secondary_model.py')
@@ -208,9 +208,9 @@ def main():
 
 
     step = {}
-    step['step'] = 13
+    step['step'] = 12
     step['comment'] = 'Plot the gain solutions'
-    step['dependency'] = 12
+    step['dependency'] = 11
     step['id'] = 'PLTAB'+code
     syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python3 '+cfg.OXKAT+'/PLOT_gaintables.py cal_1GC_* cal_1GC_*calibrators.ms*'
@@ -219,9 +219,9 @@ def main():
 
 
     step = {}
-    step['step'] = 14
+    step['step'] = 13
     step['comment'] = 'Split the corrected target data'
-    step['dependency'] = 12
+    step['dependency'] = 11
     step['id'] = 'SPTRG'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_09_casa_split_targets.py')
@@ -230,9 +230,9 @@ def main():
 
 
     step = {}
-    step['step'] = 15
+    step['step'] = 14
     step['comment'] = 'Plot the corrected calibrator visibilities'
-    step['dependency'] = 14
+    step['dependency'] = 13
     step['id'] = 'PLVIS'+code
     syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python3 '+cfg.OXKAT+'/1GC_10_plot_visibilities.py'

@@ -141,7 +141,8 @@ def main():
                         gain = 0.2,
                         mgain = 0.9,
                         autothreshold = 4.0,
-                        mask = 'none')
+                        automask = False,
+                        mask = False)
             step['syscall'] = syscall
             steps.append(step)
 

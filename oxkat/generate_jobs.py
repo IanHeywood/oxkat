@@ -423,17 +423,18 @@ def generate_syscall_wsclean(mslist,
         syscall += '-even-timesteps '
     if odd:
         syscall += '-odd-timesteps '
-    if mask.lower() == 'fits':
-        mymask = glob.glob('*mask.fits')[0]
-        syscall += '-fits-mask '+mymask+' '
-    elif mask.lower() == 'auto':
+    if mask:
+        if mask.lower() == 'fits':
+            mymask = glob.glob('*mask.fits')[0]
+            syscall += '-fits-mask '+mymask+' '
+        else:
+            syscall += '-fits-mask '+mask+' '
+    if automask:
         syscall += '-auto-mask '+str(automask)+' '
-    else:
-        syscall += '-fits-mask '+mask+' '
-    if localrms:
-        syscall += '-local-rms '
     if autothreshold:
         syscall += '-auto-threshold '+str(autothreshold)+' '
+    if localrms:
+        syscall += '-local-rms '
     if threshold:
         syscall += '-threshold '+str(threshold)+' '
     syscall += '-name '+imgname+' '

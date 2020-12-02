@@ -360,6 +360,7 @@ def generate_syscall_wsclean(mslist,
                           threshold = cfg.WSC_THRESHOLD,
                           autothreshold = cfg.WSC_AUTOTHRESHOLD,
                           automask = cfg.WSC_AUTOMASK,
+                          localrms = cfg.WSC_LOCALRMS,
                           fitspectralpol = cfg.WSC_FITSPECTRALPOL,
                           mem = cfg.WSC_MEM,
                           useidg = cfg.WSC_USEIDG,
@@ -425,15 +426,15 @@ def generate_syscall_wsclean(mslist,
     if mask.lower() == 'fits':
         mymask = glob.glob('*mask.fits')[0]
         syscall += '-fits-mask '+mymask+' '
-    elif mask.lower() == 'none':    
-        syscall += '-threshold '+str(threshold)+' '
     elif mask.lower() == 'auto':
-        syscall += '-local-rms '
         syscall += '-auto-mask '+str(automask)+' '
-        syscall += '-auto-threshold '+str(autothreshold)+' '
     else:
         syscall += '-fits-mask '+mask+' '
-    if threshold != 'none':
+    if localrms:
+        syscall += '-local-rms '
+    if autothreshold:
+        syscall += '-auto-threshold '+str(autothreshold)+' '
+    if threshold:
         syscall += '-threshold '+str(threshold)+' '
     syscall += '-name '+imgname+' '
     syscall += '-channels-out '+str(chanout)+' '

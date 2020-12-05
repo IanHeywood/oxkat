@@ -362,6 +362,7 @@ def generate_syscall_wsclean(mslist,
                           automask = cfg.WSC_AUTOMASK,
                           localrms = cfg.WSC_LOCALRMS,
                           fitspectralpol = cfg.WSC_FITSPECTRALPOL,
+                          circularbeam = cfg.WSC_CIRCULARBEAM,
                           mem = cfg.WSC_MEM,
                           useidg = cfg.WSC_USEIDG,
                           idgmode = cfg.WSC_IDGMODE,
@@ -444,6 +445,8 @@ def generate_syscall_wsclean(mslist,
     if joinchannels:
         syscall += '-join-channels '
     syscall += '-padding '+str(padding)+' '
+    if circularbeam:
+        syscall += '-circular-beam '
     syscall += '-mem '+str(mem)+' '
 
     for myms in mslist:

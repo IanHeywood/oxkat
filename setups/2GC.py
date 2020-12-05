@@ -134,7 +134,8 @@ def main():
                         imgname=data_img_prefix,
                         datacol='CORRECTED_DATA',
                         bda=True,
-                        automask=False,
+                        automask = False,
+                        autothreshold = False,
                         mask=mask)
             step['syscall'] = syscall
             steps.append(step)
@@ -188,7 +189,8 @@ def main():
                         imgname=corr_img_prefix,
                         datacol='CORRECTED_DATA',
                         bda=True,
-                        automask=False,
+                        automask = False,
+                        autothreshold = False,
                         mask=mask)
             step['syscall'] = syscall
             steps.append(step)

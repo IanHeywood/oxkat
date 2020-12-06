@@ -16,7 +16,7 @@
 ## What is this?
 
 
-* A set of Python scripts with the aim of (semi-)automatically processing [MeerKAT](https://www.sarao.ac.za/science-engineering/meerkat/) data. 
+* A set of `Python` scripts with the aim of (semi-)automatically processing [MeerKAT](https://www.sarao.ac.za/science-engineering/meerkat/) data. 
 
 
 * At the core is a set of functions that generate calls to [various pieces](README.md#software-package-roll-call) of radio astronomy software, a semi-modular bunch of CASA scripts for performing reference calibration, and a fairly sizeable list of default parameters (at present suitable for full L-band Stokes-I continuum imaging).
@@ -28,7 +28,7 @@
 * Setup scripts glue the above components together into a processing recipe. The default procedure is broken down into stages, after each of which it is advisable to pause and examine the state of the process before continuing.  
 
 
-* The intention is that the bar to entry is low. If you have stock Python then nothing else needs installing apart from [Singularity](https://github.com/hpcng/singularity), which is available on both the ilifu/IDIA and CHPC clusters, in which case all the underlying radio astronomy packages are containerised. The Singularity layer can also be disabled for running installations on your own machine, either directly, or inside a Python virtual environment.
+* The intention is that the bar to entry is low. If you have stock `Python` then nothing else needs installing apart from [`Singularity`](https://github.com/hpcng/singularity), which is available on both the ilifu/IDIA and CHPC clusters, in which case all the underlying radio astronomy packages are containerised. The `Singularity` layer can also be disabled for running installations on your own machine, either directly, or inside a Python virtual environment.
 
 
 * If you publish results that have made use of `oxkat` then [please cite the ACSL entry](https://ui.adsabs.harvard.edu/abs/2020ascl.soft09003H/abstract), and (more importantly) the [underlying packages](README.md#software-package-roll-call) used.
@@ -80,7 +80,7 @@
 
 7. Once all the jobs have completed then you can examine the products, and move on to the setup for the next steps in the same fashion. 
 
-Please see the [setups README](setups/README.md) for more details. Most of the settings can be tuned via the [`config.py`](oxkat/config.py) file. Note that for use on a cluster you might have to load a `python3` module. On the ilifu/IDIA cluster this is achieved with:
+Please see the [setups README](setups/README.md) for more details. Most of the settings can be tuned via the [`config.py`](oxkat/config.py) file. Note that for use on a cluster you might have to load a `Python 3` module. On the ilifu/IDIA cluster this is achieved with:
 
    ```
    $ module load anaconda3
@@ -102,7 +102,7 @@ Singularity can be used to download and build containers from [Docker Hub](https
 
 The default container paths are specified in the [`config.py`](oxkat/config.py) file. The scripts will select the required containers via pattern matching so if a container is replaced with a newer version it should be seamless.
 
-The IDIA slurm head node does not have singularity available, so if you are pulling your own containers that must be done either via a standalone node or a worker node, or otherwise copied over via the `transfer.ilifu.ac.za` node. You will not be able to use the `pull_containers.sh` script on the Lengau head node, and the worker nodes at CHPC do not have external connectivity, so you will have to build the containers elsewhere and then transfer them to CHPC via their `scp.chpc.ac.za` node.
+The IDIA slurm head node does not have `Singularity` available, so if you are pulling your own containers that must be done either via a standalone node or a worker node, or otherwise copied over via the `transfer.ilifu.ac.za` node. You will not be able to use the `pull_containers.sh` script on the Lengau head node, and the worker nodes at CHPC do not have external connectivity, so you will have to build the containers elsewhere and then transfer them to CHPC via their `scp.chpc.ac.za` node.
 
 ---
 
@@ -117,8 +117,10 @@ The IDIA slurm head node does not have singularity available, so if you are pull
 | [`killMS`](https://github.com/saopicc/killMS) | 3GC | DD self-calibration| - |
 | [`PyBDSF`](https://www.astron.nl/citt/pybdsf/) | 3GC | Source finding | [Mohan & Rafferty, 2017](https://ui.adsabs.harvard.edu/abs/2015ascl.soft02007M/abstract) |
 | [`owlcat`](https://github.com/ska-sa/owlcat/) | 2GC, 3GC |FITS file manipulation | - |
-| [`ragavi`](https://github.com/ratt-ru/ragavi/) | 1GC, 2GC | Plotting gain solutions| - |
-| [`shadeMS`](https://github.com/ratt-ru/shadeMS/) | 1GC | Plotting visibilities| - |
+| [`ragavi`](https://github.com/ratt-ru/ragavi/) | 1GC, 2GC | Plotting gain solutions | - |
+| [`shadeMS`](https://github.com/ratt-ru/shadeMS/) | 1GC | Plotting visibilities | - |
+| [`Singularity`](https://github.com/hpcng/singularity) | 1GC, FLAG, 2GC, 3GC | Containerisation | [Kurtzer, Sochat & Bauer, 2017](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0177459) |
+| [`Stimela`](https://github.com/ratt-ru/Stimela/) | 1GC, FLAG, 2GC, 3GC | Containers | [Makhathini, 2018](http://hdl.handle.net/10962/57348) |
 | [`tricolour`](https://github.com/ska-sa/tricolour) | FLAG | Flagging | - |
 | [`wsclean`](https://sourceforge.net/p/wsclean/wiki/Home/) | FLAG, 2GC, 3GC | Imaging, model prediction | [Offringa et al., 2014](https://ui.adsabs.harvard.edu/abs/2014MNRAS.444..606O/abstract)|
 

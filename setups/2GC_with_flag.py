@@ -178,7 +178,7 @@ def main():
             syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_tricolour(myms = myms,
                         config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
-                        datacol = 'CORRECTED_DATA',
+                        datacol = 'DATA',
                         subtractcol = 'MODEL_DATA',
                         fields = '0',
                         strategy = 'polarisation')

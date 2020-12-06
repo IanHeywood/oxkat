@@ -10,7 +10,7 @@ execfile('oxkat/casa_read_project_info.py')
 
 
 def stamp():
-    now = str(datetime.datetime.now()).replace(' ','-').replace(':','-').split($
+    now = str(datetime.datetime.now()).replace(' ','-').replace(':','-').split('.')[0]
     return now
 
 

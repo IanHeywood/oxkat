@@ -117,7 +117,7 @@ def main():
 
 
             # Generate output dir for CubiCal
-            outname = 'peeling_'+filename_targetname+'_'+stamp+'.cc/peeling_'+filename_targetname
+            outname = 'peeling_'+filename_targetname+'_'+stamp+'.cc/peeling_'+filename_targetname+'_'+stamp
 
 
             gen.print_spacer()

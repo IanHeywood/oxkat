@@ -142,6 +142,7 @@ def main():
                         # mgain = 0.9,
                         automask = False,
                         autothreshold = False,
+                        localrms = False,
                         mask = False)
             step['syscall'] = syscall
             steps.append(step)

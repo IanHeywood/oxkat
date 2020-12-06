@@ -115,6 +115,10 @@ def main():
                 mask = 'auto'
 
 
+            # Generate output dir for CubiCal
+            outname = 'peeling_'+filename_targetname+'_'+gen.timenow()+'.cc/peeling_'+filename_targetname
+
+
             gen.print_spacer()
             print(gen.now()+'Target    | '+targetname)
             print(gen.now()+'MS        | '+myms)
@@ -220,7 +224,7 @@ def main():
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_cubical(parset=cfg.CAL_3GC_PEEL_PARSET,myms=myms)
+            syscall += gen.generate_syscall_cubical(parset=cfg.CAL_3GC_PEEL_PARSET,myms=myms,outname=outname)
             step['syscall'] = syscall
             steps.append(step)
 

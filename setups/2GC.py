@@ -124,7 +124,7 @@ def main():
 
             step = {}
             step['step'] = 0
-            step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA (= DATA on first run) column of '+myms
+            step['comment'] = 'Run wsclean, masked deconvolution of the DATA column of '+myms
             step['dependency'] = None
             step['id'] = 'WSDMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
@@ -132,7 +132,7 @@ def main():
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=data_img_prefix,
-                        datacol='CORRECTED_DATA',
+                        datacol='DATA',
                         bda=True,
                         automask = False,
                         autothreshold = False,

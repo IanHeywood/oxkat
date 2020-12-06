@@ -1,6 +1,6 @@
 # setups
 
-This is where 'setup' scripts live. These are Python scripts that generate bash files containing sequential calls to various radio astronomy packages, or other Python tools that form part of `oxkat`. Executing the resulting script will run these calls in order or, if you are using a cluster, submit an interdependent batch of jobs to the queue.
+This is where 'setup' scripts live. These are `Python` scripts that generate bash files containing sequential calls to various radio astronomy packages, or other `Python` scripts that form part of `oxkat`. Executing the resulting script will run these calls in order or, if you are using a cluster, submit an interdependent batch of jobs to the queue.
 
 The computing infrastructure must be specified when a setup script is run, for example:
 
@@ -10,13 +10,13 @@ $ python setups/1GC.py idia
 $ ./submit_1GC_jobs.sh
 ```
 
-where `idia` can be replaced with `hippo`, `chpc`, or `node`, the latter being when you want to execute the jobs on your own machine or a standalone node. If you prefer to run things natively or inside a Python virtual environment, then singularity can be disabled entirely via the `USE_SINGULARITY` switch in the [`config.py`](oxkat/config.py) file.
+where `idia` can be replaced with `hippo`, `chpc`, or `node`, the latter being when you want to execute the jobs on your own machine or a standalone node. If you prefer to run software that has been installed directly, 	or inside a `Python` virtual environment, then `Singularity` can be disabled entirely via the `USE_SINGULARITY` switch in the [`config.py`](oxkat/config.py) file.
 
-Rather than having a single `go-pipeline` script, processing jobs are partitioned in stages ([1GC](README.md#1gcpy), [FLAG](README.md#flagpy), [2GC](README.md#2gcpy), [3GC](README.md#3gcpy)), after each of which it is prudent to pause and examine the state of the processing before continuing. If you are gung-ho and don't pay the electricity bill then you can just execute them in order and collect your map at the end.
+Rather than having a single `go-pipeline` script, processing jobs are partitioned in stages (1GC, FLAG, 2GC, 3GC), after each of which it is prudent to pause and examine the state of the processing before continuing. If you are gung-ho and don't pay the electricity bill then you can just execute them in order and collect your map at the end.
 
-`oxkat` assumes that your starting point is a typical MeerKAT observation. To process your MeerKAT data they must be in a Measurement Set (MS), containing your target scans as well as suitable primary and secondary calibrator scans. Clone the contents of the root `oxkat` repo into an empty folder, then copy (or place a symlink to) your MS in the same folder and you will be ready to go. A Python pickle file called `project_info.p` will be created towards the start, which contains some deductions about the input MS. This pickle is relied upon throughout the standard workflow. It is possible to use the later stages of `oxkat` to ingest an MS that has been partially processed elsewhere, however it is fiddly, and usually requires some manual editing of the pickle file. This is also part of the reason why the various stages cannot be run all at once, as setup scripts beyond `1GC.py` rely on the `project_info.p` file to generate their jobs.
+`oxkat` assumes that your starting point is a typical MeerKAT observation. To process your MeerKAT data they must be in a Measurement Set (MS), containing your target scans as well as suitably-tagged primary and secondary calibrator scans. Clone the contents of the root `oxkat` repo into an empty folder, then copy (or place a symlink to) your MS in the same folder and you will be ready to go. A `Python` pickle file called `project_info.p` will be created towards the start, which contains some deductions about the input MS. This pickle is relied upon throughout the standard workflow. It is possible to use the later stages of `oxkat` to ingest an MS that has been partially processed elsewhere, however it is fiddly, and usually requires some manual editing of the pickle file. This is also part of the reason why the various stages cannot be run all at once, as setup scripts beyond `1GC.py` rely on the `project_info.p` file to generate their jobs.
 
-There follows a description of the available setup scripts, in the order in which they should be run. Technically only the 1GC and FLAG stages are required to obtain a calibrated image of your flagged target(s), however the resulting image can often be significantly improved by direction-independent and direction-dependent self-calibration using the 2GC and 3GC recipes.
+There follows a description of the available setup scripts, in the order in which they should be run. Technically only the 1GC and FLAG stages are required to obtain a calibrated image of your target(s), however the resulting image can often be significantly improved by direction-independent and direction-dependent self-calibration using the 2GC and 3GC recipes.
 
 ---
 
@@ -24,11 +24,11 @@ There follows a description of the available setup scripts, in the order in whic
 
 This stage mostly involves using `CASA` to execute the provided processing scripts. The `1GC.py` setup will look for a single MS in the working folder, and perform the following steps:
 
-* [Duplicate your source MS](), averaging it down to 1,024 channels (if necessary).	
+* [Duplicate your source MS](), averaging it down to 1024 channels (the default setting, if necessary).	
 
 * [Examine the contents]() of the MS to identify target and calibrator fields. The preferred primary calibrator is either PKS B1934-608 or PKS B0408-65, but others should work as long as `CASA` knows about them. Targets are paired with the secondary calibrator that is closest to them on the sky.
 
-* [Rephase]() the visibilities of the primary calibrator to correct for erroneous positions that were present in the open time data (this has no effect on observations that did not have this issue).
+* [Rephase]() the visibilities of the primary calibrator to correct for erroneous positions that were used for the 2019 open-time data (this has no effect on observations that did not have this issue).
 
 * [Apply basic flagging]() commands to all fields.
 
@@ -44,7 +44,7 @@ This stage mostly involves using `CASA` to execute the provided processing scrip
 
 * [Plot visibilities]() of the corrected calibrator data using `shadeMS`.
 
-* [Split the target data]() out into individual Measurement Sets, with the reference calibrated data in the `DATA` column of the MS. Note that only basic flagging commands will have been applied to the target data at this stage.
+* [Split the target data]() out into individual Measurement Sets, with the reference-calibrated data in the `DATA` column of the MS. Note that only basic flagging commands will have been applied to the target data at this stage.
 
 Flagging operations are saved to the `.flagversions` tables at every stage. Products for examination are stored in the `GAINTABLES` and `VISPLOTS` folders.
 
@@ -66,17 +66,15 @@ The `FLAG.py` script will pick up where `1GC.py` left off, and perform the follo
 
 * [Backup the flag table]().
 
-* [Add a CORRECTED_DATA column to the MS, and copy DATA to it]() (see below).
-
 If you are running on a cluster then the steps above will be submitted for each field in parallel. The resulting image(s) will be available for examination in the `IMAGES` folder.
 
 ---
 
 ## 2GC
 
-The `2GC.py` script perfoms direction-independent self-calibration. The following steps will be performed for every target MS extracted from the source MS:
+The `2GC.py` script performs direction-independent self-calibration. The following steps will be performed for every target MS extracted from the source MS:
 
-* [Masked deconvolution]() using `wsclean` and the FITS mask generated by `FLAG.py`.
+* [Masked deconvolution]() of the `DATA` column using `wsclean` and the FITS mask generated by `FLAG.py`.
 
 * [Predict model visibilities]() based on the resulting clean component model using `wsclean`. Note that this is a separate step as baseline dependent averaging is applied during imaging by default to speed up the process.
 
@@ -88,17 +86,17 @@ The `2GC.py` script perfoms direction-independent self-calibration. The followin
 
 * [Predict model visibilities]() based on the refined model from the `CORRECTED_DATA` image.
 
-If you are running on IDIA or CHPC hardware then the steps above will be submitted for each field in parallel. The resulting image(s) will be available for examination in the `IMAGES` folder.
+If you are running on a cluster then the steps above will be submitted for each field in parallel. The resulting image(s) will be available for examination in the `IMAGES` folder.
 
-The default `oxkat` settings have automatically produced decent full-band continuum images for a range of of observing scenarios. However the default imaging setup will tend to struggle with fields that contain strong, extended emission, e.g. observations in the Galactic Plane. For fields such as this it is recommended to discard the mask produced at the end of the FLAG stage and replace it with a [thresholded mask](https://github.com/IanHeywood/oxkat/blob/master/tools/make_threshold_mask.py) prior to running the 2GC stage. Enabling multiscale in the `wsclean` section of [`config.py`](oxkat/config.py) may also be beneficial. The mask can be refined and the process repeated by re-running the 2GC recipe. This is generally not required, but making the 2GC stage iterable is the motivation for copying `DATA` to `CORRECTED_DATA` at the end of the FLAG stage.
+The default `oxkat` settings have automatically produced decent full-band continuum images for a range of of observing scenarios. However the default imaging setup will tend to struggle with fields that contain strong, extended emission, e.g. observations in the Galactic Plane. For fields such as this it might be beneficial to discard the mask produced at the end of the FLAG stage and replace it with a [thresholded mask](https://github.com/IanHeywood/oxkat/blob/master/tools/make_threshold_mask.py) prior to running the 2GC stage. Enabling multiscale in the `wsclean` section of [`config.py`](oxkat/config.py) may also help, and iterative deconvolution with the mask refined at each iteration might be necessary. 
 
 ---
 
 ## 3GC
 
-3GC scripts perform direction-dependent self-calibration. `oxkat` has two standard recipes in the form of the `3GC_peel.py` and `3GC_facet.py` script. The first script uses `wsclean` to model and `CubiCal` to peel a single, strong problem source from the visibilities and leave a residual set of visibilities to be subsequently imaged. The second script uses `killMS` to derive directional gain corrections that are then applied by `DDFacet` during imaging. This  is far more likely to be required than the peeling stage, however if both are required then the peeling stage must be done first.
+3GC scripts perform direction-dependent self-calibration. `oxkat` has two standard recipes in the form of the `3GC_peel.py` and `3GC_facet.py` script. The first script uses `wsclean` to model and `CubiCal` to peel a single, strong problem source from the visibilities and leave a residual set of visibilities to be subsequently imaged. The second script uses `killMS` to derive directional gain corrections that are then applied by `DDFacet` during imaging. This  is far more likely to be required than the peeling stage, however if both are required then peeling must be done first.
 
-At present, user input is required for both of the 3GC recipes, in the form of DS9 region files (circles only, at present). For peeling, the region file must define the outline of a single problem source, and passed to the setup script via the `CAL_3GC_PEEL_REGION` parameter in [`config.py`](oxkat/config.py). Note that the default region file points to PKS 0326-288, which is the principal troublemaker in the CDFS field.
+At present, user input is required for both of the 3GC recipes, in the form of DS9 region files (circles only, at present). For peeling, the region file must define the outline of a single problem source, and be passed to the setup script via the `CAL_3GC_PEEL_REGION` parameter in [`config.py`](oxkat/config.py). Note that the default region file points to PKS 0326-288, which is the principal troublemaker in the CDFS field.
 
 For `3GC_facet.py` a region file that defines the centres of the tessels that receive a directional gain correction must be provided in the same folder of the MS. The setup script will automatically look for a file containing the field name with a `.reg` suffix in the working folder. Defaulting to an automatic method in the event that a region file is not found is pending. Note that I've had no success running `DDFacet` or `killMS` on any of the supported cluster environments. Your mileage with these scripts may vary everywhere, but especially here.
 

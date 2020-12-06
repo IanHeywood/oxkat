@@ -149,6 +149,9 @@ def main():
                         datacol='CORRECTED_DATA',
                         briggs=-cfg.CAL_3GC_PEEL_BRIGGS,
                         chanout=cfg.CAL_3GC_PEEL_NCHAN,
+                        automask = False,
+                        autothreshold = False,
+                        localrms = False,
                         bda=True,
                         mask=mask)
             step['syscall'] = syscall

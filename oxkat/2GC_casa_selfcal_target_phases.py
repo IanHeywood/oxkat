@@ -10,7 +10,9 @@ execfile('oxkat/config.py')
 
 
 def stamp():
-    return str(time.time()).replace('.','')
+    now = str(datetime.datetime.now()).replace(' ','-').replace(':','-').split($
+    return now
+
 
 myuvrange = ''
 

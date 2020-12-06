@@ -71,6 +71,7 @@ def main():
     target_steps = []
     codes = []
     ii = 1
+    stamp = gen.timenow()
 
     # Loop over targets
 
@@ -116,7 +117,7 @@ def main():
 
 
             # Generate output dir for CubiCal
-            outname = 'peeling_'+filename_targetname+'_'+gen.timenow()+'.cc/peeling_'+filename_targetname
+            outname = 'peeling_'+filename_targetname+'_'+stamp+'.cc/peeling_'+filename_targetname
 
 
             gen.print_spacer()

@@ -137,6 +137,7 @@ def main():
                         bda=True,
                         automask = False,
                         autothreshold = False,
+                        localrms = False,
                         mask=mask)
             step['syscall'] = syscall
             steps.append(step)
@@ -234,6 +235,7 @@ def main():
                         bda=True,
                         automask = False,
                         autothreshold = False,
+                        localrms = False,
                         mask=mask)
             step['syscall'] = syscall
             steps.append(step)

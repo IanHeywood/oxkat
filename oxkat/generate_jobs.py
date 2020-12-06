@@ -272,6 +272,7 @@ def job_handler(syscall,
     return run_command
 
 
+
 def generate_syscall_casa(casascript,casalogfile='',extra_args=''):
 
     syscall = 'casa -c '+casascript+' '
@@ -361,6 +362,7 @@ def generate_syscall_wsclean(mslist,
                           autothreshold = cfg.WSC_AUTOTHRESHOLD,
                           automask = cfg.WSC_AUTOMASK,
                           localrms = cfg.WSC_LOCALRMS,
+                          stopnegative = cfg.WSC_STOPONNEGATIVE,
                           fitspectralpol = cfg.WSC_FITSPECTRALPOL,
                           circularbeam = cfg.WSC_CIRCULARBEAM,
                           mem = cfg.WSC_MEM,
@@ -438,6 +440,8 @@ def generate_syscall_wsclean(mslist,
         syscall += '-local-rms '
     if threshold:
         syscall += '-threshold '+str(threshold)+' '
+    if stopnegative:
+        syscall += '-stop-negative '        
     syscall += '-name '+imgname+' '
     syscall += '-channels-out '+str(chanout)+' '
     if fitspectralpol != 0:

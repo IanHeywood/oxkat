@@ -166,7 +166,7 @@ def main():
             step['comment'] = 'Convert the DS9 region into a numpy file that killMS will recognise'
             step['dependency'] = 0
             step['id'] = 'RG2NP'+code
-            syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+TOOLS+'/reg2npy.py '+region
             step['syscall'] = syscall
             steps.append(step)

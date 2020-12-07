@@ -122,7 +122,7 @@ The IDIA slurm head node does not have `Singularity` available, so if you are pu
 | [`Singularity`](https://github.com/hpcng/singularity) | 1GC, FLAG, 2GC, 3GC | Containerisation | [Kurtzer, Sochat & Bauer, 2017](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0177459) |
 | [`Stimela`](https://github.com/ratt-ru/Stimela/) | 1GC, FLAG, 2GC, 3GC | Containers | [Makhathini, 2018](http://hdl.handle.net/10962/57348) |
 | [`tricolour`](https://github.com/ska-sa/tricolour) | FLAG | Flagging | - |
-| [`wsclean`](https://sourceforge.net/p/wsclean/wiki/Home/) | FLAG, 2GC, 3GC | Imaging, model prediction | [Offringa et al., 2014](https://ui.adsabs.harvard.edu/abs/2014MNRAS.444..606O/abstract)|
+| [`wsclean`](https://gitlab.com/aroffringa/wsclean) | FLAG, 2GC, 3GC | Imaging, model prediction | [Offringa et al., 2014](https://ui.adsabs.harvard.edu/abs/2014MNRAS.444..606O/abstract)|
 
 ---
 

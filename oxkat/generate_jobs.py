@@ -489,11 +489,20 @@ def generate_syscall_predict(msname,
     return syscall 
 
 
+MAKEMASK_THRESH = 6.0
+MAKEMASK_DILATION = 3
+MAKEMASK_BOXSIZE = 500
+MAKEMASK_SMALLBOX = 50
+MAKEMASK_ISLANDSIZE = 5000
+
+
 def generate_syscall_makemask(restoredimage,
                             outfile = '',
                             thresh = cfg.MAKEMASK_THRESH,
-                            dilation = cfg.MAKEMASK_DILATION,
                             boxsize = cfg.MAKEMASK_BOXSIZE,
+                            smallbox = cfg.MAKEMASK_SMALLBOX,
+                            islandsize = cfg.MAKEMASK_ISLANDSIZE,
+                            dilation = cfg.MAKEMASK_DILATION,
                             zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
@@ -503,9 +512,11 @@ def generate_syscall_makemask(restoredimage,
 
     syscall = 'bash -c "'
     syscall += 'python '+cfg.TOOLS+'/pyMakeMask.py '
-    syscall += '--threshold='+str(thresh)+' '
     syscall += '--dilate='+str(dilation)+' '
     syscall += '--boxsize='+str(boxsize)+' '
+    syscall += '--smallbox='+str(smallbox)+' '
+    syscall += '--islandsize='+str(islandsize)+' '
+    syscall += '--threshold='+str(thresh)+' '
     syscall += '--outfile='+str(outfile)+' '
     syscall += restoredimage
 
@@ -733,7 +744,7 @@ def generate_syscall_killms(myms,
     # [Actions]
     syscall+= '--NCPU '+str(ncpu)+' '
     syscall+= '--DoBar '+str(dobar)+' '
-    syscall+= '--DebugPdb '+str(debugpdb)+' '
+#    syscall+= '--DebugPdb '+str(debugpdb)+' '
     # [Solutions]
     syscall+= '--OutSolsName '+outsols+' '
     # [Solvers]

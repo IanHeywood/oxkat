@@ -27,6 +27,7 @@ def main():
     CWD = cfg.CWD
     BIND = cfg.BIND
     OXKAT = cfg.OXKAT
+    DATA = cfg.DATA
     PARSETS = cfg.PARSETS
     TOOLS = cfg.TOOLS
     GAINTABLES = cfg.GAINTABLES
@@ -182,7 +183,7 @@ def main():
 
 
             syscall = 'singularity exec '+CUBICAL_CONTAINER+' '
-            syscall += gen.generate_syscall_cubical(parset=PARSETS+'/cubical/phasecal.parset',myms=myms)
+            syscall += gen.generate_syscall_cubical(parset=DATA+'/cubical/phasecal.parset',myms=myms)
 
             run_command = gen.job_handler(syscall=syscall,
                         jobname=id_selfcal,

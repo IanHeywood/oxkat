@@ -14,39 +14,38 @@ from oxkat import config as cfg
 
 # ------------------------------------------------------------------------
 
+def preamble():
+    print('---------------------+----------------------------------------------------------')
+    print('                     |')
+    print('                     | v0.1')  
+    print('    o  x  k  a  t    | Please file an issue for bugs / help:')
+    print('                     | https://github.com/IanHeywood/oxkat')
+    print('                     |')
+    print('---------------------+----------------------------------------------------------')
+
 
 def now():
     # stamp = time.strftime('[%H:%M:%S] ')
-    stamp = time.strftime('[%Y-%m-%d %H:%M:%S]:')
+    stamp = time.strftime(' %Y-%m-%d %H:%M:%S |')
     # msg = '\033[92m'+stamp+'\033[0m' # time in green
     msg = stamp+' '
     return msg
 
 
-def get_container(path,pattern):
-    
-    # For running without containers
-    if path is None:
-        return ''
-
-    # Search for a file matching pattern in path
-    path = path.rstrip('/')+'/'
-    ll = sorted(glob.glob(path+'*'+pattern+'*img'))
-    ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
-    if len(ll) == 0:
-        print(now()+'Failed to find container for '+pattern+' in '+path)
-        sys.exit()
-    elif len(ll) > 1:
-        print(now()+'Warning, more than one match for '+pattern+' in '+path)
-    container = ll[-1]
-    print(now()+'Using container: '+container)
-    return container
+def print_spacer():
+    print('---------------------+----------------------------------------------------------')
 
 
 def set_infrastructure(args):
 
     if len(args) == 1:
-        print('Please specify infrastructure (idia / chpc / hippo / node)')
+        print(now()+'Please specify infrastructure (idia / chpc / hippo / node)')
+        print_spacer()
+        sys.exit()
+
+    if args[1].lower() not in ['idia','chpc','hippo','node']:
+        print(now()+'Please specify infrastructure (idia / chpc / hippo / node)')
+        print_spacer()
         sys.exit()
 
     if args[1].lower() == 'idia':
@@ -62,7 +61,40 @@ def set_infrastructure(args):
         infrastructure = 'hippo'
         CONTAINER_PATH = None
 
+    print(now()+'Container path: '+CONTAINER_PATH)
+
     return infrastructure,CONTAINER_PATH
+
+
+def get_container(path,pattern,use_singularity):
+    
+    # For running without containers
+    if path is None: # Retain backwards compatibility with hippo fix
+        return ''
+    if not use_singularity:
+        return ''
+
+    # Search for a file matching pattern in path
+    path = path.rstrip('/')+'/'
+    ll = sorted(glob.glob(path+'*'+pattern+'*img'))
+    ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
+
+    # Exclude stimela's casa4.7 and casarest containers
+    if 'casa' in pattern.lower():
+        for ii in ll:
+            if 'casa47' in ii or 'casarest' in ii:
+                ll.remove(ii)
+    if len(ll) == 0:
+#        print(now()+f'{pattern:<10}| not found!')
+        print(now()+'{:<10}| not found!'.format(pattern))
+        print_spacer()
+        sys.exit()
+    container = ll[-1]
+#    print(now()+f'{pattern:<10}| '+container.split('/')[-1])
+    print(now()+'{:<10}| '.format(pattern)+container.split('/')[-1])
+    if len(ll) > 1:
+        print(now()+'          | (multiple matches found)')
+    return container
 
 
 def setup_dir(DIR):
@@ -88,6 +120,7 @@ def get_code(myms):
     myms = myms.split('/')[-1]
     code = myms.split('_')[0][-3:]
     code = code.replace('-','_')
+    code = code.replace('.','X')
     return code
 
 
@@ -239,10 +272,14 @@ def job_handler(syscall,
     return run_command
 
 
-def generate_syscall_casa(casascript,casalogfile,extra_args=''):
+
+def generate_syscall_casa(casascript,casalogfile='',extra_args=''):
 
     syscall = 'casa -c '+casascript+' '
-    syscall += '--logfile '+casalogfile+' '
+    if casalogfile != '':
+        syscall += '--logfile '+casalogfile+' '
+    else:
+        syscall += '--log2term '
     syscall += '--nogui '
     if extra_args != '':
       syscall += extra_args
@@ -251,7 +288,7 @@ def generate_syscall_casa(casascript,casalogfile,extra_args=''):
     return syscall
 
 
-def generate_syscall_cubical(parset,myms):#,prefix):
+def generate_syscall_cubical(parset,myms,outname=False):#,prefix):
 
     # now = timenow()
     # outname = 'cube_'+prefix+'_'+myms.split('/')[-1]+'_'+now
@@ -269,6 +306,8 @@ def generate_syscall_cubical(parset,myms):#,prefix):
 
     syscall = 'gocubical '+parset+' '
     syscall += '--data-ms='+myms+' '
+    if outname:
+        syscall += '--out-name '+outname+' '
 
     return syscall
 
@@ -276,12 +315,15 @@ def generate_syscall_cubical(parset,myms):#,prefix):
 def generate_syscall_tricolour(myms = '',
                           config = '',
                           datacol = 'DATA',
+                          subtractcol = '',
                           fields = 'all',
                           strategy = 'polarisation'):
 
     syscall = 'tricolour '
     syscall += '--config '+config+' '
     syscall += '--data-column '+datacol+' '
+    if subtractcol != '':
+        syscall += '--subtract-model-colum '+subtractcol+' '
     syscall += '--field-names '+fields+' '
     syscall += '--flagging-strategy '+strategy+' '
     syscall += myms
@@ -298,6 +340,8 @@ def generate_syscall_wsclean(mslist,
                           endchan = cfg.WSC_ENDCHAN,
                           minuvl = cfg.WSC_MINUVL,
                           maxuvl = cfg.WSC_MAXUVL,
+                          even = cfg.WSC_EVEN,
+                          odd = cfg.WSC_ODD,
                           chanout = cfg.WSC_CHANNELSOUT,
                           imsize = cfg.WSC_IMSIZE,
                           cellsize = cfg.WSC_CELLSIZE,
@@ -319,7 +363,10 @@ def generate_syscall_wsclean(mslist,
                           threshold = cfg.WSC_THRESHOLD,
                           autothreshold = cfg.WSC_AUTOTHRESHOLD,
                           automask = cfg.WSC_AUTOMASK,
+                          localrms = cfg.WSC_LOCALRMS,
+                          stopnegative = cfg.WSC_STOPNEGATIVE,
                           fitspectralpol = cfg.WSC_FITSPECTRALPOL,
+                          circularbeam = cfg.WSC_CIRCULARBEAM,
                           mem = cfg.WSC_MEM,
                           useidg = cfg.WSC_USEIDG,
                           idgmode = cfg.WSC_IDGMODE,
@@ -335,6 +382,11 @@ def generate_syscall_wsclean(mslist,
     if continueclean and bda:
         print(now()+'Cannot continue deconvolution with wsclean if BDA is enabled')
         sys.exit()
+
+    if even and odd:
+        print(now()+'Even and odd timeslots selections are both enabled, defaulting to all.')
+        even = False
+        odd = False
 
     syscall = 'wsclean '
     syscall += '-log-time '
@@ -372,18 +424,26 @@ def generate_syscall_wsclean(mslist,
         syscall += '-minuv-l '+str(minuvl)+' '
     if maxuvl != '':
         syscall += '-maxuv-l '+str(maxuvl)+' '
-    if mask.lower() == 'fits':
-        mymask = glob.glob('*mask.fits')[0]
-        syscall += '-fits-mask '+mymask+' '
-    elif mask.lower() == 'none':    
-        syscall += '-threshold '+str(threshold)+' '
-    elif mask.lower() == 'auto':
-        syscall += '-local-rms '
+    if even:
+        syscall += '-even-timesteps '
+    if odd:
+        syscall += '-odd-timesteps '
+    if mask:
+        if mask.lower() == 'fits':
+            mymask = glob.glob('*mask.fits')[0]
+            syscall += '-fits-mask '+mymask+' '
+        else:
+            syscall += '-fits-mask '+mask+' '
+    if automask:
         syscall += '-auto-mask '+str(automask)+' '
+    if autothreshold:
         syscall += '-auto-threshold '+str(autothreshold)+' '
-    else:
-        syscall += '-fits-mask '+mask+' '
+    if localrms:
+        syscall += '-local-rms '
+    if threshold:
         syscall += '-threshold '+str(threshold)+' '
+    if stopnegative:
+        syscall += '-stop-negative '        
     syscall += '-name '+imgname+' '
     syscall += '-channels-out '+str(chanout)+' '
     if fitspectralpol != 0:
@@ -391,6 +451,8 @@ def generate_syscall_wsclean(mslist,
     if joinchannels:
         syscall += '-join-channels '
     syscall += '-padding '+str(padding)+' '
+    if circularbeam:
+        syscall += '-circular-beam '
     syscall += '-mem '+str(mem)+' '
 
     for myms in mslist:
@@ -401,10 +463,11 @@ def generate_syscall_wsclean(mslist,
 
 def generate_syscall_predict(msname,
                             imgbase,
+                            field = cfg.WSC_FIELD,
                             nwlayersfactor = cfg.WSC_NWLAYERSFACTOR,
                             chanout = cfg.WSC_CHANNELSOUT,
-                            imsize = cfg.WSC_IMSIZE,
-                            cellsize = cfg.WSC_CELLSIZE,
+#                            imsize = cfg.WSC_IMSIZE,
+#                            cellsize = cfg.WSC_CELLSIZE,
 #                            predictchannels = cfg.WSC_PREDICTCHANNELS,
                             mem = cfg.WSC_MEM):
 
@@ -413,10 +476,11 @@ def generate_syscall_predict(msname,
     syscall = 'wsclean '
     syscall += '-log-time '
     syscall += '-predict '
+    syscall += '-field '+str(field)+' '
     syscall += '-nwlayers-factor '+str(nwlayersfactor)+' '
     syscall += '-channels-out '+str(chanout)+' '
-    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
-    syscall += '-scale '+cellsize+' '
+#    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
+#    syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
     syscall += '-mem '+str(mem)+' '
 #    syscall += '-predict-channels '+str(predictchannels)+' '
@@ -425,11 +489,20 @@ def generate_syscall_predict(msname,
     return syscall 
 
 
+MAKEMASK_THRESH = 6.0
+MAKEMASK_DILATION = 3
+MAKEMASK_BOXSIZE = 500
+MAKEMASK_SMALLBOX = 50
+MAKEMASK_ISLANDSIZE = 5000
+
+
 def generate_syscall_makemask(restoredimage,
                             outfile = '',
                             thresh = cfg.MAKEMASK_THRESH,
-                            dilation = cfg.MAKEMASK_DILATION,
                             boxsize = cfg.MAKEMASK_BOXSIZE,
+                            smallbox = cfg.MAKEMASK_SMALLBOX,
+                            islandsize = cfg.MAKEMASK_ISLANDSIZE,
+                            dilation = cfg.MAKEMASK_DILATION,
                             zoompix = cfg.DDF_NPIX):
 
     # Generate call to MakeMask.py and dilate the result
@@ -439,9 +512,11 @@ def generate_syscall_makemask(restoredimage,
 
     syscall = 'bash -c "'
     syscall += 'python '+cfg.TOOLS+'/pyMakeMask.py '
-    syscall += '--threshold='+str(thresh)+' '
     syscall += '--dilate='+str(dilation)+' '
     syscall += '--boxsize='+str(boxsize)+' '
+    syscall += '--smallbox='+str(smallbox)+' '
+    syscall += '--islandsize='+str(islandsize)+' '
+    syscall += '--threshold='+str(thresh)+' '
     syscall += '--outfile='+str(outfile)+' '
     syscall += restoredimage
 
@@ -669,7 +744,7 @@ def generate_syscall_killms(myms,
     # [Actions]
     syscall+= '--NCPU '+str(ncpu)+' '
     syscall+= '--DoBar '+str(dobar)+' '
-    syscall+= '--DebugPdb '+str(debugpdb)+' '
+#    syscall+= '--DebugPdb '+str(debugpdb)+' '
     # [Solutions]
     syscall+= '--OutSolsName '+outsols+' '
     # [Solvers]

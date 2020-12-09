@@ -26,7 +26,7 @@ def main():
 
     CWD = cfg.CWD
     OXKAT = cfg.OXKAT
-    PARSETS = cfg.PARSETS
+    DATA = cfg.DATA
     TOOLS = cfg.TOOLS
     IMAGES = cfg.IMAGES
     LOGS = cfg.LOGS

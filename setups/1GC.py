@@ -15,312 +15,246 @@ from oxkat import config as cfg
 
 def main():
 
+    USE_SINGULARITY = cfg.USE_SINGULARITY
+
+    gen.preamble()
+    print(gen.now()+'1GC (referenced calibration) setup')
+
     # ------------------------------------------------------------------------------
-    # Setup
+    #
+    # Setup paths, required containers, infrastructure
+    #
+    # ------------------------------------------------------------------------------
+
+
+    gen.setup_dir(cfg.LOGS)
+    gen.setup_dir(cfg.SCRIPTS)
+    gen.setup_dir(cfg.GAINTABLES)
 
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
-
-
-    # Get paths from config and setup folders
-
-    CWD = cfg.CWD
-    BIND = cfg.BIND
-    OXKAT = cfg.OXKAT
-    PARSETS = cfg.PARSETS
-    GAINTABLES = cfg.GAINTABLES
-    LOGS = cfg.LOGS
-    SCRIPTS = cfg.SCRIPTS
-
-    BINDPATH = '$PWD,'+CWD+','+BIND
-
-    gen.setup_dir(LOGS)
-    gen.setup_dir(SCRIPTS)
-    gen.setup_dir(GAINTABLES)
-
-    # Enable running without containers
     if CONTAINER_PATH is not None:
         CONTAINER_RUNNER='singularity exec '
     else:
         CONTAINER_RUNNER=''
 
-    # Get containers needed for this script
 
-    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
-    RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN)
-    SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN)
-    MEQTREES_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MEQTREES_PATTERN)
-
- 
-    # Set names of the run and kill files, open run file for writing
-
-    submit_file = 'submit_1GC_jobs.sh'
-    kill_file = SCRIPTS+'/kill_1GC_jobs.sh'
-
-    f = open(submit_file,'w')
-    f.write('#!/usr/bin/env bash\n')
-    f.write('export SINGULARITY_BINDPATH='+BINDPATH+'\n')
+    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
+    MEQTREES_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MEQTREES_PATTERN,USE_SINGULARITY)
+    RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
+    SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN,USE_SINGULARITY)
 
 
-    # Get the MS name
+    # ------------------------------------------------------------------------------
+    #
+    # 1GC recipe definition
+    #
+    # ------------------------------------------------------------------------------
+
 
     original_ms = glob.glob('*.ms')[0]
     code = gen.get_code(original_ms)
     myms = original_ms.replace('.ms','_'+str(cfg.PRE_NCHANS)+'ch.ms')
 
 
-    # Initialise a list to hold all the job IDs
+    steps = []
+
+    step = {}
+    step['step'] = 0
+    step['comment'] = 'Split and average master MS'
+    step['dependency'] = None
+    step['id'] = 'SPPRE'+code
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 1
+    step['comment'] = 'Run setup script to generate project_info pickle'
+    step['dependency'] = 0
+    step['id'] = 'SETUP'+code
+    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += ' python '+cfg.OXKAT+'/1GC_00_setup.py '+myms
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 2
+    step['comment'] = 'Rephase primary calibrator visibilties in case of open-time offset problems'
+    step['dependency'] = 1
+    step['id'] = 'UVFIX'+code
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_01_casa_rephase_primary_calibrator.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 3
+    step['comment'] = 'Apply basic flagging steps to all fields'
+    step['dependency'] = 2
+    step['id'] = 'FGBAS'+code
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_02_casa_basic_flags.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 4
+    step['comment'] = 'Run setjy for primary calibrator'
+    step['dependency'] = 3
+    step['id'] = 'SETJY'+code
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_04_casa_setjy.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 5
+    step['comment'] = 'Run auto-flaggers on calibrators'
+    step['dependency'] = 4
+    step['id'] = 'FGCAL'+code
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_05_casa_autoflag_cals_DATA.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 6
+    step['comment'] = 'Split off calibrator MS with 8 SPWs'
+    step['dependency'] = 5
+    step['id'] = 'SPCAL'+code
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_06_casa_split_calibrators.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 7
+    step['comment'] = 'Fit for intrinsic model of secondary calibrator'
+    step['dependency'] = 6
+    step['id'] = 'CLMOD'+code
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_07_casa_get_secondary_model.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 8
+    step['comment'] = 'Generate reference calibration solutions and apply to target(s)'
+    step['dependency'] = 7
+    step['id'] = 'CL1GC'+code
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_08_casa_refcal_using_secondary_model.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 9
+    step['comment'] = 'Plot the gain solutions'
+    step['dependency'] = 8
+    step['id'] = 'PLTAB'+code
+    syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += 'python3 '+cfg.OXKAT+'/PLOT_gaintables.py cal_1GC_* cal_1GC_*calibrators.ms*'
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 10
+    step['comment'] = 'Split the corrected target data'
+    step['dependency'] = 8
+    step['id'] = 'SPTRG'+code
+    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_09_casa_split_targets.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 11
+    step['comment'] = 'Plot the corrected calibrator visibilities'
+    step['dependency'] = 10
+    step['id'] = 'PLVIS'+code
+    syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += 'python3 '+cfg.OXKAT+'/1GC_10_plot_visibilities.py'
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    # ------------------------------------------------------------------------------
+    #
+    # Write the run file and kill file based on the recipe
+    #
+    # ------------------------------------------------------------------------------
+
+
+    submit_file = 'submit_1GC_jobs.sh'
+    kill_file = cfg.SCRIPTS+'/kill_1GC_jobs.sh'
+
+    f = open(submit_file,'w')
+    f.write('#!/usr/bin/env bash\n')
+    f.write('export SINGULARITY_BINDPATH='+cfg.BINDPATH+'\n')
 
     id_list = []
 
-
-    # ------------------------------------------------------------------------------
-    # Pre-processing:
-    # Duplicate orignal MS, average to 1k channels if required
-
-
-    id_average = 'SPPRE'+code
-    id_list.append(id_average)
-
-    casalog = LOGS+'/casa_1GC_'+id_average+'.log'
-
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py',
-                casalogfile=casalog)
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_average,
-                infrastructure=INFRASTRUCTURE)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 0:
-    # Examine MS and store relevant deductions in project_info.p                           
-                   
-
-    id_setup = 'SETUP'+code
-    id_list.append(id_setup)
-
-    syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' '
-    syscall += 'python '+OXKAT+'/1GC_00_setup.py '+myms
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_setup,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_average)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 1:
-    # Rephase the primary calibrators to correct positions
-                                    
-
-    id_fixvis = 'UVFIX'+code
-    id_list.append(id_fixvis)
-
-    casalog = LOGS+'/casa_1GC_'+id_fixvis+'.log'
-
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_01_casa_rephase_primary_calibrator.py',
-                casalogfile=casalog)
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_fixvis,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_setup)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 2:
-    # Apply basic flagging steps to all fields
-                                    
-
-    id_basic = 'FGBAS'+code
-    id_list.append(id_basic)
-
-    casalog = LOGS+'/casa_1GC_'+id_basic+'.log'
-
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_02_casa_basic_flags.py',
-                casalogfile=casalog)
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_basic,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_fixvis)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 3:
-    # Run auto-flaggers on calibrators
-
-
-    id_autoflagcals = 'FGCAL'+code
-    id_list.append(id_autoflagcals)
-
-    casalog = LOGS+'/casa_1GC_'+id_autoflagcals+'.log'
-
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_03_casa_autoflag_cals_DATA.py',
-                casalogfile=casalog)
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_autoflagcals,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_basic)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 4:
-    # Split calibrators into a MS with 8 spectral windows
-                                              
-
-    id_splitcals = 'SPCAL'+code
-    id_list.append(id_splitcals)
-
-    casalog = LOGS+'/casa_1GC_'+id_splitcals+'.log'
-
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_04_casa_split_calibrators.py',
-                casalogfile=casalog)
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_splitcals,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_autoflagcals)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 5:
-    # Derive an intrinsic spectral model for the secondary calibrator                              
-                                                       
-
-    id_secondarymodel = 'CLMOD'+code
-    id_list.append(id_secondarymodel)
-
-    casalog = LOGS+'/casa_1GC_'+id_secondarymodel+'.log'
-
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_05_casa_get_secondary_model.py',
-                casalogfile=casalog)
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_secondarymodel,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_splitcals)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 6: (1GC)
-    # Perform reference calibration steps and apply to target(s)
-                                               
-    id_1GC = 'CL1GC'+code
-    id_list.append(id_1GC)
-
-    casalog = LOGS+'/casa_1GC_'+id_1GC+'.log'
-
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_06_casa_refcal_using_secondary_model.py',
-                casalogfile=casalog)
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_1GC,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_secondarymodel)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 7: 
-    # Make gain table plots
-                                         
-
-    id_gainplots = 'PLTAB'+code
-    id_list.append(id_gainplots)
-
-    syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_1GC_* cal_1GC_*calibrators.ms*'
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_gainplots,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_1GC)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 8:
-    # Split the corrected target data into individual Measurement Sets
-                               
-
-    id_splittargets = 'SPTRG'+code
-    id_list.append(id_splittargets)
-
-    casalog = LOGS+'/casa_1GC_'+id_splittargets+'.log'
-
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' '
-    syscall += gen.generate_syscall_casa(casascript=OXKAT+'/1GC_07_casa_split_targets.py',
-                casalogfile=casalog)
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_splittargets,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_1GC)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-    # STEP 9: 
-    # Make visibility plots
-                                         
-
-    id_visplots = 'PLVIS'+code
-    id_list.append(id_visplots)
-
-    syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' '
-    syscall += 'python3 '+OXKAT+'/1GC_08_plot_visibilities.py'
-
-    run_command = gen.job_handler(syscall=syscall,
-                jobname=id_visplots,
-                infrastructure=INFRASTRUCTURE,
-                dependency=id_splittargets)
-
-    f.write(run_command)
-
-
-    # ------------------------------------------------------------------------------
-
+    for step in steps:
+
+        step_id = step['id']
+        id_list.append(step_id)
+        if step['dependency'] is not None:
+            dependency = steps[step['dependency']]['id']
+        else:
+            dependency = None
+        syscall = step['syscall']
+        if 'slurm_config' in step.keys():
+            slurm_config = step['slurm_config']
+        else:
+            slurm_config = cfg.SLURM_DEFAULTS
+        if 'pbs_config' in step.keys():
+            pbs_config = step['pbs_config']
+        else:
+            pbs_config = cfg.PBS_DEFAULTS
+        comment = step['comment']
+
+        run_command = gen.job_handler(syscall = syscall,
+                        jobname = step_id,
+                        infrastructure = INFRASTRUCTURE,
+                        dependency = dependency,
+                        slurm_config = slurm_config,
+                        pbs_config = pbs_config)
+
+
+        f.write('\n# '+comment+'\n')
+        f.write(run_command)
 
 
     if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
-        kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        kill = '\necho "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
         f.write(kill)
     elif INFRASTRUCTURE == 'chpc':
-        kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        kill = '\necho "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
         f.write(kill)
     
-
     f.close()
 
-
     gen.make_executable(submit_file)
+
+    gen.print_spacer()
+    print(gen.now()+'Created '+submit_file)
+    gen.print_spacer()
+
+    # ------------------------------------------------------------------------------
+
 
 
 if __name__ == "__main__":

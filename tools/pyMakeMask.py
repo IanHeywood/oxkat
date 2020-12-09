@@ -6,6 +6,8 @@ import sys
 from astropy.io import fits
 from optparse import OptionParser
 from scipy.ndimage.morphology import binary_dilation
+from scipy.ndimage.measurements import label
+from scipy.ndimage import sum as ndi_sum
 
 
 def get_image(fitsfile):
@@ -56,14 +58,18 @@ def make_noise_map(restored_image,boxsize):
 def main():
 
     parser = OptionParser(usage = '%prog [options] restored_image')
-    parser.add_option('--threshold', dest = 'threshold', help = 'Sigma threshold for masking (default = 6.5)', default = 6.5)
-    parser.add_option('--boxsize', dest = 'boxsize', help = 'Box size over which to compute stats (default = 50)', default = 50)
-    parser.add_option('--dilate', dest = 'dilate', help = 'Number of iterations of binary dilation (default = 0)', default = 0)
+    parser.add_option('--threshold', dest = 'threshold', help = 'Sigma threshold for masking (default = 6.0)', default = 6.0)
+    parser.add_option('--boxsize', dest = 'boxsize', help = 'Box size to use for fields with compact islands (default = 500)', default = 500)
+    parser.add_option('--smallbox', dest = 'smallbox', help = 'Box size to switch to for fields with small islands (default = 50), set to zero to just use boxsize', default = 50)
+    parser.add_option('--islandsize', dest = 'islandsize', help = 'Island size in pixels below which smallbox is used', default = 5000)
+    parser.add_option('--dilate', dest = 'dilate', help = 'Number of iterations of binary dilation (default = 3, set to 0 to disable)', default = 3)
     parser.add_option('--savenoise', dest = 'savenoise', help = 'Enable to export noise image as FITS file (default = do not save noise image', action = 'store_true', default = False)
     parser.add_option('--outfile', dest = 'outfile', help = 'Suffix for mask image (default = restored_image.replace(".fits",".mask.fits"))', default = '')
     (options,args) = parser.parse_args()
     threshold = float(options.threshold)
     boxsize = int(options.boxsize)
+    smallbox = int(options.smallbox)
+    islandsize = int(options.islandsize)
     dilate = int(options.dilate)
     savenoise = options.savenoise
     outfile = options.outfile
@@ -76,13 +82,36 @@ def main():
 
     input_image = get_image(input_fits)
 
-    noise_image = make_noise_map(input_image, boxsize)
+    print('Computing mask with box size: '+str(boxsize)+' pixels')
+    print('Threshold: '+str(threshold))
+    noise_image = make_noise_map(input_image,boxsize)
+    mask_image = input_image > threshold * noise_image
+
+    if smallbox != 0:
+        print('Counting islands...')
+        sizes = []
+        mask_image = mask_image.byteswap().newbyteorder()
+        labeled_mask_image, n_islands = label(mask_image)
+        print('Found '+str(n_islands))
+        print('Sizing them up...')
+        indices = numpy.arange(0,n_islands)
+        sizes = ndi_sum(mask_image, labeled_mask_image, indices)
+        sizes = numpy.sort(sizes)[::-1]
+        print('Island size threshold: '+str(islandsize))
+        print('Top five island sizes:')
+        print(sizes[0:5])
+        if sizes[0] < islandsize:
+            print('Largest island has fewer than '+str(islandsize)+' pixels')
+            print('Recomputing mask with box size: '+str(smallbox)+' pixels')
+            noise_image = make_noise_map(input_image,smallbox)
+            mask_image = input_image > threshold * noise_image
+        else:
+            print('Sticking with box size: '+str(boxsize)+' pixels')
+
     if savenoise:
         noise_fits = input_fits.replace('.fits', '.noise.fits')
         shutil.copyfile(input_fits, noise_fits)
         flush_fits(noise_image, noise_fits)
-
-    mask_image = input_image > threshold * noise_image
 
     mask_image[:,-1]=0
     mask_image[:,0]=0

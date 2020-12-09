@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+`#!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 # Continue cleaning a GC pointing
@@ -28,7 +28,7 @@ def main():
 
     CWD = cfg.CWD
     OXKAT = cfg.OXKAT
-    PARSETS = cfg.PARSETS
+    DATA = cfg.DATA
     TOOLS = cfg.TOOLS
     GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES

@@ -97,7 +97,7 @@ def main():
     step = {}
     step['step'] = 3
     step['comment'] = 'Run setjy for primary calibrator'
-    step['dependency'] = 4
+    step['dependency'] = 2
     step['id'] = 'SETJY'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_casa_UHF_setjy.py')

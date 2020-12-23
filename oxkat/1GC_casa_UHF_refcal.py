@@ -1,5 +1,6 @@
 # ian.heywood@physics.ox.ac.uk
-# Very experimental
+# UHF calibration is experimental
+
 
 import glob
 import pickle
@@ -20,8 +21,8 @@ execfile('oxkat/casa_read_project_info.py')
 execfile('oxkat/config.py')
 
 
-myuvrange = '>300m'
-myspw = '850~900MHz'
+myuvrange = CAL_1GC_UHF_UVRANGE 
+myspw = CAL_1GC_UHF_FREQRANGE
 delaycut = CAL_1GC_DELAYCUT
 
 
@@ -219,7 +220,7 @@ for i in range(0,len(pcals)):
 # ------- Apply final tables to targets
 
 
-for targ in targets:
+for i in range(0,len(targets)):
 
 
     target = targets[i]

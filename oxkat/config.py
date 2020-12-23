@@ -172,10 +172,10 @@ CAL_1GC_PRIMARY_MODEL = 'auto'       # setjy = use setjy component model only
 
 # GBK settings
 CAL_1GC_UVRANGE = '>150m'            # Selection for baselines to include during 1GC B/G solving (K excluded)
+CAL_1GC_UHF_UVRANGE = '>150m'        #
 CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on secondaries weaker than this
 CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
-
-
+CAL_1GC_UHF_FREQRANGE = '850~900MHz' # Clean part of the band to use for generating UHF 1GC solutions
 
 # ------------------------------------------------------------------------
 #

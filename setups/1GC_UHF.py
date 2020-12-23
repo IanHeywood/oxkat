@@ -96,19 +96,8 @@ def main():
 
     step = {}
     step['step'] = 3
-    step['comment'] = 'Run setjy for primary calibrator'
-    step['dependency'] = 2
-    step['id'] = 'SETJY'+code
-    syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_casa_UHF_setjy.py')
-    step['syscall'] = syscall
-    steps.append(step)
-
-
-    step = {}
-    step['step'] = 4
     step['comment'] = 'Run auto-flaggers on calibrators'
-    step['dependency'] = 3
+    step['dependency'] = 2
     step['id'] = 'FGCAL'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_casa_UHF_autoflag_cals_DATA.py')
@@ -117,9 +106,9 @@ def main():
 
 
     step = {}
-    step['step'] = 5
+    step['step'] = 4
     step['comment'] = 'Generate reference calibration solutions and apply to target(s)'
-    step['dependency'] = 4
+    step['dependency'] = 3
     step['id'] = 'CL1GC'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_casa_UHF_refcal.py')
@@ -128,9 +117,9 @@ def main():
 
 
     step = {}
-    step['step'] = 6
+    step['step'] = 5
     step['comment'] = 'Plot the gain solutions'
-    step['dependency'] = 5
+    step['dependency'] = 4
     step['id'] = 'PLTAB'+code
     syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python3 '+cfg.OXKAT+'/PLOT_gaintables.py cal_1GC_*'
@@ -139,9 +128,9 @@ def main():
 
 
     step = {}
-    step['step'] = 7
+    step['step'] = 6
     step['comment'] = 'Split the corrected target data'
-    step['dependency'] = 5
+    step['dependency'] = 4
     step['id'] = 'SPTRG'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_09_casa_split_targets.py')
@@ -150,9 +139,9 @@ def main():
 
 
     step = {}
-    step['step'] = 8
+    step['step'] = 7
     step['comment'] = 'Plot the corrected calibrator visibilities'
-    step['dependency'] = 7
+    step['dependency'] = 6
     step['id'] = 'PLVIS'+code
     syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python3 '+cfg.OXKAT+'/1GC_10_plot_visibilities.py'

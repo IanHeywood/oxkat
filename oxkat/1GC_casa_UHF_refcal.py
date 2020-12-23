@@ -22,7 +22,7 @@ execfile('oxkat/config.py')
 
 
 myuvrange = CAL_1GC_UHF_UVRANGE 
-myspw = CAL_1GC_UHF_FREQRANGE
+myspw = '*:'+CAL_1GC_UHF_FREQRANGE
 delaycut = CAL_1GC_DELAYCUT
 
 

@@ -246,6 +246,10 @@ WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'
 WSC_PARALLELDECONVOLUTION = 2560 # 
 
+WSC_UHF_IMSIZE = 10240
+WSC_UHF_CELLSIZE = '1.7asec'
+WSC_UHF_BRIGGS = -0.5
+
 
 # ------------------------------------------------------------------------
 #
@@ -335,6 +339,7 @@ DDF_MASK = 'auto' # 'auto' enables automasking
 DDF_MASKSIGMA = 4.5
 DDF_CONSERVEMEMORY = 1
 
+DDF_UHF_CELL = 1.7
 
 # ------------------------------------------------------------------------
 #

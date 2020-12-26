@@ -15,7 +15,7 @@ clearstat()
 # ------------------------------------------------------------------------
 # Band edges
 
-badfreqs = ['540~570MHz', '1030~1080MHz']
+badfreqs = ['540~570MHz', '1030~1150MHz']
 
 myspw = ''
 for badfreq in badfreqs:

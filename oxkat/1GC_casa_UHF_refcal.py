@@ -32,11 +32,11 @@ delaycut = CAL_1GC_DELAYCUT
 tt = stamp()
 
 
-ktab0 = 'cal_'+myms+'_'+tt+'.K0'
-bptab0 = 'cal_'+myms+'_'+tt+'.B0'
-gtab0 = 'cal_'+myms+'_'+tt+'.G0'
-gtab1 = 'cal_'+myms+'_'+tt+'.G1'
-ftab1 = 'cal_'+myms+'_'+tt+'.flux'
+ktab0 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.K0'
+bptab0 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.B0'
+gtab0 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G0'
+gtab1 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G1'
+ftab1 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux'
 
 
 

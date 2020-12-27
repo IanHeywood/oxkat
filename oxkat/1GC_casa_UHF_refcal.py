@@ -78,12 +78,14 @@ elif primary_tag == 'other':
         usescratch=True)
 
 
-setjy(vis =myms,
-    field = pcal,
-    standard = 'manual',
-    fluxdensity = [1.0,0,0,0],
-    reffreq = '850MHz',
-    usescratch = True)
+for i in range(0,len(pcals)):
+    pcal = pcals[i]
+    setjy(vis =myms,
+        field = pcal,
+        standard = 'manual',
+        fluxdensity = [1.0,0,0,0],
+        reffreq = '850MHz',
+        usescratch = True)
 
 
 # ------- K0 (primary)

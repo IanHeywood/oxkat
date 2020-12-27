@@ -221,6 +221,19 @@ fluxscale(vis=myms,
     transfer = '')
 
 
+# ------- Apply final tables to primary
+
+
+applycal(vis=myms,
+    gaintable=[ktab0,gtab0,bptab0,ftab1],
+#    applymode='calonly',
+    field=bpcal,
+#    calwt=False,
+    parang=False,
+    gainfield=[bpcal,bpcal,bpcal,bpcal],
+    interp = ['nearest','nearest','nearest','nearest'])
+
+
 # ------- Apply final tables to secondaries
 
 

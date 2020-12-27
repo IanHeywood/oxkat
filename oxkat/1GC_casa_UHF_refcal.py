@@ -88,7 +88,7 @@ gaincal(vis=myms,
     caltable=ktab0,
     refant = str(ref_ant),
     gaintype = 'K',
-    solint = 'inf',
+    solint = 'int',
     parang=False)
 
 
@@ -162,8 +162,22 @@ for i in range(0,len(pcals)):
     pcal = pcals[i]
     pcal_name = pcal_names[i] # name
 
-    # --- G2 (secondary)
+    # --- K0 (secondary)
 
+    gaincal(vis= myms,
+        field = pcal,
+        caltable = ktab0,
+        refant = str(ref_ant),
+        spw=myspw,
+        gaintype = 'K',
+        solint = 'inf',
+        parang = False,
+        gaintable = [ktab0,bptab0,gtab0],
+        gainfield = [bpcal,bpcal,bpcal],
+        interp = ['nearest','linear','linear'],
+        append = True)
+
+    # --- G1 (secondary)
 
     gaincal(vis = myms,
         field = pcal,
@@ -232,10 +246,10 @@ for i in range(0,len(targets)):
 
     applycal(vis=myms,
         field=target,
-        gaintable = [ktab0,gtab0,bptab0,ftab1],
+        gaintable = [ktab0,bptab0,ftab1],
         parang = False,
-        gainfield = [bpcal,bpcal,bpcal,''],
-        interp = ['nearest','linear','linear','linear'])
+        gainfield = ['',bpcal,''],
+        interp = ['nearest','linear','linear'])
 
 
 

@@ -228,6 +228,7 @@ applycal(vis=myms,
     gaintable=[ktab0,gtab0,bptab0,ftab1],
 #    applymode='calonly',
     field=bpcal,
+    calwt = [False,False,False,False],
 #    calwt=False,
     parang=False,
     gainfield=[bpcal,bpcal,bpcal,bpcal],
@@ -250,6 +251,7 @@ for i in range(0,len(pcals)):
         gaintable = [ktab0,gtab0,bptab0,ftab1],
         field = pcal,
         parang = False,
+        calwt = [False,False,False,False],
         gainfield = [bpcal,bpcal,bpcal,''],
         interp = ['nearest','linear','linear','linear'])
 
@@ -269,10 +271,11 @@ for i in range(0,len(targets)):
 
     applycal(vis=myms,
         field=target,
-        gaintable = [ktab0,bptab0,ftab1],
+        gaintable = [ktab0,gtab0,bptab0,ftab1],
         parang = False,
-        gainfield = ['',bpcal,''],
-        interp = ['nearest','linear','linear'])
+        calwt = [False,False,False,False],
+        gainfield = ['','',bpcal,''],
+        interp = ['nearest','nearest','linear','linear'])
 
 
 

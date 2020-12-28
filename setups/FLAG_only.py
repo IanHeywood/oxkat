@@ -93,9 +93,6 @@ def main():
                 ii += 1
             codes.append(code)
         
-            # Image prefix
-            img_prefix = IMAGES+'/img_'+myms+'_datablind'
-
             # Target-specific kill file
             kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
 

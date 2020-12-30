@@ -44,6 +44,6 @@ elif primary_tag == '0408':
 elif primary_tag == 'other':
     setjy(vis=myms,
         field=bpcal_name,
-        standard='Perley-Butler 2010',
+        standard='Perley-Butler 2013',
         scalebychan=True,
         usescratch=True)

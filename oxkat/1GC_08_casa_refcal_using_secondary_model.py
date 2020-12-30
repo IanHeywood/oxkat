@@ -441,7 +441,7 @@ gaincal(vis = myms,
     minsnr = 3,
     calmode = 'ap',
     parang = False,
-    gaintable = [ktab1,gtab1,bptab1],
+    gaintable = [ktab2,gtab1,bptab1],
     gainfield = [bpcal,bpcal,bpcal],
     interp = ['nearest','nearest','nearest'],
     append = False)
@@ -478,7 +478,7 @@ for i in range(0,len(pcals)):
         combine = '',
         calmode = 'ap',
         parang = False,
-        gaintable=[ktab1,gtab1,bptab1],
+        gaintable=[ktab2,gtab1,bptab1],
         gainfield=[bpcal,bpcal,bpcal],
         interp=['nearest','linear','linear'],
         append=True)

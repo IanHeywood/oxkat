@@ -30,19 +30,22 @@ def main():
     for pcal in pcals:
         fields.append(pcal)
 
-    plots = [('--xaxis CORRECTED_DATA:real:XX,CORRECTED_DATA:real:YY --yaxis CORRECTED_DATA:imag:XX,CORRECTED_DATA:imag:YY'),
-#        ('--xaxis FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY --iter-scan --colour-by ANTENNA1')
-        ('--xaxis FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY'),
-        ('--xaxis UV,UV,UV,UV --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY,CORRECTED_DATA:phase:XX,CORRECTED_DATA:phase:YY')]
+    plots = ['--xaxis CORRECTED_DATA:real:XX,CORRECTED_DATA:real:YY --yaxis CORRECTED_DATA:imag:XX,CORRECTED_DATA:imag:YY',
+        '--xaxis FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY',
+        '--xaxis FREQ,FREQ --yaxis CORRECTED_DATA:phase:XX,CORRECTED_DATA:phase:YY',
+        '--xaxis UV,UV,UV,UV --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:YY,CORRECTED_DATA:phase:XX,CORRECTED_DATA:phase:YY']
 
+    colour_by = ['--colour-by ANTENNA1 --cnum 64',
+        '--colour-by SCAN_NUMBER --cnum 48 ']
 
 #    shadems_base = 'shadems --profile --dir '+VISPLOTS+' '
     shadems_base = 'shadems --dir '+VISPLOTS+' '
 
     for field in fields:
         for plot in plots:
-            syscall = shadems_base+' '+plot+' --field '+str(field)+' '+myms
-            subprocess.run([syscall],shell=True)
+            for col in colour_by:
+                syscall = shadems_base+' '+plot+' '+col+' --field '+str(field)+' '+myms
+                subprocess.run([syscall],shell=True)
 
 
 if __name__ == "__main__":

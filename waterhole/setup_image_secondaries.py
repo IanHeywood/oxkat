@@ -53,7 +53,7 @@ def main():
 
     myms = project_info['master_ms']
     pcal_names = project_info['secondary_names']
-    pcals = project_info['secondary_ids']
+    pcal_ids = project_info['secondary_ids']
 
 
     # ------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ def main():
 
 
         steps = []        
-        filename_pcalname = gen.scrub_target_name(calname)
+        filename_calname = gen.scrub_target_name(calname)
 
 
         code = gen.get_target_code(calname)
@@ -87,12 +87,12 @@ def main():
     
 
         gen.print_spacer()
-        print(gen.now()+'Secondary | '+pcalname)
+        print(gen.now()+'Secondary | '+calname)
         print(gen.now()+'Code      | '+code)
 
 
         # Image prefix
-        img_prefix = IMAGES+'/img_'+myms+'_'+filename_pcalname+'_corrblind'
+        img_prefix = IMAGES+'/img_'+myms+'_'+filename_calname+'_corrblind'
 
 
         step = {}

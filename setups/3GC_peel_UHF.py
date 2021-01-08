@@ -151,7 +151,6 @@ def main():
                         chanout=cfg.CAL_3GC_PEEL_NCHAN,
                         imsize=cfg.WSC_UHF_IMSIZE,
                         cellsize=cfg.WSC_UHF_CELLSIZE,
-                        briggs=cfg.WSC_UHF_BRIGGS,
                         automask = False,
                         autothreshold = False,
                         localrms = False,

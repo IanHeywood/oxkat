@@ -147,7 +147,7 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=prepeel_img_prefix,
                         datacol='CORRECTED_DATA',
-                        briggs=-cfg.CAL_3GC_PEEL_BRIGGS,
+                        briggs=cfg.CAL_3GC_PEEL_BRIGGS,
                         chanout=cfg.CAL_3GC_PEEL_NCHAN,
                         automask = False,
                         autothreshold = False,

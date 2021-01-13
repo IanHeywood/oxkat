@@ -5,8 +5,7 @@
 import os
 
 
-CWD = os.getcwd()
-HOME = os.path.expanduser('~')
+BAND = 'L'
 
 
 # ------------------------------------------------------------------------
@@ -48,6 +47,8 @@ WSCLEAN_PATTERN = 'wsclean'
 # Paths for components and OUTPUTS
 #
 
+CWD = os.getcwd()
+HOME = os.path.expanduser('~')
 
 OXKAT = CWD+'/oxkat'
 DATA = CWD+'/data'
@@ -247,11 +248,12 @@ WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'
 WSC_PARALLELDECONVOLUTION = 2560 # 
 
-WSC_UHF_IMSIZE = 10240
-WSC_UHF_CELLSIZE = '1.7asec'
-WSC_UHF_BRIGGS = -0.5
-#WSC_UHF_BDAFACTOR = 4
-#WSC_UHF_NWLAYERSFACTOR = 5
+# UHF modifiers
+if BAND[0].upper() == 'U':
+    WSC_CELLSIZE = '1.7asec'
+    WSC_BRIGGS = -0.5
+    WSC_BDAFACTOR = 4
+    WSC_NWLAYERSFACTOR = 5
 
 # ------------------------------------------------------------------------
 #
@@ -296,6 +298,8 @@ DDF_PSFOVERSIZE = 1.5
 DDF_PADDING = 3.0 # padding needs increasing from default if NFacets is raised to prevent aliasing
 # [Weight]
 DDF_ROBUST = 0.0
+# [Convolution Functions]
+# DDF_NW = 100 # Increase for strong off-axis sources
 # [Comp]
 DDF_SPARSIFICATION = '0' # [100,30,10] grids every 100th visibility on major cycle 1, every 30th on cycle 2, etc.
 # [Parallel]
@@ -341,7 +345,11 @@ DDF_MASK = 'auto' # 'auto' enables automasking
 DDF_MASKSIGMA = 4.5
 DDF_CONSERVEMEMORY = 1
 
-DDF_UHF_CELL = 1.7
+# UHF modifiers
+if BAND[0].upper() == 'U':
+    DDF_CELL = 1.7
+    DDF_ROBUST = -0.5
+
 
 # ------------------------------------------------------------------------
 #

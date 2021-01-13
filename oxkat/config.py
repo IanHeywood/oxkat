@@ -10,7 +10,27 @@ BAND = 'L'
 
 # ------------------------------------------------------------------------
 #
-# Singularity
+# Paths for components and OUTPUTS
+#
+
+CWD = os.getcwd()
+HOME = os.path.expanduser('~')
+
+OXKAT = CWD+'/oxkat'
+DATA = CWD+'/data'
+TOOLS = CWD+'/tools'
+
+GAINPLOTS = CWD+'/GAINPLOTS'
+GAINTABLES = CWD+'/GAINTABLES'
+IMAGES = CWD+'/IMAGES'
+LOGS = CWD+'/LOGS'
+SCRIPTS = CWD+'/SCRIPTS'
+VISPLOTS = CWD+'/VISPLOTS'
+
+
+# ------------------------------------------------------------------------
+#
+# Singularity settings
 #
 
 # Set to False to disable singularity entirely
@@ -44,27 +64,7 @@ WSCLEAN_PATTERN = 'wsclean'
 
 # ------------------------------------------------------------------------
 #
-# Paths for components and OUTPUTS
-#
-
-CWD = os.getcwd()
-HOME = os.path.expanduser('~')
-
-OXKAT = CWD+'/oxkat'
-DATA = CWD+'/data'
-TOOLS = CWD+'/tools'
-
-GAINPLOTS = CWD+'/GAINPLOTS'
-GAINTABLES = CWD+'/GAINTABLES'
-IMAGES = CWD+'/IMAGES'
-LOGS = CWD+'/LOGS'
-SCRIPTS = CWD+'/SCRIPTS'
-VISPLOTS = CWD+'/VISPLOTS'
-
-
-# ------------------------------------------------------------------------
-#
-# Slurm settings
+# Slurm resource settings
 #
 
 SLURM_DEFAULTS = {
@@ -105,7 +105,7 @@ SLURM_HIGHMEM = {
 
 # ------------------------------------------------------------------------
 #
-# PBS settings
+# PBS resource settings
 #
 
 CHPC_ALLOCATION = 'ASTR1301'
@@ -140,7 +140,7 @@ PBS_WSCLEAN = {
 
 # ------------------------------------------------------------------------
 #
-# 1GC defaults
+# 1GC settings
 #
 
 # Pre-processing
@@ -181,7 +181,7 @@ CAL_1GC_UHF_FREQRANGE = '850~900MHz' # Clean part of the band to use for generat
 
 # ------------------------------------------------------------------------
 #
-# 2GC defaults
+# 2GC settings
 #
 
 
@@ -193,7 +193,7 @@ CAL_2GC_APSOLINT = 'inf'             # Solution interval for amplitude and phase
 
 # ------------------------------------------------------------------------
 #
-# 3GC peeling defaults
+# 3GC peeling settings
 #
 
 CAL_3GC_PEEL_NCHAN = 32

@@ -200,8 +200,21 @@ def main():
 
             step = {}
             step['step'] = 5
-            step['comment'] = 'Run CASA self-calibration script'
+            step['comment'] = 'Re-predict model visibilities from imaging of the DATA column'
             step['dependency'] = 4
+            step['id'] = 'WSDPR'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_predict(msname=myms,imgbase=data_img_prefix)
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 6
+            step['comment'] = 'Run CASA self-calibration script'
+            step['dependency'] = 5
             step['id'] = 'CL2GC'+code
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
@@ -211,9 +224,9 @@ def main():
 
 
             step = {}
-            step['step'] = 6
+            step['step'] = 7
             step['comment'] = 'Plot the self-calibration gain solutions'
-            step['dependency'] = 5
+            step['dependency'] = 6
             step['id'] = 'PLTAB'+code
             syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_2GC_*'+myms+'*'
@@ -222,9 +235,9 @@ def main():
 
 
             step = {}
-            step['step'] = 7
+            step['step'] = 8
             step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA column of '+myms
-            step['dependency'] = 5
+            step['dependency'] = 6
             step['id'] = 'WSCMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
@@ -242,9 +255,9 @@ def main():
 
 
             step = {}
-            step['step'] = 8
+            step['step'] = 9
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
-            step['dependency'] = 7
+            step['dependency'] = 8
             step['id'] = 'MASK1'+code
             syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
@@ -256,9 +269,9 @@ def main():
 
 
             step = {}
-            step['step'] = 9
+            step['step'] = 10
             step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
-            step['dependency'] = 7
+            step['dependency'] = 9
             step['id'] = 'WSCPR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN

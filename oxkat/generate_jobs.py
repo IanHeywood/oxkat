@@ -293,7 +293,7 @@ def generate_syscall_casa(casascript,casalogfile='',extra_args=''):
     return syscall
 
 
-def generate_syscall_cubical(parset,myms,outname=False):#,prefix):
+def generate_syscall_cubical(parset,myms,extra_args=''):
 
     # now = timenow()
     # outname = 'cube_'+prefix+'_'+myms.split('/')[-1]+'_'+now
@@ -311,8 +311,9 @@ def generate_syscall_cubical(parset,myms,outname=False):#,prefix):
 
     syscall = 'gocubical '+parset+' '
     syscall += '--data-ms='+myms+' '
-    if outname:
-        syscall += '--out-name '+outname+' '
+    if extra_args != '':
+        syscall += extra_args
+#        syscall += '--out-name '+outname+' '
 
     return syscall
 

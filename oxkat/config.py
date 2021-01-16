@@ -185,10 +185,13 @@ CAL_1GC_UHF_FREQRANGE = '850~900MHz' # Clean part of the band to use for generat
 #
 
 
-# G settings
+# CASA gaincal settings
 CAL_2GC_UVRANGE = '>150m'            # Selection for baselines to include during G solving
 CAL_2GC_PSOLINT = '64s'              # Solution interval for phase-only selfcal
 CAL_2GC_APSOLINT = 'inf'             # Solution interval for amplitude and phase selfcal
+
+# CubiCal
+CAL_2GC_DELAYCAL_PARSET = DATA+'/cubical/2GC_delaycal.parset'
 
 
 # ------------------------------------------------------------------------
@@ -200,7 +203,7 @@ CAL_3GC_PEEL_NCHAN = 32
 CAL_3GC_PEEL_BRIGGS = -0.6
 CAL_3GC_PEEL_DIR1COLNAME = 'DIR1_DATA'
 CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288.reg'
-CAL_3GC_PEEL_PARSET = DATA+'/cubical/peel.parset'
+CAL_3GC_PEEL_PARSET = DATA+'/cubical/3GC_peel.parset'
 
 
 # ------------------------------------------------------------------------

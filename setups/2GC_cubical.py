@@ -72,6 +72,8 @@ def main():
     target_steps = []
     codes = []
     ii = 1
+    stamp = gen.timenow()
+
 
     # Loop over targets
 

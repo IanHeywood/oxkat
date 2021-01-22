@@ -141,8 +141,8 @@ def main():
             step['comment'] = 'Run masked wsclean, high freq/angular resolution, on CORRECTED_DATA column of '+myms
             step['dependency'] = None
             step['id'] = 'WSDMA'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
+            step['slurm_config'] = cfg.SLURM_EXTRALONG
+            step['pbs_config'] = cfg.PBS_EXTRALONG
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname=prepeel_img_prefix,

@@ -94,6 +94,15 @@ SLURM_WSCLEAN = {
     'MEM': '230GB'
 }
 
+SLURM_EXTRALONG = {
+    'TIME': '48:00:00',
+    'PARTITION': 'Main',
+    'NTASKS': '1',
+    'NODES': '1',
+    'CPUS': '32',
+    'MEM': '230GB'
+}
+
 SLURM_HIGHMEM = {
     'TIME': '36:00:00',
     'PARTITION': 'HighMem',

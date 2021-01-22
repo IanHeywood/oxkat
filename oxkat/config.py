@@ -146,6 +146,14 @@ PBS_WSCLEAN = {
 	'MEM': '120gb'
 }
 
+PBS_EXTRALONG = {
+    'PROGRAM': CHPC_ALLOCATION,
+    'WALLTIME': '48:00:00',
+    'QUEUE': 'serial',
+    'NODES': '1',
+    'PPN': '24',
+    'MEM': '120gb'
+}
 
 # ------------------------------------------------------------------------
 #

@@ -143,17 +143,19 @@ def main():
             step['id'] = 'WSDMA'+code
             step['slurm_config'] = cfg.SLURM_EXTRALONG
             step['pbs_config'] = cfg.PBS_EXTRALONG
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=prepeel_img_prefix,
-                        datacol='CORRECTED_DATA',
-                        briggs=cfg.CAL_3GC_PEEL_BRIGGS,
-                        chanout=cfg.CAL_3GC_PEEL_NCHAN,
+            syscall += gen.generate_syscall_wsclean(mslist = [myms],
+                        imgname = prepeel_img_prefix,
+                        datacol = 'CORRECTED_DATA',
+                        briggs = cfg.CAL_3GC_PEEL_BRIGGS,
+                        chanout = cfg.CAL_3GC_PEEL_NCHAN,
                         automask = False,
                         autothreshold = False,
                         localrms = False,
-                        bda=True,
-                        mask=mask)
+                        bda = True,
+                        mask = mask,
+                        absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -176,8 +178,11 @@ def main():
             step['comment'] = 'Predict problem source visibilities into MODEL_DATA column of '+myms
             step['dependency'] = 1
             step['id'] = 'WS1PR'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=dir1_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
+            syscall += gen.generate_syscall_predict(msname = myms,imgbase = dir1_img_prefix,chanout = cfg.CAL_3GC_PEEL_NCHAN, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -214,8 +219,11 @@ def main():
             step['comment'] = 'Predict full sky model visibilities into MODEL_DATA column of '+myms
             step['dependency'] = 4
             step['id'] = 'WS2PR'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=prepeel_img_prefix,chanout=cfg.CAL_3GC_PEEL_NCHAN)
+            syscall += gen.generate_syscall_predict(msname = myms,imgbase = prepeel_img_prefix,chanout = cfg.CAL_3GC_PEEL_NCHAN, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 

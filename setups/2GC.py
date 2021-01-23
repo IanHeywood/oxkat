@@ -129,15 +129,17 @@ def main():
             step['id'] = 'WSDMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=data_img_prefix,
-                        datacol='DATA',
-                        bda=True,
+                        imgname = data_img_prefix,
+                        datacol = 'DATA',
+                        bda = True,
                         automask = False,
                         autothreshold = False,
                         localrms = False,
-                        mask=mask)
+                        mask = mask,
+                        absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -149,8 +151,9 @@ def main():
             step['id'] = 'WSDPR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=data_img_prefix)
+            syscall += gen.generate_syscall_predict(msname = myms, imgbase = data_img_prefix, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -185,15 +188,17 @@ def main():
             step['id'] = 'WSCMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=corr_img_prefix,
-                        datacol='CORRECTED_DATA',
-                        bda=True,
+            syscall += gen.generate_syscall_wsclean(mslist = [myms],
+                        imgname = corr_img_prefix,
+                        datacol = 'CORRECTED_DATA',
+                        bda = True,
                         automask = False,
                         autothreshold = False,
                         localrms = False,
-                        mask=mask)
+                        mask = mask,
+                        absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -219,8 +224,9 @@ def main():
             step['id'] = 'WSCPR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=corr_img_prefix)
+            syscall += gen.generate_syscall_predict(msname = myms, imgbase = corr_img_prefix, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 

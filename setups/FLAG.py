@@ -132,6 +132,7 @@ def main():
             step['id'] = 'WSDBL'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                         imgname = img_prefix,
@@ -140,7 +141,8 @@ def main():
                         automask = False,
                         autothreshold = False,
                         localrms = False,
-                        mask = False)
+                        mask = False,
+                        absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 

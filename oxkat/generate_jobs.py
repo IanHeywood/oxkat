@@ -277,6 +277,37 @@ def job_handler(syscall,
     return run_command
 
 
+def mem_string_to_gb(mem):
+    headroom = 0.98 # fraction of memory specified in IDIA/CHPC config to convert to absmem (hippo a special case)
+    mem = mem.upper().replace('B','')
+    if 'M' in mem:
+        factor = 1e-3
+    if 'G' in mem:
+        factor = 1
+    if 'T' in mem:
+        factor = 1e3
+    absmem = float(''.join(x for x in mem if x.isdigit()))
+    absmem = int(absmem * factor * headroom)
+    return absmem
+
+
+def absmem_helper(step,infrastructure,absmem):
+    if infrastructure == 'chpc':
+        config_mem = step['pbs_config']['MEM']
+    elif infrastructure == 'idia':
+        config_mem = step['slurm_config']['MEM']
+    elif infrastructure == 'hippo':
+        slurm_cpus = step['slurm_config']['CPUS']
+        if int(slurm_cpus) > 20:
+            slurm_cpus='20'
+        if int(slurm_cpus) < 20:
+            config_mem = '60gb'
+        else:
+            config_mem = '64gb'
+    if infrastructure != 'node':
+        absmem = mem_string_to_gb(config_mem)
+    return absmem
+
 
 def generate_syscall_casa(casascript,casalogfile='',extra_args=''):
 
@@ -462,8 +493,7 @@ def generate_syscall_wsclean(mslist,
     if absmem < 0:
         syscall += '-mem '+str(mem)+' '
     else:
-        syscall += '-absmem '+str(absmem)+' '
-
+        syscall += '-abs-mem '+str(absmem)+' '
     for myms in mslist:
         syscall += myms+' '
 

@@ -405,6 +405,7 @@ def generate_syscall_wsclean(mslist,
                           fitspectralpol = cfg.WSC_FITSPECTRALPOL,
                           circularbeam = cfg.WSC_CIRCULARBEAM,
                           mem = cfg.WSC_MEM,
+                          absmem = cfg.WSC_ABSMEM,
                           useidg = cfg.WSC_USEIDG,
                           idgmode = cfg.WSC_IDGMODE,
                           paralleldeconvolution = cfg.WSC_PARALLELDECONVOLUTION):
@@ -508,7 +509,8 @@ def generate_syscall_predict(msname,
 #                            imsize = cfg.WSC_IMSIZE,
 #                            cellsize = cfg.WSC_CELLSIZE,
 #                            predictchannels = cfg.WSC_PREDICTCHANNELS,
-                            mem = cfg.WSC_MEM):
+                            mem = cfg.WSC_MEM,
+                            absmem = cfg.WSC_ABSMEM):
 
     # Generate system call to run wsclean in predict mode
 
@@ -521,7 +523,10 @@ def generate_syscall_predict(msname,
 #    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
 #    syscall += '-scale '+cellsize+' '
     syscall += '-name '+imgbase+' '
-    syscall += '-mem '+str(mem)+' '
+    if absmem < 0:
+        syscall += '-mem '+str(mem)+' '
+    else:
+        syscall += '-abs-mem '+str(absmem)+' '
 #    syscall += '-predict-channels '+str(predictchannels)+' '
     syscall += msname
 

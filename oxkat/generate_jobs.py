@@ -459,7 +459,10 @@ def generate_syscall_wsclean(mslist,
     syscall += '-padding '+str(padding)+' '
     if circularbeam:
         syscall += '-circular-beam '
-    syscall += '-mem '+str(mem)+' '
+    if absmem < 0:
+        syscall += '-mem '+str(mem)+' '
+    else:
+        syscall += '-absmem '+str(absmem)+' '
 
     for myms in mslist:
         syscall += myms+' '

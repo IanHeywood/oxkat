@@ -148,7 +148,7 @@ plot = True
 
 [dist]
 _Help = Parallelization and distribution options
-ncpu = 8
+ncpu = 6
 nworker = 0
 nthread = 0
 max-chunks = 2

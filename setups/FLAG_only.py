@@ -99,6 +99,7 @@ def main():
             gen.print_spacer()
             print(gen.now()+'Target    | '+targetname)
             print(gen.now()+'MS        | '+myms)
+            print(gen.now()+'Code      | '+code)
 
             step = {}
             step['step'] = 0

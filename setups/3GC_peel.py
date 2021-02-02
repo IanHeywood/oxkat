@@ -232,7 +232,7 @@ def main():
             step['step'] = 6
             step['comment'] = 'Copy CORRECTED_DATA to DATA'
             step['dependency'] = 5
-            step['id'] = 'CPMOD'+code
+            step['id'] = 'CPCOR'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python '+TOOLS+'/copy_MS_column.py '
             syscall += '--fromcol CORRECTED_DATA '

@@ -230,8 +230,22 @@ def main():
 
             step = {}
             step['step'] = 6
-            step['comment'] = 'Run CubiCal to solve for G (full model) and dE (problem source), peel out problem source'
+            step['comment'] = 'Copy CORRECTED_DATA to DATA'
             step['dependency'] = 5
+            step['id'] = 'CPMOD'+code
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python '+TOOLS+'/copy_MS_column.py '
+            syscall += '--fromcol CORRECTED_DATA '
+            syscall += '--tocol DATA '
+            syscall += myms
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 7
+            step['comment'] = 'Run CubiCal to solve for G (full model) and dE (problem source), peel out problem source'
+            step['dependency'] = 6
             step['id'] = 'CL3GC'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN

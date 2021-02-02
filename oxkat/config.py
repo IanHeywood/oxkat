@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+        #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 
@@ -219,7 +219,7 @@ CAL_2GC_DELAYCAL_PARSET = DATA+'/cubical/2GC_delaycal.parset'
 CAL_3GC_PEEL_NCHAN = 32
 CAL_3GC_PEEL_BRIGGS = -0.6
 CAL_3GC_PEEL_DIR1COLNAME = 'DIR1_DATA'
-CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288.reg'
+CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288_CDFS.reg'
 CAL_3GC_PEEL_PARSET = DATA+'/cubical/3GC_peel.parset'
 
 
@@ -263,7 +263,7 @@ WSC_STOPNEGATIVE = False
 WSC_FITSPECTRALPOL = 4
 WSC_PREDICTCHANNELS = 64
 WSC_CIRCULARBEAM = True
-WSC_ABSMEM = -1 # mem is used if absmem is negative
+WSC_ABSMEM = -1 # in GB; mem is used if absmem is negative, calculated automatically for HPC, see absmem_helper
 WSC_MEM = 90
 WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'

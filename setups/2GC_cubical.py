@@ -108,9 +108,9 @@ def main():
             else:
                 mask = 'auto'
 
-            k_outdir = 'delaycal_'+filename_targetname+'_'+stamp+'.cc/delaycal_'+filename_targetname+'_'+stamp
-            k_gaintable = 'delaycal.parmdb'
-
+            k_outdir = GAINTABLES+'/delaycal_'+filename_targetname+'_'+stamp+'.cc/'
+            k_outname = 'delaycal_'+filename_targetname+'_'+stamp
+          
             gen.print_spacer()
             print(gen.now()+'Target    | '+targetname)
             print(gen.now()+'MS        | '+myms)
@@ -172,7 +172,7 @@ def main():
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_cubical(parset = cfg.CAL_2GC_DELAYCAL_PARSET,
                     myms = myms,
-                    extra_args = '--out-name '+k_outdir+' --k-save-to '+k_gaintable)
+                    extra_args = '--out-dir '+k_outdir+' --out-name '+k_outname)
             step['syscall'] = syscall
             steps.append(step)
 

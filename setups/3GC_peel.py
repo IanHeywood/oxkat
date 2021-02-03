@@ -255,6 +255,8 @@ def main():
             step['syscall'] = syscall
             steps.append(step)
 
+    
+            target_steps.append((steps,kill_file,targetname))
 
 
     # ------------------------------------------------------------------------------

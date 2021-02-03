@@ -17,10 +17,15 @@ def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
+    if cfg.BAND[0].upper() == 'U':
+        print(gen.col()+'Full-field primary models not available for UHF yet')
+        gen.print_spacer()
+        sys.exit()
+
     gen.preamble()
-    print(gen.now()+'1GC (referenced calibration) setup')
-    print(gen.now()+'Note that this recipe uses a full-field model for PKS B1934-638.')
-    print(gen.now()+'This is somewhat experimental!')
+    print(gen.col()+'1GC (referenced calibration) setup')
+    print(gen.col()+'Note that this recipe uses a full-field model for PKS B1934-638.')
+    print(gen.col()+'This is somewhat experimental!')
 
     # ------------------------------------------------------------------------------
     #
@@ -299,8 +304,9 @@ def main():
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
+
 
     # ------------------------------------------------------------------------------
 

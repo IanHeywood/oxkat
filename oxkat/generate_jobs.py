@@ -17,24 +17,28 @@ from oxkat import config as cfg
 def preamble():
     print('---------------------+----------------------------------------------------------')
     print('                     |')
-    print('                     | v0.1')  
+    print('                     | v0.2')  
     print('    o  x  k  a  t    | Please file an issue for bugs / help:')
     print('                     | https://github.com/IanHeywood/oxkat')
     print('                     |')
     print('---------------------+----------------------------------------------------------')
     if cfg.BAND[0].upper() == 'L':
-        print('                     | Configured for L-band processing')
+        print(now()+'Configured for L-band processing')
     elif cfg.BAND[0].upper() == 'U':
-        print('                     | Configured for UHF processing')
-    print('---------------------+----------------------------------------------------------')
+        print(now()+Configured for UHF processing')
 
 
 def now():
     # stamp = time.strftime('[%H:%M:%S] ')
-    stamp = time.strftime(' %Y-%m-%d %H:%M:%S |')
+    stamp = time.strftime(' %Y-%m-%d %H:%M:%S | ')
     # msg = '\033[92m'+stamp+'\033[0m' # time in green
-    msg = stamp+' '
+    msg = stamp
     return msg
+
+
+def col(txt=''):
+    colstr = ' '+txt.ljust(20)+'| '
+    return colstr
 
 
 def print_spacer():
@@ -44,12 +48,12 @@ def print_spacer():
 def set_infrastructure(args):
 
     if len(args) == 1:
-        print(now()+'Please specify infrastructure (idia / chpc / hippo / node)')
+        print(col()+'Please specify infrastructure (idia / chpc / hippo / node)')
         print_spacer()
         sys.exit()
 
     if args[1].lower() not in ['idia','chpc','hippo','node']:
-        print(now()+'Please specify infrastructure (idia / chpc / hippo / node)')
+        print(col()+'Please specify infrastructure (idia / chpc / hippo / node)')
         print_spacer()
         sys.exit()
 
@@ -66,7 +70,7 @@ def set_infrastructure(args):
         infrastructure = 'hippo'
         CONTAINER_PATH = None
 
-    print(now()+'Container path: '+CONTAINER_PATH)
+    print(col('Container path')+CONTAINER_PATH)
 
     return infrastructure,CONTAINER_PATH
 
@@ -90,15 +94,14 @@ def get_container(path,pattern,use_singularity):
             if 'casa47' in ii or 'casarest' in ii:
                 ll.remove(ii)
     if len(ll) == 0:
-#        print(now()+f'{pattern:<10}| not found!')
-        print(now()+'{:<10}| not found!'.format(pattern))
+        print(col(pattern)+'not found!')
         print_spacer()
         sys.exit()
     container = ll[-1]
-#    print(now()+f'{pattern:<10}| '+container.split('/')[-1])
-    print(now()+'{:<10}| '.format(pattern)+container.split('/')[-1])
+    opstr = container.split('/')[-1]
     if len(ll) > 1:
-        print(now()+'          | (multiple matches found)')
+        opstr += ' (multiple matches found)'
+    print(col(pattern)+opstr)
     return container
 
 
@@ -414,15 +417,15 @@ def generate_syscall_wsclean(mslist,
 
 
     if is_odd(imsize):
-        print(now()+'Do not use odd image sizes with wsclean')
+        print(col('wsclean')+'Do not use odd image sizes')
         sys.exit()
 
     if continueclean and bda:
-        print(now()+'Cannot continue deconvolution with wsclean if BDA is enabled')
+        print(col('wsclean')+'Cannot continue deconvolution if BDA is enabled')
         sys.exit()
 
     if even and odd:
-        print(now()+'Even and odd timeslots selections are both enabled, defaulting to all.')
+        print(col('wsclean')+'Even and odd timeslots selections are both enabled, defaulting to all.')
         even = False
         odd = False
 

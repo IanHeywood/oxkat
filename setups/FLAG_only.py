@@ -18,8 +18,8 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.now()+'FLAG (flagging & initial mask-making) setup')
-
+    print(gen.col()+'FLAG (target flagging) setup')
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
     #
@@ -79,8 +79,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | not found, skipping')
+            print(gen.col('Target')+targetname)
+            print(gen.col('MS')+'not found, skipping')
 
         else:
 
@@ -97,9 +97,10 @@ def main():
             kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | '+myms)
-            print(gen.now()+'Code      | '+code)
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
+            print(gen.col('Code')+code)
+            
 
             step = {}
             step['step'] = 0
@@ -201,7 +202,7 @@ def main():
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

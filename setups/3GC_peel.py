@@ -18,7 +18,8 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.now()+'3GC (peeling) setup')
+    print(gen.col()+'3GC (peeling)) setup')
+    gen.print_spacer()
 
 
     # ------------------------------------------------------------------------------
@@ -83,15 +84,14 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | not found, skipping')
-
+            print(gen.col('Target')+targetname)
+            print(gen.col('MS')+'not found, skipping')
 
         elif not o.isfile(cfg.CAL_3GC_PEEL_REGION):
 
             gen.print_spacer()
-            print(gen.now()+cfg.CAL_3GC_PEEL_REGION+' not found')
-            print(gen.now()+'Please provide a DS9 region file definining the source you wish to peel.')
+            print(gen.col()+cfg.CAL_3GC_PEEL_REGION+' not found')
+            print(gen.col()+'Please provide a DS9 region file definining the source you wish to peel.')
             gen.print_spacer()
             sys.exit()
 
@@ -122,11 +122,11 @@ def main():
 
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | '+myms)
-            print(gen.now()+'Code      | '+code)
-            print(gen.now()+'Mask      | '+mask)
-            print(gen.now()+'Peeling   | '+cfg.CAL_3GC_PEEL_REGION)
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
+            print(gen.col('Code')+code)
+            print(gen.col('Mask')+mask)
+            print(gen.col('Peeling region')+cfg.CAL_3GC_PEEL_REGION)
 
 
             # Image prefixes
@@ -325,7 +325,7 @@ def main():
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

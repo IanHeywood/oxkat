@@ -18,7 +18,8 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.now()+'1GC (referenced calibration) setup')
+    print(gen.col()+'1GC (referenced calibration) setup')
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
     #
@@ -359,7 +360,7 @@ def main():
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

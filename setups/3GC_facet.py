@@ -18,8 +18,8 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.now()+'3GC (facet-based corrections) setup')
-
+    print(gen.col()+'3GC (facet-based corrections) setup')
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
     #
@@ -91,8 +91,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | not found, skipping')
+            print(gen.col('Target')+targetname)
+            print(gen.col('MS')+'not found, skipping')
 
         else:
 
@@ -119,21 +119,20 @@ def main():
             region = glob.glob('*'+targetname+'*.reg')
             if len(region) == 0:
                 gen.print_spacer()
-                print(gen.now()+'Please provide a region file of the form:')
-                print(gen.now()+'       *'+targetname+'*.reg')
-                print(gen.now()+'for this field.')
+                print(gen.col()+'Please provide a region file of the form:')
+                print(gen.col()+'       *'+targetname+'*.reg')
+                print(gen.col()+'for this field.')
                 gen.print_spacer()
                 sys.exit()
             else:
                 region = region[0]
 
-
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | '+myms)
-            print(gen.now()+'Code      | '+code)
-            print(gen.now()+'Mask      | '+mask)
-            print(gen.now()+'Region    | '+region)
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
+            print(gen.col('Code')+code)
+            print(gen.col('Mask')+mask)
+            print(gen.col('Region')+region)
 
 
             # Image prefixes
@@ -279,7 +278,7 @@ def main():
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

@@ -18,8 +18,8 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
     
     gen.preamble()
-    print(gen.now()+'2GC (direction independent selfcal) setup')
-
+    print(gen.col()+'2GC (direction independent selfcal) setup')
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
     #
@@ -84,8 +84,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | not found, skipping')
+            print(gen.col('Target')+targetname)
+            print(gen.col('MS')+'not found, skipping')
 
         else:
 
@@ -109,10 +109,10 @@ def main():
 
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | '+myms)
-            print(gen.now()+'Code      | '+code)
-            print(gen.now()+'Mask      | '+mask)
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
+            print(gen.col('Code')+code)
+            print(gen.col('Mask')+mask)
 
 
             # Image prefixes
@@ -361,7 +361,7 @@ def main():
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

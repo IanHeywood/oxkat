@@ -26,6 +26,7 @@ def main():
     print(gen.col()+'1GC (referenced calibration) setup')
     print(gen.col()+'Note that this recipe uses a full-field model for PKS B1934-638.')
     print(gen.col()+'This is somewhat experimental!')
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
     #

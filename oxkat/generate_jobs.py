@@ -25,7 +25,7 @@ def preamble():
     if cfg.BAND[0].upper() == 'L':
         print(now()+'Configured for L-band processing')
     elif cfg.BAND[0].upper() == 'U':
-        print(now()+Configured for UHF processing')
+        print(now()+'Configured for UHF processing')
 
 
 def now():

@@ -20,7 +20,7 @@ tb.done()
 
 
 mychanbin = int(nchan/myoutputchans)
-if mychanbin == 1:
+if mychanbin <= 1:
 	mychanave = False
 else:
 	mychanave = True

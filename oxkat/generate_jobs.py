@@ -392,6 +392,7 @@ def generate_syscall_wsclean(mslist,
                           mgain = cfg.WSC_MGAIN,
                           multiscale = cfg.WSC_MULTISCALE,
                           scales = cfg.WSC_SCALES,
+                          nonegative = cfg.WSC_NONEGATIVE,
                           sourcelist = cfg.WSC_SOURCELIST,
                           bda = cfg.WSC_BDA,
                           bdafactor = cfg.WSC_BDAFACTOR,
@@ -453,6 +454,8 @@ def generate_syscall_wsclean(mslist,
     syscall += '-niter '+str(niter)+' '
     syscall += '-gain '+str(gain)+' '
     syscall += '-mgain '+str(mgain)+' '
+    if nonegative:
+        syscall += '-no-negative '
     syscall += '-weight briggs '+str(briggs)+' '
     if tapergaussian != '':
         syscall += '-taper-gaussian '+str(tapergaussian)+' '

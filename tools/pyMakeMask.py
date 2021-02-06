@@ -61,7 +61,7 @@ def main():
     parser.add_option('--threshold', dest = 'threshold', help = 'Sigma threshold for masking (default = 6.0)', default = 6.0)
     parser.add_option('--boxsize', dest = 'boxsize', help = 'Box size to use for fields with compact islands (default = 500)', default = 500)
     parser.add_option('--smallbox', dest = 'smallbox', help = 'Box size to switch to for fields with small islands (default = 50), set to zero to just use boxsize', default = 50)
-    parser.add_option('--islandsize', dest = 'islandsize', help = 'Island size in pixels below which smallbox is used', default = 5000)
+    parser.add_option('--islandsize', dest = 'islandsize', help = 'Island size in pixels below which smallbox is used (default = 10000)', default = 10000)
     parser.add_option('--dilate', dest = 'dilate', help = 'Number of iterations of binary dilation (default = 3, set to 0 to disable)', default = 3)
     parser.add_option('--savenoise', dest = 'savenoise', help = 'Enable to export noise image as FITS file (default = do not save noise image', action = 'store_true', default = False)
     parser.add_option('--outfile', dest = 'outfile', help = 'Suffix for mask image (default = restored_image.replace(".fits",".mask.fits"))', default = '')

@@ -219,7 +219,7 @@ def main():
         msg(' ---> '+pb_fits)
         copyfile(input_fits,pb_fits)
         flush_fits(beam_image,pb_fits)
-    if savepb:
+    if savewt:
         msg('Writing weight (pb^2) image')
         msg(' ---> '+wt_fits)
         copyfile(input_fits,wt_fits)

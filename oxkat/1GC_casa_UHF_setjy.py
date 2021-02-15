@@ -1,4 +1,5 @@
 # ian.heywood@physics.ox.ac.uk
+# UHF calibration is experimental
 
 
 import glob
@@ -30,7 +31,7 @@ if primary_tag == '1934':
     
     
 elif primary_tag == '0408':
-    bpcal_mod = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
+    bpcal_mod = [27.907, 0.0, 0.0, 0.0],[-1.205],'850MHz')
     setjy(vis=myms,
         field=bpcal_name,
         standard='manual',
@@ -44,6 +45,6 @@ elif primary_tag == '0408':
 elif primary_tag == 'other':
     setjy(vis=myms,
         field=bpcal_name,
-        standard='Perley-Butler 2013',
+        standard='Perley-Butler 2010',
         scalebychan=True,
         usescratch=True)

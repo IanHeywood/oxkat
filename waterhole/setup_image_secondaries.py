@@ -15,126 +15,177 @@ from oxkat import config as cfg
 
 def main():
 
+    USE_SINGULARITY = cfg.USE_SINGULARITY
+    
+    gen.preamble()
+    print(gen.now()+'Imaging secondary calibrators')
+
+
     # ------------------------------------------------------------------------------
-    # Setup
+    #
+    # Setup paths, required containers, infrastructure
+    #
+    # ------------------------------------------------------------------------------
+
+
+    OXKAT = cfg.OXKAT
+    IMAGES = cfg.IMAGES
+    SCRIPTS = cfg.SCRIPTS
+
+    gen.setup_dir(IMAGES)
+    gen.setup_dir(cfg.LOGS)
+    gen.setup_dir(cfg.SCRIPTS)
 
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+    if CONTAINER_PATH is not None:
+        CONTAINER_RUNNER='singularity exec '
+    else:
+        CONTAINER_RUNNER=''
 
 
-    # Get paths from config and setup folders
-
-    CWD = cfg.CWD
-    OXKAT = cfg.OXKAT
-    DATA = cfg.DATA
-    TOOLS = cfg.TOOLS
-    IMAGES = cfg.IMAGES
-    LOGS = cfg.LOGS
-    SCRIPTS = cfg.SCRIPTS
-
-    gen.setup_dir(LOGS)
-    gen.setup_dir(SCRIPTS)
-    gen.setup_dir(IMAGES)
+    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
-    # Get containers needed for this script
-
-    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
-
-
-    # Get target information from project pickle
+    # Get secondary calibrator information from project pickle
 
     project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
+
     myms = project_info['master_ms']
-    pcals = project_info['secondary']
-
- 
-    # Set names of the run file, open for writing
-
-    submit_file = 'submit_image-cal_jobs.sh'
-
-    f = open(submit_file,'w')
-    f.write('#!/usr/bin/env bash\n')
-
-    kill_file = SCRIPTS+'/kill_image-cal_jobs.sh'
+    pcal_names = project_info['secondary_names']
+    pcal_ids = project_info['secondary_ids']
 
 
+    # ------------------------------------------------------------------------------
+    #
+    # Image calibrators -- recipe definition
+    #
+    # ------------------------------------------------------------------------------
+
+
+    cal_steps = []
     codes = []
     ii = 1
 
-
-    # Initialise a list to hold all the job IDs
-    id_list = []
-
-
     # Loop over secondaries
 
-    for pcal in pcals:
+    for i in range(0,len(pcal_ids)):
 
-        pcalname = pcal[0]
-        filename_pcalname = gen.scrub_target_name(pcalname)
-        field = pcal[1]
+        field = pcal_ids[i]
+        calname = pcal_names[i]
 
-        code = gen.get_target_code(pcalname)
+
+        steps = []        
+        filename_calname = gen.scrub_target_name(calname)
+
+
+        code = gen.get_target_code(calname)
         if code in codes:
             code += '_'+str(ii)
             ii += 1
         codes.append(code)
-
     
+
+        gen.print_spacer()
+        print(gen.now()+'Secondary | '+calname)
+        print(gen.now()+'Code      | '+code)
+
+
         # Image prefix
+        img_prefix = IMAGES+'/img_'+myms+'_'+filename_calname+'_corrblind'
 
-        img_prefix = IMAGES+'/img_'+myms+'_'+filename_pcalname+'_corrblind'
-    
 
-        # ------------------------------------------------------------------------------
-        # STEP 1: 
-        # wsclean with blind deconvolution
-
+        step = {}
+        step['step'] = i
+        step['comment'] = 'Run wsclean, blind deconvolution of the CORRECTED_DATA for '+calname
+        if i == 0:
+            step['dependency'] = None
+        else:
+            step['dependency'] = i-1
+        step['id'] = 'WSCMA'+code
+        step['slurm_config'] = cfg.SLURM_WSCLEAN
+        step['pbs_config'] = cfg.PBS_WSCLEAN
+        syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
         syscall += gen.generate_syscall_wsclean(mslist = [myms],
                                 imgname = img_prefix,
                                 field = field,
                                 datacol = 'CORRECTED_DATA',
                                 imsize = 8192,
-                                niter = 100000,
+                                niter = 40000,
                                 gain = 0.2,
                                 mgain = 0.9, 
                                 bda = True,
                                 mask = 'none')
+        step['syscall'] = syscall
+        steps.append(step)
 
-        if len(id_list) > 0:
-            dependency = id_list[-1]
+
+
+    # ------------------------------------------------------------------------------
+    #
+    # Write the run file and kill file based on the recipe
+    #
+    # ------------------------------------------------------------------------------
+
+
+    submit_file = 'submit_image_secondary_jobs.sh'
+    kill_file = cfg.SCRIPTS+'/kill_image_secondary_jobs.sh'
+
+    f = open(submit_file,'w')
+    f.write('#!/usr/bin/env bash\n')
+    f.write('export SINGULARITY_BINDPATH='+cfg.BINDPATH+'\n')
+
+    id_list = []
+
+    for step in steps:
+
+        step_id = step['id']
+        id_list.append(step_id)
+        if step['dependency'] is not None:
+            dependency = steps[step['dependency']]['id']
         else:
             dependency = None
-
-        id_wsclean = 'WSCBL'+code
-        id_list.append(id_wsclean)
+        syscall = step['syscall']
+        if 'slurm_config' in step.keys():
+            slurm_config = step['slurm_config']
+        else:
+            slurm_config = cfg.SLURM_DEFAULTS
+        if 'pbs_config' in step.keys():
+            pbs_config = step['pbs_config']
+        else:
+            pbs_config = cfg.PBS_DEFAULTS
+        comment = step['comment']
 
         run_command = gen.job_handler(syscall = syscall,
-                                jobname = id_wsclean,
-                                infrastructure = INFRASTRUCTURE,
-                                dependency = dependency,
-                                slurm_config = cfg.SLURM_WSCLEAN,
-                                pbs_config = cfg.PBS_WSCLEAN)
+                        jobname = step_id,
+                        infrastructure = INFRASTRUCTURE,
+                        dependency = dependency,
+                        slurm_config = slurm_config,
+                        pbs_config = pbs_config)
 
+
+        f.write('\n# '+comment+'\n')
         f.write(run_command)
 
 
-
-        # ------------------------------------------------------------------------------
-
-
-    if INFRASTRUCTURE in ['idia','chpc']:
-        kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
-        f.write(kill+'\n')
-    f.write('\n')
-
-
+    if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
+        kill = '\necho "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        f.write(kill)
+    elif INFRASTRUCTURE == 'chpc':
+        kill = '\necho "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        f.write(kill)
+    
     f.close()
 
-
     gen.make_executable(submit_file)
+
+    gen.print_spacer()
+    print(gen.now()+'Created '+submit_file)
+    gen.print_spacer()
+
+    # ------------------------------------------------------------------------------
+
 
 
 if __name__ == "__main__":

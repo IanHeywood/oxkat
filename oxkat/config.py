@@ -1,17 +1,36 @@
-#!/usr/bin/env python
+        #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 
 import os
 
 
-CWD = os.getcwd()
-HOME = os.path.expanduser('~')
+BAND = 'L'
 
 
 # ------------------------------------------------------------------------
 #
-# Singularity
+# Paths for components and OUTPUTS
+#
+
+CWD = os.getcwd()
+HOME = os.path.expanduser('~')
+
+OXKAT = CWD+'/oxkat'
+DATA = CWD+'/data'
+TOOLS = CWD+'/tools'
+
+GAINPLOTS = CWD+'/GAINPLOTS'
+GAINTABLES = CWD+'/GAINTABLES'
+IMAGES = CWD+'/IMAGES'
+LOGS = CWD+'/LOGS'
+SCRIPTS = CWD+'/SCRIPTS'
+VISPLOTS = CWD+'/VISPLOTS'
+
+
+# ------------------------------------------------------------------------
+#
+# Singularity settings
 #
 
 # Set to False to disable singularity entirely
@@ -23,7 +42,7 @@ USE_SINGULARITY = True
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = '/software/astro/caracal/STIMELA_IMAGES_1.6.8/'
+IDIA_CONTAINER_PATH = '/software/astro/caracal/STIMELA_IMAGES_1.6.9/'
 CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = HOME+'/containers/'
@@ -45,25 +64,7 @@ WSCLEAN_PATTERN = 'wsclean'
 
 # ------------------------------------------------------------------------
 #
-# Paths for components and OUTPUTS
-#
-
-
-OXKAT = CWD+'/oxkat'
-DATA = CWD+'/data'
-TOOLS = CWD+'/tools'
-
-GAINPLOTS = CWD+'/GAINPLOTS'
-GAINTABLES = CWD+'/GAINTABLES'
-IMAGES = CWD+'/IMAGES'
-LOGS = CWD+'/LOGS'
-SCRIPTS = CWD+'/SCRIPTS'
-VISPLOTS = CWD+'/VISPLOTS'
-
-
-# ------------------------------------------------------------------------
-#
-# Slurm settings
+# Slurm resource settings
 #
 
 SLURM_DEFAULTS = {
@@ -93,6 +94,15 @@ SLURM_WSCLEAN = {
     'MEM': '230GB'
 }
 
+SLURM_EXTRALONG = {
+    'TIME': '48:00:00',
+    'PARTITION': 'Main',
+    'NTASKS': '1',
+    'NODES': '1',
+    'CPUS': '32',
+    'MEM': '230GB'
+}
+
 SLURM_HIGHMEM = {
     'TIME': '36:00:00',
     'PARTITION': 'HighMem',
@@ -104,7 +114,7 @@ SLURM_HIGHMEM = {
 
 # ------------------------------------------------------------------------
 #
-# PBS settings
+# PBS resource settings
 #
 
 CHPC_ALLOCATION = 'ASTR1301'
@@ -136,10 +146,18 @@ PBS_WSCLEAN = {
 	'MEM': '120gb'
 }
 
+PBS_EXTRALONG = {
+    'PROGRAM': CHPC_ALLOCATION,
+    'WALLTIME': '48:00:00',
+    'QUEUE': 'serial',
+    'NODES': '1',
+    'PPN': '24',
+    'MEM': '120gb'
+}
 
 # ------------------------------------------------------------------------
 #
-# 1GC defaults
+# 1GC settings
 #
 
 # Pre-processing
@@ -172,33 +190,37 @@ CAL_1GC_PRIMARY_MODEL = 'auto'       # setjy = use setjy component model only
 
 # GBK settings
 CAL_1GC_UVRANGE = '>150m'            # Selection for baselines to include during 1GC B/G solving (K excluded)
+CAL_1GC_UHF_UVRANGE = '>150m'        #
 CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on secondaries weaker than this
 CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
-
+CAL_1GC_UHF_FREQRANGE = '850~900MHz' # Clean part of the band to use for generating UHF 1GC G-solutions
 
 
 # ------------------------------------------------------------------------
 #
-# 2GC defaults
+# 2GC settings
 #
 
 
-# G settings
+# CASA gaincal settings
 CAL_2GC_UVRANGE = '>150m'            # Selection for baselines to include during G solving
 CAL_2GC_PSOLINT = '64s'              # Solution interval for phase-only selfcal
 CAL_2GC_APSOLINT = 'inf'             # Solution interval for amplitude and phase selfcal
 
+# CubiCal
+CAL_2GC_DELAYCAL_PARSET = DATA+'/cubical/2GC_delaycal.parset'
+
 
 # ------------------------------------------------------------------------
 #
-# 3GC peeling defaults
+# 3GC peeling settings
 #
 
 CAL_3GC_PEEL_NCHAN = 32
 CAL_3GC_PEEL_BRIGGS = -0.6
 CAL_3GC_PEEL_DIR1COLNAME = 'DIR1_DATA'
-CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288.reg'
-CAL_3GC_PEEL_PARSET = DATA+'/cubical/peel.parset'
+CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288_CDFS.reg'
+CAL_3GC_PEEL_PARSET = DATA+'/cubical/3GC_peel.parset'
 
 
 # ------------------------------------------------------------------------
@@ -226,6 +248,7 @@ WSC_GAIN = 0.15
 WSC_MGAIN = 0.9
 WSC_MULTISCALE = False
 WSC_SCALES = '0,3,9'
+WSC_NONEGATIVE = False
 WSC_SOURCELIST = True
 WSC_BDA = False
 WSC_BDAFACTOR = 10
@@ -241,11 +264,18 @@ WSC_STOPNEGATIVE = False
 WSC_FITSPECTRALPOL = 4
 WSC_PREDICTCHANNELS = 64
 WSC_CIRCULARBEAM = True
-WSC_MEM = 95
+WSC_ABSMEM = -1 # in GB; mem is used if absmem is negative, calculated automatically for HPC, see absmem_helper
+WSC_MEM = 90
 WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'
 WSC_PARALLELDECONVOLUTION = 2560 # 
 
+# UHF modifiers
+if BAND[0].upper() == 'U':
+    WSC_CELLSIZE = '1.7asec'
+    WSC_BRIGGS = -0.5
+    WSC_BDAFACTOR = 4
+    WSC_NWLAYERSFACTOR = 5
 
 # ------------------------------------------------------------------------
 #
@@ -256,7 +286,7 @@ WSC_PARALLELDECONVOLUTION = 2560 #
 MAKEMASK_THRESH = 6.0
 MAKEMASK_BOXSIZE = 500
 MAKEMASK_SMALLBOX = 50
-MAKEMASK_ISLANDSIZE = 5000
+MAKEMASK_ISLANDSIZE = 30000
 MAKEMASK_DILATION = 3
 
 
@@ -290,6 +320,8 @@ DDF_PSFOVERSIZE = 1.5
 DDF_PADDING = 3.0 # padding needs increasing from default if NFacets is raised to prevent aliasing
 # [Weight]
 DDF_ROBUST = 0.0
+# [Convolution Functions]
+# DDF_NW = 100 # Increase for strong off-axis sources
 # [Comp]
 DDF_SPARSIFICATION = '0' # [100,30,10] grids every 100th visibility on major cycle 1, every 30th on cycle 2, etc.
 # [Parallel]
@@ -334,6 +366,11 @@ DDF_MASK = 'auto' # 'auto' enables automasking
 # [Misc]
 DDF_MASKSIGMA = 4.5
 DDF_CONSERVEMEMORY = 1
+
+# UHF modifiers
+if BAND[0].upper() == 'U':
+    DDF_CELL = 1.7
+    DDF_ROBUST = -0.5
 
 
 # ------------------------------------------------------------------------

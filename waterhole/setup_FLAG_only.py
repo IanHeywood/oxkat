@@ -18,7 +18,7 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.col()+'3GC (facet-based corrections) setup')
+    print(gen.col()+'FLAG (target flagging) setup')
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------
@@ -30,35 +30,23 @@ def main():
 
     OXKAT = cfg.OXKAT
     DATA = cfg.DATA
-    GAINTABLES = cfg.GAINTABLES
-    IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
     TOOLS = cfg.TOOLS
 
 
-    gen.setup_dir(GAINTABLES)
-    gen.setup_dir(IMAGES)
     gen.setup_dir(cfg.LOGS)
     gen.setup_dir(cfg.SCRIPTS)
 
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
-
-    if INFRASTRUCTURE == 'idia':
-        myNCPU = 8  # Dial back the parallelism for IDIA nodes
-    elif INFRASTRUCTURE == 'chpc':
-        myNCPU = 23 # Kind of meaningless as this stuff probably won't ever run on CHPC
-    else:
-        myNCPU = 40 # Assumed NCPU for standalone nodes
-    
     if CONTAINER_PATH is not None:
         CONTAINER_RUNNER='singularity exec '
     else:
         CONTAINER_RUNNER=''
 
 
-    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN,USE_SINGULARITY) 
-    KILLMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.KILLMS_PATTERN,USE_SINGULARITY)
+    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
+    TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
 
 
     # Get target information from project pickle
@@ -72,7 +60,7 @@ def main():
 
     # ------------------------------------------------------------------------------
     #
-    # 3GC peeling recipe definition
+    # FLAG recipe definition
     #
     # ------------------------------------------------------------------------------
 
@@ -99,115 +87,51 @@ def main():
             steps = []        
             filename_targetname = gen.scrub_target_name(targetname)
 
-
             code = gen.get_target_code(targetname)
             if code in codes:
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
         
-
-            # Look for the zoomed FITS mask for this target
-            mask1 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask1.zoom*.fits'))
-            if len(mask1) > 0:
-                mask = mask1[0]
-            else:
-                mask = 'auto'
-
-
-            # Look for the DS9 region file that defines the tessel centres for this target
-            region = glob.glob('*'+targetname+'*.reg')
-            if len(region) == 0:
-                gen.print_spacer()
-                print(gen.col()+'Please provide a region file of the form:')
-                print(gen.col()+'       *'+targetname+'*.reg')
-                print(gen.col()+'for this field.')
-                gen.print_spacer()
-                sys.exit()
-            else:
-                region = region[0]
+            # Target-specific kill file
+            kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
 
             gen.print_spacer()
             print(gen.col('Target')+targetname)
             print(gen.col('Measurement Set')+myms)
             print(gen.col('Code')+code)
-            print(gen.col('Mask')+mask)
-            print(gen.col('Region')+region)
-
-
-            # Image prefixes
-            ddf_img_prefix = IMAGES+'/img_'+myms+'_DDFpcal'
-            kms_img_prefix = IMAGES+'/img_'+myms+'_DDFkMS'
-
-            # Target-specific kill file
-            kill_file = SCRIPTS+'/kill_3GC_facet_jobs_'+filename_targetname+'.sh'
-
+            
 
             step = {}
             step['step'] = 0
-            step['comment'] = 'Run DDFacet, masked deconvolution of CORRECTED_DATA column of '+myms
+            step['comment'] = 'Run Tricolour on '+myms
             step['dependency'] = None
-            step['id'] = 'DDCMA'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_ddfacet(mspattern=myms,
-                        imgname=ddf_img_prefix,
-                        ncpu=myNCPU,
-                        mask=mask,
-                        sparsification='50,20,5,2')
+            step['id'] = 'TRIC0'+code
+            step['slurm_config'] = cfg.SLURM_TRICOLOUR
+            step['pbs_config'] = cfg.PBS_TRICOLOUR
+            syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_tricolour(myms = myms,
+                        config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
+                        datacol = 'DATA',
+                        fields = '0',
+                        strategy = 'polarisation')
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 1
-            step['comment'] = 'Convert the DS9 region into a numpy file that killMS will recognise'
+            step['comment'] = 'Backup flag table for '+myms
             step['dependency'] = 0
-            step['id'] = 'RG2NP'+code
-            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python3 '+TOOLS+'/reg2npy.py '+region
+            step['id'] = 'SAVFG'+code
+            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
+            syscall += 'versionname=tricolour1 mslist='+myms
             step['syscall'] = syscall
             steps.append(step)
-
-
-            step = {}
-            step['step'] = 2
-            step['comment'] = 'Run killMS'
-            step['dependency'] = 1
-            step['id'] = 'KILMS'+code
-            syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_killms(myms=myms,
-                        baseimg=ddf_img_prefix,
-                        ncpu=myNCPU,
-                        outsols='killms-cohjones',
-                        nodesfile=region+'.npy')
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 3
-            step['comment'] = 'Run DDFacet on CORRECTED_DATA of '+myms+', applying killMS solutions'
-            step['dependency'] = 2
-            step['id'] = 'DDKMA'+code
-            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_ddfacet(mspattern=myms,
-                        imgname=kms_img_prefix,
-                        chunkhours=1,
-                        ncpu=myNCPU,
-                        initdicomodel=ddf_img_prefix+'.DicoModel',
-                        hogbom_maxmajoriter=0,
-                        hogbom_maxminoriter=1000,
-                        mask=mask,
-                        ddsols='killms-cohjones')
-            step['syscall'] = syscall
-            steps.append(step)
-
+            
 
             target_steps.append((steps,kill_file,targetname))
-
-
 
 
     # ------------------------------------------------------------------------------
@@ -217,7 +141,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_3GC_facet_jobs.sh'
+    submit_file = 'submit_flag_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

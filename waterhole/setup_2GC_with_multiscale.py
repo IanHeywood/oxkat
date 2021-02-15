@@ -15,264 +15,305 @@ from oxkat import config as cfg
 
 def main():
 
+    USE_SINGULARITY = cfg.USE_SINGULARITY
+    
+    gen.preamble()
+    print(gen.col()+'2GC (direction independent selfcal) setup')
+    print(gen.col()+'Multiscale deconvolution and robust -1.0')
+    gen.print_spacer()
+
     # ------------------------------------------------------------------------------
-    # Setup
+    #
+    # Setup paths, required containers, infrastructure
+    #
+    # ------------------------------------------------------------------------------
+
+
+    OXKAT = cfg.OXKAT
+    DATA = cfg.DATA
+    GAINTABLES = cfg.GAINTABLES
+    IMAGES = cfg.IMAGES
+    SCRIPTS = cfg.SCRIPTS
+
+    gen.setup_dir(GAINTABLES)
+    gen.setup_dir(IMAGES)
+    gen.setup_dir(cfg.LOGS)
+    gen.setup_dir(cfg.SCRIPTS)
 
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+    if CONTAINER_PATH is not None:
+        CONTAINER_RUNNER='singularity exec '
+    else:
+        CONTAINER_RUNNER=''
 
 
-    # Get paths from config and setup folders
-
-    CWD = cfg.CWD
-    OXKAT = cfg.OXKAT
-    DATA = cfg.DATA
-    TOOLS = cfg.TOOLS
-    GAINTABLES = cfg.GAINTABLES
-    IMAGES = cfg.IMAGES
-    LOGS = cfg.LOGS
-    SCRIPTS = cfg.SCRIPTS
+    CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN,USE_SINGULARITY)
+    MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN,USE_SINGULARITY)
+    RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
+    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
-    gen.setup_dir(LOGS)
-    gen.setup_dir(SCRIPTS)
-    gen.setup_dir(IMAGES)
-    gen.setup_dir(GAINTABLES)
-
-
-    # Get containers needed for this script
-
-    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN)
-    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN)
-    TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN)
-    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN)
- 
-
-    # Set names of the run and kill files, open run file for writing
-
-    submit_file = 'submit_2GC_jobs.sh'
-
-    f = open(submit_file,'w')
-    f.write('#!/usr/bin/env bash\n')
-
-
-    # Get target info from project_info.p
+    # Get target information from project pickle
 
     project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
 
-    targets = project_info['target_list'] 
+    target_ids = project_info['target_ids'] 
+    target_names = project_info['target_names']
+    target_ms = project_info['target_ms']
+
+
+    # ------------------------------------------------------------------------------
+    #
+    # 2GC recipe definition
+    #
+    # ------------------------------------------------------------------------------
+
+
+    target_steps = []
+    codes = []
+    ii = 1
+    stamp = gen.timenow()
 
 
     # Loop over targets
 
-    codes = []
-    ii = 1
+    for tt in range(0,len(target_ids)):
 
-    for target in targets:
-
-
-        targetname = target[0]
-        myms = target[2].rstrip('/')
-
+        targetname = target_names[tt]
+        myms = target_ms[tt]
 
         if not o.isdir(myms):
-            
-            print('------------------------------------------------------')
-            print(gen.now()+myms+' not found, skipping '+targetname)
+
+            gen.print_spacer()
+            print(gen.col('Target')+targetname)
+            print(gen.col('MS')+'not found, skipping')
 
         else:
 
-        
+            steps = []        
             filename_targetname = gen.scrub_target_name(targetname)
-            
+
 
             code = gen.get_target_code(targetname)
             if code in codes:
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
+        
 
-
+            # Look for the FITS mask for this target
             mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
             if len(mask0) > 0:
                 mask = mask0[0]
             else:
                 mask = 'auto'
 
+            k_outdir = GAINTABLES+'/delaycal_'+filename_targetname+'_'+stamp+'.cc/'
+            k_outname = 'delaycal_'+filename_targetname+'_'+stamp
+          
+            gen.print_spacer()
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
+            print(gen.col('Code')+code)
+            print(gen.col('Mask')+mask)
 
-            print('------------------------------------------------------')
-            print(gen.now()+'Target:     '+targetname)
-            print(gen.now()+'MS:         '+myms)
-            print(gen.now()+'Using mask: '+mask)
 
-            f.write('\n# '+targetname+'\n')
-        
-            kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
-
-
+            # Image prefixes
             data_img_prefix = IMAGES+'/img_'+myms+'_datamask'
             corr_img_prefix = IMAGES+'/img_'+myms+'_pcalmask'
 
-
-            # Initialise a list to hold all the job IDs
-
-            id_list = []
+            # Target-specific kill file
+            kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
 
 
-            # ------------------------------------------------------------------------------
-            # STEP 1: 
-            # Masked wsclean on DATA column
-
-
-            id_wsclean1 = 'WSDMA'+code
-            id_list.append(id_wsclean1)
-
-            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-            syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=data_img_prefix,
+            step = {}
+            step['step'] = 0
+            step['comment'] = 'Run wsclean, masked deconvolution of the DATA column of '+myms
+            step['dependency'] = None
+            step['id'] = 'WSDMA'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_wsclean(mslist = [myms],
+                        imgname = data_img_prefix,
+                        datacol = 'DATA',
+                        bda = True,
+                        automask = False,
+                        autothreshold = False,
+                        localrms = False,
+                        mask = mask,
                         multiscale = True,
                         scales = '0,3,9',
-                        niter = 150000,
-                        datacol='DATA',
-                        bda=True,
-                        mask=mask)
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_wsclean1,
-                        infrastructure=INFRASTRUCTURE,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
+                        niter = 120000,
+                        briggs = -1.0,
+                        absmem = absmem)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            f.write(run_command)
+            step = {}
+            step['step'] = 1
+            step['comment'] = 'Predict model visibilities from imaging of the DATA column'
+            step['dependency'] = 0
+            step['id'] = 'WSDPR'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_predict(msname = myms,imgbase = data_img_prefix,absmem = absmem)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            # ------------------------------------------------------------------------------
-            # STEP 2:
-            # Predict MODEL_DATA
+            step = {}
+            step['step'] = 2
+            step['comment'] = 'Run CubiCal with f-slope solver'
+            step['dependency'] = 1
+            step['id'] = 'CL2GC'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_cubical(parset = cfg.CAL_2GC_DELAYCAL_PARSET,
+                    myms = myms,
+                    extra_args = '--out-dir '+k_outdir+' --out-name '+k_outname)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            id_predict1 = 'WSDPR'+code
-            id_list.append(id_predict1)
-
-            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=data_img_prefix)
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_predict1,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_wsclean1,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
-
-
-            f.write(run_command)
-
-
-            # ------------------------------------------------------------------------------
-            # STEP 3:
-            # Self-calibrate phases then amplitudes
-
-
-            id_selfcal = 'CLSLF'+code
-            id_list.append(id_selfcal)
-
-            casalog = LOGS+'/casa_2GC_'+id_selfcal+'.log'
-
-            syscall = 'singularity exec '+CASA_CONTAINER+' '
-            syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
-                        casalogfile=casalog,
-                        extra_args='mslist='+myms)
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_selfcal,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_predict1)
-
-            f.write(run_command)
-
-
-            # ------------------------------------------------------------------------------
-            # STEP 4:
-            # Masked wsclean on CORRECTED_DATA column
-
-
-            id_wsclean2 = 'WSCMA'+code
-            id_list.append(id_wsclean2)
-
-            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+            step = {}
+            step['step'] = 3
+            step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA column of '+myms
+            step['dependency'] = 2
+            step['id'] = 'WSCMA'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=corr_img_prefix,
+                        imgname = corr_img_prefix,
+                        datacol = 'CORRECTED_DATA',
+                        bda = True,
+                        automask = False,
+                        autothreshold = False,
+                        localrms = False,
+                        mask = mask,
                         multiscale = True,
                         scales = '0,3,9',
-                        niter = 150000,
-                        datacol='CORRECTED_DATA',
-                        bda=True,
-                        mask=mask)
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_wsclean2,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_selfcal,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
+                        niter = 120000,
+                        briggs = -1.0,
+                        absmem = absmem)
+            step['syscall'] = syscall
+            steps.append(step)
 
 
-            f.write(run_command)
-
-
-            # ------------------------------------------------------------------------------
-            # STEP 5:
-            # Make a FITS mask 
-
-            syscall = 'singularity exec '+DDFACET_CONTAINER+' '
+            step = {}
+            step['step'] = 4
+            step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
+            step['dependency'] = 3
+            step['id'] = 'MASK1'+code
+            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
-                                    suffix = 'mask1',
+                                    outfile = corr_img_prefix+'-MFS-image.mask1.fits',
                                     thresh = 5.5,
                                     zoompix = cfg.DDF_NPIX)[0]
+            step['syscall'] = syscall
+            steps.append(step)
 
-            id_makemask = 'MASK1'+code
-            id_list.append(id_makemask)
+
+            step = {}
+            step['step'] = 5
+            step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
+            step['dependency'] = 3
+            step['id'] = 'WSCPR'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_predict(msname = myms,imgbase = corr_img_prefix,absmem = absmem)
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            target_steps.append((steps,kill_file,targetname))
+
+
+
+
+    # ------------------------------------------------------------------------------
+    #
+    # Write the run file and kill file based on the recipe
+    #
+    # ------------------------------------------------------------------------------
+
+
+    submit_file = 'submit_2GC_jobs.sh'
+
+    f = open(submit_file,'w')
+    f.write('#!/usr/bin/env bash\n')
+    f.write('export SINGULARITY_BINDPATH='+cfg.BINDPATH+'\n')
+
+    for content in target_steps:  
+        steps = content[0]
+        kill_file = content[1]
+        targetname = content[2]
+        id_list = []
+
+        f.write('\n#---------------------------------------\n')
+        f.write('# '+targetname)
+        f.write('\n#---------------------------------------\n')
+
+        for step in steps:
+
+            step_id = step['id']
+            id_list.append(step_id)
+            if step['dependency'] is not None:
+                dependency = steps[step['dependency']]['id']
+            else:
+                dependency = None
+            syscall = step['syscall']
+            if 'slurm_config' in step.keys():
+                slurm_config = step['slurm_config']
+            else:
+                slurm_config = cfg.SLURM_DEFAULTS
+            if 'pbs_config' in step.keys():
+                pbs_config = step['pbs_config']
+            else:
+                pbs_config = cfg.PBS_DEFAULTS
+            comment = step['comment']
 
             run_command = gen.job_handler(syscall = syscall,
-                                    jobname = id_makemask,
-                                    infrastructure = INFRASTRUCTURE,
-                                    dependency = id_wsclean2)
+                            jobname = step_id,
+                            infrastructure = INFRASTRUCTURE,
+                            dependency = dependency,
+                            slurm_config = slurm_config,
+                            pbs_config = pbs_config)
 
+
+            f.write('\n# '+comment+'\n')
             f.write(run_command)
 
+        if INFRASTRUCTURE != 'node':
+            f.write('\n# Generate kill script for '+targetname+'\n')
+        if INFRASTRUCTURE == 'idia' or INFRASTRUCTURE == 'hippo':
+            kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+            f.write(kill)
+        elif INFRASTRUCTURE == 'chpc':
+            kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+            f.write(kill)
 
-            # ------------------------------------------------------------------------------
-            # STEP 6:
-            # Predict MODEL_DATA
-
-
-            id_predict2 = 'WSCPR'+code
-            id_list.append(id_predict2)
-
-            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=corr_img_prefix)
-
-            run_command = gen.job_handler(syscall=syscall,
-                        jobname=id_predict2,
-                        infrastructure=INFRASTRUCTURE,
-                        dependency=id_wsclean2,
-                        slurm_config = cfg.SLURM_WSCLEAN,
-                        pbs_config = cfg.PBS_WSCLEAN)
-
-
-            f.write(run_command)
-
-
-            # ------------------------------------------------------------------------------
-
-
-            if INFRASTRUCTURE in ['idia','chpc']:
-                kill = 'echo "scancel "$'+'" "$'.join(id_list)+' > '+kill_file
-                f.write(kill+'\n')
-
-
+        
     f.close()
+
+    gen.make_executable(submit_file)
+
+    gen.print_spacer()
+    print(gen.col('Run file')+submit_file)
+    gen.print_spacer()
+
+    # ------------------------------------------------------------------------------
+
 
 
 if __name__ == "__main__":

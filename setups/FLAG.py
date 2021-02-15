@@ -18,7 +18,8 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.now()+'FLAG (flagging & initial mask-making) setup')
+    print(gen.col()+'FLAG (target flagging & initial mask-making) setup')
+    gen.print_spacer()
 
 
     # ------------------------------------------------------------------------------
@@ -84,8 +85,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | not found, skipping')
+            print(gen.col('Target')+targetname)
+            print(gen.col('MS')+'not found, skipping')
 
         else:
 
@@ -105,8 +106,10 @@ def main():
             kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | '+myms)
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
+            print(gen.col('Code')+code)
+
 
             step = {}
             step['step'] = 0
@@ -132,6 +135,7 @@ def main():
             step['id'] = 'WSDBL'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                         imgname = img_prefix,
@@ -140,7 +144,8 @@ def main():
                         automask = False,
                         autothreshold = False,
                         localrms = False,
-                        mask = False)
+                        mask = False,
+                        absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -268,7 +273,7 @@ def main():
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

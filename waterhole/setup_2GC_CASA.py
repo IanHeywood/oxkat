@@ -18,7 +18,8 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
     
     gen.preamble()
-    print(gen.now()+'2GC (direction independent selfcal) setup')
+    print(gen.col()+'2GC (direction independent selfcal) setup')
+    gen.print_spacer()
 
 
     # ------------------------------------------------------------------------------
@@ -50,7 +51,6 @@ def main():
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
     MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN,USE_SINGULARITY)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
-    TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
@@ -84,8 +84,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | not found, skipping')
+            print(gen.col('Target')+targetname)
+            print(gen.col('MS')+'not found, skipping')
 
         else:
 
@@ -109,10 +109,10 @@ def main():
 
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | '+myms)
-            print(gen.now()+'Code      | '+code)
-            print(gen.now()+'Mask      | '+mask)
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
+            print(gen.col('Code')+code)
+            print(gen.col('Mask')+mask)
 
 
             # Image prefixes
@@ -130,15 +130,17 @@ def main():
             step['id'] = 'WSDMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=data_img_prefix,
-                        datacol='DATA',
-                        bda=True,
+                        imgname = data_img_prefix,
+                        datacol = 'DATA',
+                        bda = True,
                         automask = False,
                         autothreshold = False,
                         localrms = False,
-                        mask=mask)
+                        mask = mask,
+                        absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -150,58 +152,17 @@ def main():
             step['id'] = 'WSDPR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=data_img_prefix)
+            syscall += gen.generate_syscall_predict(msname = myms, imgbase = data_img_prefix, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 2
-            step['comment'] = 'Restore post-1GC flag table for '+myms
-            step['dependency'] = 1
-            step['id'] = 'RESFG'+code
-            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'casa -c '+OXKAT+'/FLAG_casa_restore_flag_table.py --nologger --log2term --nogui '
-            syscall += 'versionname=post-1GC mslist='+myms
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 3
-            step['comment'] = 'Run Tricolour (residual flagging) on '+myms
-            step['dependency'] = 2
-            step['id'] = 'TRIC1'+code
-            step['slurm_config'] = cfg.SLURM_TRICOLOUR
-            step['pbs_config'] = cfg.PBS_TRICOLOUR
-            syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_tricolour(myms = myms,
-                        config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
-                        datacol = 'DATA',
-                        subtractcol = 'MODEL_DATA',
-                        fields = '0',
-                        strategy = 'polarisation')
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 4
-            step['comment'] = 'Backup new flag table for '+myms
-            step['dependency'] = 3
-            step['id'] = 'SAVFG'+code
-            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
-            syscall += 'versionname=tricolour2 mslist='+myms
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 5
             step['comment'] = 'Run CASA self-calibration script'
-            step['dependency'] = 4
+            step['dependency'] = 1
             step['id'] = 'CL2GC'+code
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
@@ -211,9 +172,9 @@ def main():
 
 
             step = {}
-            step['step'] = 6
+            step['step'] = 3
             step['comment'] = 'Plot the self-calibration gain solutions'
-            step['dependency'] = 5
+            step['dependency'] = 2
             step['id'] = 'PLTAB'+code
             syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_2GC_*'+myms+'*'
@@ -222,29 +183,31 @@ def main():
 
 
             step = {}
-            step['step'] = 7
+            step['step'] = 4
             step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA column of '+myms
-            step['dependency'] = 5
+            step['dependency'] = 2
             step['id'] = 'WSCMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_wsclean(mslist=[myms],
-                        imgname=corr_img_prefix,
-                        datacol='CORRECTED_DATA',
-                        bda=True,
+            syscall += gen.generate_syscall_wsclean(mslist = [myms],
+                        imgname = corr_img_prefix,
+                        datacol = 'CORRECTED_DATA',
+                        bda = True,
                         automask = False,
                         autothreshold = False,
                         localrms = False,
-                        mask=mask)
+                        mask = mask,
+                        absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
-            step['step'] = 8
+            step['step'] = 5
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
-            step['dependency'] = 7
+            step['dependency'] = 4
             step['id'] = 'MASK1'+code
             syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
@@ -256,14 +219,15 @@ def main():
 
 
             step = {}
-            step['step'] = 9
+            step['step'] = 6
             step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
-            step['dependency'] = 7
+            step['dependency'] = 4
             step['id'] = 'WSCPR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname=myms,imgbase=corr_img_prefix)
+            syscall += gen.generate_syscall_predict(msname = myms, imgbase = corr_img_prefix, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -341,7 +305,7 @@ def main():
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

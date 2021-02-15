@@ -125,7 +125,7 @@ def flush_fits(image,fits_file):
     f.flush()
 
 
-def apply_circle(image,xpix,ypix,rpix):
+def apply_circle(image,xpix,ypix,rpix,invert):
 
     """
     Apply a circle with values of 1, of radius rpix to xpix,ypix in image array
@@ -138,7 +138,10 @@ def apply_circle(image,xpix,ypix,rpix):
     for i,j in zip(xg,yg):
         sep = ((i-xpix)**2.0 + (j-ypix)**2.0)**0.5
         if sep < rpix:
-            image[j,i] = 1.0
+            if invert:
+                image[j,i] = 0.0
+            else:
+                image[j,i] = 1.0
 
     return image
 
@@ -199,12 +202,12 @@ def main():
         rpix = radius/pixscale
         print('Masking       : sky '+fmt(ra)+' '+fmt(dec)+' '+fmt(radius))
         print('              : pixel '+fmt(xpix)+' '+fmt(ypix)+' '+fmt(rpix))
-        mask = apply_circle(mask,xpix,ypix,rpix)
+        mask = apply_circle(mask,xpix,ypix,rpix,invert)
 
     if invert:
-        masked_img = img*(1.0-mask)
+        masked_img = numpy.logical_and(img,mask)
     else:
-        masked_img = img*mask
+        masked_img = numpy.logical_or(img,mask)
 
     print('Writing       : '+masked_fits)
     shutil.copyfile(fits_file,masked_fits)

@@ -48,9 +48,9 @@ This stage mostly involves using `CASA` to execute the provided processing scrip
 
 Flagging operations are saved to the `.flagversions` tables at every stage. Products for examination are stored in the `GAINTABLES` and `VISPLOTS` folders.
 
-There is a variant 1GC recipe in `1GC_primary_models.py`, which will perform the above steps, but additionally use a clean component model to represent the apparent sky around the primary calibrator (PKS B1934-638 only, at present), in addition to the standard model for the calibrator itself. The PKS B1934-638 model is derived from [Benjamin Hugo](https://github.com/bennahugo)'s high dynamic range image of the field, and has eleven spectral points across the band.
+There is a variant 1GC recipe in `waterhole/setup_1GC_primary_models.py`, which will perform the above steps, but additionally use a clean component model to represent the apparent sky around the primary calibrator (L-band data, PKS B1934-638 only, at present), in addition to the standard model for the calibrator itself. The PKS B1934-638 model is derived from [Benjamin Hugo](https://github.com/bennahugo)'s high dynamic range image of the field, and has eleven spectral points across the band.
 
-Note that only one of the 1GC setup scripts should be run for a given MS.
+Note that only one of the 1GC setup scripts should be run for a given MS. For UHF processing a subset of the band is used to determine the (***K***) and (***G***) solutions, and so the separate `*.calibrators.ms` is not produced.
 
 ---
 
@@ -68,6 +68,9 @@ The `FLAG.py` script will pick up where `1GC.py` left off, and perform the follo
 
 If you are running on a cluster then the steps above will be submitted for each field in parallel. The resulting image(s) will be available for examination in the `IMAGES` folder.
 
+A variant of this script that performs only the flagging step and not the initial imaging is available in the `waterhole` folder. This is for cases where a cleaning mask for the field is already in hand. Placing the mask in the `IMAGES` folder with a `*<field-name>*.mask0.fits` filename should allow the 2GC script to pick it up automatically and save the extra imaging cycle.
+
+
 ---
 
 ## 2GC
@@ -78,7 +81,7 @@ The `2GC.py` script performs direction-independent self-calibration. The followi
 
 * [Predict model visibilities]() based on the resulting clean component model using `wsclean`. Note that this is a separate step as baseline dependent averaging is applied during imaging by default to speed up the process.
 
-* [Self calibrate]() the data.
+* [Self calibrate]() the data. The default script now uses CubiCal for this process.
 
 * [Masked deconvolution]() of the `CORRECTED_DATA` using `wsclean`.
 
@@ -89,6 +92,9 @@ The `2GC.py` script performs direction-independent self-calibration. The followi
 If you are running on a cluster then the steps above will be submitted for each field in parallel. The resulting image(s) will be available for examination in the `IMAGES` folder.
 
 The default `oxkat` settings have automatically produced decent full-band continuum images for a range of of observing scenarios. However the default imaging setup will tend to struggle with fields that contain strong, extended emission, e.g. observations in the Galactic Plane. For fields such as this it might be beneficial to discard the mask produced at the end of the FLAG stage and replace it with a [thresholded mask](https://github.com/IanHeywood/oxkat/blob/master/tools/make_threshold_mask.py) prior to running the 2GC stage. Enabling multiscale in the `wsclean` section of [`config.py`](oxkat/config.py) may also help, and iterative deconvolution with the mask refined at each iteration might be necessary. 
+
+A variant of the 2GC script is `waterhole/setup_2GC_with_multiscale.py`, which uses a lower Briggs' robust value and enables multiscale. This will generally produce better results on fields with large regions of extended emission, although ensuring that a good clean mask is available for this process is critical. 
+The older CASA-based self-cal script is now at `waterhole/setup_2GC_CASA.py`.
 
 ---
 

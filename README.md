@@ -19,7 +19,7 @@
 * A set of `Python` scripts with the aim of (semi-)automatically processing [MeerKAT](https://www.sarao.ac.za/science-engineering/meerkat/) data. 
 
 
-* At the core is a set of functions that generate calls to [various pieces](README.md#software-package-roll-call) of radio astronomy software, a semi-modular bunch of CASA scripts for performing reference calibration, and a fairly sizeable list of default parameters (at present suitable for full L-band Stokes-I continuum imaging).
+* At the core is a set of functions that generate calls to [various pieces](README.md#software-package-roll-call) of radio astronomy software, a semi-modular bunch of CASA scripts for performing reference calibration, and a fairly sizeable list of default parameters. The default at present cater for full-band Stokes-I continuum imaging at L-band or UHF.
 
 
 * Job script generation and dependency chains are automatically handled when running on the [ilifu/IDIA](https://www.idia.ac.za/) cluster, UKZN's [hippo](https://astro.ukzn.ac.za/~hippo/) cluster, or the [CHPC](https://www.chpc.ac.za/)'s [Lengau](https://www.chpc.ac.za/index.php/resources/lengau-cluster) cluster.
@@ -65,20 +65,22 @@
    $ ln -s /idia/projects/mightee/1538856059/1538856059_sdp_l0.full_1284.full_pol.ms .
    ```
 
-5. Generate and submit (or run) the jobs required for the reference calibration (1GC):
+5. Ensure the setup is [configured](https://github.com/IanHeywood/oxkat/blob/dev/oxkat/config.py#L8) for either L-band (the default) or UHF (somewhat experimental).
+
+6. Generate and submit (or run) the jobs required for the reference calibration (1GC):
 
    ```
-   $ python setups/1GC.py <idia|hippo|chpc|node>
+   $ python setups/1GC.py idia
    $ ./submit_1GC_jobs.sh
    ```
 
-6. If something goes wrong you can kill the running and queued jobs on a cluster with:
+7. If something goes wrong you can kill the running and queued jobs on a cluster with:
 
    ```
    $ source SCRIPTS/kill_1GC_jobs.sh
    ```
 
-7. Once all the jobs have completed then you can examine the products, and move on to the setup for the next steps in the same fashion. 
+8. Once all the jobs have completed then you can examine the products, and move on to the setup for the next steps in the same fashion. 
 
 Please see the [setups README](setups/README.md) for more details. Most of the settings can be tuned via the [`config.py`](oxkat/config.py) file. Note that for use on a cluster you might have to load a `Python 3` module. On the ilifu/IDIA cluster this is achieved with:
 
@@ -112,10 +114,9 @@ The IDIA slurm head node does not have `Singularity` available, so if you are pu
 | Package | Stage | Purpose | Reference |
 | --- | --- | --- | --- | 
 | [`CASA`](https://casa.nrao.edu/) | 1GC, 2GC | Averaging, splitting, cross calibration, DI self-calibration, flagging | [McMullin et al., 2007](https://ui.adsabs.harvard.edu/abs/2007ASPC..376..127M/abstract)|
-| [`CubiCal`](https://github.com/ratt-ru/CubiCal) | 3GC | DI / DD self-calibration | [Kenyon et al., 2018](https://ui.adsabs.harvard.edu/abs/2018MNRAS.478.2399K/abstract)|
+| [`CubiCal`](https://github.com/ratt-ru/CubiCal) | 2GC, 3GC | DI / DD self-calibration | [Kenyon et al., 2018](https://ui.adsabs.harvard.edu/abs/2018MNRAS.478.2399K/abstract)|
 | [`DDFacet`](https://github.com/saopicc/DDFacet) | 3GC | Imaging with direction-dependent corrections | [Tasse et al., 2018](https://ui.adsabs.harvard.edu/abs/2018A%26A...611A..87T/abstract) | 
 | [`killMS`](https://github.com/saopicc/killMS) | 3GC | DD self-calibration| - |
-| [`PyBDSF`](https://www.astron.nl/citt/pybdsf/) | 3GC | Source finding | [Mohan & Rafferty, 2017](https://ui.adsabs.harvard.edu/abs/2015ascl.soft02007M/abstract) |
 | [`owlcat`](https://github.com/ska-sa/owlcat/) | 2GC, 3GC |FITS file manipulation | - |
 | [`ragavi`](https://github.com/ratt-ru/ragavi/) | 1GC, 2GC | Plotting gain solutions | - |
 | [`shadeMS`](https://github.com/ratt-ru/shadeMS/) | 1GC | Plotting visibilities | - |

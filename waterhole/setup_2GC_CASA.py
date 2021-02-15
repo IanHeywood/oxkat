@@ -18,7 +18,8 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
     
     gen.preamble()
-    print(gen.now()+'2GC (direction independent selfcal) setup')
+    print(gen.col()+'2GC (direction independent selfcal) setup')
+    gen.print_spacer()
 
 
     # ------------------------------------------------------------------------------
@@ -47,7 +48,7 @@ def main():
         CONTAINER_RUNNER=''
 
 
-    CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN,USE_SINGULARITY)
+    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
     MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN,USE_SINGULARITY)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
@@ -72,8 +73,6 @@ def main():
     target_steps = []
     codes = []
     ii = 1
-    stamp = gen.timenow()
-
 
     # Loop over targets
 
@@ -85,8 +84,8 @@ def main():
         if not o.isdir(myms):
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | not found, skipping')
+            print(gen.col('Target')+targetname)
+            print(gen.col('MS')+'not found, skipping')
 
         else:
 
@@ -108,14 +107,12 @@ def main():
             else:
                 mask = 'auto'
 
-            k_outdir = 'delaycal_'+filename_targetname+'_'+stamp+'.cc/delaycal_'+filename_targetname+'_'+stamp
-            k_gaintable = 'delaycal.parmdb'
 
             gen.print_spacer()
-            print(gen.now()+'Target    | '+targetname)
-            print(gen.now()+'MS        | '+myms)
-            print(gen.now()+'Code      | '+code)
-            print(gen.now()+'Mask      | '+mask)
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
+            print(gen.col('Code')+code)
+            print(gen.col('Mask')+mask)
 
 
             # Image prefixes
@@ -135,7 +132,7 @@ def main():
             step['pbs_config'] = cfg.PBS_WSCLEAN
             absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_wsclean(mslist = [myms],
+            syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname = data_img_prefix,
                         datacol = 'DATA',
                         bda = True,
@@ -143,10 +140,6 @@ def main():
                         autothreshold = False,
                         localrms = False,
                         mask = mask,
-                        multiscale = True,
-                        scales = '0,3,9',
-                        niter = 120000,
-                        briggs = -1.0,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
@@ -161,28 +154,36 @@ def main():
             step['pbs_config'] = cfg.PBS_WSCLEAN
             absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = data_img_prefix,absmem = absmem)
+            syscall += gen.generate_syscall_predict(msname = myms, imgbase = data_img_prefix, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 2
-            step['comment'] = 'Run CubiCal with f-slope solver'
+            step['comment'] = 'Run CASA self-calibration script'
             step['dependency'] = 1
             step['id'] = 'CL2GC'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_cubical(parset = cfg.CAL_2GC_DELAYCAL_PARSET,
-                    myms = myms,
-                    extra_args = '--out-name '+k_outdir+' --k-save-to '+k_gaintable)+'  --sol-min-bl 250.0 '
+            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_casa(casascript=OXKAT+'/2GC_casa_selfcal_target_amp_phases.py',
+                        extra_args='mslist='+myms)
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 3
+            step['comment'] = 'Plot the self-calibration gain solutions'
+            step['dependency'] = 2
+            step['id'] = 'PLTAB'+code
+            syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+OXKAT+'/PLOT_gaintables.py cal_2GC_*'+myms+'*'
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 4
             step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA column of '+myms
             step['dependency'] = 2
             step['id'] = 'WSCMA'+code
@@ -190,7 +191,7 @@ def main():
             step['pbs_config'] = cfg.PBS_WSCLEAN
             absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_wsclean(mslist=[myms],
+            syscall += gen.generate_syscall_wsclean(mslist = [myms],
                         imgname = corr_img_prefix,
                         datacol = 'CORRECTED_DATA',
                         bda = True,
@@ -198,19 +199,15 @@ def main():
                         autothreshold = False,
                         localrms = False,
                         mask = mask,
-                        multiscale = True,
-                        scales = '0,3,9',
-                        niter = 120000,
-                        briggs = -1.0,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
-            step['step'] = 4
+            step['step'] = 5
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
-            step['dependency'] = 3
+            step['dependency'] = 4
             step['id'] = 'MASK1'+code
             syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
@@ -222,15 +219,15 @@ def main():
 
 
             step = {}
-            step['step'] = 5
+            step['step'] = 6
             step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
-            step['dependency'] = 3
+            step['dependency'] = 4
             step['id'] = 'WSCPR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
             absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = corr_img_prefix,absmem = absmem)
+            syscall += gen.generate_syscall_predict(msname = myms, imgbase = corr_img_prefix, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -302,13 +299,13 @@ def main():
             kill = 'echo "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
             f.write(kill)
 
-
+        
     f.close()
 
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

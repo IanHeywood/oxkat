@@ -19,6 +19,7 @@ def main():
     
     gen.preamble()
     print(gen.col()+'2GC (direction independent selfcal) setup')
+    print(gen.col()+'Multiscale deconvolution and robust -1.0')
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------
@@ -143,6 +144,10 @@ def main():
                         autothreshold = False,
                         localrms = False,
                         mask = mask,
+                        multiscale = True,
+                        scales = '0,3,9',
+                        niter = 120000,
+                        briggs = -1.0,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
@@ -194,6 +199,10 @@ def main():
                         autothreshold = False,
                         localrms = False,
                         mask = mask,
+                        multiscale = True,
+                        scales = '0,3,9',
+                        niter = 120000,
+                        briggs = -1.0,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)

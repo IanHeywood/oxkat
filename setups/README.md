@@ -50,7 +50,7 @@ Flagging operations are saved to the `.flagversions` tables at every stage. Prod
 
 There is a variant 1GC recipe in `waterhole/setup_1GC_primary_models.py`, which will perform the above steps, but additionally use a clean component model to represent the apparent sky around the primary calibrator (L-band data, PKS B1934-638 only, at present), in addition to the standard model for the calibrator itself. The PKS B1934-638 model is derived from [Benjamin Hugo](https://github.com/bennahugo)'s high dynamic range image of the field, and has eleven spectral points across the band.
 
-Note that only one of the 1GC setup scripts should be run for a given MS. For UHF processing a subset of the band is used to determine the (***K***) and (***G***) solutions, and so the separate `*.calibrators.ms` is not produced.
+Note that only one of the 1GC setup scripts should be run for a given MS. For UHF processing a subset of the band is used to determine the (***G***) solutions, and so the separate `*.calibrators.ms` is not produced.
 
 ---
 

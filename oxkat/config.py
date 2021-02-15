@@ -42,7 +42,7 @@ USE_SINGULARITY = True
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = '/software/astro/caracal/STIMELA_IMAGES_1.6.8/'
+IDIA_CONTAINER_PATH = '/software/astro/caracal/STIMELA_IMAGES_1.6.9/'
 CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = HOME+'/containers/'

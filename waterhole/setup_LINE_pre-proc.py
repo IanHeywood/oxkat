@@ -78,13 +78,13 @@ def main():
         i_loop_dependencies = []
         n = len(subms_list)
 
-        for i in range(0,n):#len(subms_list)):
+        for i in range(0,2*n,2): # Two steps in this sub-loop hence 2*n
 
             myms = subms_list[i]
             code_i = gen.get_mms_code(myms)
 
             step = {}
-            step['step'] = 1+i
+            step['step'] = i+1
             step['comment'] = 'Apply basic flagging steps to '+myms
             step['dependency'] = 0
             step['id'] = 'F'+code+'_'+code_i
@@ -95,9 +95,9 @@ def main():
             steps.append(step)
 
             step = {}
-            step['step'] = n+i+1
+            step['step'] = i+2
             step['comment'] = 'Run Tricolour on '+myms
-            step['dependency'] = 1+i
+            step['dependency'] = i+1
             step['id'] = 'T'+code+'_'+code_i
             step['slurm_config'] = cfg.SLURM_TRICOLOUR
             step['pbs_config'] = cfg.PBS_TRICOLOUR
@@ -110,7 +110,7 @@ def main():
             step['syscall'] = syscall
             steps.append(step)
 
-            i_loop_dependencies.append(n+i+1)
+            i_loop_dependencies.append(i+2)
 
         step = {}
         step['step'] = i_loop_dependencies[-1]+1

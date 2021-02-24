@@ -15,8 +15,8 @@ from oxkat import config as cfg
 
 def main():
 
-    mymms = glob.glob('.mms')[0]
-    subms_list = glob.glob(mymms+'/SUBMMS/*.ms')
+    mymms = glob.glob('*.mms')[0]
+    subms_list = sorted(glob.glob(mymms+'/SUBMSS/*.ms'))
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
@@ -30,6 +30,7 @@ def main():
     #
     # ------------------------------------------------------------------------------
 
+    DATA = cfg.DATA
 
     gen.setup_dir(cfg.LOGS)
     gen.setup_dir(cfg.SCRIPTS)
@@ -56,7 +57,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    code = gen.get_code(original_ms)
+    code = gen.get_code(mymms)
 
     steps = []
 
@@ -79,13 +80,13 @@ def main():
         for i in range(0,len(subms_list)):
 
             myms = subms_list[i]
-            code_i = gen.get_code(myms)
+            code_i = gen.get_mms_code(myms)
 
             step = {}
             step['step'] = 1+i
             step['comment'] = 'Apply basic flagging steps to '+myms
             step['dependency'] = 0
-            step['id'] = 'FGBAS'+code_i
+            step['id'] = 'F'+code+'_'+code_i
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_02_casa_basic_flags.py',
                     extra_args = 'myms='+myms)
@@ -96,7 +97,7 @@ def main():
             step['step'] = 2+i
             step['comment'] = 'Run Tricolour on '+myms
             step['dependency'] = 1+i
-            step['id'] = 'TRIC0'+code_i
+            step['id'] = 'T'+code+'_'+code_i
             step['slurm_config'] = cfg.SLURM_TRICOLOUR
             step['pbs_config'] = cfg.PBS_TRICOLOUR
             syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else ''
@@ -149,7 +150,7 @@ def main():
         step_dependency = step['dependency']
         if step_dependency is not None:
             if isinstance(step_dependency,list):
-                dependency = ':',join(steps[ii]['id'] for ii in step_dependency)
+                dependency = ':'.join(steps[ii]['id'] for ii in step_dependency)
             else:
                 dependency = steps[step_dependency]['id']
         else:

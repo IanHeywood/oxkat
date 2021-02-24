@@ -374,7 +374,8 @@ def generate_syscall_tricolour(myms = '',
     syscall += '--data-column '+datacol+' '
     if subtractcol != '':
         syscall += '--subtract-model-colum '+subtractcol+' '
-    syscall += '--field-names '+fields+' '
+    if fields != 'all':
+        syscall += '--field-names '+fields+' '
     syscall += '--flagging-strategy '+strategy+' '
     syscall += myms
 

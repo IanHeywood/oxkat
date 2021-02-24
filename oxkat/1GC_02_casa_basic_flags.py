@@ -7,6 +7,13 @@ import numpy
 execfile('oxkat/casa_read_project_info.py')
 
 
+args = sys.argv
+for item in sys.argv:
+    parts = item.split('=')
+    if parts[0] == 'myms':
+        myms = parts[1]
+
+
 clearstat()
 clearstat()
 

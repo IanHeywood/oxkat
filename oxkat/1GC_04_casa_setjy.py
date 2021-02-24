@@ -11,6 +11,12 @@ execfile('oxkat/casa_read_project_info.py')
 execfile('oxkat/config.py')
 
 
+args = sys.argv
+for item in sys.argv:
+    parts = item.split('=')
+    if parts[0] == 'myms':
+        myms = parts[1]
+
 
 tb.open(myms)
 colnames = tb.colnames()

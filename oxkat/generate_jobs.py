@@ -132,6 +132,15 @@ def get_code(myms):
     return code
 
 
+def get_mms_code(myms):
+
+    # Last three digits of the data set ID
+
+    myms = myms.split('/')[-1]
+    code = myms.split('.')[-2][-3:]
+    return code
+
+
 def get_target_code(targetname):
 
     # Last three digits of the target name

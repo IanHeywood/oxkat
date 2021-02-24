@@ -76,8 +76,9 @@ def main():
         steps.append(step)
 
         i_loop_dependencies = []
+        n = len(subms_list)
 
-        for i in range(0,len(subms_list)):
+        for i in range(0,n):#len(subms_list)):
 
             myms = subms_list[i]
             code_i = gen.get_mms_code(myms)
@@ -94,7 +95,7 @@ def main():
             steps.append(step)
 
             step = {}
-            step['step'] = 2+i
+            step['step'] = n+i+1
             step['comment'] = 'Run Tricolour on '+myms
             step['dependency'] = 1+i
             step['id'] = 'T'+code+'_'+code_i
@@ -109,10 +110,10 @@ def main():
             step['syscall'] = syscall
             steps.append(step)
 
-            i_loop_dependencies.append(2+i)
+            i_loop_dependencies.append(n+i+1)
 
         step = {}
-        step['step'] = i+3
+        step['step'] = i_loop_dependencies[-1]+1
         step['comment'] = 'Generate bandpass solutions'
         step['dependency'] = i_loop_dependencies
         step['id'] = 'CL1GC'+code

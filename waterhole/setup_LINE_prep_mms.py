@@ -81,7 +81,7 @@ def main():
 
         for i in range(0,2*n,2): # Two steps in this sub-loop hence 2*n
 
-            myms = subms_list[i/2]
+            myms = subms_list[int(i/2)]
             code_i = gen.get_mms_code(myms)
 
             step = {}

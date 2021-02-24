@@ -21,7 +21,7 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.col()+'1GC (referenced calibration) setup')
+    print(gen.col()+'Prep spectral line MMS')
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------
@@ -45,6 +45,7 @@ def main():
 
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
+    MEQTREES_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MEQTREES_PATTERN,USE_SINGULARITY)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
     SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN,USE_SINGULARITY)
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
@@ -80,11 +81,11 @@ def main():
 
         for i in range(0,2*n,2): # Two steps in this sub-loop hence 2*n
 
-            myms = subms_list[i]
+            myms = subms_list[i/2]
             code_i = gen.get_mms_code(myms)
 
             step = {}
-            step['step'] = i+1
+            step['step'] = i+1 # One step prior to this sub-loop
             step['comment'] = 'Apply basic flagging steps to '+myms
             step['dependency'] = 0
             step['id'] = 'F'+code+'_'+code_i
@@ -103,22 +104,24 @@ def main():
             step['pbs_config'] = cfg.PBS_TRICOLOUR
             syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_tricolour(myms = myms,
-                        config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
+                        config = DATA+'/tricolour/target_flagging_1.yaml',
                         datacol = 'DATA',
-                        fields = '0',
                         strategy = 'polarisation')
             step['syscall'] = syscall
             steps.append(step)
 
             i_loop_dependencies.append(i+2)
 
+        # DUMMY SETUP HERE JUST TO TEST DEPENDENCY CHAINS FOR NOW
         step = {}
         step['step'] = i_loop_dependencies[-1]+1
         step['comment'] = 'Generate bandpass solutions'
         step['dependency'] = i_loop_dependencies
         step['id'] = 'CL1GC'+code
-        syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-        syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_08_casa_refcal_using_secondary_model.py')
+        syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += ' python '+cfg.OXKAT+'/1GC_00_setup.py '+mymms
+        # syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+        # syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_08_casa_refcal_using_secondary_model.py')
         step['syscall'] = syscall
         steps.append(step)
 
@@ -135,8 +138,8 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_1GC_jobs.sh'
-    kill_file = cfg.SCRIPTS+'/kill_1GC_jobs.sh'
+    submit_file = 'submit_line_prep_jobs.sh'
+    kill_file = cfg.SCRIPTS+'/kill_line_prep_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

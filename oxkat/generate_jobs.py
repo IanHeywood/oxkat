@@ -210,7 +210,8 @@ def job_handler(syscall,
 
         run_command = jobname+"=`sbatch "
         if dependency:
-          run_command += "-d afterok:${"+dependency+"} "
+            #run_command += "-d afterok:${"+dependency+"} "
+            run_command += '-d afterok:'+'${'+dependency.replace(':','}:${')+'} '
         run_command += slurm_runfile+" | awk '{print $4}'`"
 
         f = open(slurm_runfile,'w')

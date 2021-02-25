@@ -88,7 +88,7 @@ def main():
             step['step'] = i+1 # One step prior to this sub-loop
             step['comment'] = 'Apply basic flagging steps to '+myms
             step['dependency'] = 0
-            step['id'] = 'F'+code+'_'+code_i
+            step['id'] = 'F'+code_i+'_'+code
             syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_02_casa_basic_flags.py',
                     extra_args = 'myms='+myms)

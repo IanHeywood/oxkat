@@ -195,6 +195,8 @@ CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on
 CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
 CAL_1GC_UHF_FREQRANGE = '850~900MHz' # Clean part of the band to use for generating UHF 1GC G-solutions
 
+# LINE modifiers
+CAL_1GC_LINE_FILLGAPS = 48
 
 # ------------------------------------------------------------------------
 #

@@ -118,6 +118,8 @@ def main():
         step['comment'] = 'Generate full spectral resolution bandpass solutions'
         step['dependency'] = i_loop_dependencies
         step['id'] = 'BPASS'+code
+        step['slurm_config'] = cfg.SLURM_WSCLEAN
+        step['pbs_config'] = cfg.PBS_WSCLEAN
         syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_casa_LINE_refcal_primary.py')
         step['syscall'] = syscall

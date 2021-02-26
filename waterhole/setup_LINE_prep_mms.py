@@ -115,13 +115,11 @@ def main():
         # DUMMY SETUP HERE JUST TO TEST DEPENDENCY CHAINS FOR NOW
         step = {}
         step['step'] = i_loop_dependencies[-1]+1
-        step['comment'] = 'Generate bandpass solutions'
+        step['comment'] = 'Generate full spectral resolution bandpass solutions'
         step['dependency'] = i_loop_dependencies
-        step['id'] = 'CL1GC'+code
-        syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
-        syscall += ' python '+cfg.OXKAT+'/1GC_00_setup.py '+mymms
-        # syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-        # syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_08_casa_refcal_using_secondary_model.py')
+        step['id'] = 'BPASS'+code
+        syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_casa_LINE_refcal_primary.py')
         step['syscall'] = syscall
         steps.append(step)
 

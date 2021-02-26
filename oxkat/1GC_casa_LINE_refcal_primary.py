@@ -28,9 +28,9 @@ def stamp():
 # ------- Parameters
 
 
+mymms = glob.glob('*.mms')[0]
 myuvrange = CAL_1GC_UVRANGE
 gapfill = CAL_1GC_LINE_FILLGAPS
-
 
 
 # ------- Setup names
@@ -58,9 +58,6 @@ ktab3 = GAINTABLES+'/cal_1GC_LINE_'+mymms+'_'+tt+'.K3'
 gtab3 = GAINTABLES+'/cal_1GC_LINE_'+mymms+'_'+tt+'.G3'
 ftab3 = GAINTABLES+'/cal_1GC_LINE_'+mymms+'_'+tt+'.flux3'
 
-
-
-mymms = glob.glob('*.mms')[0]
 
 
 # ------- K0 (primary)

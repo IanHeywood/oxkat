@@ -35,9 +35,10 @@ def main():
     for caltab in caltabs:
         if caltab not in exclude:
             gaintype = caltab.split('.')[-1][0].upper()
-            opfile = GAINPLOTS+'/'+caltab.split('/')[-1]
+            htmlname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.html'
+            plotname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.png'
             if not os.path.isfile(opfile):
-                syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+opfile
+                syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+htmlname+' --plotname='+plotname
                 subprocess.run([syscall],shell=True)
             else:
                 print(opfile+' exists, skipping')

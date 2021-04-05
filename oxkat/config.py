@@ -162,6 +162,7 @@ PBS_EXTRALONG = {
 
 # Pre-processing
 PRE_FIELDS = ''                      # Comma-separated list of fields to select from raw MS
+PRE_SCANS = ''                       # Comma-separated list of scans to select from raw MS
 PRE_NCHANS = 1024                    # Integer number of channels in working MS
 PRE_TIMEBIN = '8s'                   # Integration time in working MS
 

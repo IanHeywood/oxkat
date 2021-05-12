@@ -90,7 +90,7 @@ def main():
 	        print(gen.now()+'Mask      | '+fitsmask)
     
 	        # Image prefix
-	        img_prefix = IMAGES+'/img_'+myms+'_'+field+'_2GCr-1p2'
+	        img_prefix = IMAGES+'/img_'+myms.split('/')[-1]+'_'+field+'_2GCr-1p2'
 
 	        step = {}
 	        step['step'] = i
@@ -109,6 +109,10 @@ def main():
 	                                briggs = -1.2,
 	                                bda = True,
 	                                mask = fitsmask,
+	                                automask = False,
+	                                autothreshold = False,
+	                                localrms = False,
+                                        threshold = 40e-6,
 	                                absmem = absmem)
 	        step['syscall'] = syscall
 	        steps.append(step)

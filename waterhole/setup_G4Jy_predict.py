@@ -66,8 +66,8 @@ def main():
 
     for i in range(0,len(mslist)):
 
-    	myms = mslist[i]
-    	field = myms.split('_')[-1].rstrip('.ms')
+        myms = mslist[i]
+        field = myms.split('_')[-1].rstrip('.ms')
         code = gen.get_target_code(field)
         if code in codes:
             code += '_'+str(ii)
@@ -85,7 +85,7 @@ def main():
         step['step'] = i
         step['comment'] = 'Predict model visibilities'
         step['dependency'] = None
-        step['id'] = 'WSDPR'+code
+        step['id'] = 'PG4JY'+code
         step['slurm_config'] = cfg.SLURM_WSCLEAN
         step['pbs_config'] = cfg.PBS_WSCLEAN
         absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)

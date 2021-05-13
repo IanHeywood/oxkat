@@ -19,7 +19,7 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
     
     gen.preamble()
-    print(gen.now()+'High resolution images for the G4Jy sample')
+    print(gen.now()+'Predict visibilities from high resolution images')
 
 
     # ------------------------------------------------------------------------------
@@ -78,45 +78,21 @@ def main():
         print(gen.now()+'Field     | '+field)
         print(gen.now()+'Code      | '+code)
 
-    	fitsmask = glob.glob(imgdir+'*'+field+'*mask1.fits')
+        # Image prefix
+        img_prefix = IMAGES+'/img_'+myms.split('/')[-1]+'_'+field+'_2GCr-1p5'
 
-    	if len(fitsmask) == 0:
-
-	        print(gen.now()+'Mask      | not found, skipping')
-
-	    else:
-
-	    	fitsmask = fitsmask[0]
-	        print(gen.now()+'Mask      | '+fitsmask)
-    
-	        # Image prefix
-	        img_prefix = IMAGES+'/img_'+myms.split('/')[-1]+'_'+field+'_2GCr-1p5'
-
-	        step = {}
-	        step['step'] = i
-	        step['comment'] = 'Run wsclean, blind deconvolution of the CORRECTED_DATA for '+field
-            step['dependency'] = None
-	        step['id'] = 'WG4JY'+code
-	        step['slurm_config'] = cfg.SLURM_WSCLEAN
-	        step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-	        syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-	        syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-	        syscall += gen.generate_syscall_wsclean(mslist = [myms],
-	                                imgname = img_prefix,
-	                                datacol = 'CORRECTED_DATA',
-	                                niter = 60000,
-	                                briggs = -1.5,
-	                                bda = True,
-	                                mask = fitsmask,
-	                                automask = False,
-	                                autothreshold = False,
-	                                localrms = False,
-                                        threshold = 40e-6,
-	                                absmem = absmem)
-	        step['syscall'] = syscall
-	        steps.append(step)
-
+        step = {}
+        step['step'] = i
+        step['comment'] = 'Predict model visibilities'
+        step['dependency'] = None
+        step['id'] = 'WSDPR'+code
+        step['slurm_config'] = cfg.SLURM_WSCLEAN
+        step['pbs_config'] = cfg.PBS_WSCLEAN
+        absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
+        syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += gen.generate_syscall_predict(msname = myms,imgbase = img_prefix,absmem = absmem)
+        step['syscall'] = syscall
+        steps.append(step)
 
 
     # ------------------------------------------------------------------------------

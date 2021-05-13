@@ -83,7 +83,7 @@ def main():
 
         step = {}
         step['step'] = i
-        step['comment'] = 'Predict model visibilities'
+        step['comment'] = 'Predict model visibilities for '+field
         step['dependency'] = None
         step['id'] = 'PG4JY'+code
         step['slurm_config'] = cfg.SLURM_WSCLEAN
@@ -102,8 +102,8 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_imaging_jobs.sh'
-    kill_file = cfg.SCRIPTS+'/kill_imaging_jobs.sh'
+    submit_file = 'submit_predict_jobs.sh'
+    kill_file = cfg.SCRIPTS+'/kill_predict_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

@@ -225,7 +225,7 @@ def job_handler(syscall,
         run_command += slurm_runfile+" | awk '{print $4}'`"
 
         if slurm_reservation != '':
-            slurm_reservation = '#SBATCH --reservation='+slurm_reservation+'\n',
+            slurm_reservation = '#SBATCH --reservation='+slurm_reservation+'\n'
 
         f = open(slurm_runfile,'w')
         f.writelines(['#!/bin/bash\n',

@@ -67,6 +67,7 @@ WSCLEAN_PATTERN = 'wsclean'
 # Slurm resource settings
 #
 
+SLURM_ACCOUNT = '' # e.g. b09-mightee-ag
 SLURM_RESERVATION = '' # e.g. lsp-mightee
 
 SLURM_DEFAULTS = {

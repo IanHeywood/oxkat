@@ -224,6 +224,9 @@ def job_handler(syscall,
             run_command += '-d afterok:'+'${'+dependency.replace(':','}:${')+'} '
         run_command += slurm_runfile+" | awk '{print $4}'`"
 
+        if slurm_account != '':
+            slurm_account = '#SBATCH --account='+slurm_account+'\n'
+
         if slurm_reservation != '':
             slurm_reservation = '#SBATCH --reservation='+slurm_reservation+'\n'
 
@@ -238,6 +241,7 @@ def job_handler(syscall,
             '#SBATCH --cpus-per-task='+slurm_cpus+'\n',
             '#SBATCH --mem='+slurm_mem+'\n',
             '#SBATCH --output='+slurm_logfile+'\n',
+            slurm_account,
             slurm_reservation,
             'SECONDS=0\n',
             syscall+'\n',

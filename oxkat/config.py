@@ -67,13 +67,15 @@ WSCLEAN_PATTERN = 'wsclean'
 # Slurm resource settings
 #
 
+SLURM_RESERVATION = '' # e.g. lsp-mightee
+
 SLURM_DEFAULTS = {
 	'TIME': '12:00:00',
 	'PARTITION': 'Main',
 	'NTASKS': '1',
 	'NODES': '1',
 	'CPUS': '8',
-	'MEM': '64GB'
+	'MEM': '64GB',
 }
 
 SLURM_TRICOLOUR = {

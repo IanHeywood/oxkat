@@ -177,6 +177,7 @@ def job_handler(syscall,
                 infrastructure,
                 dependency = None,
                 slurm_config = cfg.SLURM_DEFAULTS,
+                slurm_accouont = cfg.SLURM_ACCOUNT,
                 slurm_reservation = cfg.SLURM_RESERVATION,
                 pbs_config = cfg.PBS_DEFAULTS,
                 bind = cfg.BIND):

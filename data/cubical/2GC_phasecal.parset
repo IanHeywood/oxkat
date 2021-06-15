@@ -1,0 +1,221 @@
+[data]
+_Help = Visibility data options
+ms = 
+column = DATA
+time-chunk = 96
+freq-chunk = 0
+rebin-time = 1
+rebin-freq = 1
+chunk-by = SCAN_NUMBER
+chunk-by-jump = 0
+single-chunk = 
+single-tile = -1
+normalize = 0
+
+[sel]
+_Help = Data selection options
+field = 0
+ddid = None
+taql = 
+chan = 
+diag = False
+
+[out]
+_Help = Options for output products
+dir = selfcal
+name = selfcal.cc-out/selfcal
+overwrite = False
+backup = 1
+mode = sc
+apply-solver-flags = True
+column = CORRECTED_DATA
+derotate = None
+model-column = 
+weight-column = 
+reinit-column = False
+subtract-model = 0
+subtract-dirs = 0
+correct-dir = 0
+plots = 1
+casa-gaintables = True
+
+[model]
+_Help = Calibration model options
+list = MODEL_DATA
+ddes = auto
+beam-pattern = None
+beam-l-axis = None
+beam-m-axis = None
+feed-rotate = auto
+pa-rotate = False
+
+[montblanc]
+_Help = Montblanc simulation options
+device-type = CPU
+dtype = double
+mem-budget = 1024
+verbosity = WARNING
+threads = 0
+pa-rotate = None
+
+[weight]
+_Help = Weighting options
+column = WEIGHT_SPECTRUM
+fill-offdiag = False
+legacy-v1-2 = False
+
+[flags]
+_Help = General flagging options
+apply = -cubical
+auto-init = legacy
+save = cubical
+save-legacy = auto
+reinit-bitflags = False
+warn-thr = 0.3
+see-no-evil = 0
+
+[degridding]
+_Help = Options for the degridder. Only in use when predicting from DicoModels using DDFacet
+OverS = 11
+Support = 7
+Nw = 100
+wmax = 0.0
+Padding = 1.7
+NDegridBand = 16
+MaxFacetSize = 0.25
+MinNFacetPerAxis = 1
+NProcess = 8
+BeamModel = None
+NBand = 0
+FITSFile = beam_$(corr)_$(reim).fits
+FITSFeed = None
+FITSFeedSwap = False
+DtBeamMin = 5.0
+FITSParAngleIncDeg = 5.0
+FITSLAxis = -X
+FITSMAxis = Y
+FITSVerbosity = 0
+FeedAngle = 0.0
+FlipVisibilityHands = 0
+
+[postmortem]
+_Help = Options for "postmortem" flagging based on solution statistics
+enable = False
+tf-chisq-median = 1.2
+tf-np-median = 0.5
+time-density = 0.5
+chan-density = 0.5
+ddid-density = 0.5
+
+[madmax]
+_Help = Options for the "Mad Max" flagger
+enable = 0
+residuals = 0
+estimate = corr
+diag = True
+offdiag = True
+threshold = 10
+global-threshold = 12
+plot = 1
+plot-frac-above = 0.01
+plot-bl = 
+flag-ant = 0
+flag-ant-thr = 5
+
+[sol]
+_Help = Solution options which apply at the solver level
+jones = K,G
+precision = 32
+delta-g = 1e-06
+delta-chi = 1e-06
+chi-int = 5
+last-rites = True
+stall-quorum = 0.99
+term-iters = 50,50
+flag-divergence = 0
+min-bl = 100.0
+max-bl = 0
+subset = 
+
+[bbc]
+_Help = Options for baseline-based corrections (a.k.a. BBCs, a.k.a. interferometer gains).
+load-from = 
+compute-2x2 = False
+apply-2x2 = False
+save-to = {out[name]}-BBC-field_{sel[field]}-ddid_{sel[ddid]}.parmdb
+per-chan = True
+plot = True
+
+[dist]
+_Help = Parallelization and distribution options
+ncpu = 8
+nworker = 0
+nthread = 0
+max-chunks = 2
+min-chunks = 0
+pin = 0
+pin-io = False
+pin-main = io
+safe = True
+
+[log]
+_Help = Options related to logging
+memory = True
+stats = chi2:.3f
+stats-warn = chi2:10
+boring = True
+append = False
+verbose = 0
+file-verbose = None
+
+[debug]
+_Help = Debugging options for the discerning masochist
+pdb = False
+panic-amplitude = 0.0
+stop-before-solver = False
+escalate-warnings = 0
+
+[misc]
+_Help = Miscellaneous options
+random-seed = None
+parset-version = 0.1
+
+
+[g]
+_Help = Options for G-Jones term
+label = G
+solvable = 1
+type = complex-2x2
+delay-estimate-pad-factor = 8
+load-from = 
+xfer-from = 
+save-to = {out[name]}-{JONES}-field_{sel[field]}-ddid_{sel[ddid]}.parmdb
+dd-term = 0
+fix-dirs = 
+update-type = full
+estimate-pzd = False
+time-int = 16
+freq-int = 0
+max-prior-error = 0.3
+max-post-error = 0.3
+low-snr-warn = 75
+high-gain-var-warn = 30
+clip-low = 0.1
+clip-high = 10000
+clip-after = 5
+max-iter = 50
+pin-slope-iters = 0
+epsilon = 1e-06
+delta-chi = 1e-06
+conv-quorum = 0.99
+ref-ant = None
+prop-flags = default
+diag-only = 0
+offdiag-only = False
+robust-cov = compute
+robust-scale = 1
+robust-npol = 2
+robust-int = 1
+robust-save-weights = 0
+estimate-delays = False
+_Templated = True

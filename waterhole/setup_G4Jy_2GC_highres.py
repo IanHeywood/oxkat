@@ -55,14 +55,6 @@ def main():
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
-    # Get target information from project pickle
-
-    project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
-
-    target_ids = project_info['target_ids'] 
-    target_names = project_info['target_names']
-    target_ms = project_info['target_ms']
-
 
     # ------------------------------------------------------------------------------
     #
@@ -97,20 +89,15 @@ def main():
     
 
         # Look for the FITS mask for this target
-        mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask.fits'))
+        mask0 = sorted(glob.glob(IMAGES+'/*'+field+'*.mask.fits'))
         if len(mask0) > 0:
             mask = mask0[0]
         else:
             mask = 'auto'
 
-        k_outdir = GAINTABLES+'/phasecal_'+filename_targetname+'_'+stamp+'.cc/'
-        k_outname = 'phasecal_'+filename_targetname+'_'+stamp
+        k_outdir = GAINTABLES+'/phasecal_'+field+'_'+stamp+'.cc/'
+        k_outname = 'phasecal_'+field+'_'+stamp
       
-        gen.print_spacer()
-        print(gen.col('Target')+targetname)
-        print(gen.col('Measurement Set')+myms)
-        print(gen.col('Code')+code)
-        print(gen.col('Mask')+mask)
 
 
         # Image prefixes

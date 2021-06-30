@@ -225,11 +225,15 @@ def job_handler(syscall,
             run_command += '-d afterok:'+'${'+dependency.replace(':','}:${')+'} '
         run_command += slurm_runfile+" | awk '{print $4}'`"
 
-        if slurm_account != '':
+        if cfg.slurm_account != '':
             slurm_account = '#SBATCH --account='+slurm_account+'\n'
+        else:
+            slurm_account = ''
 
-        if slurm_reservation != '':
+        if cfg.slurm_reservation != '':
             slurm_reservation = '#SBATCH --reservation='+slurm_reservation+'\n'
+        else:
+            slurm_reservation = ''
 
         f = open(slurm_runfile,'w')
         f.writelines(['#!/bin/bash\n',

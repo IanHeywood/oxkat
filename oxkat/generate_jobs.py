@@ -70,7 +70,12 @@ def set_infrastructure(args):
         infrastructure = 'hippo'
         CONTAINER_PATH = None
 
-    print(col('Container path')+CONTAINER_PATH)
+    print(col('Infrastructure')+infrastructure)
+    if cfg.USE_SINGULARITY:
+        print(col('Singularity')+'Enabled')
+        print(col('Container path')+CONTAINER_PATH)
+    else:
+        print(col('Singularity')+'Not enabled')
 
     return infrastructure,CONTAINER_PATH
 

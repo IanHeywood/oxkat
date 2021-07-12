@@ -435,7 +435,7 @@ def generate_syscall_wsclean(mslist,
     if continueclean:
         syscall += '-continue '
     syscall += '-field '+str(field)+' '
-    if sourcelist and fitspectralpol != 0:
+    if sourcelist: # and fitspectralpol != 0:
         syscall += '-save-source-list '
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '
     syscall += '-scale '+cellsize+' '

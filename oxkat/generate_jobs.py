@@ -182,7 +182,7 @@ def job_handler(syscall,
                 infrastructure,
                 dependency = None,
                 slurm_config = cfg.SLURM_DEFAULTS,
-                slurm_accouont = cfg.SLURM_ACCOUNT,
+                slurm_account = cfg.SLURM_ACCOUNT,
                 slurm_reservation = cfg.SLURM_RESERVATION,
                 pbs_config = cfg.PBS_DEFAULTS,
                 bind = cfg.BIND):
@@ -231,12 +231,12 @@ def job_handler(syscall,
         run_command += slurm_runfile+" | awk '{print $4}'`"
 
         if cfg.SLURM_ACCOUNT != '':
-            slurm_account = '#SBATCH --account='+slurm_account+'\n'
+            slurm_account = '#SBATCH --account='+cfg.SLURM_ACCOUNT+'\n'
         else:
             slurm_account = ''
 
         if cfg.SLURM_RESERVATION != '':
-            slurm_reservation = '#SBATCH --reservation='+slurm_reservation+'\n'
+            slurm_reservation = '#SBATCH --reservation='+cfg.SLURM_RESERVATION+'\n'
         else:
             slurm_reservation = ''
 

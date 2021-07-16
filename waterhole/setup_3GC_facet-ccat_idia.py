@@ -122,11 +122,9 @@ def main():
             print(gen.col('Mask')+mask)
 
 
-            # Image prefixes and file names
+            # Image prefixes 
             ddf_img_prefix = IMAGES+'/img_'+myms+'_DDFpcal'
             kms_img_prefix = IMAGES+'/img_'+myms+'_DDFkMS'
-            pybdsf_catalogue = ddf_img_prefix+'.srl.fits'
-            cluster_file = pybdsf_catalogue+'.ClusterCat.npy'
 
             # Target-specific kill file
             kill_file = SCRIPTS+'/kill_3GC_facet_jobs_'+filename_targetname+'.sh'
@@ -154,8 +152,9 @@ def main():
             step['comment'] = 'Run PyBDSF on the restored DDFacet image to get a source catalogue for clustering'
             step['dependency'] = 0
             step['id'] = 'BDSF_'+code
+            pybdsf_call, pybdsf_catalogue = gen.generate_syscall_pybdsf(ddf_img_prefix+'.app.restored.fits')
             syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_pybdsf(ddf_img_prefix+'.app.restored.fits')
+            syscall += pybdsf_call
             step['syscall'] = syscall
             steps.append(step)
 
@@ -165,8 +164,9 @@ def main():
             step['comment'] = 'Run ClusterCat on the PyBDSF catalogue to chunk up the sky model'
             step['dependency'] = 1
             step['id'] = 'CCAT_'+code
+            ccat_call, ccat_file = gen.generate_syscall_clustercat(pybdsf_catalogue)
             syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_clustercat(pybdsf_catalogue)
+            syscall += ccat_call
             step['syscall'] = syscall
             steps.append(step)
 
@@ -183,7 +183,7 @@ def main():
                         baseimg=ddf_img_prefix,
                         ncpu=myNCPU,
                         outsols='killms-cohjones',
-                        nodesfile=cluster_file)
+                        nodesfile=ccat_file)
             step['syscall'] = syscall
             steps.append(step)
 

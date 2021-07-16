@@ -120,7 +120,6 @@ def main():
             print(gen.col('Measurement Set')+myms)
             print(gen.col('Code')+code)
             print(gen.col('Mask')+mask)
-            print(gen.col('Region')+region)
 
 
             # Image prefixes and file names

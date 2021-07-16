@@ -874,7 +874,7 @@ def generate_syscall_clustercat(srl,
                         fluxmin = cfg.CLUSTERCAT_FLUXMIN,
                         ncpu = cfg.CLUSTERCAT_NCPU):
 
-    opfile = srl.replace('.srl.fits','.srl.fits.'+str(ndir)+'.dirs.ClusterCat.npy')
+#    opfile = srl.replace('.srl.fits','.srl.fits.'+str(ndir)+'.dirs.ClusterCat.npy')
     syscall = 'ClusterCat.py --SourceCat '+srl+' '
     syscall += '--NGen '+str(ngen)+' '
     syscall += '--NCluster '+str(ndir)+' '
@@ -882,7 +882,7 @@ def generate_syscall_clustercat(srl,
     syscall += '--CentralRadius='+str(centralradius)+' '
     syscall += '--NCPU='+str(ncpu)+' '
     syscall += '--DoPlot=0 '
-    syscall += '--OutClusterCat='+opfile
+#    syscall += '--OutClusterCat='+opfile
 
     return syscall, opfile
 

@@ -853,7 +853,7 @@ def generate_syscall_pybdsf(fitsfile,
     if catalogformat == 'fits':
         opfile += '.fits'
 
-    syscall = "python -c '"
+    syscall = "python3 -c '"
     syscall += "import bdsf; "
     syscall += "img = bdsf.process_image(\""+fitsfile+"\","
     syscall += "thresh_pix="+str(thresh_pix)+","

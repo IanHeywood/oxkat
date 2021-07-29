@@ -10,7 +10,7 @@ sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), ".."
 
 
 from oxkat import generate_jobs as gen
-from waterhole import config_ddf_idia as cfg
+from oxkat import config as cfg
 
 
 def main():

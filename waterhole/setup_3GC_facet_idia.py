@@ -45,7 +45,7 @@ def main():
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
 
     if INFRASTRUCTURE == 'idia':
-        myNCPU = 8  # Dial back the parallelism for IDIA nodes
+        myNCPU = 12  # Dial back the parallelism for IDIA nodes
     elif INFRASTRUCTURE == 'chpc':
         myNCPU = 23 # Kind of meaningless as this stuff probably won't ever run on CHPC
     else:

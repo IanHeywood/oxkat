@@ -70,6 +70,9 @@ WSCLEAN_PATTERN = 'wsclean'
 SLURM_ACCOUNT = '' # e.g. b09-mightee-ag
 SLURM_RESERVATION = '' # e.g. lsp-mightee
 
+SLURM_NODELIST = '' # Specify node(s) to use
+SLURM_EXCLUDE = '' # Specify node(s) to exclude
+
 SLURM_DEFAULTS = {
 	'TIME': '12:00:00',
 	'PARTITION': 'Main',

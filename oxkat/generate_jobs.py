@@ -17,7 +17,7 @@ from oxkat import config as cfg
 def preamble():
     print('---------------------+----------------------------------------------------------')
     print('                     |')
-    print('                     | v0.2')  
+    print('                     | v0.3')  
     print('    o  x  k  a  t    | Please file an issue for bugs / help:')
     print('                     | https://github.com/IanHeywood/oxkat')
     print('                     |')
@@ -184,6 +184,8 @@ def job_handler(syscall,
                 slurm_config = cfg.SLURM_DEFAULTS,
                 slurm_account = cfg.SLURM_ACCOUNT,
                 slurm_reservation = cfg.SLURM_RESERVATION,
+                slurm_nodelist = cfg.SLURM_NODELIST,
+                slurm_exclude = cfg.SLURM_EXCLUDE,
                 pbs_config = cfg.PBS_DEFAULTS,
                 bind = cfg.BIND):
                 # slurm_time=cfg.SLURM_TIME,
@@ -230,6 +232,16 @@ def job_handler(syscall,
             run_command += '-d afterok:'+'${'+dependency.replace(':','}:${')+'} '
         run_command += slurm_runfile+" | awk '{print $4}'`"
 
+        if cfg.SLURM_NODELIST != '':
+            slurm_nodelist = '#SBATCH --nodelist='+cfg.SLURM_NODELIST+'\n'
+        else:
+            slurm_nodelist = ''
+
+        if cfg.SLURM_EXCLUDE != '':
+            slurm_exclude = '#SBATCH --exclude='+cfg.SLURM_EXCLUDE+'\n'
+        else:
+            slurm_exclude = ''
+
         if cfg.SLURM_ACCOUNT != '':
             slurm_account = '#SBATCH --account='+cfg.SLURM_ACCOUNT+'\n'
         else:
@@ -251,6 +263,8 @@ def job_handler(syscall,
             '#SBATCH --cpus-per-task='+slurm_cpus+'\n',
             '#SBATCH --mem='+slurm_mem+'\n',
             '#SBATCH --output='+slurm_logfile+'\n',
+            slurm_nodelist,
+            slurm_exclude,
             slurm_account,
             slurm_reservation,
             'SECONDS=0\n',

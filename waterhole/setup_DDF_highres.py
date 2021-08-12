@@ -149,7 +149,7 @@ def main():
             steps.append(step)
 
 
-            target_steps.append((steps,kill_file,targetname))
+            target_steps.append((steps,'',targetname))
 
 
 

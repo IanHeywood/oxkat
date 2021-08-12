@@ -131,7 +131,7 @@ def main():
             step['step'] = 0
             step['comment'] = 'Run DDFacet on CORRECTED_DATA of '+myms+', applying killMS solutions, robust -1.2'
             step['dependency'] = None
-            step['id'] = 'DDKMA'+code
+            step['id'] = 'DDFHI'+code
             step['slurm_config'] = cfg.SLURM_HIGHMEM
             step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''

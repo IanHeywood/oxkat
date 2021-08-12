@@ -123,7 +123,7 @@ def main():
 
 
             # Image prefixes
-            ddf_img_prefix = IMAGES+'/img_'+myms+'+DDFpcal'
+            ddf_img_prefix = IMAGES+'/img_'+myms+'_DDFpcal'
             kms_img_prefix = IMAGES+'/img_'+myms+'_DDFkMSr-1p2'
 
 

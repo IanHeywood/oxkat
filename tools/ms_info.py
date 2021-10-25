@@ -2,6 +2,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import logging
 import sys
 import numpy
 from astropy.coordinates import SkyCoord
@@ -49,9 +50,16 @@ def main():
     else:
             myms = args[0].rstrip('/')
 
+    logfile = 'msinfo_'+myms+'.log'
+    logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
+
     print('')
     gi('--MS: '+myms,docolour)
     print('')
+
+    logging.info('')
+    logging.info('--MS: '+myms)
+    logging.info('')
 
     # ------- GETTING INFORMATION -------
 
@@ -137,10 +145,26 @@ def main():
     print('     Mean integration time:    '+str(meanexp)+' s')
     print('')
 
+
+    logging.info('     Observation start:        '+start_time)
+    logging.info('     Observation end:          '+end_time)
+    logging.info('')
+
+    logging.info('     Track length:             '+str(length)+' s ('+str(round((length/3600.0),2))+' h)')
+    logging.info('     Mean integration time:    '+str(meanexp)+' s')
+    logging.info('')
+
+
     if dofield:
+
         gi('---- FIELDS:',docolour)
         print('')
         gi('     ROW   SOURCE_ID  NAME                  RA[hms]           DEC[dms]          RA[deg]   DEC[deg]  EXP[s]    EXP[h]',docolour)
+
+        logging.info('---- FIELDS:')
+        logging.info('')
+        logging.info('     ROW   SOURCE_ID  NAME                  RA[hms]           DEC[dms]          RA[deg]   DEC[deg]  EXP[s]    EXP[h]')
+
         for i in range(0,len(names)):
             ra_rad = float(dirs[i][0][0])
             dec_rad = float(dirs[i][0][1])
@@ -152,38 +176,83 @@ def main():
             dec_str = coord_str.split(' ')[1]
             exp_s = str(round(field_integrations[i][1],0))
             exp_h = str(round(field_integrations[i][1]/3600.0,3))
+            
             print('     %-6s%-11s%-22s%-18s%-18s%-10s%-10s%-10s%-10s' % (i,str(ids[i]),names[i],ra_str,dec_str,ra_deg,dec_deg,exp_s,exp_h))
+
+            logging.info('     %-6s%-11s%-22s%-18s%-18s%-10s%-10s%-10s%-10s' % (i,str(ids[i]),names[i],ra_str,dec_str,ra_deg,dec_deg,exp_s,exp_h))
+
         print('')
+        logging.info('')
 
     if doscan:
+
         gi('---- SCANS:',docolour)
         print('')
         gi('     SCAN  SOURCE_ID  NAME                  LENGTH[s]         INTS        INTENT',docolour)
+        
+        logging.info('---- SCANS:')
+        logging.info('')
+        logging.info('     SCAN  SOURCE_ID  NAME                  LENGTH[s]         INTS        INTENT')
+
         for sc in scanlist:
+
             print('     %-6s%-11s%-22s%-18s%-12s%s' % (sc[0],sc[1],names[sc[1]],sc[2],sc[3],sc[4]))
+
+            logging.info('     %-6s%-11s%-22s%-18s%-12s%s' % (sc[0],sc[1],names[sc[1]],sc[2],sc[3],sc[4]))
+        
         print('')
 
+        logging.info('')
+
     if dospw:
+
         gi('---- SPECTRAL WINDOWS:',docolour)
         print('')
         gi('     ROW   CHANS      WIDTH[MHz]            REF_FREQ[MHz]',docolour)
+
+        logging.info('---- SPECTRAL WINDOWS:')
+        logging.info('')
+        logging.info('     ROW   CHANS      WIDTH[MHz]            REF_FREQ[MHz]')
+
         for i in range(0,nspw):
+
                 print('     %-6s%-11s%-22s%-14s' % (i,str(nchans[i]),str(chanwidths[i]),str(spwfreqs[i]/1e6)))
+
+                logging.info('     %-6s%-11s%-22s%-14s' % (i,str(nchans[i]),str(chanwidths[i]),str(spwfreqs[i]/1e6)))
+
         print('')
 
+        logging.info('')
+
     if doant:
+
         gi('---- ANTENNAS:',docolour)
         print('')
         print('     '+str(len(usedants))+' / '+str(nant)+' antennas in the main table')
         print('')
         gi('     ROW   NAME       POSITION',docolour)
+
+        logging.info('---- ANTENNAS:')
+        logging.info('')
+        logging.info('     '+str(len(usedants))+' / '+str(nant)+' antennas in the main table')
+        logging.info('')
+        logging.info('     ROW   NAME       POSITION')
+
         for i in range(0,nant):
                 if i in usedants:
+
                         print('     %-6s%-11s%-14s' % (i,(antnames[i]),str(antpos[i])))
+
+                        logging.info('     %-6s%-11s%-14s' % (i,(antnames[i]),str(antpos[i])))
                 else:
+
                         ri('     %-6s%-11s%-14s' % (i,(antnames[i]),str(antpos[i])),docolour)
+
+                        logging.info('     %-6s%-11s%-14s' % (i,(antnames[i]),str(antpos[i])))
+
         print('')
 
+        logging.info('')
 
 if __name__ == '__main__':
         main()

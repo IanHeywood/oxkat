@@ -2,6 +2,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import logging
 import numpy
 import sys
 from pyrap.tables import table
@@ -57,13 +58,16 @@ def main():
 	scans = list(numpy.unique(maintab.getcol('SCAN_NUMBER')))
 	ids,names,dirs = get_fields(myms)
 
+	logfile = 'sun_'+myms+'.log'
+    logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
 
-	print(myms+' | '+str(len(ids))+' fields | '+str(len(scans))+' scans')
+
+	logging.info(myms+' | '+str(len(ids))+' fields | '+str(len(scans))+' scans')
 	#header = 'Scan  Field        ID    t[iso]                    t[s]                 t0[s]                t1[s]                int0    int1    Duration[m]  N_int'
 	header = 't[iso]                       Scan  Field Name         SunRA[deg]   SunDec[deg]  SunRA[hms]       SunDec[dms]      SunSep[deg]  MoonRA[deg]  MoonDec[deg] MoonRA[hms]      MoonDec[dms]     MoonSep[deg]'
-	print('-'*len(header))
-	print(header)
-	print('-'*len(header))
+	logging.info('-'*len(header))
+	logging.info(header)
+	logging.info('-'*len(header))
 	for scan in scans:
 		subtab = maintab.query(query='SCAN_NUMBER=='+str(scan))
 		field = numpy.unique(subtab.getcol('FIELD_ID'))[0]
@@ -87,10 +91,10 @@ def main():
 		sun_sep = calcsep(field_ra,field_dec,sun_ra,sun_dec)
 		moon_sep = calcsep(field_ra,field_dec,moon_ra,moon_dec)
 	#	print field,name,sun_sep
-		print('%-28s %-5i %-5i %-12s %-12f %-12f %-16s %-16s %-12f %-12f %-12f %-16s %-16s %-12f' %
+		logging.info('%-28s %-5i %-5i %-12s %-12f %-12f %-16s %-16s %-12f %-12f %-12f %-16s %-16s %-12f' %
 			(t.iso,scan,field,name,sun_ra,sun_dec,sun_hms,sun_dms,sun_sep,moon_ra,moon_dec,moon_hms,moon_dms,moon_sep))
 
-	print('-'*len(header))
+	logging.info('-'*len(header))
 
 
 if __name__ == "__main__":

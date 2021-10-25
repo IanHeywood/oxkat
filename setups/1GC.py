@@ -88,11 +88,11 @@ def main():
         step['dependency'] = 0
         step['id'] = 'SETUP'+code
         syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
-        syscall += ' python '+cfg.OXKAT+'/1GC_00_setup.py '+myms+'\n'
-        syscall += CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall += ' python '+cfg.TOOLS+'/ms_info.py '+myms+'\n'
         syscall += CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall += ' python '+cfg.TOOLS+'/scan_times.py '+myms
+        syscall += CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += ' python '+cfg.OXKAT+'/1GC_00_setup.py '+myms+'\n'
         step['syscall'] = syscall
         steps.append(step)
 

@@ -37,7 +37,7 @@ def main():
         slurm_file = 'SCRIPTS/slurm_uvsub_'+myms+'.sh'
         log_file = 'LOGS/slurm_uvsub_'+myms+'.log'
 
-        write_slurm(opfile=slurm_file,jobname=code,logfile=log_file,syscall=syscall)
+        write_slurm(opfile=slurm_file,jobname=code,logfile=log_file,syscall=syscall )
 
         print('sbatch '+slurm_file)
 

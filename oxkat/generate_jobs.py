@@ -355,6 +355,25 @@ def absmem_helper(step,infrastructure,absmem):
     return absmem
 
 
+def get_scan_times(scanpickle):
+    scan_times = []
+    ss = pickle.load(open(scanpickle,'rb'))
+    fields = []
+    for ii in ss:
+        fields.append(ii[1])
+    fields = numpy.unique(fields).tolist()
+    for field in fields:
+        scans = []
+        intervals = []
+        for ii in ss:
+            if ii[1] == field:
+                scans.append(ii[0])
+                intervals.append(ii[5])
+        scan_times.append((field,scans,intervals))
+    return scan_times
+
+
+
 def generate_syscall_casa(casascript,casalogfile='',extra_args=''):
 
     syscall = 'casa -c '+casascript+' '
@@ -427,6 +446,9 @@ def generate_syscall_wsclean(mslist,
                           even = cfg.WSC_EVEN,
                           odd = cfg.WSC_ODD,
                           chanout = cfg.WSC_CHANNELSOUT,
+                          interval0 = cfg.WSC_INTERVAL0,
+                          interval1 = cfg.WSC_INTERVAL1,
+                          intervalsout = cfg.WSC_INTERVALSOUT,
                           imsize = cfg.WSC_IMSIZE,
                           cellsize = cfg.WSC_CELLSIZE,
                           briggs = cfg.WSC_BRIGGS,
@@ -516,6 +538,10 @@ def generate_syscall_wsclean(mslist,
         syscall += '-even-timesteps '
     if odd:
         syscall += '-odd-timesteps '
+    if interval0 and interval1:
+        syscall += '-intervals '+str(interval0)+' '+str(interval1)+' '
+    if intervalsout:
+        syscall += '-intervalsout '+str(intervalsout)+' '
     if mask:
         if mask.lower() == 'fits':
             mymask = glob.glob('*mask.fits')[0]
@@ -533,7 +559,8 @@ def generate_syscall_wsclean(mslist,
     if stopnegative:
         syscall += '-stop-negative '        
     syscall += '-name '+imgname+' '
-    syscall += '-channels-out '+str(chanout)+' '
+    if chanout:
+        syscall += '-channels-out '+str(chanout)+' '
     if fitspectralpol != 0:
         syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
     if joinchannels:

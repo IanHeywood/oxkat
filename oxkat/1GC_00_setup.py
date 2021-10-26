@@ -53,6 +53,8 @@ def get_refant(myms,field_id):
 
     """ Sorts a list of antennas in order of increasing flagged percentages based on field_id """
 
+	mylogger = logging.getLogger(__name__) 
+
     ant_names = get_antnames(myms)
     main_tab = table(myms,ack='False')
     
@@ -101,7 +103,6 @@ def get_nchan(myms):
     spw_table = table(myms+'/SPECTRAL_WINDOW',ack=False)
     nchan = spw_table.getcol('NUM_CHAN')[0]
     spw_table.close()
-    mylogger.info('MS has '+str(nchan)+' channels')
     return nchan
 
 
@@ -370,6 +371,7 @@ def main():
     # NUMBER OF CHANNELS
 
     nchan = get_nchan(myms)
+    mylogger.info('MS has '+str(nchan)+' channels')
 
 
     # ------------------------------------------------------------------------------

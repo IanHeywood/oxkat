@@ -269,8 +269,8 @@ def job_handler(syscall,
             slurm_reservation,
             'SECONDS=0\n',
             syscall+'\n',
-            'echo "****ELAPSED "$SECONDS" '+jobname+'"\n',
-            'sleep 10\n'])
+            'echo "****ELAPSED "$SECONDS" '+jobname+'"\n'])
+#            'sleep 10\n'])
         f.close()
 
         make_executable(slurm_runfile)

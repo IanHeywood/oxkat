@@ -1,4 +1,4 @@
-	#!/usr/bin/env python
+    #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 
@@ -53,7 +53,7 @@ def get_refant(myms,field_id):
 
     """ Sorts a list of antennas in order of increasing flagged percentages based on field_id """
 
-	mylogger = logging.getLogger(__name__) 
+    mylogger = logging.getLogger(__name__) 
 
     ant_names = get_antnames(myms)
     main_tab = table(myms,ack='False')

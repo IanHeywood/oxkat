@@ -46,7 +46,7 @@ def main():
     field_tab.done()
 
     scan_list = []
-    pickle_name = 'scans_'+myms+'.p'
+    pickle_name = 'scantimes_'+myms+'.p'
 
     mylogger.info(myms+' | '+str(n_fields)+' fields | '+str(n_scans)+' scans | track = '+str(track_length)+' h | t_int = '+str(exposure)+' s')
 

@@ -17,11 +17,11 @@ def main():
         sys.exit()
     elif len(sys.argv) > 1:
         myms = sys.argv[1].rstrip('/')
-        logfile = 'scans_'+myms+'.log'
+        logfile = 'scantimes_'+myms+'.log'
 
     if len(sys.argv) > 2:
         myscan = sys.argv[2]
-        logfile = 'scans_'+myms+'_scan'+myscan+'.log'
+        logfile = 'scantimes_'+myms+'_scan'+myscan+'.log'
     else:
         myscan = ''
 

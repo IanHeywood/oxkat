@@ -26,6 +26,13 @@ def main():
         myscan = ''
 
     logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
+    stream = logging.StreamHandler()
+    stream.setLevel(logging.DEBUG)
+    streamformat = logging.Formatter('%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
+    stream.setFormatter(streamformat)
+    mylogger = logging.getLogger(__name__)
+    mylogger.setLevel(logging.DEBUG)
+    mylogger.addHandler(stream)
 
     tt = table(myms,ack=False)
     all_times = list(numpy.unique(tt.getcol('TIME')))
@@ -41,13 +48,13 @@ def main():
     scan_list = []
     pickle_name = 'scans_'+myms+'.p'
 
-    logging.info(myms+' | '+str(n_fields)+' fields | '+str(n_scans)+' scans | track = '+str(track_length)+' h | t_int = '+str(exposure)+' s')
+    mylogger.info(myms+' | '+str(n_fields)+' fields | '+str(n_scans)+' scans | track = '+str(track_length)+' h | t_int = '+str(exposure)+' s')
 
     if myscan == '':
         header = 'Scan  Field        ID    t[iso]                    t[s]                 t0[s]                t1[s]                int0    int1    Duration[m]  N_int'
-        logging.info('-'*len(header))
-        logging.info(header)
-        logging.info('-'*len(header))
+        mylogger.info('-'*len(header))
+        mylogger.info(header)
+        mylogger.info('-'*len(header))
         for scan in scan_numbers:
             subtab = tt.query(query='SCAN_NUMBER=='+str(scan))
             times = subtab.getcol('TIME')
@@ -65,12 +72,12 @@ def main():
             tc = t0+(dt/2.0) # central time of this scan 
             t_iso = Time(tc/86400.0,format='mjd').iso # central time of this scan in ISO format
 
-            logging.info('%-5i %-12s %-5s %-25s %-20f %-20f %-20f %-7s %-7s %-12s %-5i' % 
+            mylogger.info('%-5i %-12s %-5s %-25s %-20f %-20f %-20f %-7s %-7s %-12s %-5i' % 
                 (scan,field_name,field_id,t_iso,tc,t0,t1,int0,int1,duration,n_int))
 
             scan_list.append((scan,field_name,field_id,int0,int1,n_int))
 
-        logging.info('-'*len(header))
+        mylogger.info('-'*len(header))
 
         pickle.dump(scan_list,open(pickle_name,'wb'))
 
@@ -80,17 +87,17 @@ def main():
         times = numpy.unique(subtab.getcol('TIME'))
         subtab.done()
 
-        logging.info('Per-integration time details for scan '+myscan)
+        mylogger.info('Per-integration time details for scan '+myscan)
         header = 't[iso]                    t[s]                 int'
-        logging.info('-'*len(header))
-        logging.info(header)
-        logging.info('-'*len(header))
+        mylogger.info('-'*len(header))
+        mylogger.info(header)
+        mylogger.info('-'*len(header))
         for t_i in times:
             t_iso = Time(t_i/86400.0,format='mjd').iso
             int_i = all_times.index(t_i)
-            logging.info('%-25s %-20f %-7s' %
+            mylogger.info('%-25s %-20f %-7s' %
                 (t_iso,t_i,int_i))
-        logging.info('-'*len(header))
+        mylogger.info('-'*len(header))
 
     tt.done()
 

@@ -82,7 +82,6 @@ def main():
                             imgname = imgname,
                             datacol = 'CORRECTED_DATA',
                             bda = True,
-                            niter = 0,
                             imsize = 4096,
                             cellsize = '2.0asec',
                             niter = 0,

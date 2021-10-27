@@ -48,9 +48,9 @@ def main():
         write_slurm(opfile=slurm_file,jobname=code,logfile=log_file,syscall=syscall )
         os.chdir('../../')
 
-        print('cd '+mydir)
-        print('sbatch '+slurm_file)
-        print('cd ../../')
+        # print('cd '+mydir)
+        # print('sbatch '+slurm_file)
+        # print('cd ../../')
 
         f.writelines(['cd '+mydir+'\n',
             'sbatch '+slurm_file+'\n',

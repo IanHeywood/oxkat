@@ -30,6 +30,10 @@ def main():
     intervals = sorted(glob.glob('INTERVALS/*scan*'))
     rootdir = os.getcwd()
 
+    runfile = 'submit_movie_jobs.sh'
+
+    f = open(runfile,'w')
+    f.writelines(['#!/bin/bash\n'])
 
     for mydir in intervals:
 
@@ -47,6 +51,13 @@ def main():
         print('cd '+mydir)
         print('sbatch '+slurm_file)
         print('cd ../../')
+
+        f.writelines(['cd '+mydir+'\n',
+            'sbatch '+slurm_file+'\n',
+            'cd ../../\n'])
+
+    f.close()
+    print('Wrote '+runfile+' script')
 
 if __name__ == "__main__":
 

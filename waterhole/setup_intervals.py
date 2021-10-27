@@ -54,8 +54,8 @@ def get_scan_times(scanpickle):
 
 def main():
 
-    INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure('idia')
-    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
+    INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(('','idia'))
+    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,True)
 
 
     scan_pickle = sys.argv[1]
@@ -89,6 +89,7 @@ def main():
                             niter = 0,
                             briggs = -0.3,
                             chanout = None,
+                            sourcelist = False,
                             joinchannels = None,
                             absmem = 110)
 

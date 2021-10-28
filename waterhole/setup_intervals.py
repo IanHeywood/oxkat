@@ -61,6 +61,8 @@ def main():
     scan_pickle = sys.argv[1]
     scan_times = get_scan_times(scan_pickle)
 
+    if not os.path.isdir('INTERVALS'):
+        os.mkdir('INTERVALS')
 
     for ss in scan_times:
         targetname = ss[0]

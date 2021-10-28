@@ -24,7 +24,7 @@ for ff in fitslist:
 	tt = map_date+' | '+str(t_mjd)
 #	pp = str(i).zfill(4)+'_'+ff.replace('.fits','.png')
 	pp = 'pic_'+str(i).zfill(4)+'.png'
-	syscall = 'mViewer -ct 0 -gray '+ff+' -0.0015 0.002 -out '+pp
+	syscall = 'mViewer -ct 0 -gray '+ff+' -0.0004 0.0004 -out '+pp
 	os.system(syscall)
 	print(syscall)
 	img = Image.open(pp)

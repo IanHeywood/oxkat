@@ -80,18 +80,10 @@ def main():
                 code = 'scan'+str(scans[i])
 
                 syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-                syscall += gen.generate_syscall_wsclean(mslist = [myms],
-                            imgname = imgname,
-                            datacol = 'CORRECTED_DATA',
-                            bda = True,
-                            imsize = 4096,
-                            cellsize = '2.0asec',
-                            niter = 0,
-                            briggs = -0.3,
-                            chanout = None,
-                            sourcelist = False,
-                            joinchannels = None,
-                            absmem = 110)
+                syscall += 'wsclean -intervals-out '+str(intervals[i])+' -interval 0 '+str(intervals[i])+' '
+                syscall += '-log-time -field 0 -size 4096 4096 -scale 2.0asec -baseline-averaging 10 -no-update-model-required '
+                syscall += '-nwlayers-factor 3 -niter 0 -name '+imgname+' '
+                syscall += '-weight briggs -0.3 -data-column CORRECTED_DATA -padding 1.2 -absmem 110 '+myms
 
                 slurm_file = 'SCRIPTS/slurm_intervals_'+code+'.sh'
                 log_file = 'LOGS/slurm_intervals_'+code+'.sh'

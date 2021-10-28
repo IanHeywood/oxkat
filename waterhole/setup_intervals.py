@@ -98,7 +98,7 @@ def main():
 
                 write_slurm(opfile=slurm_file,jobname=code,logfile=log_file,syscall=syscall)
 
-                f.writelines(['sbatch '+slurm_file+'\n')
+                f.writelines(['sbatch '+slurm_file+'\n'])
 
     f.close()
     print('Wrote '+runfile+' script')

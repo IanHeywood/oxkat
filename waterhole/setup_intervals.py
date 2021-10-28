@@ -85,7 +85,7 @@ def main():
                     os.mkdir(opdir)
 
                 imgname = opdir+'/img_'+myms+'_modelsub'
-                code = 'scan'+str(scans[i])
+                code = 'WSscan'+str(scans[i])
 
                 syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
                 syscall += 'wsclean -intervals-out '+str(intervals[i])+' -interval 0 '+str(intervals[i])+' '
@@ -94,7 +94,7 @@ def main():
                 syscall += '-weight briggs -0.3 -data-column CORRECTED_DATA -padding 1.2 -absmem 110 '+myms
 
                 slurm_file = 'SCRIPTS/slurm_intervals_'+code+'.sh'
-                log_file = 'LOGS/slurm_intervals_'+code+'.sh'
+                log_file = 'LOGS/slurm_intervals_'+code+'.log'
 
                 write_slurm(opfile=slurm_file,jobname=code,logfile=log_file,syscall=syscall)
 

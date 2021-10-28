@@ -64,6 +64,12 @@ def main():
     if not os.path.isdir('INTERVALS'):
         os.mkdir('INTERVALS')
 
+
+    runfile = 'submit_interval_jobs.sh'
+
+    f = open(runfile,'w')
+    f.writelines(['#!/bin/bash\n'])
+
     for ss in scan_times:
         targetname = ss[0]
         scans = ss[1]
@@ -92,9 +98,10 @@ def main():
 
                 write_slurm(opfile=slurm_file,jobname=code,logfile=log_file,syscall=syscall)
 
-                print('sbatch '+slurm_file)
+                f.writelines(['sbatch '+slurm_file+'\n')
 
-
+    f.close()
+    print('Wrote '+runfile+' script')
 
 
 if __name__ == "__main__":

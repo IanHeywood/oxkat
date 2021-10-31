@@ -78,28 +78,30 @@ def main():
         print('Scans:     '+str(scans))
         print('Intervals: '+str(intervals))
         for i in range(0,len(scans)):
-            myms = glob.glob('*'+targetname+'*scan'+str(scans[i])+'.ms')[0]
-            if os.path.isdir(myms):
-                opdir = 'INTERVALS/'+targetname+'_scan'+str(scans[i])
-                if not os.path.isdir(opdir):
-                    os.mkdir(opdir)
+            myms = glob.glob('*'+targetname+'*scan'+str(scans[i])+'.ms')
+            if len(myms) == 1:
+            	myms = myms[0]
+	            if os.path.isdir(myms):
+	                opdir = 'INTERVALS/'+targetname+'_scan'+str(scans[i])
+	                if not os.path.isdir(opdir):
+	                    os.mkdir(opdir)
 
-                imgname = opdir+'/img_'+myms+'_modelsub'
-                code = 'WSscan'+str(scans[i])
+	                imgname = opdir+'/img_'+myms+'_modelsub'
+	                code = 'WSscan'+str(scans[i])
 
-                syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-                syscall += 'wsclean -intervals-out '+str(intervals[i])+' -interval 0 '+str(intervals[i])+' '
-                syscall += '-log-time -field 0 -size 4096 4096 -scale 2.0asec -baseline-averaging 10 -no-update-model-required '
-                syscall += '-nwlayers-factor 3 -niter 0 -name '+imgname+' '
-                syscall += '-weight briggs -0.3 -data-column CORRECTED_DATA -padding 1.2 -absmem 110 '+myms
+	                syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
+	                syscall += 'wsclean -intervals-out '+str(intervals[i])+' -interval 0 '+str(intervals[i])+' '
+	                syscall += '-log-time -field 0 -size 4096 4096 -scale 2.0asec -baseline-averaging 10 -no-update-model-required '
+	                syscall += '-nwlayers-factor 3 -niter 0 -name '+imgname+' '
+	                syscall += '-weight briggs -0.3 -data-column CORRECTED_DATA -padding 1.2 -absmem 110 '+myms
 
-                slurm_file = 'SCRIPTS/slurm_intervals_'+code+'.sh'
-                log_file = 'LOGS/slurm_intervals_'+code+'.log'
+	                slurm_file = 'SCRIPTS/slurm_intervals_'+code+'.sh'
+	                log_file = 'LOGS/slurm_intervals_'+code+'.log'
 
-                write_slurm(opfile=slurm_file,jobname=code,logfile=log_file,syscall=syscall)
+	                write_slurm(opfile=slurm_file,jobname=code,logfile=log_file,syscall=syscall)
 
-                f.writelines(['sbatch '+slurm_file+'\n'])
-
+	                f.writelines(['sbatch '+slurm_file+'\n'])
+	            	
     f.close()
     print('Wrote '+runfile+' script')
 

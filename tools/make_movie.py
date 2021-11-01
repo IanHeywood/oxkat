@@ -31,7 +31,7 @@ for ff in fitslist:
 #	pp = str(i).zfill(4)+'_'+ff.replace('.fits','.png')
 	pp = 'pic_'+str(i).zfill(4)+'.png'
 #	syscall = 'mViewer -ct 0 -gray '+ff+' -0.0004 0.0008 -out '+pp
-	syscall = 'mViewer -ct 0 -gray temp.fits -0.0004 0.0008 -out '+pp
+	syscall = 'mViewer -ct 0 -gray '+tmpfits+' -0.0004 0.0008 -out '+pp
 	os.system(syscall)
 	print(syscall)
 	img = Image.open(pp)

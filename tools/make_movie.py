@@ -45,6 +45,6 @@ for ff in fitslist:
 	os.system('rm '+tmpfits)
 
 frame = '4096x4096'
-fps = 15
+fps = 10
 opmovie = fitslist[0].split('-t')[0]+'.mp4'
 os.system('ffmpeg -r '+str(fps)+' -f image2 -s '+frame+' -i pic_%04d.png -vcodec libx264 -crf 25 -pix_fmt yuv420p '+opmovie)

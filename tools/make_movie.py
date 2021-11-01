@@ -4,6 +4,8 @@
 
 import glob
 import os
+import random 
+import string
 from astropy.io import fits
 from astropy.time import Time
 from PIL import Image,ImageDraw,ImageFont
@@ -15,7 +17,11 @@ fitslist = sorted(glob.glob('*-t*-image.fits'))
 nframes = len(fitslist)
 i = 1
 
+tmpfits = 'temp_'+''.join(random.choices(string.ascii_uppercase + string.digits, k=16))+'.fits'
+
 for ff in fitslist:
+
+	os.system('mShrink '+ff+' '+tmpfits+' 2')
 
 	input_hdu = fits.open(ff)[0]
 	hdr = input_hdu.header
@@ -24,7 +30,8 @@ for ff in fitslist:
 	tt = map_date+' | '+str(t_mjd)
 #	pp = str(i).zfill(4)+'_'+ff.replace('.fits','.png')
 	pp = 'pic_'+str(i).zfill(4)+'.png'
-	syscall = 'mViewer -ct 0 -gray '+ff+' -0.0004 0.0008 -out '+pp
+#	syscall = 'mViewer -ct 0 -gray '+ff+' -0.0004 0.0008 -out '+pp
+	syscall = 'mViewer -ct 0 -gray temp.fits -0.0004 0.0008 -out '+pp
 	os.system(syscall)
 	print(syscall)
 	img = Image.open(pp)
@@ -35,6 +42,7 @@ for ff in fitslist:
 	draw.text((0.03*xx,0.96*yy),'Image : '+ff,fill=('white'),font=sans48)
 	img.save(pp)
 	i+=1
+	os.system('rm '+tmpfits)
 
 frame = '4096x4096'
 fps = 15

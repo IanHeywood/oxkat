@@ -9,7 +9,7 @@ def write_slurm(opfile,jobname,logfile,syscall):
     f.writelines(['#!/bin/bash\n',
         '#file: '+opfile+':\n',
         '#SBATCH --job-name='+jobname+'\n',
-        '#SBATCH --time=06:00:00\n',
+        '#SBATCH --time=02:00:00\n',
         '#SBATCH --partition=Main\n'
         '#SBATCH --ntasks=1\n',
         '#SBATCH --nodes=1\n',

@@ -17,8 +17,7 @@ def write_slurm(opfile,jobname,logfile,syscall):
         '#SBATCH --mem=16GB\n',
         '#SBATCH --account=b24-thunderkat-ag\n',
         '#SBATCH --output='+logfile+'\n',
-        syscall+'\n',
-        'sleep 10\n'])
+        syscall+'\n'])
     f.close()
 
 

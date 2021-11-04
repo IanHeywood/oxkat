@@ -640,7 +640,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Data-ChunkHours '+str(chunkhours)+' '
     syscall += '--Data-Sort '+str(datasort)+' '
     # [Predict]
-    if predictcolname != '':
+    if predictcolname:
         syscall += '--Predict-ColName '+predictcolname+' '
     if initdicomodel != '':
         syscall += '--Predict-InitDicoModel '+initdicomodel+' '

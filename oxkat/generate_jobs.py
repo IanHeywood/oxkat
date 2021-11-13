@@ -439,6 +439,8 @@ def generate_syscall_wsclean(mslist,
                           datacol,
                           continueclean = cfg.WSC_CONTINUE,
                           field = cfg.WSC_FIELD,
+                          makepsf = cfg.WSC_MAKEPSF,
+                          nodirty = cfg.WSC_NODIRTY,
                           startchan = cfg.WSC_STARTCHAN,
                           endchan = cfg.WSC_ENDCHAN,
                           minuvl = cfg.WSC_MINUVL,
@@ -501,6 +503,10 @@ def generate_syscall_wsclean(mslist,
     if continueclean:
         syscall += '-continue '
     syscall += '-field '+str(field)+' '
+    if makepsf:
+        syscall += '-make-psf '
+    if nodirty:
+        syscall += '-no-dirty '
     if sourcelist: # and fitspectralpol != 0:
         syscall += '-save-source-list '
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '

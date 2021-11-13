@@ -240,6 +240,8 @@ CAL_3GC_PEEL_PARSET = DATA+'/cubical/3GC_peel.parset'
 
 WSC_CONTINUE = False
 WSC_FIELD = 0
+WSC_MAKEPSF = False
+WSC_NODIRTY = False
 WSC_STARTCHAN = -1
 WSC_ENDCHAN = -1
 WSC_EVEN = False
@@ -315,7 +317,7 @@ DDF_COLNAME = 'CORRECTED_DATA'
 DDF_CHUNKHOURS = 3
 DDF_DATASORT = 1
 # [Predict]
-DDF_PREDICTCOLNAME = '' # MODEL_DATA or leave empty to disable predict
+DDF_PREDICTCOLNAME = 'MODEL_DATA' # MODEL_DATA or set to None to disable predict
 DDF_INITDICOMODEL = ''
 # [Output]
 DDF_OUTPUTALSO = 'oenNS'

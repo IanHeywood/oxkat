@@ -70,7 +70,7 @@ def set_infrastructure(args):
         infrastructure = 'hippo'
         CONTAINER_PATH = None
 
-    print(col('Container path')+CONTAINER_PATH)
+    print(col('Container path')+str(CONTAINER_PATH))
 
     return infrastructure,CONTAINER_PATH
 

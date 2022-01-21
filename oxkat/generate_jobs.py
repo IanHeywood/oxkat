@@ -73,7 +73,7 @@ def set_infrastructure(args):
     print(col('Infrastructure')+infrastructure.upper())
     if cfg.USE_SINGULARITY:
         print(col('Singularity')+'Enabled')
-        print(col('Container path')+CONTAINER_PATH)
+        print(col('Container path')+str(CONTAINER_PATH))
     else:
         print(col('Singularity')+'Not enabled')
 

@@ -9,7 +9,7 @@ from pyrap.tables import table
 from astropy.time import Time
 from astropy import units as u
 from astropy.coordinates import SkyCoord
-from astropy.coordinates import solar_system_ephemeris, EarthLocation
+from astropy.coordinates import solar_system_ephemeris, EarthLocation, AltAz
 from astropy.coordinates import get_body_barycentric, get_body, get_moon
 
 
@@ -64,7 +64,7 @@ def main():
 
     logging.info(myms+' | '+str(len(ids))+' fields | '+str(len(scans))+' scans')
     #header = 'Scan  Field        ID    t[iso]                    t[s]                 t0[s]                t1[s]                int0    int1    Duration[m]  N_int'
-    header = 't[iso]                       Scan  Field Name         SunRA[deg]   SunDec[deg]  SunRA[hms]       SunDec[dms]      SunSep[deg]  MoonRA[deg]  MoonDec[deg] MoonRA[hms]      MoonDec[dms]     MoonSep[deg]'
+    header = 't[iso]                       Scan  Field Name         SunRA[deg]   SunDec[deg]  SunRA[hms]       SunDec[dms]      SunSep[deg]  SunAlt[deg]  MoonRA[deg]  MoonDec[deg] MoonRA[hms]      MoonDec[dms]     MoonSep[deg] MoonAlt[deg]'
     logging.info('-'*len(header))
     logging.info(header)
     logging.info('-'*len(header))
@@ -80,8 +80,12 @@ def main():
             moon = get_body('Moon', t, loc)
         sun_ra = sun.ra.value
         sun_dec = sun.dec.value
+        sun_altaz = sun.transform_to(AltAz(obstime=t,location=loc))
+        sun_alt = sun_altaz.alt.value
         moon_ra = moon.ra.value
         moon_dec = moon.dec.value
+        moon_altaz = moon.transform_to(AltAz(obstime=t,location=loc))
+        moon_alt = moon_altaz.alt.value
         sun_hms,sun_dms = format_coords(sun_ra,sun_dec)
         moon_hms,moon_dms = format_coords(moon_ra,moon_dec)
         delta_ra_sun = field_ra - sun_ra
@@ -91,8 +95,8 @@ def main():
         sun_sep = calcsep(field_ra,field_dec,sun_ra,sun_dec)
         moon_sep = calcsep(field_ra,field_dec,moon_ra,moon_dec)
     #   print field,name,sun_sep
-        logging.info('%-28s %-5i %-5i %-12s %-12f %-12f %-16s %-16s %-12f %-12f %-12f %-16s %-16s %-12f' %
-            (t.iso,scan,field,name,sun_ra,sun_dec,sun_hms,sun_dms,sun_sep,moon_ra,moon_dec,moon_hms,moon_dms,moon_sep))
+        logging.info('%-28s %-5i %-5i %-12s %-12f %-12f %-16s %-16s %-12f %-12f %-12f %-12f %-16s %-16s %-12f %-12f' %
+            (t.iso,scan,field,name,sun_ra,sun_dec,sun_hms,sun_dms,sun_sep,sun_alt,moon_ra,moon_dec,moon_hms,moon_dms,moon_sep,moon_alt))
 
     logging.info('-'*len(header))
 

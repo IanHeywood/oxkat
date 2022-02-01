@@ -87,23 +87,21 @@ def main():
             print(gen.col('Target')+targetname)
             print(gen.col('MS')+'not found, skipping')
 
-        elif CAL_3GC_PEEL_REGION == ''
+        elif CAL_3GC_PEEL_REGION == '':
             region = glob.glob('*'+targetname+'*peel*.reg')
             if len(region) == 0:
-                gen.print_spacer()
-                print(gen.col()+'Please provide a region file of the form:')
-                print(gen.col()+'       *'+targetname+'*peel*.reg')
-                print(gen.col()+'for this field. Skipping.')
-                sys.exit()
+                CAL_3GC_PEEL_REGION = ''
             else:
                 CAL_3GC_PEEL_REGION = region[0]
 
         if not o.isfile(CAL_3GC_PEEL_REGION):
             gen.print_spacer()
-            print(gen.col()+CAL_3GC_PEEL_REGION+' not found')
+            print(gen.col()+'Peeling region file not found.')
             print(gen.col()+'Please provide a DS9 region file definining the source you wish to peel.')
+            print(gen.col()+'This can be specified in the config or by placing a file of the form:')
+            print(gen.col()+'       *'+targetname+'*peel*.reg')
+            print(gen.col()+'in this folder. Skipping.')
             gen.print_spacer()
-            sys.exit()
 
         else:
 

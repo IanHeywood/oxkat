@@ -229,9 +229,11 @@ CAL_2GC_DELAYCAL_PARSET = DATA+'/cubical/2GC_delaycal.parset'
 CAL_3GC_PEEL_NCHAN = 32
 CAL_3GC_PEEL_BRIGGS = -0.6
 CAL_3GC_PEEL_DIR1COLNAME = 'DIR1_DATA'
-CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288_CDFS.reg'
+CAL_3GC_PEEL_REGION = ''  # Specify DS9 peeling region 
+                          # Leave blank to search for <fieldname>*peel*.reg in the current path
 CAL_3GC_PEEL_PARSET = DATA+'/cubical/3GC_peel.parset'
-
+CAL_3GC_FACET_REGION = '' # Specify DS9 region to define tessel centres
+                          # Leave blank to search for <fieldname>*facet*.reg in the current path
 
 # ------------------------------------------------------------------------
 #

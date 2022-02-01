@@ -52,7 +52,7 @@ badfreqs = ['900MHz~915MHz', # GSM and aviation
 	'1191MHz~1217MHz', # Galileo
 	'1260MHz~1300MHz',
 	'1453MHz~1490MHz', # Afristar
-	'1616MHz~1626MHZ', # Iridium
+	'1616MHz~1626MHz', # Iridium
 	'1526MHz~1554MHz', # Inmarsat
 	'1600MHz'] # Alkantpan
 

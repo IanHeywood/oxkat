@@ -70,12 +70,14 @@ def set_infrastructure(args):
         infrastructure = 'hippo'
         CONTAINER_PATH = None
 
+        
     print(col('Infrastructure')+infrastructure.upper())
     if cfg.USE_SINGULARITY:
         print(col('Singularity')+'Enabled')
         print(col('Container path')+str(CONTAINER_PATH))
     else:
         print(col('Singularity')+'Not enabled')
+
 
     return infrastructure,CONTAINER_PATH
 
@@ -721,7 +723,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Data-ChunkHours '+str(chunkhours)+' '
     syscall += '--Data-Sort '+str(datasort)+' '
     # [Predict]
-    if predictcolname != '':
+    if predictcolname:
         syscall += '--Predict-ColName '+predictcolname+' '
     if initdicomodel != '':
         syscall += '--Predict-InitDicoModel '+initdicomodel+' '

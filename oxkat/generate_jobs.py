@@ -80,18 +80,20 @@ def set_infrastructure(args):
     return infrastructure,CONTAINER_PATH
 
 
-def get_container(path,pattern,use_singularity):
+def get_container(pathlist,pattern,use_singularity):
     
     # For running without containers
-    if path is None: # Retain backwards compatibility with hippo fix
+    if pathlist is None: # Retain backwards compatibility with hippo fix
         return ''
     if not use_singularity:
         return ''
 
-    # Search for a file matching pattern in path
-    path = path.rstrip('/')+'/'
-    ll = sorted(glob.glob(path+'*'+pattern+'*img'))
-    ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
+    ll = []
+    for path in pathlist:
+        # Search for a file matching pattern in path
+        path = path.rstrip('/')+'/'
+        ll.extend(sorted(glob.glob(path+'*'+pattern+'*img')))
+        ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
 
     # Exclude stimela's casa4.7 and casarest containers
     if 'casa' in pattern.lower():
@@ -500,6 +502,7 @@ def generate_syscall_wsclean(mslist,
 
     syscall = 'wsclean '
     syscall += '-log-time '
+    syscall += '-parallel-reordering 8 '
     if continueclean:
         syscall += '-continue '
     syscall += '-field '+str(field)+' '

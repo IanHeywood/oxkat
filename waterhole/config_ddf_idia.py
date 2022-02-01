@@ -42,16 +42,16 @@ USE_SINGULARITY = True
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = HOME+'/containers/'
-CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
+IDIA_CONTAINER_PATH = ['/software/astro/caracal/STIMELA_IMAGES_1.6.9','/idia/software/containers/']
+CHPC_CONTAINER_PATH = ['/apps/chpc/astro/stimela_images/']
 HIPPO_CONTAINER_PATH = None
-NODE_CONTAINER_PATH = HOME+'/containers/'
+NODE_CONTAINER_PATH = [HOME+'/containers/']
 
 CASA_PATTERN = 'casa'
 CLUSTERCAT_PATTERN = 'ddfacet'
 CUBICAL_PATTERN = 'cubical'
-DDFACET_PATTERN = 'ddfacet'
-KILLMS_PATTERN = 'ddfacet'
+DDFACET_PATTERN = 'ddfacet-12'
+KILLMS_PATTERN = 'killms_v.3'
 MAKEMASK_PATTERN = 'owlcat'
 MEQTREES_PATTERN = 'meqtrees'
 PYBDSF_PATTERN = 'pybdsf'
@@ -67,7 +67,7 @@ WSCLEAN_PATTERN = 'wsclean'
 # Slurm resource settings
 #
 
-SLURM_ACCOUNT = '' # e.g. b09-mightee-ag
+SLURM_ACCOUNT = '' # e.g. b09-mightee-ag, b24-thunderkat-ag
 SLURM_RESERVATION = '' # e.g. lsp-mightee
 
 SLURM_NODELIST = '' # Specify node(s) to use
@@ -111,7 +111,7 @@ SLURM_EXTRALONG = {
 }
 
 SLURM_HIGHMEM = {
-    'TIME': '48:00:00',
+    'TIME': '36:00:00',
     'PARTITION': 'HighMem',
     'NTASKS': '1',
     'NODES': '1',
@@ -241,6 +241,8 @@ CAL_3GC_PEEL_PARSET = DATA+'/cubical/3GC_peel.parset'
 
 WSC_CONTINUE = False
 WSC_FIELD = 0
+WSC_MAKEPSF = False
+WSC_NODIRTY = False
 WSC_STARTCHAN = -1
 WSC_ENDCHAN = -1
 WSC_EVEN = False
@@ -249,6 +251,9 @@ WSC_MINUVL = ''
 WSC_MAXUVL = ''
 WSC_CHANNELSOUT = 8
 WSC_JOINCHANNELS = True
+WSC_INTERVAL0 = None
+WSC_INTERVAL1 = None
+WSC_INTERVALSOUT = None
 WSC_IMSIZE = 10240
 WSC_CELLSIZE = '1.1asec'
 WSC_BRIGGS = -0.3
@@ -262,7 +267,7 @@ WSC_NONEGATIVE = False
 WSC_SOURCELIST = True
 WSC_BDA = False
 WSC_BDAFACTOR = 10
-WSC_NWLAYERSFACTOR = 3
+WSC_NWLAYERSFACTOR = 5
 WSC_PADDING = 1.2
 WSC_NOMODEL = False
 WSC_MASK = 'auto'
@@ -439,11 +444,11 @@ PYBDSF_CATALOGFORMAT = 'fits'
 #
 
 
-CLUSTERCAT_NDIR = 7
-CLUSTERCAT_CENTRALRADIUS = 0.15
+CLUSTERCAT_NDIR = 8
+CLUSTERCAT_CENTRALRADIUS = 0.0
 CLUSTERCAT_NGEN = 100
 CLUSTERCAT_FLUXMIN = 0.000001
-CLUSTERCAT_NCPU = 32
+CLUSTERCAT_NCPU = 8
 
 
 # ------------------------------------------------------------------------

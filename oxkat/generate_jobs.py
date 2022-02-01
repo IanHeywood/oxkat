@@ -101,12 +101,6 @@ def get_container(pathlist,pattern,use_singularity):
             if 'casa47' in ii or 'casarest' in ii:
                 ll.remove(ii)
 
-    # Exclude GPU / IDG wsclean containers
-    if 'wsclean' in pattern.lower():
-        for ii in ll:
-            if 'idg' in ii or 'gpu' in ii:
-                ll.remove(ii)
-                
     if len(ll) == 0:
         print(col(pattern)+'not found!')
         print_spacer()

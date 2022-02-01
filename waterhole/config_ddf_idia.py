@@ -42,23 +42,23 @@ USE_SINGULARITY = True
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = ['/software/astro/caracal/STIMELA_IMAGES_1.6.9','/idia/software/containers/']
+IDIA_CONTAINER_PATH = ['/software/astro/caracal/STIMELA_IMAGES_1.6.9',HOME+'/containers/']
 CHPC_CONTAINER_PATH = ['/apps/chpc/astro/stimela_images/']
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = [HOME+'/containers/']
 
 CASA_PATTERN = 'casa'
-CLUSTERCAT_PATTERN = 'ddfacet-12'
+CLUSTERCAT_PATTERN = 'ddfacet'
 CUBICAL_PATTERN = 'cubical'
-DDFACET_PATTERN = 'ddfacet-12'
-KILLMS_PATTERN = 'killMS_v.3'
+DDFACET_PATTERN = 'ddfacet'
+KILLMS_PATTERN = 'ddfacet'
 MAKEMASK_PATTERN = 'owlcat'
 MEQTREES_PATTERN = 'meqtrees'
 PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
 SHADEMS_PATTERN = 'shadems'
 TRICOLOUR_PATTERN = 'tricolour'
-WSCLEAN_PATTERN = 'wsclean_'
+WSCLEAN_PATTERN = 'wsclean'
 #WSCLEANIDG_PATTERN = 'wsclean*idg'
 
 

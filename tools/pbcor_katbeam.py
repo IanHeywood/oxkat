@@ -37,14 +37,14 @@ def check_name(name1,name2):
         sys.exit()
 
 
-def get_header(fitsfile):
+def get_header(fitsfile,freqaxis):
     inphdu = fits.open(fitsfile)
     inphdr = inphdu[0].header
     nx = inphdr.get('NAXIS1')
     ny = inphdr.get('NAXIS2')
     dx = inphdr.get('CDELT1')
     dy = inphdr.get('CDELT2')
-    freq = inphdr.get('CRVAL3')
+    freq = inphdr.get('CRVAL'+freqaxis)
     return nx,ny,dx,dy,freq
 
 
@@ -81,6 +81,7 @@ def main():
     parser = OptionParser(usage = '%prog [options] input_fits')
     parser.add_option('--band', dest = 'band', help = 'Select [U]HF or [L]-band (default = L-band)', default = 'L')
     parser.add_option('--freq', dest = 'freq', help = 'Frequency in MHz at which to evaluate beam model (default = get from input FITS header)', default = '')
+    parser.add_option('--freqaxis', dest = 'freqaxis', help = 'Frequency axis in FITS header (default = 3, set to 4 for DDFacet images)', default = '3')
     parser.add_option('--pbcut', dest = 'pbcut', help = 'Primary beam gain level beyond which to blank output images (default = 0.3)', default = 0.3)
     parser.add_option('--noavg', dest = 'azavg', help = 'Do not azimuthally-average the primary beam pattern (default = do this)', default = True, action = 'store_false')
     parser.add_option('--nopbcorfits', dest = 'savepbcor', help = 'Do not save primary beam corrected image (default = save corrected image)', action = 'store_false', default = True)
@@ -107,6 +108,7 @@ def main():
 
     # Frequency
     freq = options.freq
+    freqaxis = options.freqaxis
 
     # Primary beam cut level
     pbcut = float(options.pbcut)
@@ -175,7 +177,7 @@ def main():
     # Get header info
     msg('Reading FITS image')
     msg(' <--- '+input_fits)
-    nx,ny,dx,dy,fitsfreq = get_header(input_fits)
+    nx,ny,dx,dy,fitsfreq = get_header(input_fits,freqaxis)
     if nx != ny or abs(dx) != abs(dy):
         msg('Can only handle square images / pixels')
         sys.exit()

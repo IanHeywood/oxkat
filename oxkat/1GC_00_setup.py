@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+    #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 
 import glob
+import logging
 import numpy
 import os.path as o
 import pickle
@@ -14,15 +15,6 @@ from pyrap.tables import table
 
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 from oxkat import config as cfg
-
-
-def myprint(msg):
-
-    """ Print a message with a timestamp """
-
-    stamp = time.strftime('[%Y-%m-%d %H:%M:%S]:')
-    print(stamp+' '+msg)
-    return stamp
 
 
 def get_dummy():
@@ -61,6 +53,8 @@ def get_refant(myms,field_id):
 
     """ Sorts a list of antennas in order of increasing flagged percentages based on field_id """
 
+    mylogger = logging.getLogger(__name__) 
+
     ant_names = get_antnames(myms)
     main_tab = table(myms,ack='False')
     
@@ -88,7 +82,7 @@ def get_refant(myms,field_id):
             if flag_pc < 80.0:
                 pc_list.append(flag_pc)
                 idx_list.append(str(idx))
-            myprint('Antenna '+str(idx)+':'+ant+' is '+str(round(flag_pc,2))+chr(37)+' flagged')
+            mylogger.info('Antenna '+str(idx)+':'+ant+' is '+str(round(flag_pc,2))+chr(37)+' flagged')
     pc_list = numpy.array(pc_list)
     idx_list = numpy.array(idx_list)
 
@@ -109,7 +103,6 @@ def get_nchan(myms):
     spw_table = table(myms+'/SPECTRAL_WINDOW',ack=False)
     nchan = spw_table.getcol('NUM_CHAN')[0]
     spw_table.close()
-    myprint('MS has '+str(nchan)+' channels')
     return nchan
 
 
@@ -335,8 +328,19 @@ def main():
 
     myms = sys.argv[1].rstrip('/')
 
-    myprint('Examining '+myms)
-    myprint('Please wait...')
+    logfile = 'setup_'+myms+'.log'
+
+    logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
+    stream = logging.StreamHandler()
+    stream.setLevel(logging.DEBUG)
+    streamformat = logging.Formatter('%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
+    stream.setFormatter(streamformat)
+    mylogger = logging.getLogger(__name__)
+    mylogger.setLevel(logging.DEBUG)
+    mylogger.addHandler(stream)
+
+    mylogger.info('Examining '+myms)
+    mylogger.info('Please wait...')
 
     outpick = 'project_info.p'
 
@@ -367,6 +371,7 @@ def main():
     # NUMBER OF CHANNELS
 
     nchan = get_nchan(myms)
+    mylogger.info('MS has '+str(nchan)+' channels')
 
 
     # ------------------------------------------------------------------------------
@@ -397,10 +402,10 @@ def main():
 
     primary_name, primary_id, primary_tag, primary_sep = get_primary_tag(candidate_dirs, candidate_names, candidate_ids)
 
-    myprint('Primary calibrator:    '+str(primary_id)+': '+primary_name)
+    mylogger.info('Primary calibrator:    '+str(primary_id)+': '+primary_name)
     if primary_sep != 0.0:
-        myprint('                       '+str(round((primary_sep/3600.0),4))+'" from nominal position')
-    myprint('')
+        mylogger.info('                       '+str(round((primary_sep/3600.0),4))+'" from nominal position')
+    mylogger.info('')
 
 
     # ------------------------------------------------------------------------------
@@ -409,10 +414,10 @@ def main():
 
     if CAL_1GC_REF_ANT == 'auto':
         ref_ant = get_refant(myms,primary_id)
-        myprint('Ranked reference antenna ordering: '+str(ref_ant))
+        mylogger.info('Ranked reference antenna ordering: '+str(ref_ant))
     else:
         ref_ant = CAL_1GC_REF_ANT
-        myprint('User requested reference antenna ordering: '+str(ref_ant))
+        mylogger.info('User requested reference antenna ordering: '+str(ref_ant))
 
 
     # ------------------------------------------------------------------------------
@@ -458,11 +463,11 @@ def main():
     else:
         target_cal_map = [int(x) for x in CAL_1GC_SECONDARIES.split(',')]
         if len(target_cal_map) != len(target_dirs) and len(target_cal_map) > 1:
-            myprint('Target-secondary mapping is ambiguous, reverting to auto')
+            mylogger.info('Target-secondary mapping is ambiguous, reverting to auto')
             target_cal_map,target_cal_separations = target_cal_pairs(target_dirs,target_names,target_ids,
                                                     secondary_dirs,secondary_names,secondary_ids)
         elif len(target_cal_map) == 1:
-            myprint('User requested field '+str(target_cal_map)+' as secondary calibrator for all targets')
+            mylogger.info('User requested field '+str(target_cal_map)+' as secondary calibrator for all targets')
             target_cal_map = target_cal_map * len(target_dirs)
 
 
@@ -478,9 +483,9 @@ def main():
     # PRINT FIELD SUMMARY
 
 
-    myprint('')
+    mylogger.info('')
 
-    myprint('Target                   Secondary                Separation')
+    mylogger.info('Target                   Secondary                Separation')
     for i in range(0,len(target_dirs)):
         targ = str(target_ids[i])+': '+target_names[i]
         j = target_cal_map[i]
@@ -497,17 +502,17 @@ def main():
         sep = round(calcsep(ra_target,dec_target,ra_cal,dec_cal),3)
         sep = str(sep)+' deg'
 
-        myprint('%-24s %-24s %-9s' % (targ, pcal, sep))
+        mylogger.info('%-24s %-24s %-9s' % (targ, pcal, sep))
     
-    myprint('')
+    mylogger.info('')
 
-    myprint('Target                   Eventual MS name')
+    mylogger.info('Target                   Eventual MS name')
     for i in range(0,len(target_dirs)):
         targ = str(target_ids[i])+': '+target_names[i]
-        myprint('%-24s %-50s' % (targ, target_ms[i]))
+        mylogger.info('%-24s %-50s' % (targ, target_ms[i]))
     
-    myprint('')
-    myprint('Writing '+outpick)
+    mylogger.info('')
+    mylogger.info('Writing '+outpick)
 
     project_info['master_ms'] = myms
     project_info['nchan'] = nchan
@@ -526,7 +531,7 @@ def main():
 
     pickle.dump(project_info,open(outpick,'wb'),protocol=2)
 
-    myprint('Done')
+    mylogger.info('Done')
 
 
 if __name__ == "__main__":

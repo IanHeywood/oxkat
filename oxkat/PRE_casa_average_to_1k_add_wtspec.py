@@ -6,6 +6,7 @@ import glob
 execfile('oxkat/config.py')
 
 myfields = PRE_FIELDS
+myscans = PRE_SCANS
 myoutputchans = int(PRE_NCHANS)
 mytimebins = PRE_TIMEBIN
 
@@ -29,6 +30,7 @@ else:
 mstransform(vis = myms,
 	outputvis = opms,
 	field = myfields,
+	scan = myscans,
 	datacolumn = 'data',
 	chanaverage = mychanave,
 	chanbin = mychanbin,

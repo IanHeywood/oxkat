@@ -41,7 +41,7 @@ def main():
 
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
-    MEQTREES_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MEQTREES_PATTERN,USE_SINGULARITY)
+    OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
     SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN,USE_SINGULARITY)
 
@@ -87,7 +87,13 @@ def main():
         step['comment'] = 'Run setup script to generate project_info pickle'
         step['dependency'] = 0
         step['id'] = 'SETUP'+code
-        syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += ' python '+cfg.TOOLS+'/ms_info.py '+myms+'\n'
+        syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += ' python '+cfg.TOOLS+'/scan_times.py '+myms+'\n'
+        syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += ' python '+cfg.TOOLS+'/find_sun.py '+myms+'\n'
+        syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall += ' python '+cfg.OXKAT+'/1GC_00_setup.py '+myms
         step['syscall'] = syscall
         steps.append(step)
@@ -229,8 +235,15 @@ def main():
         step['comment'] = 'Run setup script to generate project_info pickle'
         step['dependency'] = 0
         step['id'] = 'SETUP'+code
-        syscall = CONTAINER_RUNNER+MEQTREES_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += ' python '+cfg.TOOLS+'/ms_info.py '+myms+'\n'
+        syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += ' python '+cfg.TOOLS+'/scan_times.py '+myms+'\n'
+        syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += ' python '+cfg.TOOLS+'/find_sun.py '+myms+'\n'
+        syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall += ' python '+cfg.OXKAT+'/1GC_00_setup.py '+myms
+
         step['syscall'] = syscall
         steps.append(step)
 

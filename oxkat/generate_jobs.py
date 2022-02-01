@@ -17,7 +17,7 @@ from oxkat import config as cfg
 def preamble():
     print('---------------------+----------------------------------------------------------')
     print('                     |')
-    print('                     | v0.2')  
+    print('                     | v0.3')  
     print('    o  x  k  a  t    | Please file an issue for bugs / help:')
     print('                     | https://github.com/IanHeywood/oxkat')
     print('                     |')
@@ -70,29 +70,39 @@ def set_infrastructure(args):
         infrastructure = 'hippo'
         CONTAINER_PATH = None
 
-    print(col('Container path')+str(CONTAINER_PATH))
+        
+    print(col('Infrastructure')+infrastructure.upper())
+    if cfg.USE_SINGULARITY:
+        print(col('Singularity')+'Enabled')
+        print(col('Container path')+str(CONTAINER_PATH))
+    else:
+        print(col('Singularity')+'Not enabled')
+
 
     return infrastructure,CONTAINER_PATH
 
 
-def get_container(path,pattern,use_singularity):
+def get_container(pathlist,pattern,use_singularity):
     
     # For running without containers
-    if path is None: # Retain backwards compatibility with hippo fix
+    if pathlist is None: # Retain backwards compatibility with hippo fix
         return ''
     if not use_singularity:
         return ''
 
-    # Search for a file matching pattern in path
-    path = path.rstrip('/')+'/'
-    ll = sorted(glob.glob(path+'*'+pattern+'*img'))
-    ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
+    ll = []
+    for path in pathlist:
+        # Search for a file matching pattern in path
+        path = path.rstrip('/')+'/'
+        ll.extend(sorted(glob.glob(path+'*'+pattern+'*img')))
+        ll.extend(sorted(glob.glob(path+'*'+pattern+'*sif')))
 
     # Exclude stimela's casa4.7 and casarest containers
     if 'casa' in pattern.lower():
         for ii in ll:
             if 'casa47' in ii or 'casarest' in ii:
                 ll.remove(ii)
+
     if len(ll) == 0:
         print(col(pattern)+'not found!')
         print_spacer()
@@ -132,6 +142,15 @@ def get_code(myms):
     return code
 
 
+def get_mms_code(myms):
+
+    # Last three digits of the data set ID
+
+    myms = myms.split('/')[-1]
+    code = myms.split('.')[-2][-3:]
+    return code
+
+
 def get_target_code(targetname):
 
     # Last three digits of the target name
@@ -168,6 +187,10 @@ def job_handler(syscall,
                 infrastructure,
                 dependency = None,
                 slurm_config = cfg.SLURM_DEFAULTS,
+                slurm_account = cfg.SLURM_ACCOUNT,
+                slurm_reservation = cfg.SLURM_RESERVATION,
+                slurm_nodelist = cfg.SLURM_NODELIST,
+                slurm_exclude = cfg.SLURM_EXCLUDE,
                 pbs_config = cfg.PBS_DEFAULTS,
                 bind = cfg.BIND):
                 # slurm_time=cfg.SLURM_TIME,
@@ -210,8 +233,29 @@ def job_handler(syscall,
 
         run_command = jobname+"=`sbatch "
         if dependency:
-          run_command += "-d afterok:${"+dependency+"} "
+            #run_command += "-d afterok:${"+dependency+"} "
+            run_command += '-d afterok:'+'${'+dependency.replace(':','}:${')+'} '
         run_command += slurm_runfile+" | awk '{print $4}'`"
+
+        if cfg.SLURM_NODELIST != '':
+            slurm_nodelist = '#SBATCH --nodelist='+cfg.SLURM_NODELIST+'\n'
+        else:
+            slurm_nodelist = ''
+
+        if cfg.SLURM_EXCLUDE != '':
+            slurm_exclude = '#SBATCH --exclude='+cfg.SLURM_EXCLUDE+'\n'
+        else:
+            slurm_exclude = ''
+
+        if cfg.SLURM_ACCOUNT != '':
+            slurm_account = '#SBATCH --account='+cfg.SLURM_ACCOUNT+'\n'
+        else:
+            slurm_account = ''
+
+        if cfg.SLURM_RESERVATION != '':
+            slurm_reservation = '#SBATCH --reservation='+cfg.SLURM_RESERVATION+'\n'
+        else:
+            slurm_reservation = ''
 
         f = open(slurm_runfile,'w')
         f.writelines(['#!/bin/bash\n',
@@ -224,10 +268,14 @@ def job_handler(syscall,
             '#SBATCH --cpus-per-task='+slurm_cpus+'\n',
             '#SBATCH --mem='+slurm_mem+'\n',
             '#SBATCH --output='+slurm_logfile+'\n',
+            slurm_nodelist,
+            slurm_exclude,
+            slurm_account,
+            slurm_reservation,
             'SECONDS=0\n',
             syscall+'\n',
-            'echo "****ELAPSED "$SECONDS" '+jobname+'"\n',
-            'sleep 10\n'])
+            'echo "****ELAPSED "$SECONDS" '+jobname+'"\n'])
+#            'sleep 10\n'])
         f.close()
 
         make_executable(slurm_runfile)
@@ -312,6 +360,25 @@ def absmem_helper(step,infrastructure,absmem):
     return absmem
 
 
+def get_scan_times(scanpickle):
+    scan_times = []
+    ss = pickle.load(open(scanpickle,'rb'))
+    fields = []
+    for ii in ss:
+        fields.append(ii[1])
+    fields = numpy.unique(fields).tolist()
+    for field in fields:
+        scans = []
+        intervals = []
+        for ii in ss:
+            if ii[1] == field:
+                scans.append(ii[0])
+                intervals.append(ii[5])
+        scan_times.append((field,scans,intervals))
+    return scan_times
+
+
+
 def generate_syscall_casa(casascript,casalogfile='',extra_args=''):
 
     syscall = 'casa -c '+casascript+' '
@@ -364,7 +431,8 @@ def generate_syscall_tricolour(myms = '',
     syscall += '--data-column '+datacol+' '
     if subtractcol != '':
         syscall += '--subtract-model-colum '+subtractcol+' '
-    syscall += '--field-names '+fields+' '
+    if fields != 'all':
+        syscall += '--field-names '+fields+' '
     syscall += '--flagging-strategy '+strategy+' '
     syscall += myms
 
@@ -376,6 +444,8 @@ def generate_syscall_wsclean(mslist,
                           datacol,
                           continueclean = cfg.WSC_CONTINUE,
                           field = cfg.WSC_FIELD,
+                          makepsf = cfg.WSC_MAKEPSF,
+                          nodirty = cfg.WSC_NODIRTY,
                           startchan = cfg.WSC_STARTCHAN,
                           endchan = cfg.WSC_ENDCHAN,
                           minuvl = cfg.WSC_MINUVL,
@@ -383,6 +453,9 @@ def generate_syscall_wsclean(mslist,
                           even = cfg.WSC_EVEN,
                           odd = cfg.WSC_ODD,
                           chanout = cfg.WSC_CHANNELSOUT,
+                          interval0 = cfg.WSC_INTERVAL0,
+                          interval1 = cfg.WSC_INTERVAL1,
+                          intervalsout = cfg.WSC_INTERVALSOUT,
                           imsize = cfg.WSC_IMSIZE,
                           cellsize = cfg.WSC_CELLSIZE,
                           briggs = cfg.WSC_BRIGGS,
@@ -432,9 +505,14 @@ def generate_syscall_wsclean(mslist,
 
     syscall = 'wsclean '
     syscall += '-log-time '
+    syscall += '-parallel-reordering 8 '
     if continueclean:
         syscall += '-continue '
     syscall += '-field '+str(field)+' '
+    if makepsf:
+        syscall += '-make-psf '
+    if nodirty:
+        syscall += '-no-dirty '
     if sourcelist: # and fitspectralpol != 0:
         syscall += '-save-source-list '
     syscall += '-size '+str(imsize)+' '+str(imsize)+' '
@@ -472,6 +550,10 @@ def generate_syscall_wsclean(mslist,
         syscall += '-even-timesteps '
     if odd:
         syscall += '-odd-timesteps '
+    if interval0 and interval1:
+        syscall += '-intervals '+str(interval0)+' '+str(interval1)+' '
+    if intervalsout:
+        syscall += '-intervalsout '+str(intervalsout)+' '
     if mask:
         if mask.lower() == 'fits':
             mymask = glob.glob('*mask.fits')[0]
@@ -480,16 +562,17 @@ def generate_syscall_wsclean(mslist,
             syscall += '-fits-mask '+mask+' '
     if automask:
         syscall += '-auto-mask '+str(automask)+' '
-    if autothreshold:
+#    if autothreshold:
         syscall += '-auto-threshold '+str(autothreshold)+' '
-    if localrms:
+#    if localrms:
         syscall += '-local-rms '
     if threshold:
         syscall += '-threshold '+str(threshold)+' '
     if stopnegative:
         syscall += '-stop-negative '        
     syscall += '-name '+imgname+' '
-    syscall += '-channels-out '+str(chanout)+' '
+    if chanout:
+        syscall += '-channels-out '+str(chanout)+' '
     if fitspectralpol != 0:
         syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
     if joinchannels:
@@ -823,7 +906,7 @@ def generate_syscall_pybdsf(fitsfile,
     if catalogformat == 'fits':
         opfile += '.fits'
 
-    syscall = "python -c '"
+    syscall = "python3 -c '"
     syscall += "import bdsf; "
     syscall += "img = bdsf.process_image(\""+fitsfile+"\","
     syscall += "thresh_pix="+str(thresh_pix)+","

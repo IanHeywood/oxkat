@@ -48,8 +48,7 @@ def main():
 
 
     CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN,USE_SINGULARITY)
-    MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN,USE_SINGULARITY)
-    RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
+    OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
@@ -105,17 +104,20 @@ def main():
             mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
             if len(mask0) > 0:
                 mask = mask0[0]
+                automask = False
             else:
-                mask = 'auto'
+                mask = False
+                automask = cfg.WSC_AUTOMASK
 
             k_outdir = GAINTABLES+'/delaycal_'+filename_targetname+'_'+stamp+'.cc/'
             k_outname = 'delaycal_'+filename_targetname+'_'+stamp
+            k_saveto = 'delaycal_'+filename_targetname+'.parmdb'
           
             gen.print_spacer()
             print(gen.col('Target')+targetname)
             print(gen.col('Measurement Set')+myms)
             print(gen.col('Code')+code)
-            print(gen.col('Mask')+mask)
+            print(gen.col('FITS mask')+str(mask))
 
 
             # Image prefixes
@@ -139,10 +141,8 @@ def main():
                         imgname = data_img_prefix,
                         datacol = 'DATA',
                         bda = True,
-                        automask = False,
-                        autothreshold = False,
-                        localrms = False,
                         mask = mask,
+                        automask = automask,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
@@ -172,7 +172,7 @@ def main():
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_cubical(parset = cfg.CAL_2GC_DELAYCAL_PARSET,
                     myms = myms,
-                    extra_args = '--out-dir '+k_outdir+' --out-name '+k_outname)
+                    extra_args = '--out-dir '+k_outdir+' --out-name '+k_outname+' --k-save-to '+k_saveto)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -190,10 +190,8 @@ def main():
                         imgname = corr_img_prefix,
                         datacol = 'CORRECTED_DATA',
                         bda = True,
-                        automask = False,
-                        autothreshold = False,
-                        localrms = False,
                         mask = mask,
+                        automask = automask,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
@@ -204,7 +202,7 @@ def main():
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
             step['dependency'] = 3
             step['id'] = 'MASK1'+code
-            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
                                     outfile = corr_img_prefix+'-MFS-image.mask1.fits',
                                     thresh = 5.5,

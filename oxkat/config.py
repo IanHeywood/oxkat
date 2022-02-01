@@ -42,17 +42,17 @@ USE_SINGULARITY = True
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = '/software/astro/caracal/STIMELA_IMAGES_1.6.9/'
-CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
+IDIA_CONTAINER_PATH = ['/software/astro/caracal/STIMELA_IMAGES_1.6.9',HOME+'/containers/']
+CHPC_CONTAINER_PATH = ['/apps/chpc/astro/stimela_images/']
 HIPPO_CONTAINER_PATH = None
-NODE_CONTAINER_PATH = HOME+'/containers/'
+NODE_CONTAINER_PATH = [HOME+'/containers/']
 
 CASA_PATTERN = 'casa'
 CLUSTERCAT_PATTERN = 'ddfacet'
 CUBICAL_PATTERN = 'cubical'
 DDFACET_PATTERN = 'ddfacet'
-KILLMS_PATTERN = 'killms'
-MAKEMASK_PATTERN = 'owlcat'
+KILLMS_PATTERN = 'ddfacet'
+OWLCAT_PATTERN = 'owlcat'
 MEQTREES_PATTERN = 'meqtrees'
 PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
@@ -67,13 +67,20 @@ WSCLEAN_PATTERN = 'wsclean'
 # Slurm resource settings
 #
 
+SLURM_ACCOUNT = '' # e.g. b09-mightee-ag, b24-thunderkat-ag
+SLURM_RESERVATION = '' # e.g. lsp-mightee
+
+SLURM_NODELIST = '' # Specify node(s) to use
+SLURM_EXCLUDE = '' # Specify node(s) to exclude
+
+
 SLURM_DEFAULTS = {
 	'TIME': '12:00:00',
 	'PARTITION': 'Main',
 	'NTASKS': '1',
 	'NODES': '1',
 	'CPUS': '8',
-	'MEM': '64GB'
+	'MEM': '64GB',
 }
 
 SLURM_TRICOLOUR = {
@@ -162,6 +169,7 @@ PBS_EXTRALONG = {
 
 # Pre-processing
 PRE_FIELDS = ''                      # Comma-separated list of fields to select from raw MS
+PRE_SCANS = ''                       # Comma-separated list of scans to select from raw MS
 PRE_NCHANS = 1024                    # Integer number of channels in working MS
 PRE_TIMEBIN = '8s'                   # Integration time in working MS
 
@@ -195,6 +203,8 @@ CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on
 CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
 CAL_1GC_UHF_FREQRANGE = '850~900MHz' # Clean part of the band to use for generating UHF 1GC G-solutions
 
+# LINE modifiers
+CAL_1GC_LINE_FILLGAPS = 48
 
 # ------------------------------------------------------------------------
 #
@@ -219,9 +229,14 @@ CAL_2GC_DELAYCAL_PARSET = DATA+'/cubical/2GC_delaycal.parset'
 CAL_3GC_PEEL_NCHAN = 32
 CAL_3GC_PEEL_BRIGGS = -0.6
 CAL_3GC_PEEL_DIR1COLNAME = 'DIR1_DATA'
-CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288_CDFS.reg'
+CAL_3GC_PEEL_REGION = ''  # Specify DS9 peeling region 
+                          # Leave blank to search for <fieldname>*peel*.reg in the current path
 CAL_3GC_PEEL_PARSET = DATA+'/cubical/3GC_peel.parset'
-
+CAL_3GC_FACET_REGION = '' # Specify DS9 region to define tessel centres
+                          # Leave blank to search for <fieldname>*facet*.reg in the current path
+                          # Regions specified here and above will apply to all fields, and so can
+                          # be used to e.g. peel the same source from a compact mosaic rather than
+                          # having to provide multiple copies of the same region on a per-field basis
 
 # ------------------------------------------------------------------------
 #
@@ -231,6 +246,8 @@ CAL_3GC_PEEL_PARSET = DATA+'/cubical/3GC_peel.parset'
 
 WSC_CONTINUE = False
 WSC_FIELD = 0
+WSC_MAKEPSF = False
+WSC_NODIRTY = False
 WSC_STARTCHAN = -1
 WSC_ENDCHAN = -1
 WSC_EVEN = False
@@ -239,6 +256,9 @@ WSC_MINUVL = ''
 WSC_MAXUVL = ''
 WSC_CHANNELSOUT = 8
 WSC_JOINCHANNELS = True
+WSC_INTERVAL0 = None
+WSC_INTERVAL1 = None
+WSC_INTERVALSOUT = None
 WSC_IMSIZE = 10240
 WSC_CELLSIZE = '1.1asec'
 WSC_BRIGGS = -0.3
@@ -252,11 +272,11 @@ WSC_NONEGATIVE = False
 WSC_SOURCELIST = True
 WSC_BDA = False
 WSC_BDAFACTOR = 10
-WSC_NWLAYERSFACTOR = 3
+WSC_NWLAYERSFACTOR = 5
 WSC_PADDING = 1.2
 WSC_NOMODEL = False
 WSC_MASK = 'auto'
-WSC_THRESHOLD = 2e-5
+WSC_THRESHOLD = 1e-5
 WSC_AUTOMASK = 4.0
 WSC_AUTOTHRESHOLD = 1.0
 WSC_LOCALRMS = True
@@ -300,7 +320,7 @@ MAKEMASK_DILATION = 3
 DDF_DDID = 'D*'
 DDF_FIELD = 'F0'
 DDF_COLNAME = 'CORRECTED_DATA'
-DDF_CHUNKHOURS = 3
+DDF_CHUNKHOURS = 0.5
 DDF_DATASORT = 1
 # [Predict]
 DDF_PREDICTCOLNAME = '' # MODEL_DATA or leave empty to disable predict
@@ -325,7 +345,7 @@ DDF_ROBUST = 0.0
 # [Comp]
 DDF_SPARSIFICATION = '0' # [100,30,10] grids every 100th visibility on major cycle 1, every 30th on cycle 2, etc.
 # [Parallel]
-DDF_NCPU = 32
+DDF_NCPU = 12
 # [Cache]
 DDF_CACHERESET = 0
 DDF_CACHEDIR = '.'
@@ -356,7 +376,7 @@ DDF_SSD_MAXMAJORITER = 3
 DDF_SSD_MAXMINORITER = 120000
 DDF_SSD_ENLARGEDATA = 0
 DDF_HOGBOM_DECONVPEAKFACTOR = 0.15
-DDF_HOGBOM_MAXMAJORITER = 6
+DDF_HOGBOM_MAXMAJORITER = 5
 DDF_HOGBOM_MAXMINORITER = 100000
 DDF_HOGBOM_POLYFITORDER = 4
 # [Mask]
@@ -399,7 +419,7 @@ KMS_UVMINMAX = '0.15,8500.0'
 KMS_FIELDID = 0
 KMS_DDID = 0
 # [Actions]
-KMS_NCPU = 40
+KMS_NCPU = 12
 KMS_DOBAR = 0
 KMS_DEBUGPDB = 0
 # [Solvers]
@@ -429,11 +449,11 @@ PYBDSF_CATALOGFORMAT = 'fits'
 #
 
 
-CLUSTERCAT_NDIR = 7
-CLUSTERCAT_CENTRALRADIUS = 0.15
+CLUSTERCAT_NDIR = 8
+CLUSTERCAT_CENTRALRADIUS = 0.0
 CLUSTERCAT_NGEN = 100
 CLUSTERCAT_FLUXMIN = 0.000001
-CLUSTERCAT_NCPU = 32
+CLUSTERCAT_NCPU = 8
 
 
 # ------------------------------------------------------------------------

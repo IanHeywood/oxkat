@@ -18,9 +18,8 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.col()+'FLAG (target flagging & initial mask-making) setup')
+    print(gen.col()+'3GC (facet-based corrections) setup')
     gen.print_spacer()
-
 
     # ------------------------------------------------------------------------------
     #
@@ -31,27 +30,35 @@ def main():
 
     OXKAT = cfg.OXKAT
     DATA = cfg.DATA
+    GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
     TOOLS = cfg.TOOLS
 
 
+    gen.setup_dir(GAINTABLES)
     gen.setup_dir(IMAGES)
     gen.setup_dir(cfg.LOGS)
     gen.setup_dir(cfg.SCRIPTS)
 
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
+
+    if INFRASTRUCTURE == 'idia':
+        myNCPU = 12  # Dial back the parallelism for IDIA nodes
+    elif INFRASTRUCTURE == 'chpc':
+        myNCPU = 23 # Kind of meaningless as this stuff probably won't ever run on CHPC
+    else:
+        myNCPU = 40 # Assumed NCPU for standalone nodes
+    
     if CONTAINER_PATH is not None:
         CONTAINER_RUNNER='singularity exec '
     else:
         CONTAINER_RUNNER=''
 
 
-    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
-    OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
-    TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
-    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
+    DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN,USE_SINGULARITY) 
+    KILLMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.KILLMS_PATTERN,USE_SINGULARITY)
 
 
     # Get target information from project pickle
@@ -65,7 +72,7 @@ def main():
 
     # ------------------------------------------------------------------------------
     #
-    # FLAG recipe definition
+    # 3GC peeling recipe definition
     #
     # ------------------------------------------------------------------------------
 
@@ -92,89 +99,119 @@ def main():
             steps = []        
             filename_targetname = gen.scrub_target_name(targetname)
 
+
             code = gen.get_target_code(targetname)
             if code in codes:
                 code += '_'+str(ii)
                 ii += 1
             codes.append(code)
         
-            # Image prefix
-            img_prefix = IMAGES+'/img_'+myms+'_datablind'
 
-            # Target-specific kill file
-            kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
+            # Look for the zoomed FITS mask for this target
+            mask1 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask1.zoom*.fits'))
+            if len(mask1) > 0:
+                mask = mask1[0]
+            else:
+                mask = 'auto'
+
 
             gen.print_spacer()
             print(gen.col('Target')+targetname)
             print(gen.col('Measurement Set')+myms)
             print(gen.col('Code')+code)
+            print(gen.col('Mask')+mask)
+
+
+            # Image prefixes 
+            ddf_img_prefix = IMAGES+'/img_'+myms+'_DDFpcal'
+            kms_img_prefix = IMAGES+'/img_'+myms+'_DDFkMS'
+
+            # Target-specific kill file
+            kill_file = SCRIPTS+'/kill_3GC_facet_jobs_'+filename_targetname+'.sh'
 
 
             step = {}
             step['step'] = 0
-            step['comment'] = 'Run Tricolour on '+myms
+            step['comment'] = 'Run DDFacet, masked deconvolution of CORRECTED_DATA column of '+myms
             step['dependency'] = None
-            step['id'] = 'TRIC0'+code
-            step['slurm_config'] = cfg.SLURM_TRICOLOUR
-            step['pbs_config'] = cfg.PBS_TRICOLOUR
-            syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_tricolour(myms = myms,
-                        config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
-                        datacol = 'DATA',
-                        fields = '0',
-                        strategy = 'polarisation')
+            step['id'] = 'DDCMA'+code
+            step['slurm_config'] = cfg.SLURM_HIGHMEM
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_ddfacet(mspattern=myms,
+                        imgname=ddf_img_prefix,
+                        ncpu=myNCPU,
+                        mask=mask,
+                        sparsification='5,3,2')
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 1
-            step['comment'] = 'Blind wsclean on DATA column of '+myms
+            step['comment'] = 'Run PyBDSF on the restored DDFacet image to get a source catalogue for clustering'
             step['dependency'] = 0
-            step['id'] = 'WSDBL'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_wsclean(mslist = [myms],
-                        imgname = img_prefix,
-                        datacol = 'DATA',
-                        bda = True,
-                        automask = False,
-                        autothreshold = False,
-                        localrms = False,
-                        mask = False,
-                        absmem = absmem)
+            step['id'] = 'BDSF_'+code
+            pybdsf_call, pybdsf_catalogue = gen.generate_syscall_pybdsf(ddf_img_prefix+'.app.restored.fits')
+            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += pybdsf_call
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 2
-            step['comment'] = 'Make initial cleaning mask for '+targetname
+            step['comment'] = 'Run ClusterCat on the PyBDSF catalogue to chunk up the sky model'
             step['dependency'] = 1
-            step['id'] = 'MASK0'+code
-            syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
-                        outfile = img_prefix+'-MFS-image.mask0.fits',
-                        zoompix = '')[0]
+            step['id'] = 'CCAT_'+code
+            ccat_call, ccat_file = gen.generate_syscall_clustercat(pybdsf_catalogue)
+            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += ccat_call
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 3
-            step['comment'] = 'Backup flag table for '+myms
-            step['dependency'] = 1
-            step['id'] = 'SAVFG'+code
-            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
-            syscall += 'versionname=tricolour1 mslist='+myms
+            step['comment'] = 'Run killMS'
+            step['dependency'] = 2
+            step['id'] = 'KILMS'+code
+            step['slurm_config'] = cfg.SLURM_HIGHMEM
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_killms(myms=myms,
+                        baseimg=ddf_img_prefix,
+                        ncpu=myNCPU,
+                        outsols='killms-cohjones',
+                        nodesfile=ccat_file)
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 4
+            step['comment'] = 'Run DDFacet on CORRECTED_DATA of '+myms+', applying killMS solutions'
+            step['dependency'] = 3
+            step['id'] = 'DDKMA'+code
+            step['slurm_config'] = cfg.SLURM_HIGHMEM
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_ddfacet(mspattern=myms,
+                        imgname=kms_img_prefix,
+                        chunkhours=1,
+                        ncpu=myNCPU,
+                        initdicomodel=ddf_img_prefix+'.DicoModel',
+                        hogbom_maxmajoriter=0,
+                        hogbom_maxminoriter=1000,
+                        mask=mask,
+                        ddsols='killms-cohjones')
             step['syscall'] = syscall
             steps.append(step)
 
 
             target_steps.append((steps,kill_file,targetname))
+
+
 
 
     # ------------------------------------------------------------------------------
@@ -184,7 +221,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_flag_jobs.sh'
+    submit_file = 'submit_3GC_facet_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

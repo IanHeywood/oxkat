@@ -2,6 +2,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import logging
 import sys
 import numpy
 from astropy.coordinates import SkyCoord
@@ -10,19 +11,6 @@ from astropy.time import Time
 from pyrap.tables import table
 from optparse import OptionParser
 
-
-def gi(message,docolour):
-    if docolour:
-        print('\033[92m'+message+'\033[0m')
-    else:
-        print(message)
-
-
-def ri(message,docolour):
-    if docolour:
-        print('\033[91m'+message+'\033[0m')
-    else:
-        print(message)
 
 def rad2deg(xx):
     return 180.0*xx/numpy.pi
@@ -49,9 +37,20 @@ def main():
     else:
             myms = args[0].rstrip('/')
 
-    print('')
-    gi('--MS: '+myms,docolour)
-    print('')
+    logfile = 'msinfo_'+myms+'.log'
+
+    logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
+    stream = logging.StreamHandler()
+    stream.setLevel(logging.DEBUG)
+    streamformat = logging.Formatter('%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
+    stream.setFormatter(streamformat)
+    mylogger = logging.getLogger(__name__)
+    mylogger.setLevel(logging.DEBUG)
+    mylogger.addHandler(stream)
+
+    mylogger.info('')
+    mylogger.info('--MS: '+myms)
+    mylogger.info('')
 
     # ------- GETTING INFORMATION -------
 
@@ -129,18 +128,21 @@ def main():
 
     # ------- PRINTING INFORMATION -------
 
-    print('     Observation start:        '+start_time)
-    print('     Observation end:          '+end_time)
-    print('')
+    mylogger.info('     Observation start:        '+start_time)
+    mylogger.info('     Observation end:          '+end_time)
+    mylogger.info('')
 
-    print('     Track length:             '+str(length)+' s ('+str(round((length/3600.0),2))+' h)')
-    print('     Mean integration time:    '+str(meanexp)+' s')
-    print('')
+    mylogger.info('     Track length:             '+str(length)+' s ('+str(round((length/3600.0),2))+' h)')
+    mylogger.info('     Mean integration time:    '+str(meanexp)+' s')
+    mylogger.info('')
+
 
     if dofield:
-        gi('---- FIELDS:',docolour)
-        print('')
-        gi('     ROW   SOURCE_ID  NAME                  RA[hms]           DEC[dms]          RA[deg]   DEC[deg]  EXP[s]    EXP[h]',docolour)
+
+        mylogger.info('---- FIELDS:')
+        mylogger.info('')
+        mylogger.info('     ROW   SOURCE_ID  NAME                  RA[hms]           DEC[dms]          RA[deg]   DEC[deg]  EXP[s]    EXP[h]')
+
         for i in range(0,len(names)):
             ra_rad = float(dirs[i][0][0])
             dec_rad = float(dirs[i][0][1])
@@ -152,38 +154,48 @@ def main():
             dec_str = coord_str.split(' ')[1]
             exp_s = str(round(field_integrations[i][1],0))
             exp_h = str(round(field_integrations[i][1]/3600.0,3))
-            print('     %-6s%-11s%-22s%-18s%-18s%-10s%-10s%-10s%-10s' % (i,str(ids[i]),names[i],ra_str,dec_str,ra_deg,dec_deg,exp_s,exp_h))
-        print('')
+            
+            mylogger.info('     %-6s%-11s%-22s%-18s%-18s%-10s%-10s%-10s%-10s' % (i,str(ids[i]),names[i],ra_str,dec_str,ra_deg,dec_deg,exp_s,exp_h))
+
+        mylogger.info('')
 
     if doscan:
-        gi('---- SCANS:',docolour)
-        print('')
-        gi('     SCAN  SOURCE_ID  NAME                  LENGTH[s]         INTS        INTENT',docolour)
+
+        mylogger.info('---- SCANS:')
+        mylogger.info('')
+        mylogger.info('     SCAN  SOURCE_ID  NAME                  LENGTH[s]         INTS        INTENT')
+
         for sc in scanlist:
-            print('     %-6s%-11s%-22s%-18s%-12s%s' % (sc[0],sc[1],names[sc[1]],sc[2],sc[3],sc[4]))
-        print('')
+            mylogger.info('     %-6s%-11s%-22s%-18s%-12s%s' % (sc[0],sc[1],names[sc[1]],sc[2],sc[3],sc[4]))
+
+        mylogger.info('')
 
     if dospw:
-        gi('---- SPECTRAL WINDOWS:',docolour)
-        print('')
-        gi('     ROW   CHANS      WIDTH[MHz]            REF_FREQ[MHz]',docolour)
+
+        mylogger.info('---- SPECTRAL WINDOWS:')
+        mylogger.info('')
+        mylogger.info('     ROW   CHANS      WIDTH[MHz]            REF_FREQ[MHz]')
+
         for i in range(0,nspw):
-                print('     %-6s%-11s%-22s%-14s' % (i,str(nchans[i]),str(chanwidths[i]),str(spwfreqs[i]/1e6)))
-        print('')
+                mylogger.info('     %-6s%-11s%-22s%-14s' % (i,str(nchans[i]),str(chanwidths[i]),str(spwfreqs[i]/1e6)))
+
+        mylogger.info('')
 
     if doant:
-        gi('---- ANTENNAS:',docolour)
-        print('')
-        print('     '+str(len(usedants))+' / '+str(nant)+' antennas in the main table')
-        print('')
-        gi('     ROW   NAME       POSITION',docolour)
+
+        mylogger.info('---- ANTENNAS:')
+        mylogger.info('')
+        mylogger.info('     '+str(len(usedants))+' / '+str(nant)+' antennas in the main table')
+        mylogger.info('')
+        mylogger.info('     ROW   NAME       POSITION')
+
         for i in range(0,nant):
                 if i in usedants:
-                        print('     %-6s%-11s%-14s' % (i,(antnames[i]),str(antpos[i])))
+                        mylogger.info('     %-6s%-11s%-14s' % (i,(antnames[i]),str(antpos[i])))
                 else:
-                        ri('     %-6s%-11s%-14s' % (i,(antnames[i]),str(antpos[i])),docolour)
-        print('')
+                        mylogger.info('     %-6s%-11s%-14s' % (i,(antnames[i]),str(antpos[i])))
 
+        mylogger.info('')
 
 if __name__ == '__main__':
         main()

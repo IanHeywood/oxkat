@@ -105,8 +105,10 @@ def main():
             mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
             if len(mask0) > 0:
                 mask = mask0[0]
+                automask = False
             else:
-                mask = 'auto'
+                mask = False
+                automask = cfg.WSC_AUTOMASK
 
             k_outdir = GAINTABLES+'/delaycal_'+filename_targetname+'_'+stamp+'.cc/'
             k_outname = 'delaycal_'+filename_targetname+'_'+stamp
@@ -116,7 +118,7 @@ def main():
             print(gen.col('Target')+targetname)
             print(gen.col('Measurement Set')+myms)
             print(gen.col('Code')+code)
-            print(gen.col('Mask')+mask)
+            print(gen.col('FITS mask')+str(mask))
 
 
             # Image prefixes
@@ -140,10 +142,8 @@ def main():
                         imgname = data_img_prefix,
                         datacol = 'DATA',
                         bda = True,
-                        automask = False,
-                        autothreshold = False,
-                        localrms = False,
                         mask = mask,
+                        automask = automask,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
@@ -191,10 +191,8 @@ def main():
                         imgname = corr_img_prefix,
                         datacol = 'CORRECTED_DATA',
                         bda = True,
-                        automask = False,
-                        autothreshold = False,
-                        localrms = False,
                         mask = mask,
+                        automask = automask,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)

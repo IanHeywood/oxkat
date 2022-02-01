@@ -560,9 +560,9 @@ def generate_syscall_wsclean(mslist,
             syscall += '-fits-mask '+mask+' '
     if automask:
         syscall += '-auto-mask '+str(automask)+' '
-    if autothreshold:
+#    if autothreshold:
         syscall += '-auto-threshold '+str(autothreshold)+' '
-    if localrms:
+#    if localrms:
         syscall += '-local-rms '
     if threshold:
         syscall += '-threshold '+str(threshold)+' '

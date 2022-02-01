@@ -81,13 +81,15 @@ def main():
         targetname = target_names[tt]
         myms = target_ms[tt]
         CAL_3GC_PEEL_REGION = cfg.CAL_3GC_PEEL_REGION
+        skip = False
 
         if not o.isdir(myms):
             gen.print_spacer()
             print(gen.col('Target')+targetname)
             print(gen.col('MS')+'not found, skipping')
+            skip = True
 
-        elif CAL_3GC_PEEL_REGION == '':
+        if CAL_3GC_PEEL_REGION == '':
             region = glob.glob('*'+targetname+'*peel*.reg')
             if len(region) == 0:
                 CAL_3GC_PEEL_REGION = ''
@@ -96,14 +98,15 @@ def main():
 
         if not o.isfile(CAL_3GC_PEEL_REGION):
             gen.print_spacer()
-            print(gen.col()+'Peeling region file not found.')
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
             print(gen.col()+'Please provide a DS9 region file definining the source you wish to peel.')
             print(gen.col()+'This can be specified in the config or by placing a file of the form:')
             print(gen.col()+'       *'+targetname+'*peel*.reg')
             print(gen.col()+'in this folder. Skipping.')
-            gen.print_spacer()
+            skip = True
 
-        else:
+        if not skip:
 
             steps = []        
             filename_targetname = gen.scrub_target_name(targetname)
@@ -134,12 +137,12 @@ def main():
             print(gen.col('Measurement Set')+myms)
             print(gen.col('Code')+code)
             print(gen.col('Mask')+mask)
-            print(gen.col('Peeling region')+cfg.CAL_3GC_PEEL_REGION)
+            print(gen.col('Peeling region')+CAL_3GC_PEEL_REGION)
 
 
             # Image prefixes
             prepeel_img_prefix = IMAGES+'/img_'+myms+'_prepeel'
-            dir1_img_prefix = prepeel_img_prefix+'-'+cfg.CAL_3GC_PEEL_REGION.split('/')[-1].split('.')[0]
+            dir1_img_prefix = prepeel_img_prefix+'-'+CAL_3GC_PEEL_REGION.split('/')[-1].split('.')[0]
 
             # Target-specific kill file
             kill_file = SCRIPTS+'/kill_3GC_peel_jobs_'+filename_targetname+'.sh'
@@ -176,7 +179,7 @@ def main():
             step['id'] = 'IMSPL'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python '+OXKAT+'/3GC_split_model_images.py '
-            syscall += '--region '+cfg.CAL_3GC_PEEL_REGION+' '
+            syscall += '--region '+CAL_3GC_PEEL_REGION+' '
             syscall += '--prefix '+prepeel_img_prefix+' '
             step['syscall'] = syscall
             steps.append(step)

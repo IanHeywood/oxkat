@@ -87,14 +87,34 @@ def main():
 
         targetname = target_names[tt]
         myms = target_ms[tt]
+        CAL_3GC_FACET_REGION = cfg. CAL_3GC_FACET_REGION
+        skip = False
 
         if not o.isdir(myms):
 
             gen.print_spacer()
             print(gen.col('Target')+targetname)
             print(gen.col('MS')+'not found, skipping')
+            skip = True
 
-        else:
+        if CAL_3GC_FACET_REGION == '':
+            region = glob.glob('*'+targetname+'*facet*.reg')
+            if len(region) == 0:
+                CAL_3GC_FACET_REGION = ''
+            else:
+                CAL_3GC_FACET_REGION = region[0]
+
+        if not o.isfile(CAL_3GC_FACET_REGION):
+            gen.print_spacer()
+            print(gen.col('Target')+targetname)
+            print(gen.col('Measurement Set')+myms)
+            print(gen.col()+'Please provide a DS9 region file definining the tessel centres for killMS.')
+            print(gen.col()+'This can be specified in the config or by placing a file of the form:')
+            print(gen.col()+'       *'+targetname+'*facet*.reg')
+            print(gen.col()+'in this folder. Skipping.')
+            skip = True    
+
+        if not skip:
 
             steps = []        
             filename_targetname = gen.scrub_target_name(targetname)
@@ -115,24 +135,12 @@ def main():
                 mask = 'auto'
 
 
-            # Look for the DS9 region file that defines the tessel centres for this target
-            region = glob.glob('*'+targetname+'*.reg')
-            if len(region) == 0:
-                gen.print_spacer()
-                print(gen.col()+'Please provide a region file of the form:')
-                print(gen.col()+'       *'+targetname+'*.reg')
-                print(gen.col()+'for this field.')
-                gen.print_spacer()
-                sys.exit()
-            else:
-                region = region[0]
-
             gen.print_spacer()
             print(gen.col('Target')+targetname)
             print(gen.col('Measurement Set')+myms)
             print(gen.col('Code')+code)
             print(gen.col('Mask')+mask)
-            print(gen.col('Region')+region)
+            print(gen.col('Region')+CAL_3GC_FACET_REGION)
 
 
             # Image prefixes
@@ -166,7 +174,7 @@ def main():
             step['dependency'] = 0
             step['id'] = 'RG2NP'+code
             syscall = CONTAINER_RUNNER+DDFACET_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python3 '+TOOLS+'/reg2npy.py '+region
+            syscall += 'python3 '+TOOLS+'/reg2npy.py '+CAL_3GC_FACET_REGION
             step['syscall'] = syscall
             steps.append(step)
 
@@ -183,7 +191,7 @@ def main():
                         baseimg=ddf_img_prefix,
                         ncpu=myNCPU,
                         outsols='killms-cohjones',
-                        nodesfile=region+'.npy')
+                        nodesfile=CAL_3GC_FACET_REGION+'.npy')
             step['syscall'] = syscall
             steps.append(step)
 

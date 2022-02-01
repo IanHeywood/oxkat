@@ -48,7 +48,7 @@ HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = [HOME+'/containers/']
 
 CASA_PATTERN = 'casa'
-CLUSTERCAT_PATTERN = 'ddfacet'
+CLUSTERCAT_PATTERN = 'ddfacet-12'
 CUBICAL_PATTERN = 'cubical'
 DDFACET_PATTERN = 'ddfacet-12'
 KILLMS_PATTERN = 'killMS_v.3'
@@ -58,7 +58,7 @@ PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
 SHADEMS_PATTERN = 'shadems'
 TRICOLOUR_PATTERN = 'tricolour'
-WSCLEAN_PATTERN = 'wsclean'
+WSCLEAN_PATTERN = 'wsclean_'
 #WSCLEANIDG_PATTERN = 'wsclean*idg'
 
 

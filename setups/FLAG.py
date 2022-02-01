@@ -49,7 +49,6 @@ def main():
 
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
-    CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN,USE_SINGULARITY)
     OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
@@ -173,33 +172,6 @@ def main():
             syscall += 'versionname=tricolour1 mslist='+myms
             step['syscall'] = syscall
             steps.append(step)
-
-
-            # step = {}
-            # step['step'] = 4
-            # step['comment'] = 'Add CORRECTED_DATA column to '+myms
-            # step['dependency'] = 3
-            # step['id'] = 'ADCOR'+code
-            # syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            # syscall += 'python '+TOOLS+'/add_MS_column.py '
-            # syscall += '--colname CORRECTED_DATA '
-            # syscall += myms
-            # step['syscall'] = syscall
-            # steps.append(step)
-
-
-            # step = {}
-            # step['step'] = 5
-            # step['comment'] = 'Copy DATA to CORRECTED_DATA for '+myms
-            # step['dependency'] = 4
-            # step['id'] = 'CPDAT'+code
-            # syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            # syscall += 'python '+TOOLS+'/copy_MS_column.py '
-            # syscall += '--fromcol DATA '
-            # syscall += '--tocol CORRECTED_DATA '
-            # syscall += myms
-            # step['syscall'] = syscall
-            # steps.append(step)
 
 
             target_steps.append((steps,kill_file,targetname))

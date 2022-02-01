@@ -64,7 +64,7 @@ def main():
 
     logging.info(myms+' | '+str(len(ids))+' fields | '+str(len(scans))+' scans')
     #header = 'Scan  Field        ID    t[iso]                    t[s]                 t0[s]                t1[s]                int0    int1    Duration[m]  N_int'
-    header = 't[iso]                       Scan  Field Name         SunRA[deg]   SunDec[deg]  SunRA[hms]       SunDec[dms]      SunSep[deg]  SunAlt[deg]  MoonRA[deg]  MoonDec[deg] MoonRA[hms]      MoonDec[dms]     MoonSep[deg] MoonAlt[deg]'
+    header = '# t[iso]                     Scan  Field Name         SunRA[deg]   SunDec[deg]  SunRA[hms]       SunDec[dms]      SunSep[deg]  SunAlt[deg]  MoonRA[deg]  MoonDec[deg] MoonRA[hms]      MoonDec[dms]     MoonSep[deg] MoonAlt[deg]'
     logging.info('-'*len(header))
     logging.info(header)
     logging.info('-'*len(header))

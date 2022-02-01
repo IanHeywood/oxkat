@@ -42,16 +42,16 @@ USE_SINGULARITY = True
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = '/software/astro/caracal/STIMELA_IMAGES_1.6.9/'
-CHPC_CONTAINER_PATH = '/apps/chpc/astro/stimela_images/'
+IDIA_CONTAINER_PATH = ['/software/astro/caracal/STIMELA_IMAGES_1.6.9',HOME+'/containers/']
+CHPC_CONTAINER_PATH = ['/apps/chpc/astro/stimela_images/']
 HIPPO_CONTAINER_PATH = None
-NODE_CONTAINER_PATH = HOME+'/containers/'
+NODE_CONTAINER_PATH = [HOME+'/containers/']
 
 CASA_PATTERN = 'casa'
 CLUSTERCAT_PATTERN = 'ddfacet'
 CUBICAL_PATTERN = 'cubical'
 DDFACET_PATTERN = 'ddfacet'
-KILLMS_PATTERN = 'killms'
+KILLMS_PATTERN = 'ddfacet'
 MAKEMASK_PATTERN = 'owlcat'
 MEQTREES_PATTERN = 'meqtrees'
 PYBDSF_PATTERN = 'pybdsf'
@@ -72,6 +72,7 @@ SLURM_RESERVATION = '' # e.g. lsp-mightee
 
 SLURM_NODELIST = '' # Specify node(s) to use
 SLURM_EXCLUDE = '' # Specify node(s) to exclude
+
 
 SLURM_DEFAULTS = {
 	'TIME': '12:00:00',
@@ -228,9 +229,14 @@ CAL_2GC_DELAYCAL_PARSET = DATA+'/cubical/2GC_delaycal.parset'
 CAL_3GC_PEEL_NCHAN = 32
 CAL_3GC_PEEL_BRIGGS = -0.6
 CAL_3GC_PEEL_DIR1COLNAME = 'DIR1_DATA'
-CAL_3GC_PEEL_REGION = DATA+'/peeling/PKS0326-288_CDFS.reg'
+CAL_3GC_PEEL_REGION = ''  # Specify DS9 peeling region 
+                          # Leave blank to search for <fieldname>*peel*.reg in the current path
 CAL_3GC_PEEL_PARSET = DATA+'/cubical/3GC_peel.parset'
-
+CAL_3GC_FACET_REGION = '' # Specify DS9 region to define tessel centres
+                          # Leave blank to search for <fieldname>*facet*.reg in the current path
+                          # Regions specified here and above will apply to all fields, and so can
+                          # be used to e.g. peel the same source from a compact mosaic rather than
+                          # having to provide multiple copies of the same region on a per-field basis
 
 # ------------------------------------------------------------------------
 #
@@ -314,10 +320,10 @@ MAKEMASK_DILATION = 3
 DDF_DDID = 'D*'
 DDF_FIELD = 'F0'
 DDF_COLNAME = 'CORRECTED_DATA'
-DDF_CHUNKHOURS = 3
+DDF_CHUNKHOURS = 0.5
 DDF_DATASORT = 1
 # [Predict]
-DDF_PREDICTCOLNAME = 'MODEL_DATA' # MODEL_DATA or set to None to disable predict
+DDF_PREDICTCOLNAME = '' # MODEL_DATA or leave empty to disable predict
 DDF_INITDICOMODEL = ''
 # [Output]
 DDF_OUTPUTALSO = 'oenNS'
@@ -339,7 +345,7 @@ DDF_ROBUST = 0.0
 # [Comp]
 DDF_SPARSIFICATION = '0' # [100,30,10] grids every 100th visibility on major cycle 1, every 30th on cycle 2, etc.
 # [Parallel]
-DDF_NCPU = 32
+DDF_NCPU = 12
 # [Cache]
 DDF_CACHERESET = 0
 DDF_CACHEDIR = '.'
@@ -370,7 +376,7 @@ DDF_SSD_MAXMAJORITER = 3
 DDF_SSD_MAXMINORITER = 120000
 DDF_SSD_ENLARGEDATA = 0
 DDF_HOGBOM_DECONVPEAKFACTOR = 0.15
-DDF_HOGBOM_MAXMAJORITER = 6
+DDF_HOGBOM_MAXMAJORITER = 5
 DDF_HOGBOM_MAXMINORITER = 100000
 DDF_HOGBOM_POLYFITORDER = 4
 # [Mask]
@@ -413,7 +419,7 @@ KMS_UVMINMAX = '0.15,8500.0'
 KMS_FIELDID = 0
 KMS_DDID = 0
 # [Actions]
-KMS_NCPU = 40
+KMS_NCPU = 12
 KMS_DOBAR = 0
 KMS_DEBUGPDB = 0
 # [Solvers]

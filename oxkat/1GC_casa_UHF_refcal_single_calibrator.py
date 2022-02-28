@@ -1,7 +1,9 @@
 # ian.heywood@physics.ox.ac.uk
+# UHF calibration is experimental
 
 
 import glob
+import pickle
 import shutil
 import time
 
@@ -19,10 +21,10 @@ def stamp():
 # ------- Parameters
 
 
-myuvrange = CAL_1GC_UVRANGE
-delaycut = CAL_1GC_DELAYCUT
 gapfill = CAL_1GC_FILLGAPS
-
+myuvrange = CAL_1GC_UHF_UVRANGE 
+myspw = '*:'+CAL_1GC_UHF_FREQRANGE
+delaycut = CAL_1GC_DELAYCUT
 
 
 # ------- Setup names
@@ -61,22 +63,21 @@ ftab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux3'
 # --------------------------------------------------------------- #
 
 
-
 # ------- Setup models
 
 
 if primary_tag == '1934':
     setjy(vis=myms,
-        field=bpcal,
-        standard='Perley-Butler 2010',
+        field=bpcal_name,
+        standard='Stevens-Reynolds 2016',
         scalebychan=True,
         usescratch=True)
     
     
 elif primary_tag == '0408':
-    bpcal_mod = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
+    bpcal_mod = ([27.907,0.0,0.0,0.0],[-1.205],'850MHz')
     setjy(vis=myms,
-        field=bpcal,
+        field=bpcal_name,
         standard='manual',
         fluxdensity=bpcal_mod[0],
         spix=bpcal_mod[1],
@@ -85,12 +86,31 @@ elif primary_tag == '0408':
         usescratch=True)
 
 
+elif primary_tag == 'other':
+    setjy(vis=myms,
+        field=bpcal_name,
+        standard='Perley-Butler 2013',
+        scalebychan=True,
+        usescratch=True)
+
+
+for i in range(0,len(pcals)):
+    pcal = pcals[i]
+    setjy(vis =myms,
+        field = pcal,
+        standard = 'manual',
+        fluxdensity = [1.0,0,0,0],
+        reffreq = '850MHz',
+        usescratch = True)
+
+
 # ------- K0 (primary)
 
 
 gaincal(vis=myms,
     field=bpcal,
     #uvrange=myuvrange,
+    #spw=myspw,
     caltable=ktab0,
     refant = str(ref_ant),
     gaintype = 'K',
@@ -104,9 +124,10 @@ gaincal(vis=myms,
 gaincal(vis=myms,
     field=bpcal,
     uvrange=myuvrange,
+    spw=myspw,
     caltable=gtab0,
     gaintype='G',
-    solint='inf',
+    solint='int',
     calmode='p',
     minsnr=5,
     gainfield=[bpcal],
@@ -185,6 +206,7 @@ flagmanager(vis=myms,
 gaincal(vis=myms,
     field=bpcal,
     #uvrange=myuvrange,
+    #spw=myspw,
     caltable=ktab1,
     refant = str(ref_ant),
     gaintype = 'K',
@@ -201,9 +223,10 @@ gaincal(vis=myms,
 gaincal(vis=myms,
     field=bpcal,
     uvrange=myuvrange,
+    spw=myspw,
     caltable=gtab1,
     gaintype='G',
-    solint='inf',
+    solint='int',
     calmode='p',
     minsnr=5,
     gainfield=[bpcal,bpcal],
@@ -262,9 +285,10 @@ applycal(vis=myms,
 gaincal(vis = myms,
     field = bpcal,
     uvrange = myuvrange,
+    spw = myspw,
     caltable = gtab2,
     refant = str(ref_ant),
-    solint = 'inf',
+    solint = '32s',
     solnorm = False,
     combine = '',
     minsnr = 3,
@@ -274,6 +298,7 @@ gaincal(vis = myms,
     gainfield = [bpcal,bpcal,bpcal],
     interp = ['nearest','nearest','nearest'],
     append = False)
+
 
 
 # ------- Apply final tables to targets
@@ -286,7 +311,7 @@ for i in range(0,len(targets)):
     related_pcal = target_cal_map[i]
 
 
-    # --- Correct targets with K3, G1, B1, G3
+    # --- Correct targets with K1, G1, B1, G2
 
 
     applycal(vis=myms,

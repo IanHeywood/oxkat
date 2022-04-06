@@ -345,7 +345,7 @@ DDF_ROBUST = 0.0
 # [Comp]
 DDF_SPARSIFICATION = '0' # [100,30,10] grids every 100th visibility on major cycle 1, every 30th on cycle 2, etc.
 # [Parallel]
-DDF_NCPU = 12
+DDF_NCPU = 16
 # [Cache]
 DDF_CACHERESET = 0
 DDF_CACHEDIR = '.'
@@ -419,7 +419,7 @@ KMS_UVMINMAX = '0.15,8500.0'
 KMS_FIELDID = 0
 KMS_DDID = 0
 # [Actions]
-KMS_NCPU = 12
+KMS_NCPU = 16
 KMS_DOBAR = 0
 KMS_DEBUGPDB = 0
 # [Solvers]

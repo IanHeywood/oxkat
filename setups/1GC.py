@@ -4,7 +4,6 @@
 
 import glob
 import os.path as o
-import pickle
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
@@ -84,7 +83,7 @@ def main():
 
         step = {}
         step['step'] = 1
-        step['comment'] = 'Run setup script to generate project_info pickle'
+        step['comment'] = 'Run setup script to generate project_info json file'
         step['dependency'] = 0
         step['id'] = 'SETUP'+code
         syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
@@ -232,7 +231,7 @@ def main():
 
         step = {}
         step['step'] = 1
-        step['comment'] = 'Run setup script to generate project_info pickle'
+        step['comment'] = 'Run setup script to generate project_info json file'
         step['dependency'] = 0
         step['id'] = 'SETUP'+code
         syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''

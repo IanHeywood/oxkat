@@ -3,8 +3,8 @@
 
 
 import glob
+import json
 import os.path as o
-import pickle
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
@@ -47,9 +47,10 @@ def main():
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
-    # Get secondary calibrator information from project pickle
+    # Get secondary calibrator information from project info json file
 
-    project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
+    with open('project_info.json') as f:
+        project_info = json.load(f)
 
     myms = project_info['master_ms']
     pcal_names = project_info['secondary_names']

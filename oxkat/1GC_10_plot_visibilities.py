@@ -2,8 +2,8 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import json
 import os.path as o
-import pickle
 import subprocess
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
@@ -20,7 +20,10 @@ def main():
     gen.setup_dir(VISPLOTS)
 
 
-    project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
+    with open('project_info.json') as f:
+        project_info = json.load(f)
+
+
     myms = project_info['master_ms']
     bpcal = project_info['primary_id']
     pcals = project_info['secondary_ids']

@@ -3,9 +3,9 @@
 
 
 import glob
+import json
 import os
 import os.path as o
-import pickle
 import subprocess
 import sys
 import tarfile
@@ -16,11 +16,15 @@ from oxkat import generate_jobs as gen
 from oxkat import config as cfg
 
 
-# Python2 pickle fix for wsclean container
-import oxkat.casa_read_project_info as pp
+
+
 
 
 def main():
+
+
+    with open('project_info.json') as f:
+        project_info = json.load(f)
 
 
     remove_models = True
@@ -29,18 +33,11 @@ def main():
     DATA = cfg.DATA
     CALMODELPATH = DATA+'/calmodels/'
 
-    # Uncomment when wsclean container comes with python3 as standard...
-    # project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
-    # myms = project_info['master_ms']
-    # primary_id = project_info['primary_id']
-    # primary_name = project_info['primary_name']
-    # primary_tag = project_info['primary_tag']
 
-    # ...using the python 2 pickle fix until then.
-    myms = pp.myms
-    primary_id = pp.bpcal
-    primary_name = pp.bpcal_name
-    primary_tag = pp.primary_tag
+    myms = project_info['master_ms']
+    primary_id = project_info['primary_id']
+    primary_name = project_info['primary_name']
+    primary_tag = project_info['primary_tag']
 
 
     if cfg.CAL_1GC_PRIMARY_MODEL == 'auto':

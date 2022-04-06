@@ -2,11 +2,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-# Spoonfeed CASA's python2 the contents of the python3 project_info.p file
-# without having to ruin my life with string formats.
-
-
-import pickle
+import json
 
 
 def str_iterator(inlist):
@@ -15,9 +11,12 @@ def str_iterator(inlist):
 		xx.append(str(yy))
 	return xx
 
-project_info = pickle.load(open('project_info.p','rb'))
+
+with open('project_info.json') as f:
+	project_info = json.load(f)
 
 myms = str(project_info['master_ms'])
+band = str(project_info['band'])
 nchan = int(project_info['nchan'])
 ref_ant = str(project_info['ref_ant'])
 bpcal = str(project_info['primary_id'])

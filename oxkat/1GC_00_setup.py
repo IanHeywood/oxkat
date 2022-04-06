@@ -1,12 +1,12 @@
-    #!/usr/bin/env python
+#!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 
 import glob
+import json
 import logging
 import numpy
 import os.path as o
-import pickle
 import sys
 import time
 
@@ -17,23 +17,33 @@ sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), ".."
 from oxkat import config as cfg
 
 
+bands = [(815e6,1080e6,'UHF'),
+    (856e6,1711e6,'L'),
+    (1750e6,2624e6,'S0'),
+    (1969e6,2843e6,'S1'), # 2406.25
+    (2188e6,3062e6,'S2'), # 2625.00
+    (2046e6,2920e6,'S3'), # 2483.75
+    (2625e6,3499e6,'S4')] # 3062.50
+
+
 def get_dummy():
 
     """ Returns dummy project_info dictionary to set up its structure"""
 
     project_info = {'master_ms':'myms.ms',
-        'nchan':4096,
+        'nchan':'4096',
+        'band':'L',
         'ref_ant':['-1'],
         'primary_name':'1934-638',
-        'primary_id':0,
+        'primary_id':'0',
         'primary_tag':'1934',
         'secondary_names':['mysecondary'],
-        'secondary_ids':[1],
+        'secondary_ids':['1'],
         'secondary_dirs':[(180.5,-56.0)],
         'target_names':['mytarget'],
-        'target_ids':[2],
+        'target_ids':['2'],
         'target_dirs':[(180.0,-56.8)],
-        'target_cal_map':[0],
+        'target_cal_map':['0'],
         'target_ms':['mytarget.ms']}
 
     return project_info
@@ -64,7 +74,7 @@ def get_refant(myms,field_id):
     idx_list = []
 
     main_tab = table(myms,ack=False)
-    field_id = 0
+    field_id = int(field_id)
     for i in range(0,len(ref_pool)):
         ant = ref_pool[i]
         if ant in ant_names:
@@ -104,6 +114,31 @@ def get_nchan(myms):
     nchan = spw_table.getcol('NUM_CHAN')[0]
     spw_table.close()
     return nchan
+
+
+def get_band(myms):
+
+    """ Returns the minimum and maxmium frequency
+    and band estimate.
+    """
+
+    spw_table = table(myms+'/SPECTRAL_WINDOW',ack=False)
+    chans = spw_table.getcol('CHAN_FREQ')[0]
+    min_freq = chans[0]
+    max_freq = chans[-1]
+    mid_freq = numpy.mean((min_freq,max_freq))
+    bw = max_freq - min_freq
+    spw_table.close()
+
+    f0s = []
+    for band in bands:
+        fc = numpy.mean((band[0],band[1]))
+        f0s.append(fc)
+    diffs = numpy.abs(f0s-mid_freq)
+    idx = diffs.tolist().index(numpy.min(diffs))
+    band = bands[idx][2]
+
+    return min_freq,mid_freq,max_freq,bw,band
 
 
 def get_antnames(myms):
@@ -182,7 +217,7 @@ def get_primary_candidates(myms,
             if state == primary_state or state == unknown_state:
                 candidate_dirs.append(field_dir)
                 candidate_names.append(field_name)
-                candidate_ids.append(field_id)
+                candidate_ids.append(str(field_id))
         sub_tab.close()
     main_tab.close()
 
@@ -210,9 +245,9 @@ def get_secondaries(myms,
         states = numpy.unique(sub_tab.getcol('STATE_ID'))
         for state in states:
             if state == secondary_state:
-                secondary_dirs.append(field_dir)
+                secondary_dirs.append(field_dir[0].tolist())
                 secondary_names.append(field_name)
-                secondary_ids.append(field_id)
+                secondary_ids.append(str(field_id))
         sub_tab.close()
     main_tab.close()
 
@@ -240,9 +275,9 @@ def get_targets(myms,
         states = numpy.unique(sub_tab.getcol('STATE_ID'))
         for state in states:
             if state == target_state:
-                target_dirs.append(field_dir)
+                target_dirs.append(field_dir[0].tolist())
                 target_names.append(field_name)
-                target_ids.append(field_id)
+                target_ids.append(str(field_id))
         sub_tab.close()
     main_tab.close()
 
@@ -273,12 +308,12 @@ def get_primary_tag(candidate_dirs,
             primary_sep = calcsep(candidate_dir[0],candidate_dir[1],cal[1],cal[2])
             if primary_sep < 3e-3:
                 primary_name = candidate_name
-                primary_id = candidate_id
+                primary_id = str(candidate_id)
                 primary_tag = cal[0]
 
     if primary_tag == '':
         primary_name = candidate_names[0]
-        primary_id = candidate_ids[0]
+        primary_id = str(candidate_ids[0])
         primary_tag = 'other'
         primary_sep = 0.0
 
@@ -295,17 +330,17 @@ def target_cal_pairs(target_dirs,target_names,target_ids,
     target_cal_separations = []
 
     for i in range(0,len(target_dirs)):
-        ra_target = target_dirs[i][0][0]
-        dec_target = target_dirs[i][0][1]
+        ra_target = target_dirs[i][0]
+        dec_target = target_dirs[i][1]
         separations = []
         for j in range(0,len(secondary_dirs)):
-            ra_cal = secondary_dirs[j][0][0]
-            dec_cal = secondary_dirs[j][0][1]
+            ra_cal = secondary_dirs[j][0]
+            dec_cal = secondary_dirs[j][1]
             separations.append(calcsep(ra_target,dec_target,ra_cal,dec_cal))
         separations = numpy.array(separations)
         secondary_index = numpy.where(separations == numpy.min(separations))[0][0]
 
-        target_cal_map.append(secondary_ids[secondary_index])
+        target_cal_map.append(str(secondary_ids[secondary_index]))
         target_cal_separations.append(round(separations[secondary_index],3))
 
     return target_cal_map,target_cal_separations
@@ -340,9 +375,8 @@ def main():
     mylogger.addHandler(stream)
 
     mylogger.info('Examining '+myms)
-    mylogger.info('Please wait...')
 
-    outpick = 'project_info.p'
+    outfile = 'project_info.json'
 
 
     project_info = get_dummy()
@@ -376,6 +410,18 @@ def main():
 
     # ------------------------------------------------------------------------------
     #
+    # DEDUCE THE BAND
+
+    min_freq,mid_freq,max_freq,bw,band = get_band(myms)
+    mylogger.info('Minimum frequency is '+str(min_freq/1e6)+' MHz')
+    mylogger.info('Maximum frequency is '+str(max_freq/1e6)+' MHz')
+    mylogger.info('Central frequency is '+str(mid_freq/1e6)+' MHz')
+    mylogger.info('Bandwidth is '+str(bw/1e6)+' MHz')
+    mylogger.info('These are '+band+' band observations')
+
+
+    # ------------------------------------------------------------------------------
+    #
     # STATE IDs
 
     primary_state, secondary_state, target_state, unknown_state = get_states(myms,
@@ -389,7 +435,7 @@ def main():
     # PRIMARY CALIBRATOR
 
     if CAL_1GC_PRIMARY != 'auto':
-        candidate_ids = [int(x) for x in CAL_1GC_PRIMARY.split(',')]
+        candidate_ids = [str(x) for x in CAL_1GC_PRIMARY.split(',')]
         candidate_names = [field_names[i] for i in candidate_ids]
         candidate_dirs = [field_dirs[i][0] for i in candidate_ids]
     else:
@@ -425,7 +471,7 @@ def main():
     # SECONDARY CALIBRATORS
 
     if CAL_1GC_SECONDARIES != 'auto':
-        secondary_ids = [int(x) for x in CAL_1GC_SECONDARIES.split(',')]
+        secondary_ids = [str(x) for x in CAL_1GC_SECONDARIES.split(',')]
         secondary_ids = list(dict.fromkeys(secondary_ids)) # 
         secondary_names = [field_names[i] for i in secondary_ids]
         secondary_dirs = [field_dirs[i] for i in secondary_ids]
@@ -442,7 +488,7 @@ def main():
     # TARGETS
 
     if CAL_1GC_TARGETS != 'auto':
-        target_ids = [int(x) for x in CAL_1GC_TARGETS.split(',')]
+        target_ids = [str(x) for x in CAL_1GC_TARGETS.split(',')]
         target_names = [field_names[i] for i in target_ids]
         target_dirs = [field_dirs[i][0] for i in target_ids]
     else:
@@ -494,11 +540,11 @@ def main():
 
         # Re-calculate separations in case of user-specified pairings that don't invoke 
         # the automatic calculation
-        ra_target = target_dirs[i][0][0]
-        dec_target = target_dirs[i][0][1]
+        ra_target = target_dirs[i][0]
+        dec_target = target_dirs[i][1]
         separations = []
-        ra_cal = secondary_dirs[k][0][0]
-        dec_cal = secondary_dirs[k][0][1]
+        ra_cal = secondary_dirs[k][0]
+        dec_cal = secondary_dirs[k][1]
         sep = round(calcsep(ra_target,dec_target,ra_cal,dec_cal),3)
         sep = str(sep)+' deg'
 
@@ -512,13 +558,13 @@ def main():
         mylogger.info('%-24s %-50s' % (targ, target_ms[i]))
     
     mylogger.info('')
-    mylogger.info('Writing '+outpick)
+    mylogger.info('Writing '+outfile)
 
     project_info['master_ms'] = myms
-    project_info['nchan'] = nchan
+    project_info['nchan'] = str(nchan)
     project_info['ref_ant'] = ref_ant
     project_info['primary_name'] = primary_name
-    project_info['primary_id'] = primary_id
+    project_info['primary_id'] = str(primary_id)
     project_info['primary_tag'] = primary_tag
     project_info['secondary_names'] = secondary_names
     project_info['secondary_ids'] = secondary_ids
@@ -529,7 +575,10 @@ def main():
     project_info['target_cal_map'] = target_cal_map
     project_info['target_ms'] = target_ms
 
-    pickle.dump(project_info,open(outpick,'wb'),protocol=2)
+    #pickle.dump(project_info,open(outpick,'wb'),protocol=2)
+
+    with open(outfile, "w") as f:
+        f.write(json.dumps(project_info, indent=4, sort_keys=True))
 
     mylogger.info('Done')
 

@@ -1,12 +1,15 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-import pickle
 import glob
+import json
 import sys
 
 
-project_info = pickle.load(open('project_info.p','rb'))
+with open('project_info.json') as f:
+    project_info = json.load(f)
+
+
 flag_file = glob.glob('*manualflags.txt')
 
 

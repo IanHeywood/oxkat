@@ -28,8 +28,9 @@ for item in sys.argv:
 if myuvrange == '':
     myuvrange = '>150m'
 
+with open('project_info.json') as f:
+    project_info = json.load(f)
 
-project_info = pickle.load(open('project_info.p','rb'))
 ref_ant = project_info['ref_ant']
 
 

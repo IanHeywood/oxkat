@@ -2,7 +2,6 @@
 
 
 import glob
-import pickle
 import shutil
 import time
 

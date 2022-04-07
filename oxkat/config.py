@@ -219,7 +219,7 @@ if BAND == 'U':
 
     CAL_1GC_FREQRANGE = '850~900MHz'        # Clean part of the band to use for generating UHF 1GC G-solutions
     CAL_1GC_UVRANGE = '>150m'               # Selection for baselines to include during 1GC B/G solving (K excluded)
-    CAL_1GC_0408_MODEL = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
+    CAL_1GC_0408_MODEL = ([27.907,0.0,0.0,0.0],[-1.205],'850MHz')
 
     CAL_1GC_BAD_FREQS = ['540~570MHz',      # Lower band edge 
                         '1010~1150MHz']     # Upper band edge

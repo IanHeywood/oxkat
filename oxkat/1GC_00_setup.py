@@ -30,8 +30,8 @@ def get_dummy():
 
     """ Returns dummy project_info dictionary to set up its structure"""
 
-    project_info = {'master_ms':'master_ms_1024ch.ms',
-        'orignal_ms':'master_ms.ms',
+    project_info = {'working_ms':'master_ms_1024ch.ms',
+        'master_ms':'master_ms.ms',
         'nchan':'4096',
         'band':'L',
         'ref_ant':['-1'],

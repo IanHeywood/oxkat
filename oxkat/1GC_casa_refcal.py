@@ -62,47 +62,6 @@ ftab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux3'
 # --------------------------------------------------------------- #
 
 
-# ------- Setup models
-
-
-if primary_tag == '1934':
-    setjy(vis=myms,
-        field=bpcal_name,
-        standard='Stevens-Reynolds 2016',
-        scalebychan=True,
-        usescratch=True)
-    
-    
-elif primary_tag == '0408':
-    bpcal_mod = ([27.907,0.0,0.0,0.0],[-1.205],'850MHz')
-    setjy(vis=myms,
-        field=bpcal_name,
-        standard='manual',
-        fluxdensity=bpcal_mod[0],
-        spix=bpcal_mod[1],
-        reffreq=bpcal_mod[2],
-        scalebychan=True,
-        usescratch=True)
-
-
-elif primary_tag == 'other':
-    setjy(vis=myms,
-        field=bpcal_name,
-        standard='Perley-Butler 2013',
-        scalebychan=True,
-        usescratch=True)
-
-
-for i in range(0,len(pcals)):
-    pcal = pcals[i]
-    setjy(vis =myms,
-        field = pcal,
-        standard = 'manual',
-        fluxdensity = [1.0,0,0,0],
-        reffreq = '850MHz',
-        usescratch = True)
-
-
 # ------- K0 (primary)
 
 

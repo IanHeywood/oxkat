@@ -35,7 +35,7 @@ if primary_tag == '1934':
     
     
 elif primary_tag == '0408':
-    bpcal_mod = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
+    bpcal_mod = CAL_1GC_0408_MODEL
     setjy(vis=myms,
         field=bpcal_name,
         standard='manual',

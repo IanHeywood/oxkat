@@ -180,16 +180,16 @@ PBS_EXTRALONG = {
 # 1GC settings
 #
 
-# Pre-processing
-PRE_FIELDS = ''                      # Comma-separated list of fields to select from raw MS
-PRE_SCANS = ''                       # Comma-separated list of scans to select from raw MS
-PRE_NCHANS = 1024                    # Integer number of channels in working MS
-PRE_TIMEBIN = '8s'                   # Integration time in working MS
-
-# Scan intents
+# Scan intents, for automatic identification of cals/targets
 CAL_1GC_TARGET_INTENT = 'TARGET'     # (partial) string to match for target intents
 CAL_1GC_PRIMARY_INTENT = 'BANDPASS'  # (partial) string to match for primary intents
 CAL_1GC_SECONDARY_INTENT = 'PHASE'   # (partial) string to match for secondary intents
+
+# Pre-processing, operations applied when master MS is split to working MS
+PRE_FIELDS = ''                      # Comma-separated list of fields to select from raw MS
+PRE_SCANS = ''                       # Comma-separated list of scans to select from raw MS
+PRE_NCHANS = 1024                    # Integer number of channels for working MS
+PRE_TIMEBIN = '8s'                   # Integration time for working MS
 
 # Reference antennas
 CAL_1GC_REF_ANT = 'auto'             # Comma-separated list to manually specify refant(s)
@@ -219,17 +219,19 @@ if BAND == 'U':
 
     CAL_1GC_FREQRANGE = '850~900MHz'        # Clean part of the band to use for generating UHF 1GC G-solutions
     CAL_1GC_UVRANGE = '>150m'               # Selection for baselines to include during 1GC B/G solving (K excluded)
+    CAL_1GC_0408_MODEL = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
 
     CAL_1GC_BAD_FREQS = ['540~570MHz',      # Lower band edge 
                         '1010~1150MHz']     # Upper band edge
 
-    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'        # Baseline range for which BL_FREQS are flagged
     CAL_1GC_BL_FREQS = []            
 
 elif BAND == 'L':
 
     CAL_1GC_FREQRANGE = '1300~1400MHz'
     CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
 
     CAL_1GC_BAD_FREQS = ['850~900MHz',      # Lower band edge
                         '1658~1800MHz',     # Upper bandpass edge
@@ -257,6 +259,7 @@ elif BAND == 'S0':
 
     CAL_1GC_FREQRANGE = ''
     CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([6.432,0.0,0.0,0.0],[-1.124],'3000MHz')   
     CAL_1GC_BAD_FREQS = []
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
@@ -265,6 +268,7 @@ elif BAND == 'S1':
 
     CAL_1GC_FREQRANGE = ''
     CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([6.432,0.0,0.0,0.0],[-1.124],'3000MHz')   
     CAL_1GC_BAD_FREQS = []
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
@@ -273,6 +277,7 @@ elif BAND == 'S2':
 
     CAL_1GC_FREQRANGE = ''
     CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([6.432,0.0,0.0,0.0],[-1.124],'3000MHz')   
     CAL_1GC_BAD_FREQS = []
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
@@ -281,6 +286,7 @@ elif BAND == 'S3':
 
     CAL_1GC_FREQRANGE = ''
     CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([6.432,0.0,0.0,0.0],[-1.124],'3000MHz')   
     CAL_1GC_BAD_FREQS = []
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
@@ -288,7 +294,8 @@ elif BAND == 'S3':
 elif BAND == 'S4':
 
     CAL_1GC_FREQRANGE = '2900~3000MHz'
-    CAL_1GC_UVRANGE = '>150m'        
+    CAL_1GC_UVRANGE = '>150m'     
+    CAL_1GC_0408_MODEL = ([6.432,0.0,0.0,0.0],[-1.124],'3000MHz')   
     CAL_1GC_BAD_FREQS = []
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []

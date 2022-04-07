@@ -1,5 +1,4 @@
 # ian.heywood@physics.ox.ac.uk
-# UHF calibration is experimental
 
 
 import glob
@@ -21,8 +20,8 @@ def stamp():
 
 
 gapfill = CAL_1GC_FILLGAPS
-myuvrange = CAL_1GC_UHF_UVRANGE 
-myspw = '*:'+CAL_1GC_UHF_FREQRANGE
+myuvrange = CAL_1GC_UVRANGE 
+myspw = '*:'+CAL_1GC_FREQRANGE
 delaycut = CAL_1GC_DELAYCUT
 
 

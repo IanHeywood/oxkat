@@ -2,10 +2,23 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import json
 import os
+import sys
 
 
-BAND = 'L'
+# ------------------------------------------------------------------------
+#
+# Check for project_info file and get band
+#
+
+if os.path.isfile('project_info.json'):
+    with open('project_info.json') as f:
+        project_info = json.load(f)
+    BAND = project_info['band']
+else:
+    print('Project info file not found, please run setups/00_get_info.py.')
+    sys.exit()
 
 
 # ------------------------------------------------------------------------
@@ -197,11 +210,89 @@ CAL_1GC_PRIMARY_MODEL = 'auto'       # setjy = use setjy component model only
                                      # or specify the location/of/wsclean-prefix for an arbitrary model cube
 
 # GBK settings
-CAL_1GC_UVRANGE = '>150m'            # Selection for baselines to include during 1GC B/G solving (K excluded)
-CAL_1GC_UHF_UVRANGE = '>150m'        #
 CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on secondaries weaker than this
 CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
-CAL_1GC_UHF_FREQRANGE = '850~900MHz' # Clean part of the band to use for generating UHF 1GC G-solutions
+
+# Band specific options
+
+if BAND == 'U':       
+
+    CAL_1GC_FREQRANGE = '850~900MHz'        # Clean part of the band to use for generating UHF 1GC G-solutions
+    CAL_1GC_UVRANGE = '>150m'               # Selection for baselines to include during 1GC B/G solving (K excluded)
+
+    CAL_1GC_BAD_FREQS = ['540~570MHz',      # Lower band edge 
+                        '1010~1150MHz']     # Upper band edge
+
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []            
+
+elif BAND == 'L':
+
+    CAL_1GC_FREQRANGE = '1300~1400MHz'
+    CAL_1GC_UVRANGE = '>150m'
+
+    CAL_1GC_BAD_FREQS = ['850~900MHz',      # Lower band edge
+                        '1658~1800MHz',     # Upper bandpass edge
+                        '1419.8~1421.3MHz'] # Galactic HI
+
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = ['900MHz~915MHz',    # GSM and aviation
+                        '925MHz~960MHz',                
+                        '1080MHz~1095MHz',
+                        '1565MHz~1585MHz',  # GPS
+                        '1217MHz~1237MHz',
+                        '1375MHz~1387MHz',
+                        '1166MHz~1186MHz',
+                        '1592MHz~1610MHz',  # GLONASS
+                        '1242MHz~1249MHz',
+                        '1191MHz~1217MHz',  # Galileo
+                        '1260MHz~1300MHz',
+                        '1453MHz~1490MHz',  # Afristar
+                        '1616MHz~1626MHz',  # Iridium
+                        '1526MHz~1554MHz',  # Inmarsat
+                        '1600MHz']          # Alkantpan
+                                            # https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/L-band%20RFI%20frequency%20flagging.ipynb
+
+elif BAND == 'S0':
+
+    CAL_1GC_FREQRANGE = ''
+    CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
+elif BAND == 'S1':
+
+    CAL_1GC_FREQRANGE = ''
+    CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
+elif BAND == 'S2':
+
+    CAL_1GC_FREQRANGE = ''
+    CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
+elif BAND == 'S3':
+
+    CAL_1GC_FREQRANGE = ''
+    CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
+elif BAND == 'S4':
+
+    CAL_1GC_FREQRANGE = '2900~3000MHz'
+    CAL_1GC_UVRANGE = '>150m'        
+    CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
 
 # LINE modifiers
 CAL_1GC_LINE_FILLGAPS = 48
@@ -242,7 +333,6 @@ CAL_3GC_FACET_REGION = '' # Specify DS9 region to define tessel centres
 #
 # wsclean defaults
 #
-
 
 WSC_CONTINUE = False
 WSC_FIELD = 0
@@ -290,12 +380,23 @@ WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'
 WSC_PARALLELDECONVOLUTION = 2560 # 
 
-# UHF modifiers
-if BAND[0].upper() == 'U':
+# Band modifiers
+if BAND == 'U':
     WSC_CELLSIZE = '1.7asec'
     WSC_BRIGGS = -0.5
     WSC_BDAFACTOR = 4
     WSC_NWLAYERSFACTOR = 5
+if BAND == 'S0':
+    WSC_CELLSIZE = '0.45asec'
+if BAND == 'S1':
+    WSC_CELLSIZE = '0.425asec'
+if BAND == 'S2':
+    WSC_CELLSIZE = '0.4asec'
+if BAND == 'S3':
+    WSC_CELLSIZE = '0.375asec'    
+if BAND == 'S4':
+    WSC_CELLSIZE = '0.35asec'
+
 
 # ------------------------------------------------------------------------
 #
@@ -387,10 +488,21 @@ DDF_MASK = 'auto' # 'auto' enables automasking
 DDF_MASKSIGMA = 4.5
 DDF_CONSERVEMEMORY = 1
 
-# UHF modifiers
-if BAND[0].upper() == 'U':
+
+# Band modifiers
+if BAND == 'U':
     DDF_CELL = 1.7
     DDF_ROBUST = -0.5
+if BAND == 'S0':
+    DDF_CELL = 0.45
+if BAND == 'S1':
+    DDF_CELL = 0.425
+if BAND == 'S2':
+    DDF_CELL = 0.4
+if BAND == 'S3':
+    DDF_CELL = 0.375
+if BAND == 'S4':
+    DDF_CELL = 0.35
 
 
 # ------------------------------------------------------------------------

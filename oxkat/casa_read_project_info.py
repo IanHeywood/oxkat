@@ -15,7 +15,7 @@ def str_iterator(inlist):
 with open('project_info.json') as f:
 	project_info = json.load(f)
 
-myms = str(project_info['master_ms'])
+myms = str(project_info['working_ms'])
 band = str(project_info['band'])
 nchan = int(project_info['nchan'])
 ref_ant = str(project_info['ref_ant'])

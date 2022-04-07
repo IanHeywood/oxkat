@@ -30,7 +30,8 @@ def get_dummy():
 
     """ Returns dummy project_info dictionary to set up its structure"""
 
-    project_info = {'master_ms':'myms.ms',
+    project_info = {'master_ms':'master_ms_1024ch.ms',
+        'orignal_ms':'master_ms.ms',
         'nchan':'4096',
         'band':'L',
         'ref_ant':['-1'],
@@ -59,21 +60,21 @@ def calcsep(ra0,dec0,ra1,dec1):
     return sep.value
 
 
-def get_refant(myms,field_id):
+def get_refant(master_ms,field_id):
 
     """ Sorts a list of antennas in order of increasing flagged percentages based on field_id """
 
     mylogger = logging.getLogger(__name__) 
 
-    ant_names = get_antnames(myms)
-    main_tab = table(myms,ack='False')
+    ant_names = get_antnames(master_ms)
+    main_tab = table(master_ms,ack='False')
     
     ref_pool = cfg.CAL_1GC_REF_POOL
     
     pc_list = []
     idx_list = []
 
-    main_tab = table(myms,ack=False)
+    main_tab = table(master_ms,ack=False)
     field_id = int(field_id)
     for i in range(0,len(ref_pool)):
         ant = ref_pool[i]
@@ -104,25 +105,25 @@ def get_refant(myms,field_id):
     return ranked_list
 
 
-def get_nchan(myms):
+def get_nchan(master_ms):
 
-    """ Returns the number of channels in myms.
+    """ Returns the number of channels in master_ms.
     Only works for data with a single SPW
     """
 
-    spw_table = table(myms+'/SPECTRAL_WINDOW',ack=False)
+    spw_table = table(master_ms+'/SPECTRAL_WINDOW',ack=False)
     nchan = spw_table.getcol('NUM_CHAN')[0]
     spw_table.close()
     return nchan
 
 
-def get_band(myms):
+def get_band(master_ms):
 
     """ Returns the minimum and maxmium frequency
     and band estimate.
     """
 
-    spw_table = table(myms+'/SPECTRAL_WINDOW',ack=False)
+    spw_table = table(master_ms+'/SPECTRAL_WINDOW',ack=False)
     chans = spw_table.getcol('CHAN_FREQ')[0]
     min_freq = chans[0]
     max_freq = chans[-1]
@@ -141,24 +142,24 @@ def get_band(myms):
     return min_freq,mid_freq,max_freq,bw,band
 
 
-def get_antnames(myms):
+def get_antnames(master_ms):
 
-    """ Returns a list of the antenna names in myms """
+    """ Returns a list of the antenna names in master_ms """
 
-    ant_tab = table(myms+'/ANTENNA',ack=False)
+    ant_tab = table(master_ms+'/ANTENNA',ack=False)
     ant_names = ant_tab.getcol('NAME')
     ant_names = [a.lower() for a in ant_names]
     ant_tab.close()
     return ant_names
 
 
-def get_fields(myms):
+def get_fields(master_ms):
 
     """ Returns lists of directions, names and integer source IDs
-    from the FIELD table of myms
+    from the FIELD table of master_ms
     """
 
-    field_tab = table(myms+'/FIELD',ack=False)
+    field_tab = table(master_ms+'/FIELD',ack=False)
     field_dirs = field_tab.getcol('REFERENCE_DIR')*180.0/numpy.pi
     field_names = field_tab.getcol('NAME')
     field_ids = field_tab.getcol('SOURCE_ID')
@@ -166,7 +167,7 @@ def get_fields(myms):
     return field_dirs,field_names,field_ids
 
 
-def get_states(myms,
+def get_states(master_ms,
                 primary_intent,
                 secondary_intent,
                 target_intent):
@@ -176,7 +177,7 @@ def get_states(myms,
     table, along with any UNKNOWN states.
     """
 
-    state_tab = table(myms+'/STATE',ack=False)
+    state_tab = table(master_ms+'/STATE',ack=False)
     modes = state_tab.getcol('OBS_MODE')
     state_tab.close()
 
@@ -193,20 +194,20 @@ def get_states(myms,
     return primary_state, secondary_state, target_state, unknown_state
 
 
-def get_primary_candidates(myms,
+def get_primary_candidates(master_ms,
                 primary_state,
                 unknown_state,
                 field_dirs,
                 field_names,
                 field_ids):
 
-    """ Automatically identify primary calibrator candidates from myms """
+    """ Automatically identify primary calibrator candidates from master_ms """
 
     candidate_ids = []
     candidate_names = []
     candidate_dirs = []
 
-    main_tab = table(myms,ack=False)
+    main_tab = table(master_ms,ack=False)
     for i in range(0,len(field_ids)):
         field_dir = field_dirs[i]
         field_name = field_names[i]
@@ -224,19 +225,19 @@ def get_primary_candidates(myms,
     return candidate_dirs, candidate_names, candidate_ids
 
 
-def get_secondaries(myms,
+def get_secondaries(master_ms,
                 secondary_state,
                 field_dirs,
                 field_names,
                 field_ids):
 
-    """ Automatically identify secondary calibrators from myms """
+    """ Automatically identify secondary calibrators from master_ms """
 
     secondary_ids = []
     secondary_names = []
     secondary_dirs = []
 
-    main_tab = table(myms,ack=False)
+    main_tab = table(master_ms,ack=False)
     for i in range(0,len(field_ids)):
         field_dir = field_dirs[i]
         field_name = field_names[i]
@@ -254,19 +255,19 @@ def get_secondaries(myms,
     return secondary_dirs, secondary_names, secondary_ids
 
 
-def get_targets(myms,
+def get_targets(master_ms,
                 target_state,
                 field_dirs,
                 field_names,
                 field_ids):
 
-    """ Automatically identify secondary calibrators from myms"""
+    """ Automatically identify secondary calibrators from master_ms"""
 
     target_ids = []
     target_names = []
     target_dirs = []
 
-    main_tab = table(myms,ack=False)
+    main_tab = table(master_ms,ack=False)
     for i in range(0,len(field_ids)):
         field_dir = field_dirs[i]
         field_name = field_names[i]
@@ -347,13 +348,13 @@ def target_cal_pairs(target_dirs,target_names,target_ids,
 
 
 
-def target_ms_list(myms,target_names):
+def target_ms_list(master_ms,target_names):
 
     """ Return a list of MS names derived from target_names """
 
     target_ms = []
     for target in target_names:
-        ms_name = myms.replace('.ms','_'+target.replace(' ','_')+'.ms')
+        ms_name = master_ms.replace('.ms','_'+target.replace(' ','_')+'.ms')
         target_ms.append(ms_name)
 
     return target_ms
@@ -361,9 +362,9 @@ def target_ms_list(myms,target_names):
 
 def main():
 
-    myms = sys.argv[1].rstrip('/')
+    master_ms = sys.argv[1].rstrip('/')
 
-    logfile = 'setup_'+myms+'.log'
+    logfile = 'setup_'+master_ms+'.log'
 
     logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
     stream = logging.StreamHandler()
@@ -374,7 +375,7 @@ def main():
     mylogger.setLevel(logging.DEBUG)
     mylogger.addHandler(stream)
 
-    mylogger.info('Examining '+myms)
+    mylogger.info('Examining '+master_ms)
 
     outfile = 'project_info.json'
 
@@ -382,29 +383,29 @@ def main():
     project_info = get_dummy()
 
 
+    PRE_NCHANS = cfg.PRE_NCHANS
     CAL_1GC_PRIMARY = cfg.CAL_1GC_PRIMARY
     CAL_1GC_SECONDARIES = cfg.CAL_1GC_SECONDARIES
     CAL_1GC_TARGETS = cfg.CAL_1GC_TARGETS
-
     CAL_1GC_REF_ANT = cfg.CAL_1GC_REF_ANT
-
     CAL_1GC_PRIMARY_INTENT = cfg.CAL_1GC_PRIMARY_INTENT
     CAL_1GC_SECONDARY_INTENT = cfg.CAL_1GC_SECONDARY_INTENT
     CAL_1GC_TARGET_INTENT = cfg.CAL_1GC_TARGET_INTENT
 
+    working_ms = master_ms.replace('.ms','_'+str(PRE_NCHANS)+'ch.ms')
 
     # ------------------------------------------------------------------------------
     #
     # FIELD INFO
 
-    field_dirs, field_names, field_ids = get_fields(myms)
+    field_dirs, field_names, field_ids = get_fields(master_ms)
 
 
     # ------------------------------------------------------------------------------
     #
     # NUMBER OF CHANNELS
 
-    nchan = get_nchan(myms)
+    nchan = get_nchan(master_ms)
     mylogger.info('MS has '+str(nchan)+' channels')
 
 
@@ -412,7 +413,7 @@ def main():
     #
     # DEDUCE THE BAND
 
-    min_freq,mid_freq,max_freq,bw,band = get_band(myms)
+    min_freq,mid_freq,max_freq,bw,band = get_band(master_ms)
     mylogger.info('Minimum frequency is '+str(min_freq/1e6)+' MHz')
     mylogger.info('Maximum frequency is '+str(max_freq/1e6)+' MHz')
     mylogger.info('Central frequency is '+str(mid_freq/1e6)+' MHz')
@@ -424,7 +425,7 @@ def main():
     #
     # STATE IDs
 
-    primary_state, secondary_state, target_state, unknown_state = get_states(myms,
+    primary_state, secondary_state, target_state, unknown_state = get_states(master_ms,
                                                             CAL_1GC_PRIMARY_INTENT,
                                                             CAL_1GC_SECONDARY_INTENT,
                                                             CAL_1GC_TARGET_INTENT)
@@ -439,7 +440,7 @@ def main():
         candidate_names = [field_names[i] for i in candidate_ids]
         candidate_dirs = [field_dirs[i][0] for i in candidate_ids]
     else:
-        candidate_dirs, candidate_names, candidate_ids = get_primary_candidates(myms,
+        candidate_dirs, candidate_names, candidate_ids = get_primary_candidates(master_ms,
                                                             primary_state,
                                                             unknown_state,
                                                             field_dirs,
@@ -459,7 +460,7 @@ def main():
     # REFERENCE ANTENNAS
 
     if CAL_1GC_REF_ANT == 'auto':
-        ref_ant = get_refant(myms,primary_id)
+        ref_ant = get_refant(master_ms,primary_id)
         mylogger.info('Ranked reference antenna ordering: '+str(ref_ant))
     else:
         ref_ant = CAL_1GC_REF_ANT
@@ -476,7 +477,7 @@ def main():
         secondary_names = [field_names[i] for i in secondary_ids]
         secondary_dirs = [field_dirs[i] for i in secondary_ids]
     else:
-        secondary_dirs, secondary_names, secondary_ids = get_secondaries(myms,
+        secondary_dirs, secondary_names, secondary_ids = get_secondaries(master_ms,
                                                             secondary_state,
                                                             field_dirs,
                                                             field_names,
@@ -492,7 +493,7 @@ def main():
         target_names = [field_names[i] for i in target_ids]
         target_dirs = [field_dirs[i][0] for i in target_ids]
     else:
-        target_dirs, target_names, target_ids = get_targets(myms,
+        target_dirs, target_names, target_ids = get_targets(master_ms,
                                                             target_state,
                                                             field_dirs,
                                                             field_names,
@@ -521,7 +522,7 @@ def main():
     #
     # GENERATE LIST OF TARGET MS NAMES
 
-    target_ms = target_ms_list(myms,target_names)
+    target_ms = target_ms_list(master_ms,target_names)
 
 
     # ------------------------------------------------------------------------------
@@ -560,7 +561,8 @@ def main():
     mylogger.info('')
     mylogger.info('Writing '+outfile)
 
-    project_info['master_ms'] = myms
+    project_info['master_ms'] = master_ms
+    project_info['working_ms'] = working_ms
     project_info['nchan'] = str(nchan)
     project_info['ref_ant'] = ref_ant
     project_info['primary_name'] = primary_name

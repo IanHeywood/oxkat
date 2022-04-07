@@ -563,6 +563,7 @@ def main():
 
     project_info['master_ms'] = master_ms
     project_info['working_ms'] = working_ms
+    project_info['band'] = band
     project_info['nchan'] = str(nchan)
     project_info['ref_ant'] = ref_ant
     project_info['primary_name'] = primary_name

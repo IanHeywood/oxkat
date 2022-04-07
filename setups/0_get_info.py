@@ -9,14 +9,14 @@ sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), ".."
 
 
 from oxkat import generate_jobs as gen
-
+from oxkat import config as cfg
 
 def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.col()+'Get MS info for subsequent processing')
+    print(gen.col()+'Setting up job to examine master MS')
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    original_ms = glob.glob('*.ms')[0]
+    myms = glob.glob('*.ms')[0]
     code = gen.get_code(original_ms)
 
     steps = []

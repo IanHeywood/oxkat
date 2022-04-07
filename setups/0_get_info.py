@@ -49,7 +49,7 @@ def main():
 
 
     myms = glob.glob('*.ms')[0]
-    code = gen.get_code(original_ms)
+    code = gen.get_code(myms)
 
     steps = []
 

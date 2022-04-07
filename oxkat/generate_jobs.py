@@ -22,10 +22,11 @@ def preamble():
     print('                     | https://github.com/IanHeywood/oxkat')
     print('                     |')
     print('---------------------+----------------------------------------------------------')
-    if cfg.BAND[0].upper() == 'L':
-        print(now()+'Configured for L-band processing')
-    elif cfg.BAND[0].upper() == 'U':
-        print(now()+'Configured for UHF processing')
+    print(now()+'Observing band is '+cfg.BAND)
+    # if cfg.BAND[0].upper() == 'L':
+    #     print(now()+'Configured for L-band processing')
+    # elif cfg.BAND[0].upper() == 'U':
+    #     print(now()+'Configured for UHF processing')
 
 
 def now():

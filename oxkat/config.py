@@ -17,8 +17,7 @@ if os.path.isfile('project_info.json'):
         project_info = json.load(f)
     BAND = project_info['band']
 else:
-    print('Project info file not found, please run setups/00_get_info.py.')
-    sys.exit()
+    BAND = 'not yet determined'
 
 
 # ------------------------------------------------------------------------

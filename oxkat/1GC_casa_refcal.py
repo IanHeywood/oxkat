@@ -265,6 +265,9 @@ shutil.copytree(gtab2,gtab3)
 for i in range(0,len(pcals)):
 
 
+    pcal = pcals[i]
+
+
     # --- G2 (secondary)
 
 

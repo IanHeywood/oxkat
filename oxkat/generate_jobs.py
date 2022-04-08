@@ -17,7 +17,7 @@ from oxkat import config as cfg
 def preamble():
     print('---------------------+----------------------------------------------------------')
     print('                     |')
-    print('                     | v0.3')  
+    print('                     | v0.4')  
     print('    o  x  k  a  t    | Please file an issue for bugs / help:')
     print('                     | https://github.com/IanHeywood/oxkat')
     print('                     |')

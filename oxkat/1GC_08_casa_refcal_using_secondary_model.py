@@ -499,7 +499,7 @@ for i in range(0,len(pcals)):
             solint = 'inf',
             parang = False,
             gaintable = [gtab1,bptab1,gtab3],
-            gainfield = [bpcal,bpcal,bpcal,pcal],
+            gainfield = [bpcal,bpcal,pcal],
             interp = ['linear','linear','linear'],
             append = True)
 

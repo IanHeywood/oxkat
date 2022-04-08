@@ -209,7 +209,7 @@ CAL_1GC_PRIMARY_MODEL = 'auto'       # setjy = use setjy component model only
                                      # or specify the location/of/wsclean-prefix for an arbitrary model cube
 
 # GBK settings
-CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on secondaries weaker than this
+CAL_1GC_DELAYCUT = 2.5               # [now defunct] Jy at central freq. Do not solve for K on secondaries weaker than this
 CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
 
 # Band specific options
@@ -258,7 +258,7 @@ elif BAND == 'S0':
 
     CAL_1GC_FREQRANGE = ''
     CAL_1GC_UVRANGE = '>150m'
-    CAL_1GC_0408_MODEL = ([6.432,0.0,0.0,0.0],[-1.124],'3000MHz')   
+    CAL_1GC_0408_MODEL = ([9.193,0.0,0.0,0.0],[-1.144],'2187MHz')   
     CAL_1GC_BAD_FREQS = []
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []

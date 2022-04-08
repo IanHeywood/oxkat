@@ -22,7 +22,6 @@ def stamp():
 gapfill = CAL_1GC_FILLGAPS
 myuvrange = CAL_1GC_UVRANGE 
 myspw = '*:'+CAL_1GC_FREQRANGE
-delaycut = CAL_1GC_DELAYCUT
 
 
 # ------- Setup names
@@ -81,10 +80,9 @@ gaincal(vis=myms,
 gaincal(vis=myms,
     field=bpcal,
     uvrange=myuvrange,
-    spw=myspw,
     caltable=gtab0,
     gaintype='G',
-    solint='int',
+    solint='inf',
     calmode='p',
     minsnr=5,
     gainfield=[bpcal],
@@ -162,8 +160,6 @@ flagmanager(vis=myms,
 
 gaincal(vis=myms,
     field=bpcal,
-    #uvrange=myuvrange,
-    #spw=myspw,
     caltable=ktab1,
     refant = str(ref_ant),
     gaintype = 'K',
@@ -180,10 +176,9 @@ gaincal(vis=myms,
 gaincal(vis=myms,
     field=bpcal,
     uvrange=myuvrange,
-    spw=myspw,
     caltable=gtab1,
     gaintype='G',
-    solint='int',
+    solint='inf',
     calmode='p',
     minsnr=5,
     gainfield=[bpcal,bpcal],
@@ -242,10 +237,9 @@ applycal(vis=myms,
 gaincal(vis = myms,
     field = bpcal,
     uvrange = myuvrange,
-    spw = myspw,
     caltable = gtab2,
     refant = str(ref_ant),
-    solint = '32s',
+    solint = 'inf',
     solnorm = False,
     combine = '',
     minsnr = 3,
@@ -282,7 +276,7 @@ for i in range(0,len(pcals)):
         refant = str(ref_ant),
         minblperant = 4,
         minsnr = 3,
-        solint = '16s',
+        solint = 'inf',
         solnorm = False,
         gaintype = 'G',
         combine = '',
@@ -312,15 +306,16 @@ for i in range(0,len(pcals)):
         append = True)
 
 
-    # --- F3 
+# --- F2 
 
 
-    fluxscale(vis=myms,
-        caltable = gtab2,
-        fluxtable = ftab2,
-        reference = bpcal,
-        append = False,
-        transfer = '')
+fluxscale(vis=myms,
+    caltable = gtab2,
+    fluxtable = ftab2,
+    reference = bpcal,
+    transfer = '', 
+    append = False,
+    transfer = '')
 
 
 # ------- Looping over secondaries
@@ -373,7 +368,6 @@ flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
 gaincal(vis = myms,
     field = bpcal,
     uvrange = myuvrange,
-    spw = myspw,
     caltable = gtab3,
     refant = str(ref_ant),
     solint = 'inf',
@@ -431,27 +425,27 @@ for i in range(0,len(pcals)):
 
     gaincal(vis= myms,
         field = pcal,
-    #   uvrange = myuvrange,
         caltable = ktab3,
         refant = str(ref_ant),
         gaintype = 'K',
         solint = 'inf',
         parang = False,
         gaintable = [gtab1,bptab1,gtab3],
-        gainfield = [bpcal,bpcal,bpcal,pcal],
+        gainfield = [bpcal,bpcal,pcal],
         interp = ['linear','linear','linear'],
         append = True)
 
 
-    # --- F3 
+# --- F3 
 
 
-    fluxscale(vis=myms,
-        caltable = gtab3,
-        fluxtable = ftab3,
-        reference = bpcal,
-        append = False,
-        transfer = '')
+fluxscale(vis=myms,
+    caltable = gtab3,
+    fluxtable = ftab3,
+    reference = bpcal,
+    transfer = '',
+    append = False,
+    transfer = '')
 
 
 # ------- Apply final tables to secondaries

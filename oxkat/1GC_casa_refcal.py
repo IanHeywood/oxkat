@@ -316,7 +316,6 @@ fluxscale(vis=myms,
     caltable = gtab2,
     fluxtable = ftab2,
     reference = bpcal,
-    transfer = '', 
     append = False,
     transfer = '')
 
@@ -446,7 +445,6 @@ fluxscale(vis=myms,
     caltable = gtab3,
     fluxtable = ftab3,
     reference = bpcal,
-    transfer = '',
     append = False,
     transfer = '')
 

@@ -43,6 +43,7 @@ def main():
     GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
+    TOOLS = cfg.TOOLS
 
     gen.setup_dir(GAINTABLES)
     gen.setup_dir(IMAGES)
@@ -75,7 +76,7 @@ def main():
 
     # ------------------------------------------------------------------------------
     #
-    # 2GC recipe definition
+    # Recipe definition
     #
     # ------------------------------------------------------------------------------
 
@@ -174,7 +175,7 @@ def main():
             syscall += gen.generate_syscall_tricolour(myms = myms,
                         config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
                         datacol = 'DATA',
-                        subtractcol = 'MODEL_DATA'
+                        subtractcol = 'MODEL_DATA',
                         fields = '0',
                         strategy = 'polarisation')
             step['syscall'] = syscall
@@ -303,7 +304,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_2GC_jobs.sh'
+    submit_file = 'submit_laduma_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

@@ -50,7 +50,14 @@ gtab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G3'
 ftab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux3'
 
 
-
+for i in range(0,len(pcals)):
+    pcal = pcals[i]
+    setjy(vis =myms,
+        field = pcal,
+        standard = 'manual',
+        fluxdensity = [1.0,0,0,0],
+        reffreq = '1000MHz',
+        usescratch = True)
 
 
 # --------------------------------------------------------------- #

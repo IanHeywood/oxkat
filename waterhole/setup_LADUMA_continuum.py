@@ -28,7 +28,7 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
     
     gen.preamble()
-    print(gen.col()+'Selfcal and peeling setup using existing sky model cube')
+    print(gen.col()+'Selfcal setup for LADUMA/MIGHTEE continuum using existing sky model cube')
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------
@@ -93,24 +93,6 @@ def main():
 
         targetname = target_names[tt]
         myms = target_ms[tt]
-        CAL_3GC_PEEL_REGION = cfg.CAL_3GC_PEEL_REGION
-
-        if CAL_3GC_PEEL_REGION == '':
-            region = glob.glob('*'+targetname+'*peel*.reg')
-            if len(region) == 0:
-                CAL_3GC_PEEL_REGION = ''
-            else:
-                CAL_3GC_PEEL_REGION = region[0]
-
-        if not o.isfile(CAL_3GC_PEEL_REGION):
-            gen.print_spacer()
-            print(gen.col('Target')+targetname)
-            print(gen.col('Measurement Set')+myms)
-            print(gen.col()+'Please provide a DS9 region file definining the source you wish to peel.')
-            print(gen.col()+'This can be specified in the config or by placing a file of the form:')
-            print(gen.col()+'       *'+targetname+'*peel*.reg')
-            print(gen.col()+'in this folder. Skipping.')
-            skip = True
 
         if not o.isdir(myms):
 
@@ -134,11 +116,7 @@ def main():
             k_outdir = GAINTABLES+'/delaycal_'+filename_targetname+'_'+stamp+'.cc/'
             k_outname = 'delaycal_'+filename_targetname+'_'+stamp
             k_saveto = 'delaycal_'+filename_targetname+'.parmdb'
-            outdir = GAINTABLES+'/peeling_'+filename_targetname+'_'+stamp+'.cc/'
-            outname = 'peeling_'+filename_targetname+'_'+stamp
 
-            prepeel_img_prefix = laduma_model
-            dir1_img_prefix = prepeel_img_prefix+'-'+CAL_3GC_PEEL_REGION.split('/')[-1].split('.')[0]
           
             gen.print_spacer()
             print(gen.col('Target')+targetname)
@@ -197,104 +175,7 @@ def main():
             steps.append(step)
 
 
-            step = {}
-            step['step'] = 3
-            step['comment'] = 'Extract problem source defined by region into a separate set of model images'
-            step['dependency'] = 2
-            step['id'] = 'IMSPL'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+OXKAT+'/3GC_split_model_images.py '
-            syscall += '--region '+CAL_3GC_PEEL_REGION+' '
-            syscall += '--prefix '+laduma_model+' '
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 4
-            step['comment'] = 'Predict problem source visibilities into MODEL_DATA column of '+myms
-            step['dependency'] = 3
-            step['id'] = 'WS1PR'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = dir1_img_prefix,chanout = 16, absmem = absmem)
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 5
-            step['comment'] = 'Add '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' column to '+myms
-            step['dependency'] = 4
-            step['id'] = 'ADDIR'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+TOOLS+'/add_MS_column.py '
-            syscall += '--colname '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
-            syscall += myms
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 6
-            step['comment'] = 'Copy MODEL_DATA to '+cfg.CAL_3GC_PEEL_DIR1COLNAME
-            step['dependency'] = 5
-            step['id'] = 'CPMOD'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+TOOLS+'/copy_MS_column.py '
-            syscall += '--fromcol MODEL_DATA '
-            syscall += '--tocol '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
-            syscall += myms
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 7
-            step['comment'] = 'Predict full sky model visibilities into MODEL_DATA column of '+myms
-            step['dependency'] = 6
-            step['id'] = 'WS2PR'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = prepeel_img_prefix,chanout = 16, absmem = absmem)
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 8
-            step['comment'] = 'Copy CORRECTED_DATA to DATA'
-            step['dependency'] = 7
-            step['id'] = 'CPCOR'+code
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+TOOLS+'/copy_MS_column.py '
-            syscall += '--fromcol CORRECTED_DATA '
-            syscall += '--tocol DATA '
-            syscall += myms
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 9
-            step['comment'] = 'Run CubiCal to solve for G (full model) and dE (problem source), peel out problem source'
-            step['dependency'] = 8
-            step['id'] = 'CL3GC'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_cubical(parset=cfg.CAL_3GC_PEEL_PARSET,myms=myms,extra_args='--out-name '+outname+' --out-dir '+outdir)
-            step['syscall'] = syscall
-            steps.append(step)
-
-
             target_steps.append((steps,kill_file,targetname))
-
-
 
 
     # ------------------------------------------------------------------------------

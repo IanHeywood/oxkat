@@ -22,6 +22,11 @@ def preamble():
     print('                     | https://github.com/IanHeywood/oxkat')
     print('                     |')
     print('---------------------+----------------------------------------------------------')
+    print('')
+    print('            **** NOTE: THE DEV BRANCH DOES NOT CURRENTLY WORK ****')
+    print('            ****     PLEASE USE THE MASTER BRANCH INSTEAD     ****')
+    print('')
+    print('---------------------+----------------------------------------------------------')
     print(now()+'Observing band is '+cfg.BAND)
     # if cfg.BAND[0].upper() == 'L':
     #     print(now()+'Configured for L-band processing')

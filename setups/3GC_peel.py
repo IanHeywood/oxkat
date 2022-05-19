@@ -18,7 +18,7 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
-    print(gen.col()+'3GC (peeling)) setup')
+    print(gen.col()+'3GC (peeling) setup')
     gen.print_spacer()
 
 

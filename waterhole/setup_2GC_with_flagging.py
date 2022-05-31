@@ -48,7 +48,7 @@ def main():
 
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
-    MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN,USE_SINGULARITY)
+    OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
@@ -265,7 +265,7 @@ def main():
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
             step['dependency'] = 8
             step['id'] = 'MASK1'+code
-            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
                                     outfile = corr_img_prefix+'-MFS-image.mask1.fits',
                                     thresh = 5.5,

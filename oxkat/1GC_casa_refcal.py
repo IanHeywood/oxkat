@@ -50,6 +50,39 @@ gtab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G3'
 ftab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux3'
 
 
+
+# ------- Set calibrator models
+
+
+
+if primary_tag == '1934':
+    setjy(vis=myms,
+        field=bpcal_name,
+        standard='Stevens-Reynolds 2016',
+        scalebychan=True,
+        usescratch=True)
+    
+    
+elif primary_tag == '0408':
+    bpcal_mod = CAL_1GC_0408_MODEL
+    setjy(vis=myms,
+        field=bpcal_name,
+        standard='manual',
+        fluxdensity=bpcal_mod[0],
+        spix=bpcal_mod[1],
+        reffreq=bpcal_mod[2],
+        scalebychan=True,
+        usescratch=True)
+
+
+elif primary_tag == 'other':
+    setjy(vis=myms,
+        field=bpcal_name,
+        standard='Perley-Butler 2013',
+        scalebychan=True,
+        usescratch=True)
+
+
 for i in range(0,len(pcals)):
     pcal = pcals[i]
     setjy(vis =myms,
@@ -455,7 +488,7 @@ fluxscale(vis=myms,
     fluxtable = ftab3,
     reference = bpcal,
     append = False,
-    transfer = '')
+    transfer = pcals)
 
 
 # ------- Apply final tables to secondaries

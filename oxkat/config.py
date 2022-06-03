@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+  #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 
@@ -256,7 +256,7 @@ elif BAND == 'L':
 
 elif BAND == 'S0':
 
-    CAL_1GC_FREQRANGE = ''
+    CAL_1GC_FREQRANGE = '2300~2400MHz'
     CAL_1GC_UVRANGE = '>150m'
     CAL_1GC_0408_MODEL = ([9.193,0.0,0.0,0.0],[-1.144],'2187MHz')   
     CAL_1GC_BAD_FREQS = []

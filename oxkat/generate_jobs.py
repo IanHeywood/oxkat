@@ -29,9 +29,9 @@ def preamble():
     print('---------------------+----------------------------------------------------------')
     print(now()+'Observing band is '+cfg.BAND)
     if cfg.SAVE_FLAGS:
-        print(now()+'Intermediate flag tables will be backed up')
+        print(col()+'Intermediate flag tables will be backed up')
     else:
-        print(now()+'Intermediate flag tables will not be backed up')
+        print(col()+'Intermediate flag tables will not be backed up')
     # if cfg.BAND[0].upper() == 'L':
     #     print(now()+'Configured for L-band processing')
     # elif cfg.BAND[0].upper() == 'U':

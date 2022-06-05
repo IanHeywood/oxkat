@@ -21,7 +21,7 @@ def stamp():
 
 gapfill = CAL_1GC_FILLGAPS
 myuvrange = CAL_1GC_UVRANGE 
-myspw = '*:'+CAL_1GC_FREQRANGE
+myspw = CAL_1GC_FREQRANGE
 
 
 # ------- Setup names

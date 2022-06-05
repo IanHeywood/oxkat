@@ -216,7 +216,7 @@ CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpo
 
 if BAND == 'U':       
 
-    CAL_1GC_FREQRANGE = '850~900MHz'        # Clean part of the band to use for generating UHF 1GC G-solutions
+    CAL_1GC_FREQRANGE = '*:850~900MHz'        # Clean part of the band to use for generating UHF 1GC G-solutions
     CAL_1GC_UVRANGE = '>150m'               # Selection for baselines to include during 1GC B/G solving (K excluded)
     CAL_1GC_0408_MODEL = ([27.907,0.0,0.0,0.0],[-1.205],'850MHz')
 
@@ -228,7 +228,7 @@ if BAND == 'U':
 
 elif BAND == 'L':
 
-    CAL_1GC_FREQRANGE = '1300~1400MHz'
+    CAL_1GC_FREQRANGE = '*:1300~1400MHz'
     CAL_1GC_UVRANGE = '>150m'
     CAL_1GC_0408_MODEL = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
 
@@ -256,7 +256,7 @@ elif BAND == 'L':
 
 elif BAND == 'S0':
 
-    CAL_1GC_FREQRANGE = '2300~2400MHz'
+    CAL_1GC_FREQRANGE = '*:2300~2400MHz'
     CAL_1GC_UVRANGE = '>150m'
     CAL_1GC_0408_MODEL = ([9.193,0.0,0.0,0.0],[-1.144],'2187MHz')   
     CAL_1GC_BAD_FREQS = []
@@ -292,7 +292,7 @@ elif BAND == 'S3':
 
 elif BAND == 'S4':
 
-    CAL_1GC_FREQRANGE = '2900~3000MHz'
+    CAL_1GC_FREQRANGE = '*:2900~3000MHz'
     CAL_1GC_UVRANGE = '>150m'     
     CAL_1GC_0408_MODEL = ([6.432,0.0,0.0,0.0],[-1.124],'3000MHz')   
     CAL_1GC_BAD_FREQS = []
@@ -393,7 +393,7 @@ if BAND == 'U':
     WSC_BDAFACTOR = 4
     WSC_NWLAYERSFACTOR = 5
 if BAND == 'S0':
-    WSC_CELLSIZE = '0.45asec'
+    WSC_CELLSIZE = '0.65asec'
 if BAND == 'S1':
     WSC_CELLSIZE = '0.425asec'
 if BAND == 'S2':

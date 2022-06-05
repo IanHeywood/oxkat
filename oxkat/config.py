@@ -220,8 +220,8 @@ if BAND == 'U':
     CAL_1GC_UVRANGE = '>150m'               # Selection for baselines to include during 1GC B/G solving (K excluded)
     CAL_1GC_0408_MODEL = ([27.907,0.0,0.0,0.0],[-1.205],'850MHz')
 
-    CAL_1GC_BAD_FREQS = ['540~570MHz',      # Lower band edge 
-                        '1010~1150MHz']     # Upper band edge
+    CAL_1GC_BAD_FREQS = ['*:540~570MHz',      # Lower band edge 
+                        '*:1010~1150MHz']     # Upper band edge
 
     CAL_1GC_BL_FLAG_UVRANGE = '<600'        # Baseline range for which BL_FREQS are flagged
     CAL_1GC_BL_FREQS = []            
@@ -232,26 +232,26 @@ elif BAND == 'L':
     CAL_1GC_UVRANGE = '>150m'
     CAL_1GC_0408_MODEL = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
 
-    CAL_1GC_BAD_FREQS = ['850~900MHz',      # Lower band edge
-                        '1658~1800MHz',     # Upper bandpass edge
-                        '1419.8~1421.3MHz'] # Galactic HI
+    CAL_1GC_BAD_FREQS = ['*:850~900MHz',      # Lower band edge
+                        '*:1658~1800MHz',     # Upper bandpass edge
+                        '*:1419.8~1421.3MHz'] # Galactic HI
 
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
-    CAL_1GC_BL_FREQS = ['900MHz~915MHz',    # GSM and aviation
-                        '925MHz~960MHz',                
-                        '1080MHz~1095MHz',
-                        '1565MHz~1585MHz',  # GPS
-                        '1217MHz~1237MHz',
-                        '1375MHz~1387MHz',
-                        '1166MHz~1186MHz',
-                        '1592MHz~1610MHz',  # GLONASS
-                        '1242MHz~1249MHz',
-                        '1191MHz~1217MHz',  # Galileo
-                        '1260MHz~1300MHz',
-                        '1453MHz~1490MHz',  # Afristar
-                        '1616MHz~1626MHz',  # Iridium
-                        '1526MHz~1554MHz',  # Inmarsat
-                        '1600MHz']          # Alkantpan
+    CAL_1GC_BL_FREQS = ['*:900MHz~915MHz',    # GSM and aviation
+                        '*:925MHz~960MHz',                
+                        '*:1080MHz~1095MHz',
+                        '*:1565MHz~1585MHz',  # GPS
+                        '*:1217MHz~1237MHz',
+                        '*:1375MHz~1387MHz',
+                        '*:1166MHz~1186MHz',
+                        '*:1592MHz~1610MHz',  # GLONASS
+                        '*:1242MHz~1249MHz',
+                        '*:1191MHz~1217MHz',  # Galileo
+                        '*:1260MHz~1300MHz',
+                        '*:1453MHz~1490MHz',  # Afristar
+                        '*:1616MHz~1626MHz',  # Iridium
+                        '*:1526MHz~1554MHz',  # Inmarsat
+                        '*:1600MHz']          # Alkantpan
                                             # https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/L-band%20RFI%20frequency%20flagging.ipynb
 
 elif BAND == 'S0':
@@ -260,6 +260,8 @@ elif BAND == 'S0':
     CAL_1GC_UVRANGE = '>150m'
     CAL_1GC_0408_MODEL = ([9.193,0.0,0.0,0.0],[-1.144],'2187MHz')   
     CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BAD_FREQS = ['*:1700~1800MHz',    # Lower band edge 
+                        '*:2500~2650MHz']     # Upper band edge
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
 
@@ -295,7 +297,8 @@ elif BAND == 'S4':
     CAL_1GC_FREQRANGE = '*:2900~3000MHz'
     CAL_1GC_UVRANGE = '>150m'     
     CAL_1GC_0408_MODEL = ([6.432,0.0,0.0,0.0],[-1.124],'3000MHz')   
-    CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BAD_FREQS = ['*:2600~2660MHz',    # Lower band edge 
+                        '*:3460~3600MHz']     # Upper band edge
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
 

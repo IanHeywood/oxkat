@@ -24,10 +24,12 @@ clearstat()
 
 if CAL_1GC_BAD_FREQS != []:
 
-	myspw = ''
-	for badfreq in CAL_1GC_BAD_FREQS:
-		myspw += '*:'+badfreq+','
-	myspw = myspw.rstrip(',')
+	myspw = ','.join(CAL_1GC_BAD_FREQS)
+
+	# myspw = ''
+	# for badfreq in CAL_1GC_BAD_FREQS:
+	# 	myspw += '*:'+badfreq+','
+	# myspw = myspw.rstrip(',')
 
 	flagdata(vis = myms, 
 		mode = 'manual', 
@@ -39,10 +41,12 @@ if CAL_1GC_BAD_FREQS != []:
 
 if CAL_1GC_BL_FREQS != []:
 
-	myspw = ''
-	for badfreq in CAL_1GC_BL_FREQS:
-		myspw += '*:'+badfreq+','
-	myspw = myspw.rstrip(',')
+	myspw = ','.join(CAL_1GC_BL_FREQS)
+
+	# myspw = ''
+	# for badfreq in CAL_1GC_BL_FREQS:
+	# 	myspw += '*:'+badfreq+','
+	# myspw = myspw.rstrip(',')
 
 	flagdata(vis = myms,
 		mode = 'manual',

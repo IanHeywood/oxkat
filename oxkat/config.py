@@ -407,13 +407,13 @@ if BAND == 'U':
 if BAND == 'S0':
     WSC_CELLSIZE = '0.65asec'
 if BAND == 'S1':
-    WSC_CELLSIZE = '0.425asec'
+    WSC_CELLSIZE = '0.61asec'
 if BAND == 'S2':
-    WSC_CELLSIZE = '0.4asec'
+    WSC_CELLSIZE = '0.58asec'
 if BAND == 'S3':
-    WSC_CELLSIZE = '0.375asec'    
+    WSC_CELLSIZE = '0.54asec'    
 if BAND == 'S4':
-    WSC_CELLSIZE = '0.35asec'
+    WSC_CELLSIZE = '0.5asec'
 
 
 # ------------------------------------------------------------------------
@@ -512,15 +512,15 @@ if BAND == 'U':
     DDF_CELL = 1.7
     DDF_ROBUST = -0.5
 if BAND == 'S0':
-    DDF_CELL = 0.45
+    DDF_CELL = 0.65
 if BAND == 'S1':
-    DDF_CELL = 0.425
+    DDF_CELL = 0.61
 if BAND == 'S2':
-    DDF_CELL = 0.4
+    DDF_CELL = 0.58
 if BAND == 'S3':
-    DDF_CELL = 0.375
+    DDF_CELL = 0.54
 if BAND == 'S4':
-    DDF_CELL = 0.35
+    DDF_CELL = 0.5
 
 
 # ------------------------------------------------------------------------

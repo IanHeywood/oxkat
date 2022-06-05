@@ -184,9 +184,10 @@ flagdata(vis=myms,
     field=bpcal_name)
 
 
-flagmanager(vis=myms,
-    mode='save',
-    versionname='bpcal_residual_flags')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,
+        mode='save',
+        versionname='bpcal_residual_flags')
 
 
 # --------------------------------------------------------------- #
@@ -407,8 +408,8 @@ for i in range(0,len(pcal_names)):
         mode = 'tfcrop',
         datacolumn = 'residual')
 
-
-flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
 
 
 

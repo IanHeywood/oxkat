@@ -28,6 +28,10 @@ def preamble():
     print('')
     print('---------------------+----------------------------------------------------------')
     print(now()+'Observing band is '+cfg.BAND)
+    if cfg.SAVE_FLAGS:
+        print(now()+'Intermediate flag tables will be backed up')
+    else:
+        print(now()+'Intermediate flag tables will not be backed up')
     # if cfg.BAND[0].upper() == 'L':
     #     print(now()+'Configured for L-band processing')
     # elif cfg.BAND[0].upper() == 'U':
@@ -627,12 +631,6 @@ def generate_syscall_predict(msname,
 
     return syscall 
 
-
-MAKEMASK_THRESH = 6.0
-MAKEMASK_DILATION = 3
-MAKEMASK_BOXSIZE = 500
-MAKEMASK_SMALLBOX = 50
-MAKEMASK_ISLANDSIZE = 5000
 
 
 def generate_syscall_makemask(restoredimage,

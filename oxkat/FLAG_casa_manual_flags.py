@@ -50,7 +50,8 @@ while line:
 f.close()
 
 
-flagmanager(vis=myms,mode='save',versionname='manual_flags')
+if SAVE_FLAGS:
+	flagmanager(vis=myms,mode='save',versionname='manual_flags')
 
 
 clearstat()

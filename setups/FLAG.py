@@ -163,16 +163,17 @@ def main():
             steps.append(step)
 
 
-            step = {}
-            step['step'] = 3
-            step['comment'] = 'Backup flag table for '+myms
-            step['dependency'] = 1
-            step['id'] = 'SAVFG'+code
-            syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
-            syscall += 'versionname=tricolour1 mslist='+myms
-            step['syscall'] = syscall
-            steps.append(step)
+            if cfg.SAVE_FLAGS:
+                step = {}
+                step['step'] = 3
+                step['comment'] = 'Backup flag table for '+myms
+                step['dependency'] = 1
+                step['id'] = 'SAVFG'+code
+                syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+                syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
+                syscall += 'versionname=tricolour1 mslist='+myms
+                step['syscall'] = syscall
+                steps.append(step)
 
 
             target_steps.append((steps,kill_file,targetname))

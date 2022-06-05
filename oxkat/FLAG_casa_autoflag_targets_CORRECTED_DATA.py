@@ -22,7 +22,8 @@ for target in targets:
     flagdata(vis=myms,mode='extend',growtime=90.0,growfreq=90.0,growaround=True,flagneartime=True,flagnearfreq=True,field=target[1])
 
 
-flagmanager(vis=myms,mode='save',versionname='tfcrop_targets')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,mode='save',versionname='tfcrop_targets')
 
 
 clearstat()

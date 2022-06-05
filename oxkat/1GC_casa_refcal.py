@@ -182,10 +182,10 @@ flagdata(vis=myms,
     datacolumn='residual',
     field=bpcal)
 
-
-flagmanager(vis=myms,
-    mode='save',
-    versionname='bpcal_residual_flags')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,
+        mode='save',
+        versionname='bpcal_residual_flags')
 
 
 # --------------------------------------------------------------- #
@@ -397,8 +397,8 @@ for i in range(0,len(pcals)):
         mode = 'tfcrop',
         datacolumn = 'residual')
 
-
-flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
 
 
 # --------------------------------------------------------------- #
@@ -535,5 +535,5 @@ for i in range(0,len(targets)):
         gainfield=['',bpcal,bpcal,related_pcal],
         interp=['nearest','linear','linear','linear'])
 
-
-flagmanager(vis=myms,mode='save',versionname='refcal-full')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,mode='save',versionname='refcal-full')

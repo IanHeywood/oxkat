@@ -338,6 +338,15 @@ CAL_3GC_FACET_REGION = '' # Specify DS9 region to define tessel centres
                           # be used to e.g. peel the same source from a compact mosaic rather than
                           # having to provide multiple copies of the same region on a per-field basis
 
+
+# ------------------------------------------------------------------------
+#
+# Flag settings
+#
+
+SAVE_FLAGS = False
+
+
 # ------------------------------------------------------------------------
 #
 # wsclean defaults

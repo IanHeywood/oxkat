@@ -17,7 +17,7 @@ for i in range(0,len(targets)):
         realmodelcol=True,
         datacolumn='corrected')
 
-
-    flagmanager(vis=opms,
-        mode='save',
-        versionname='post-1GC')
+    if SAVE_FLAGS:
+        flagmanager(vis=opms,
+            mode='save',
+            versionname='post-1GC')

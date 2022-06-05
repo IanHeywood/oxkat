@@ -187,9 +187,10 @@ flagdata(vis=myms,
     field=bpcal)
 
 
-flagmanager(vis=myms,
-    mode='save',
-    versionname='bpcal_residual_flags')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,
+        mode='save',
+        versionname='bpcal_residual_flags')
 
 
 # --------------------------------------------------------------- #
@@ -323,4 +324,5 @@ for i in range(0,len(targets)):
         interp=['nearest','linear','linear','linear'])
 
 
-flagmanager(vis=myms,mode='save',versionname='refcal-full')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,mode='save',versionname='refcal-full')

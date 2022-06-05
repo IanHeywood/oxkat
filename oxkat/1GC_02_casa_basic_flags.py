@@ -78,9 +78,11 @@ flagdata(vis = myms,
 # ------------------------------------------------------------------------
 # Save the flags
 
-flagmanager(vis = myms,
-	mode = 'save',
-	versionname = 'basic')
+if SAVE_FLAGS:
+
+	flagmanager(vis = myms,
+		mode = 'save',
+		versionname = 'basic')
 
 
 clearstat()

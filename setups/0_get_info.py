@@ -38,6 +38,7 @@ def main():
         CONTAINER_RUNNER=''
 
 
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY)
     OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
 
 
@@ -63,7 +64,7 @@ def main():
     syscall += ' python '+cfg.TOOLS+'/ms_info.py '+myms+'\n'
     syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += ' python '+cfg.TOOLS+'/scan_times.py '+myms+'\n'
-    syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += ' python '+cfg.TOOLS+'/find_sun.py '+myms+'\n'
     syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += ' python '+cfg.OXKAT+'/1GC_00_setup.py '+myms

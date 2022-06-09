@@ -140,7 +140,7 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                         imgname = img_prefix,
                         datacol = 'DATA',
-                        nomodel = True,
+                        bda = True,
                         automask = False,
                         autothreshold = False,
                         localrms = False,

@@ -488,9 +488,11 @@ def generate_syscall_wsclean(mslist,
                           circularbeam = cfg.WSC_CIRCULARBEAM,
                           mem = cfg.WSC_MEM,
                           absmem = cfg.WSC_ABSMEM,
+                          usewgridder = cfg.WSC_USEWGRIDDER,
                           useidg = cfg.WSC_USEIDG,
                           idgmode = cfg.WSC_IDGMODE,
-                          paralleldeconvolution = cfg.WSC_PARALLELDECONVOLUTION):
+                          paralleldeconvolution = cfg.WSC_PARALLELDECONVOLUTION,
+                          parallelreordering = cfg.WSC_PARALLELREORDERING):
 
     # Generate system call to run wsclean
 
@@ -508,43 +510,30 @@ def generate_syscall_wsclean(mslist,
         even = False
         odd = False
 
+    # -----------
     syscall = 'wsclean '
     syscall += '-log-time '
-    syscall += '-parallel-reordering 8 '
+    if absmem < 0:
+        syscall += '-mem '+str(mem)+' '
+    else:
+        syscall += '-abs-mem '+str(absmem)+' '
     if continueclean:
         syscall += '-continue '
-    syscall += '-field '+str(field)+' '
+    if parallelreordering != 0:
+        syscall += '-parallel-reordering '+str(parallelreordering)
+
+    # Outputs  
+    syscall += '-name '+imgname+' '
     if makepsf:
         syscall += '-make-psf '
     if nodirty:
         syscall += '-no-dirty '
     if sourcelist: # and fitspectralpol != 0:
         syscall += '-save-source-list '
-    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
-    syscall += '-scale '+cellsize+' '
-    if bda and not useidg:
-        syscall += '-baseline-averaging '+str(bdafactor)+' '
-        syscall += '-no-update-model-required '
-    elif not bda and nomodel:
-        syscall += '-no-update-model-required '
-    syscall += '-nwlayers-factor '+str(nwlayersfactor)+' '
-    if useidg:
-        syscall += '-use-idg '
-        syscall += '-idg-mode '+idgmode+' '
-    if multiscale:
-        syscall += '-multiscale '
-        syscall += '-multiscale-scales '+scales+' '
-    syscall += '-niter '+str(niter)+' '
-    syscall += '-gain '+str(gain)+' '
-    syscall += '-mgain '+str(mgain)+' '
-    if nonegative:
-        syscall += '-no-negative '
-    syscall += '-weight briggs '+str(briggs)+' '
-    if tapergaussian != '':
-        syscall += '-taper-gaussian '+str(tapergaussian)+' '
+
+    # Data selection
     syscall += '-data-column '+datacol+' '
-    if paralleldeconvolution != 0:
-        syscall += '-parallel-deconvolution '+str(paralleldeconvolution)+' '
+    syscall += '-field '+str(field)+' '
     if startchan != -1 and endchan != -1:
         syscall += '-channel-range '+str(startchan)+' '+str(endchan)+' '
     if minuvl != '':
@@ -559,6 +548,54 @@ def generate_syscall_wsclean(mslist,
         syscall += '-intervals '+str(interval0)+' '+str(interval1)+' '
     if intervalsout:
         syscall += '-intervalsout '+str(intervalsout)+' '
+
+    # Image dimensions
+    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
+    syscall += '-scale '+cellsize+' '
+
+    # Gridding
+    if usewgridder:
+        syscall += '-use-wgridder '
+    if bda and not useidg:
+        syscall += '-baseline-averaging '+str(bdafactor)+' '
+        syscall += '-no-update-model-required '
+    elif not bda and nomodel:
+        syscall += '-no-update-model-required '
+    if not usewgridder and not useidg:
+        syscall += '-padding '+str(padding)+' '
+        syscall += '-nwlayers-factor '+str(nwlayersfactor)+' '
+    if useidg:
+        syscall += '-use-idg '
+        syscall += '-idg-mode '+idgmode+' '
+
+    # Weighting
+    syscall += '-weight briggs '+str(briggs)+' '
+    if tapergaussian != '':
+        syscall += '-taper-gaussian '+str(tapergaussian)+' '
+
+    # Deconvolution
+    if paralleldeconvolution != 0:
+        syscall += '-parallel-deconvolution '+str(paralleldeconvolution)+' '    
+    if multiscale:
+        syscall += '-multiscale '
+        syscall += '-multiscale-scales '+scales+' '
+    syscall += '-niter '+str(niter)+' '
+    syscall += '-gain '+str(gain)+' '
+    syscall += '-mgain '+str(mgain)+' '
+    if chanout:
+        syscall += '-channels-out '+str(chanout)+' '
+    if fitspectralpol != 0:
+        syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
+    if joinchannels:
+        syscall += '-join-channels '
+    if nonegative:
+        syscall += '-no-negative '
+    if stopnegative:
+        syscall += '-stop-negative '
+    if circularbeam:
+        syscall += '-circular-beam '
+
+    # Masking
     if mask:
         if mask.lower() == 'fits':
             mymask = glob.glob('*mask.fits')[0]
@@ -573,22 +610,7 @@ def generate_syscall_wsclean(mslist,
         syscall += '-local-rms '
     if threshold:
         syscall += '-threshold '+str(threshold)+' '
-    if stopnegative:
-        syscall += '-stop-negative '        
-    syscall += '-name '+imgname+' '
-    if chanout:
-        syscall += '-channels-out '+str(chanout)+' '
-    if fitspectralpol != 0:
-        syscall += '-fit-spectral-pol '+str(fitspectralpol)+' '
-    if joinchannels:
-        syscall += '-join-channels '
-    syscall += '-padding '+str(padding)+' '
-    if circularbeam:
-        syscall += '-circular-beam '
-    if absmem < 0:
-        syscall += '-mem '+str(mem)+' '
-    else:
-        syscall += '-abs-mem '+str(absmem)+' '
+
     for myms in mslist:
         syscall += myms+' '
 
@@ -600,6 +622,7 @@ def generate_syscall_predict(msname,
                             field = cfg.WSC_FIELD,
                             nwlayersfactor = cfg.WSC_NWLAYERSFACTOR,
                             chanout = cfg.WSC_CHANNELSOUT,
+                            usewgridder = cfg.WSC_USEWGRIDDER,
 #                            imsize = cfg.WSC_IMSIZE,
 #                            cellsize = cfg.WSC_CELLSIZE,
 #                            predictchannels = cfg.WSC_PREDICTCHANNELS,
@@ -612,7 +635,10 @@ def generate_syscall_predict(msname,
     syscall += '-log-time '
     syscall += '-predict '
     syscall += '-field '+str(field)+' '
-    syscall += '-nwlayers-factor '+str(nwlayersfactor)+' '
+    if usewgridder:
+        syscall += '-use-wgridder '
+    if not usewgridder:
+        syscall += '-nwlayers-factor '+str(nwlayersfactor)+' '
     syscall += '-channels-out '+str(chanout)+' '
 #    syscall += '-size '+str(imsize)+' '+str(imsize)+' '
 #    syscall += '-scale '+cellsize+' '

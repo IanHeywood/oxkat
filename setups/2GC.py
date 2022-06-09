@@ -141,7 +141,6 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                         imgname = data_img_prefix,
                         datacol = 'DATA',
-                        bda = True,
                         mask = mask,
                         automask = automask,
                         absmem = absmem)
@@ -151,22 +150,8 @@ def main():
 
             step = {}
             step['step'] = 1
-            step['comment'] = 'Predict model visibilities from imaging of the DATA column'
-            step['dependency'] = 0
-            step['id'] = 'WSDPR'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = data_img_prefix,absmem = absmem)
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 2
             step['comment'] = 'Run CubiCal with f-slope solver'
-            step['dependency'] = 1
+            step['dependency'] = 0
             step['id'] = 'CL2GC'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
@@ -179,9 +164,9 @@ def main():
 
 
             step = {}
-            step['step'] = 3
+            step['step'] = 2
             step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA column of '+myms
-            step['dependency'] = 2
+            step['dependency'] = 1
             step['id'] = 'WSCMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
@@ -190,7 +175,6 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname = corr_img_prefix,
                         datacol = 'CORRECTED_DATA',
-                        bda = True,
                         mask = mask,
                         automask = automask,
                         absmem = absmem)
@@ -199,29 +183,15 @@ def main():
 
 
             step = {}
-            step['step'] = 4
+            step['step'] = 3
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
-            step['dependency'] = 3
+            step['dependency'] = 2
             step['id'] = 'MASK1'+code
             syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
                                     outfile = corr_img_prefix+'-MFS-image.mask1.fits',
                                     thresh = 5.5,
                                     zoompix = cfg.DDF_NPIX)[0]
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 5
-            step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
-            step['dependency'] = 3
-            step['id'] = 'WSCPR'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = corr_img_prefix,absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 

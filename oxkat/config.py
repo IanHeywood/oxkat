@@ -395,9 +395,11 @@ WSC_PREDICTCHANNELS = 64
 WSC_CIRCULARBEAM = True
 WSC_ABSMEM = -1 # in GB; mem is used if absmem is negative, calculated automatically for HPC, see absmem_helper
 WSC_MEM = 90
+WSC_USEWGRIDDER = True
 WSC_USEIDG = False # use image-domain gridder (not useable yet)
 WSC_IDGMODE = 'CPU'
 WSC_PARALLELDECONVOLUTION = 2560 # 
+WSC_PARALLELREORDERING = 8
 
 # Band modifiers
 if BAND == 'U':

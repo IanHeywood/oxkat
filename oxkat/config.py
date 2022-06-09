@@ -215,7 +215,7 @@ CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpo
 
 # Band specific options
 
-if BAND == 'U':       
+if BAND == 'UHF':       
 
     CAL_1GC_FREQRANGE = '*:850~900MHz'        # Clean part of the band to use for generating UHF 1GC G-solutions
     CAL_1GC_UVRANGE = '>150m'               # Selection for baselines to include during 1GC B/G solving (K excluded)

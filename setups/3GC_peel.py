@@ -166,7 +166,7 @@ def main():
                         automask = False,
                         autothreshold = False,
                         localrms = False,
-                        bda = True,
+                        momodel = True,
                         mask = mask,
                         absmem = absmem)
             step['syscall'] = syscall
@@ -195,7 +195,7 @@ def main():
             step['pbs_config'] = cfg.PBS_WSCLEAN
             absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = dir1_img_prefix,chanout = cfg.CAL_3GC_PEEL_NCHAN, absmem = absmem)
+            syscall += gen.generate_syscall_predict(msname = myms, imgbase = dir1_img_prefix, chanout = cfg.CAL_3GC_PEEL_NCHAN, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -236,7 +236,7 @@ def main():
             step['pbs_config'] = cfg.PBS_WSCLEAN
             absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
             syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = prepeel_img_prefix,chanout = cfg.CAL_3GC_PEEL_NCHAN, absmem = absmem)
+            syscall += gen.generate_syscall_predict(msname = myms, imgbase = prepeel_img_prefix, chanout = cfg.CAL_3GC_PEEL_NCHAN, absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -263,7 +263,7 @@ def main():
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_cubical(parset=cfg.CAL_3GC_PEEL_PARSET,myms=myms,extra_args='--out-name '+outname+' --out-dir '+outdir)
+            syscall += gen.generate_syscall_cubical(parset=cfg.CAL_3GC_PEEL_PARSET, myms=myms, extra_args='--out-name '+outname+' --out-dir '+outdir)
             step['syscall'] = syscall
             steps.append(step)
 

@@ -352,54 +352,62 @@ SAVE_FLAGS = False
 #
 # wsclean defaults
 #
-
+# General
+WSC_MEM = 90
+WSC_ABSMEM = -1 # in GB; mem is used if absmem is negative, calculated automatically for HPC, see absmem_helper
 WSC_CONTINUE = False
-WSC_FIELD = 0
+WSC_PARALLELREORDERING = 8
+# Outputs
 WSC_MAKEPSF = False
 WSC_NODIRTY = False
+WSC_SOURCELIST = True
+# Data selection
+WSC_FIELD = 0
 WSC_STARTCHAN = -1
 WSC_ENDCHAN = -1
-WSC_EVEN = False
-WSC_ODD = False
 WSC_MINUVL = ''
 WSC_MAXUVL = ''
-WSC_CHANNELSOUT = 8
-WSC_JOINCHANNELS = True
+WSC_EVEN = False
+WSC_ODD = False
 WSC_INTERVAL0 = None
 WSC_INTERVAL1 = None
 WSC_INTERVALSOUT = None
+# Image dimensions
 WSC_IMSIZE = 10240
 WSC_CELLSIZE = '1.1asec'
+# Gridding / degridding
+WSC_USEWGRIDDER = True
+WSC_WGRIDDERACCURACY = 5e-5
+WSC_BDA = False
+WSC_BDAFACTOR = 10
+WSC_NOMODEL = False
+WSC_NWLAYERSFACTOR = 5
+WSC_PADDING = 1.2
+WSC_USEIDG = False # use image-domain gridder (not useable yet)
+WSC_IDGMODE = 'CPU'
+WSC_PREDICTCHANNELS = 64
+# Weighting
 WSC_BRIGGS = -0.3
 WSC_TAPERGAUSSIAN = ''
+# Deconvolution
+WSC_PARALLELDECONVOLUTION = 2560
+WSC_MULTISCALE = False
+WSC_SCALES = '0,3,9'
 WSC_NITER = 80000
 WSC_GAIN = 0.15
 WSC_MGAIN = 0.9
-WSC_MULTISCALE = False
-WSC_SCALES = '0,3,9'
+WSC_CHANNELSOUT = 8
+WSC_FITSPECTRALPOL = 4
+WSC_JOINCHANNELS = True
 WSC_NONEGATIVE = False
-WSC_SOURCELIST = True
-WSC_BDA = False
-WSC_BDAFACTOR = 10
-WSC_NWLAYERSFACTOR = 5
-WSC_PADDING = 1.2
-WSC_NOMODEL = False
+WSC_STOPNEGATIVE = False
+WSC_CIRCULARBEAM = True
+# Masking
 WSC_MASK = 'auto'
 WSC_THRESHOLD = 1e-6
 WSC_AUTOMASK = 4.0
 WSC_AUTOTHRESHOLD = 1.0
 WSC_LOCALRMS = True
-WSC_STOPNEGATIVE = False
-WSC_FITSPECTRALPOL = 4
-WSC_PREDICTCHANNELS = 64
-WSC_CIRCULARBEAM = True
-WSC_ABSMEM = -1 # in GB; mem is used if absmem is negative, calculated automatically for HPC, see absmem_helper
-WSC_MEM = 90
-WSC_USEWGRIDDER = True
-WSC_USEIDG = False # use image-domain gridder (not useable yet)
-WSC_IDGMODE = 'CPU'
-WSC_PARALLELDECONVOLUTION = 2560 # 
-WSC_PARALLELREORDERING = 8
 
 # Band modifiers
 if BAND == 'U':

@@ -489,6 +489,7 @@ def generate_syscall_wsclean(mslist,
                           mem = cfg.WSC_MEM,
                           absmem = cfg.WSC_ABSMEM,
                           usewgridder = cfg.WSC_USEWGRIDDER,
+                          wgridderaccuracy = cfg.WSC_WGRIDDERACCURACY,
                           useidg = cfg.WSC_USEIDG,
                           idgmode = cfg.WSC_IDGMODE,
                           paralleldeconvolution = cfg.WSC_PARALLELDECONVOLUTION,
@@ -556,6 +557,7 @@ def generate_syscall_wsclean(mslist,
     # Gridding
     if usewgridder:
         syscall += '-use-wgridder '
+        syscall += '-wgridder-accuracy '+str(wgridderaccuracy)+' '
     if bda and not useidg:
         syscall += '-baseline-averaging '+str(bdafactor)+' '
         syscall += '-no-update-model-required '

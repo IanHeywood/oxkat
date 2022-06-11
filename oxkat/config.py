@@ -59,14 +59,14 @@ CHPC_CONTAINER_PATH = ['/apps/chpc/astro/stimela_images/']
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = [HOME+'/containers/']
 
-ASTROPY_PATTERN = 'owlcat_1.2.5'
+ASTROPY_PATTERN = 'owlcat*1.2.5'
 CASA_PATTERN = 'casa'
 CLUSTERCAT_PATTERN = 'ddfacet'
 CUBICAL_PATTERN = 'cubical'
 DDFACET_PATTERN = 'ddfacet'
 KILLMS_PATTERN = 'ddfacet'
 MEQTREES_PATTERN = 'meqtrees'
-OWLCAT_PATTERN = 'owlcat_1.6.6'
+OWLCAT_PATTERN = 'owlcat*1.6.6'
 PYBDSF_PATTERN = 'pybdsf'
 RAGAVI_PATTERN = 'ragavi'
 SHADEMS_PATTERN = 'shadems'

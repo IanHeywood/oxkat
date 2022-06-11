@@ -520,7 +520,7 @@ def generate_syscall_wsclean(mslist,
     if continueclean:
         syscall += '-continue '
     if parallelreordering != 0:
-        syscall += '-parallel-reordering '+str(parallelreordering)
+        syscall += '-parallel-reordering '+str(parallelreordering)+' '
 
     # Outputs  
     syscall += '-name '+imgname+' '

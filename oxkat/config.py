@@ -410,7 +410,7 @@ WSC_AUTOTHRESHOLD = 1.0
 WSC_LOCALRMS = True
 
 # Band modifiers
-if BAND == 'U':
+if BAND == 'UHF':
     WSC_CELLSIZE = '1.7asec'
     WSC_BRIGGS = -0.5
     WSC_BDAFACTOR = 4
@@ -519,7 +519,7 @@ DDF_CONSERVEMEMORY = 1
 
 
 # Band modifiers
-if BAND == 'U':
+if BAND == 'UHF':
     DDF_CELL = 1.7
     DDF_ROBUST = -0.5
 if BAND == 'S0':

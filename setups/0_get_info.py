@@ -61,13 +61,13 @@ def main():
     step['dependency'] = None
     step['id'] = 'SETUP'+code
     syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += ' python '+cfg.TOOLS+'/ms_info.py '+myms+'\n'
+    syscall += ' python3 '+cfg.TOOLS+'/ms_info.py '+myms+'\n'
     syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += ' python '+cfg.TOOLS+'/scan_times.py '+myms+'\n'
+    syscall += ' python3 '+cfg.TOOLS+'/scan_times.py '+myms+'\n'
     syscall += CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += ' python '+cfg.TOOLS+'/find_sun.py '+myms+'\n'
+    syscall += ' python3 '+cfg.TOOLS+'/find_sun.py '+myms+'\n'
     syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += ' python '+cfg.OXKAT+'/1GC_00_setup.py '+myms
+    syscall += ' python3 '+cfg.OXKAT+'/1GC_00_setup.py '+myms
     step['syscall'] = syscall
     steps.append(step)
 

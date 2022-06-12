@@ -166,7 +166,7 @@ def main():
                         automask = False,
                         autothreshold = False,
                         localrms = False,
-                        momodel = True,
+                        nomodel = True,
                         mask = mask,
                         absmem = absmem)
             step['syscall'] = syscall

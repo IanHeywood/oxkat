@@ -557,7 +557,7 @@ def generate_syscall_wsclean(mslist,
     # Gridding
     if usewgridder:
         syscall += '-use-wgridder '
-        syscall += '-wgridder-accuracy '+str(wgridderaccuracy)+' '
+#        syscall += '-wgridder-accuracy '+str(wgridderaccuracy)+' '
     if bda and not useidg:
         syscall += '-baseline-averaging '+str(bdafactor)+' '
         syscall += '-no-update-model-required '

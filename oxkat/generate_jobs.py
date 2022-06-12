@@ -671,7 +671,7 @@ def generate_syscall_makemask(restoredimage,
         outfile = restoredimage.replace('.fits','.mask.fits')
 
     syscall = 'bash -c "'
-    syscall += 'python '+cfg.TOOLS+'/pyMakeMask.py '
+    syscall += 'python3 '+cfg.TOOLS+'/pyMakeMask.py '
     syscall += '--dilate='+str(dilation)+' '
     syscall += '--boxsize='+str(boxsize)+' '
     syscall += '--smallbox='+str(smallbox)+' '

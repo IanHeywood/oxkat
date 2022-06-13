@@ -54,25 +54,24 @@ USE_SINGULARITY = True
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = ['/software/astro/caracal/STIMELA_IMAGES_1.6.9',HOME+'/containers/']
-CHPC_CONTAINER_PATH = ['/apps/chpc/astro/stimela_images/']
+IDIA_CONTAINER_PATH = ['/idia/software/containers/',HOME+'/containers/']
+CHPC_CONTAINER_PATH = [HOME+'/containers/']
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = [HOME+'/containers/']
 
-ASTROPY_PATTERN = 'owlcat*1.2.5'
-CASA_PATTERN = 'casa'
-CLUSTERCAT_PATTERN = 'ddfacet'
-CUBICAL_PATTERN = 'cubical'
-DDFACET_PATTERN = 'ddfacet'
-KILLMS_PATTERN = 'ddfacet'
-MEQTREES_PATTERN = 'meqtrees'
-OWLCAT_PATTERN = 'owlcat*1.6.6'
-PYBDSF_PATTERN = 'pybdsf'
-RAGAVI_PATTERN = 'ragavi'
-SHADEMS_PATTERN = 'shadems'
-TRICOLOUR_PATTERN = 'tricolour'
-WSCLEAN_PATTERN = 'wsclean'
-#WSCLEANIDG_PATTERN = 'wsclean*idg'
+
+ASTROPY_PATTERN = 'oxkat-0.4'
+CASA_PATTERN = 'oxkat-0.4'
+CLUSTERCAT_PATTERN = 'oxkat-0.4'
+CUBICAL_PATTERN = 'oxkat-0.4'
+DDFACET_PATTERN = 'oxkat-0.4'
+KILLMS_PATTERN = 'oxkat-0.4'
+OWLCAT_PATTERN = 'oxkat-0.4'
+PYBDSF_PATTERN = 'oxkat-0.4'
+RAGAVI_PATTERN = 'oxkat-0.4'
+SHADEMS_PATTERN = 'oxkat-0.4'
+TRICOLOUR_PATTERN = 'oxkat-0.4'
+WSCLEAN_PATTERN = 'oxkat-0.4'
 
 
 # ------------------------------------------------------------------------

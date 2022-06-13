@@ -75,7 +75,7 @@ def set_infrastructure(args):
     print(col('Infrastructure')+infrastructure.upper())
     if cfg.USE_SINGULARITY:
         print(col('Singularity')+'Enabled')
-        print(col('Container path(s)')+str(CONTAINER_PATH))
+        print(col('Searching')+str(CONTAINER_PATH))
     else:
         print(col('Singularity')+'Not enabled')
 
@@ -116,9 +116,9 @@ def get_container(pathlist,pattern,use_singularity):
     container = ll[-1]
     opstr = container.split('/')[-1]
     if len(ll) > 1:
-        opstr += ' (multiple matches found)'
+        opstr += ' (multiple matches)'
     if opstr not in container_list:
-        print(col()+opstr)
+        print(col('Found container')+opstr)
         container_list.append(opstr)
     return container
 

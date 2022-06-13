@@ -27,10 +27,6 @@ def preamble():
         print(col()+'Intermediate flag tables will be backed up')
     else:
         print(col()+'Intermediate flag tables will not be backed up')
-    # if cfg.BAND[0].upper() == 'L':
-    #     print(now()+'Configured for L-band processing')
-    # elif cfg.BAND[0].upper() == 'U':
-    #     print(now()+'Configured for UHF processing')
 
 
 def now():
@@ -79,7 +75,7 @@ def set_infrastructure(args):
     print(col('Infrastructure')+infrastructure.upper())
     if cfg.USE_SINGULARITY:
         print(col('Singularity')+'Enabled')
-        print(col('Container path')+str(CONTAINER_PATH))
+        print(col('Container path(s)')+str(CONTAINER_PATH))
     else:
         print(col('Singularity')+'Not enabled')
 
@@ -87,8 +83,13 @@ def set_infrastructure(args):
     return infrastructure,CONTAINER_PATH
 
 
+container_list = []
+
 def get_container(pathlist,pattern,use_singularity):
     
+    # Pass a list, if container isn't in it then append?]
+    # Call another function to print it
+
     # For running without containers
     if pathlist is None: # Retain backwards compatibility with hippo fix
         return ''
@@ -116,7 +117,9 @@ def get_container(pathlist,pattern,use_singularity):
     opstr = container.split('/')[-1]
     if len(ll) > 1:
         opstr += ' (multiple matches found)'
-    print(col(pattern)+opstr)
+    if opstr not in container_list:
+        print(col()+opstr)
+        opstr.append(container_list)
     return container
 
 

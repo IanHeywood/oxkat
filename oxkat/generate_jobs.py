@@ -119,7 +119,7 @@ def get_container(pathlist,pattern,use_singularity):
         opstr += ' (multiple matches found)'
     if opstr not in container_list:
         print(col()+opstr)
-        opstr.append(container_list)
+        container_list.append(opstr)
     return container
 
 

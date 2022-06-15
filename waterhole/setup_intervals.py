@@ -87,7 +87,7 @@ def main():
                         os.mkdir(opdir)
 
                     imgname = opdir+'/img_'+myms+'_modelsub'
-                    code = 'WSscan'+str(scans[i])
+                    code = 'intrvl'+str(scans[i])
 
                     syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
                     syscall += 'wsclean -intervals-out '+str(intervals[i])+' -interval 0 '+str(intervals[i])+' '

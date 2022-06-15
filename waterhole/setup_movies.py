@@ -24,7 +24,8 @@ def write_slurm(opfile,jobname,logfile,syscall):
 def main():
 
 
-    MOVIE_CONTAINER = '/idia/software/containers/ASTRO-PY3-2021-10-26.simg'
+    INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(('','idia'))
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,True)
 
     intervals = sorted(glob.glob('INTERVALS/*scan*'))
     rootdir = os.getcwd()
@@ -38,7 +39,7 @@ def main():
 
         os.chdir(mydir)
         code = os.getcwd().split('/')[-1].split('_')[-1].replace('scan','movie')
-        syscall = 'singularity exec '+MOVIE_CONTAINER+' '
+        syscall = 'singularity exec '+ASTROPY_CONTAINER+' '
         syscall += 'python '+rootdir+'/tools/make_movie.py'
 
         slurm_file = 'slurm_'+code+'.sh'

@@ -11,7 +11,7 @@ from astropy.time import Time
 from PIL import Image,ImageDraw,ImageFont
 
 fontPath = '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf'
-sans48  =  ImageFont.truetype ( fontPath, 48 )
+sans24  =  ImageFont.truetype ( fontPath, 24 )
 
 fitslist = sorted(glob.glob('*-t*-image.fits'))
 nframes = len(fitslist)
@@ -37,9 +37,9 @@ for ff in fitslist:
 	img = Image.open(pp)
 	xx,yy = img.size
 	draw = ImageDraw.Draw(img)
-	draw.text((0.03*xx,0.90*yy),'Frame : '+str(i).zfill(len(str(nframes)))+' / '+str(nframes),fill=('white'),font=sans48)
-	draw.text((0.03*xx,0.93*yy),'Time  : '+tt,fill=('white'),font=sans48)
-	draw.text((0.03*xx,0.96*yy),'Image : '+ff,fill=('white'),font=sans48)
+	draw.text((0.03*xx,0.90*yy),'Frame : '+str(i).zfill(len(str(nframes)))+' / '+str(nframes),fill=('white'),font=sans24)
+	draw.text((0.03*xx,0.93*yy),'Time  : '+tt,fill=('white'),font=sans24)
+	draw.text((0.03*xx,0.96*yy),'Image : '+ff,fill=('white'),font=sans24)
 	img.save(pp)
 	i+=1
 	os.system('rm '+tmpfits)

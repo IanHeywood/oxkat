@@ -105,7 +105,7 @@ These can also be added to your `~/.bashrc` file for simplicity.
 
 ## Containers
 
-There is a dedicated `Singularity` container (`oxkat-0.4.sif`) available that contains all the necessary packages and dependencies. This is available in the general container repository on the ilifu/IDIA cluster, and the default settings should pick it up automatically when that cluster is being used. For other systems the container will have to be downloaded (or copied over). The container can be downloaded [here](https://entangled.physics.ox.ac.uk/index.php/s/qt0IMEkiOOj0TJe/download). 
+There is a dedicated `Singularity` container (`oxkat-0.4.sif`) available that contains all the necessary packages and dependencies. This is available in the general container repository on the ilifu/IDIA cluster, and the default settings should pick it up automatically when that cluster is being used. For other systems the container will have to be downloaded (or copied over). The container can be downloaded [here](https://entangled.physics.ox.ac.uk/index.php/s/jmHRBQyyB6Zm2fj). 
 
 String patterns for package-specific containers are specified in the [`config.py`](oxkat/config.py) file. The scripts will search for containers that match these patterns in the container paths, so it's simple to swap a particular package out for a different version.
 

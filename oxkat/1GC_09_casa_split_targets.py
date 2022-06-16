@@ -3,6 +3,7 @@
 
 
 execfile('oxkat/casa_read_project_info.py')
+execfile('oxkat/config.py')
 
 
 for i in range(0,len(targets)):

@@ -69,7 +69,7 @@ KILLMS_PATTERN = 'oxkat-0.4'
 OWLCAT_PATTERN = 'oxkat-0.4'
 PYBDSF_PATTERN = 'oxkat-0.4'
 RAGAVI_PATTERN = 'oxkat-0.4'
-SHADEMS_PATTERN = 'oxkat-0.4'
+SHADEMS_PATTERN = 'oxkat-0.41'
 TRICOLOUR_PATTERN = 'oxkat-0.4'
 WSCLEAN_PATTERN = 'oxkat-0.4'
 

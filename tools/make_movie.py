@@ -6,18 +6,22 @@ import glob
 import os
 import random 
 import string
+
 from astropy.io import fits
 from astropy.time import Time
+from multiprocessing import Pool
 from PIL import Image,ImageDraw,ImageFont
 
 fontPath = '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf'
-sans24  =  ImageFont.truetype ( fontPath, 24 )
+sans18  =  ImageFont.truetype ( fontPath, 18 )
 
-fitslist = sorted(glob.glob('*-t*-image.fits'))
+fitslist = sorted(glob.glob('*-t*-image-restored.fits'))
 nframes = len(fitslist)
 i = 1
 
-tmpfits = 'temp_'+''.join(random.choices(string.ascii_uppercase + string.digits, k=16))+'.fits'
+def generate_temp(k=16):
+	tmpfits = 'temp_'+''.join(random.choices(string.ascii_uppercase + string.digits, k=k))+'.fits'
+	return tmpfits
 
 for ff in fitslist:
 
@@ -37,9 +41,9 @@ for ff in fitslist:
 	img = Image.open(pp)
 	xx,yy = img.size
 	draw = ImageDraw.Draw(img)
-	draw.text((0.03*xx,0.90*yy),'Frame : '+str(i).zfill(len(str(nframes)))+' / '+str(nframes),fill=('white'),font=sans24)
-	draw.text((0.03*xx,0.93*yy),'Time  : '+tt,fill=('white'),font=sans24)
-	draw.text((0.03*xx,0.96*yy),'Image : '+ff,fill=('white'),font=sans24)
+	draw.text((0.03*xx,0.90*yy),'Frame : '+str(i).zfill(len(str(nframes)))+' / '+str(nframes),fill=('white'),font=sans18)
+	draw.text((0.03*xx,0.93*yy),'Time  : '+tt,fill=('white'),font=sans18)
+	draw.text((0.03*xx,0.96*yy),'Image : '+ff,fill=('white'),font=sans18)
 	img.save(pp)
 	i+=1
 	os.system('rm '+tmpfits)

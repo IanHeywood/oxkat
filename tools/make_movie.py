@@ -15,15 +15,16 @@ from PIL import Image,ImageDraw,ImageFont
 fontPath = '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf'
 sans18  =  ImageFont.truetype ( fontPath, 18 )
 
-fitslist = sorted(glob.glob('*-t*-image-restored.fits'))
-nframes = len(fitslist)
-i = 1
+
 
 def generate_temp(k=16):
 	tmpfits = 'temp_'+''.join(random.choices(string.ascii_uppercase + string.digits, k=k))+'.fits'
 	return tmpfits
 
-for ff in fitslist:
+
+def make_png(ff)
+
+	tmpfits = generate_temp()
 
 	os.system('mShrink '+ff+' '+tmpfits+' 2')
 
@@ -48,7 +49,17 @@ for ff in fitslist:
 	i+=1
 	os.system('rm '+tmpfits)
 
-frame = '2340x2340'
-fps = 10
-opmovie = fitslist[0].split('-t')[0]+'.mp4'
-os.system('ffmpeg -r '+str(fps)+' -f image2 -s '+frame+' -i pic_%04d.png -vcodec libx264 -crf 25 -pix_fmt yuv420p '+opmovie)
+if __name__ == '__main__':
+
+	fitslist = sorted(glob.glob('*-t*-image-restored.fits'))
+	nframes = len(fitslist)
+	i = 1
+	j = 8
+
+    pool = Pool(processes=j)
+    pool.map(make_png,fitslist)
+
+	frame = '2340x2340'
+	fps = 10
+	opmovie = fitslist[0].split('-t')[0]+'.mp4'
+	os.system('ffmpeg -r '+str(fps)+' -f image2 -s '+frame+' -i pic_%04d.png -vcodec libx264 -crf 25 -pix_fmt yuv420p '+opmovie)

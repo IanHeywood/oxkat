@@ -1,6 +1,12 @@
 import glob
 import os
+import os.path as o
 import sys
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
+
+
+from oxkat import generate_jobs as gen
+from oxkat import config as cfg
 
 
 def write_slurm(opfile,jobname,logfile,syscall):
@@ -40,7 +46,7 @@ def main():
         os.chdir(mydir)
         code = os.getcwd().split('/')[-1].split('_')[-1].replace('scan','movie')
         syscall = 'singularity exec '+ASTROPY_CONTAINER+' '
-        syscall += 'python '+rootdir+'/tools/make_movie.py'
+        syscall += 'python3 '+rootdir+'/tools/make_movie.py'
 
         slurm_file = 'slurm_'+code+'.sh'
         log_file = 'slurm_'+code+'.log'

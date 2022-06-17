@@ -52,12 +52,13 @@ def make_png(ff):
 if __name__ == '__main__':
 
     fitslist = sorted(glob.glob('*-t*-image-restored.fits'))
+    ids = numpy.arange(0,len(fitslist))
     nframes = len(fitslist)
-    i = 1
     j = 8
 
     pool = Pool(processes=j)
-    pool.map(make_png,fitslist)
+#    pool.map(make_png,fitslist)
+    pool.starmap(make_png,zip(fits_list,ids))
 
     frame = '2340x2340'
     fps = 10

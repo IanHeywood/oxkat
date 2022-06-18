@@ -3,8 +3,10 @@
 
 
 import glob
+import logging
 import os
 import random 
+import numpy
 import string
 
 from astropy.io import fits
@@ -16,15 +18,17 @@ fontPath = '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf'
 sans18  =  ImageFont.truetype ( fontPath, 18 )
 
 
-
 def generate_temp(k=16):
     tmpfits = 'temp_'+''.join(random.choices(string.ascii_uppercase + string.digits, k=k))+'.fits'
     return tmpfits
 
 
-def make_png(ff):
+def make_png(ff,i):
 
     tmpfits = generate_temp()
+
+    logging.info(' | File '+str(i)+' | Input image '+ff)
+    logging.info(' | File '+str(i)+' | Temp image  '+tmpfits)
 
     os.system('mShrink '+ff+' '+tmpfits+' 2')
 
@@ -36,9 +40,10 @@ def make_png(ff):
 #   pp = str(i).zfill(4)+'_'+ff.replace('.fits','.png')
     pp = 'pic_'+str(i).zfill(4)+'.png'
 #   syscall = 'mViewer -ct 0 -gray '+ff+' -0.0004 0.0008 -out '+pp
+    logging.info(' | File '+str(i)+' | PNG         '+pp)
     syscall = 'mViewer -ct 0 -gray '+tmpfits+' -0.0004 0.0008 -out '+pp
     os.system(syscall)
-    print(syscall)
+    logging.info(' | File '+str(i)+' | Time        '+tt)
     img = Image.open(pp)
     xx,yy = img.size
     draw = ImageDraw.Draw(img)
@@ -46,10 +51,14 @@ def make_png(ff):
     draw.text((0.03*xx,0.93*yy),'Time  : '+tt,fill=('white'),font=sans18)
     draw.text((0.03*xx,0.96*yy),'Image : '+ff,fill=('white'),font=sans18)
     img.save(pp)
-    i+=1
     os.system('rm '+tmpfits)
+    logging.info(' | File '+str(i)+' | Done')
 
 if __name__ == '__main__':
+
+    logfile = 'restore_model.log'
+    logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
+
 
     fitslist = sorted(glob.glob('*-t*-image-restored.fits'))
     ids = numpy.arange(0,len(fitslist))
@@ -58,7 +67,7 @@ if __name__ == '__main__':
 
     pool = Pool(processes=j)
 #    pool.map(make_png,fitslist)
-    pool.starmap(make_png,zip(fits_list,ids))
+    pool.starmap(make_png,zip(fitslist,ids))
 
     frame = '2340x2340'
     fps = 10

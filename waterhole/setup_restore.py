@@ -19,8 +19,8 @@ def write_slurm(opfile,jobname,logfile,syscall):
         '#SBATCH --partition=Main\n'
         '#SBATCH --ntasks=1\n',
         '#SBATCH --nodes=1\n',
-        '#SBATCH --cpus-per-task=8\n',
-        '#SBATCH --mem=32GB\n',
+        '#SBATCH --cpus-per-task=12\n',
+        '#SBATCH --mem=64GB\n',
         '#SBATCH --account=b24-thunderkat-ag\n',
         '#SBATCH --output='+logfile+'\n',
         syscall+'\n'])

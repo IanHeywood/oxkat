@@ -34,7 +34,7 @@ target_dirs = project_info['target_dirs']
 target_cal_map = str_iterator(project_info['target_cal_map'])
 target_ms = str_iterator(project_info['target_ms'])
 
-if pre_field_list != '':
+if PRE_FIELDS != '':
 
 	pre_field_list = PRE_FIELDS.split(',')
 
@@ -72,9 +72,9 @@ if pre_field_list != '':
 				user_pcals.append(pcal_names[idx])
 
 	for src in user_targets:
-		idx = target_names(src)
+		idx = target_names.index(src)
 		user_cal_map.append(target_cal_map[idx])
-	
+
 
 
 

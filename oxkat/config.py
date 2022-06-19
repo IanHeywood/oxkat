@@ -186,6 +186,7 @@ CAL_1GC_SECONDARY_INTENT = 'PHASE'   # (partial) string to match for secondary i
 
 # Pre-processing, operations applied when master MS is split to working MS
 PRE_FIELDS = ''                      # Comma-separated list of fields to select from raw MS
+                                     # Names or IDs, do not mix, do not use spaces
 PRE_SCANS = ''                       # Comma-separated list of scans to select from raw MS
 PRE_NCHANS = 1024                    # Integer number of channels for working MS
 PRE_TIMEBIN = '8s'                   # Integration time for working MS

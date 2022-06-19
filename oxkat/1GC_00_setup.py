@@ -21,9 +21,9 @@ bands = [(815e6,1080e6,'UHF'),
     (856e6,1711e6,'L'),
     (1750e6,2624e6,'S0'),
     (1969e6,2843e6,'S1'), # 2406.25
-    (2188e6,3062e6,'S2'), # 2625.00
+    (2188e6,3062e6,'S2'), # 2625.00 1654978576
     (2046e6,2920e6,'S3'), # 2483.75
-    (2625e6,3499e6,'S4')] # 3062.50
+    (2625e6,3499e6,'S4')] # 3062.50 1653833475
 
 
 def get_dummy():
@@ -341,7 +341,7 @@ def target_cal_pairs(target_dirs,target_names,target_ids,
         separations = numpy.array(separations)
         secondary_index = numpy.where(separations == numpy.min(separations))[0][0]
 
-        target_cal_map.append(str(secondary_ids[secondary_index]))
+        target_cal_map.append(str(secondary_names[secondary_index]))
         target_cal_separations.append(round(separations[secondary_index],3))
 
     return target_cal_map,target_cal_separations

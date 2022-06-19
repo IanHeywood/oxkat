@@ -59,7 +59,7 @@ def main():
     step['step'] = 0
     step['comment'] = 'Run setup script to generate project_info json file'
     step['dependency'] = None
-    step['id'] = 'SETUP'+code
+    step['id'] = 'INFO_'+code
     syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += ' python3 '+cfg.TOOLS+'/ms_info.py '+myms+'\n'
     syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''

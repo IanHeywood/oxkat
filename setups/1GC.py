@@ -21,6 +21,11 @@ def main():
     print(gen.col()+'1GC (referenced calibration) setup')
     gen.print_spacer()
 
+    if cfg.PRE_FIELDS != '':
+        print(col('Field selection')+cfg.PRE_FIELDS)
+    if cfg.PRE_SCANS != '':
+        print(col('Scan selection')+cfg.PRE_SCANS)
+
     # ------------------------------------------------------------------------------
     #
     # Setup paths, required containers, infrastructure

@@ -13,6 +13,7 @@ from oxkat import generate_jobs as gen
 from oxkat import config as cfg
 
 
+
 def main():
 
 
@@ -28,6 +29,10 @@ def main():
     bpcal = project_info['primary_id']
     pcals = project_info['secondary_ids']
     targets = project_info['target_ids'] 
+
+    if cfg.PRE_FIELDS != '':
+        from oxkat import user_field_handler as ufh
+        pcals = ufh.user_pcals
 
     fields = [bpcal]
     for pcal in pcals:

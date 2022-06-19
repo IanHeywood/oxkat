@@ -4,6 +4,8 @@
 execfile('oxkat/casa_read_project_info.py')
 execfile('oxkat/config.py')
 
+if PRE_FIELDS != '':
+    pcals = user_pcals
 
 clearstat()
 clearstat()

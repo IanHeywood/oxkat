@@ -536,7 +536,7 @@ def main():
     for i in range(0,len(target_dirs)):
         targ = str(target_ids[i])+': '+target_names[i]
         j = target_cal_map[i]
-        k = secondary_ids.index(j)
+        k = secondary_names.index(j)
         pcal = str(secondary_ids[k])+': '+secondary_names[k]
 
         # Re-calculate separations in case of user-specified pairings that don't invoke 

@@ -9,7 +9,10 @@ import time
 execfile('oxkat/casa_read_project_info.py')
 execfile('oxkat/config.py')
 
-
+if PRE_FIELDS != '':
+    targets = user_targets
+    pcals = user_pcals
+    target_cal_map = user_cal_map
 
 def stamp():
     now = str(datetime.datetime.now()).replace(' ','-').replace(':','-').split('.')[0]
@@ -104,7 +107,7 @@ for i in range(0,len(pcals)):
 
 
 gaincal(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     #uvrange=myuvrange,
     #spw=myspw,
     caltable=ktab0,
@@ -118,14 +121,14 @@ gaincal(vis=myms,
 
 
 gaincal(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     uvrange=myuvrange,
     caltable=gtab0,
     gaintype='G',
     solint='inf',
     calmode='p',
     minsnr=5,
-    gainfield=[bpcal],
+    gainfield=[bpcal_name],
     interp = ['nearest'],
     gaintable=[ktab0])
 
@@ -134,7 +137,7 @@ gaincal(vis=myms,
 
 
 bandpass(vis=myms,
-    field=bpcal, 
+    field=bpcal_name, 
     uvrange=myuvrange,
     caltable=bptab0,
     refant = str(ref_ant),
@@ -146,7 +149,7 @@ bandpass(vis=myms,
     bandtype='B',
     fillgaps=gapfill,
     parang=False,
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp = ['nearest','nearest'],
     gaintable=[ktab0,gtab0])
 
@@ -161,10 +164,10 @@ flagdata(vis=bptab0,mode='rflag',datacolumn='CPARAM')
 applycal(vis=myms,
     gaintable=[ktab0,gtab0,bptab0],
 #    applymode='calonly',
-    field=bpcal,
+    field=bpcal_name,
 #    calwt=False,
     parang=False,
-    gainfield=[bpcal,bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name,bpcal_name],
     interp = ['nearest','nearest','nearest'])
 
 
@@ -174,13 +177,13 @@ applycal(vis=myms,
 flagdata(vis=myms,
     mode='rflag',
     datacolumn='residual',
-    field=bpcal)
+    field=bpcal_name)
 
 
 flagdata(vis=myms,
     mode='tfcrop',
     datacolumn='residual',
-    field=bpcal)
+    field=bpcal_name)
 
 if SAVE_FLAGS:
     flagmanager(vis=myms,
@@ -199,14 +202,14 @@ if SAVE_FLAGS:
 
 
 gaincal(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     caltable=ktab1,
     refant = str(ref_ant),
     gaintype = 'K',
     solint = 'inf',
     parang=False,
     gaintable=[bptab0,gtab0],
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp=['nearest','nearest'])
 
 
@@ -214,14 +217,14 @@ gaincal(vis=myms,
 
 
 gaincal(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     uvrange=myuvrange,
     caltable=gtab1,
     gaintype='G',
     solint='inf',
     calmode='p',
     minsnr=5,
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp = ['nearest','nearest'],
     gaintable=[ktab1,bptab0])
 
@@ -230,7 +233,7 @@ gaincal(vis=myms,
 
 
 bandpass(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     uvrange=myuvrange,
     caltable=bptab1,
     refant = str(ref_ant),
@@ -242,7 +245,7 @@ bandpass(vis=myms,
     bandtype='B',
     fillgaps=gapfill,
     parang=False,
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp = ['nearest','nearest'],
     gaintable=[ktab1,gtab1])
 
@@ -257,10 +260,10 @@ flagdata(vis=bptab1,mode='rflag',datacolumn='CPARAM')
 applycal(vis=myms,
     gaintable=[ktab1,gtab1,bptab1],
 #    applymode='calonly',
-    field=bpcal,
+    field=bpcal_name,
 #    calwt=False,
     parang=False,
-    gainfield=[bpcal,bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name,bpcal_name],
     interp = ['nearest','nearest','nearest'])
 
 
@@ -275,7 +278,7 @@ applycal(vis=myms,
 
 
 gaincal(vis = myms,
-    field = bpcal,
+    field = bpcal_name,
     uvrange = myuvrange,
     spw = myspw,
     caltable = gtab2,
@@ -287,7 +290,7 @@ gaincal(vis = myms,
     calmode = 'ap',
     parang = False,
     gaintable = [ktab1,gtab1,bptab1],
-    gainfield = [bpcal,bpcal,bpcal],
+    gainfield = [bpcal_name,bpcal_name,bpcal_name],
     interp = ['nearest','nearest','nearest'],
     append = False)
 
@@ -327,7 +330,7 @@ for i in range(0,len(pcals)):
         calmode = 'ap',
         parang = False,
         gaintable=[ktab1,gtab1,bptab1],
-        gainfield=[bpcal,bpcal,bpcal],
+        gainfield=[bpcal_name,bpcal_name,bpcal_name],
         interp=['nearest','linear','linear'],
         append=True)
 
@@ -345,7 +348,7 @@ for i in range(0,len(pcals)):
         solint = 'inf',
         parang = False,
         gaintable = [gtab1,bptab1,gtab2],
-        gainfield = [bpcal,bpcal,pcal],
+        gainfield = [bpcal_name,bpcal_name,pcal],
         interp = ['nearest','linear','linear','linear'],
         append = True)
 
@@ -356,7 +359,7 @@ for i in range(0,len(pcals)):
 fluxscale(vis=myms,
     caltable = gtab2,
     fluxtable = ftab2,
-    reference = bpcal,
+    reference = bpcal_name,
     append = False,
     transfer = '')
 
@@ -379,7 +382,7 @@ for i in range(0,len(pcals)):
         field = pcal,
 #        calwt = False,
         parang = False,
-        gainfield = ['','',bpcal,pcal],
+        gainfield = ['','',bpcal_name,pcal],
         interp = ['nearest','linear','linear','linear'])
 
 
@@ -409,7 +412,7 @@ if SAVE_FLAGS:
 
 
 gaincal(vis = myms,
-    field = bpcal,
+    field = bpcal_name,
     uvrange = myuvrange,
     spw = myspw,
     caltable = gtab3,
@@ -421,7 +424,7 @@ gaincal(vis = myms,
     calmode = 'ap',
     parang = False,
     gaintable = [ktab2,gtab1,bptab1],
-    gainfield = [bpcal,bpcal,bpcal],
+    gainfield = [bpcal_name,bpcal_name,bpcal_name],
     interp = ['nearest','nearest','nearest'],
     append = False)
 
@@ -459,7 +462,7 @@ for i in range(0,len(pcals)):
         calmode = 'ap',
         parang = False,
         gaintable=[ktab2,gtab1,bptab1],
-        gainfield=[bpcal,bpcal,bpcal],
+        gainfield=[bpcal_name,bpcal_name,bpcal_name],
         interp=['nearest','linear','linear'],
         append=True)
 
@@ -475,7 +478,7 @@ for i in range(0,len(pcals)):
         solint = 'inf',
         parang = False,
         gaintable = [gtab1,bptab1,gtab3],
-        gainfield = [bpcal,bpcal,pcal],
+        gainfield = [bpcal_name,bpcal_name,pcal],
         interp = ['linear','linear','linear'],
         append = True)
 
@@ -486,7 +489,7 @@ for i in range(0,len(pcals)):
 fluxscale(vis=myms,
     caltable = gtab3,
     fluxtable = ftab3,
-    reference = bpcal,
+    reference = bpcal_name,
     append = False,
     transfer = pcals)
 
@@ -509,7 +512,7 @@ for i in range(0,len(pcals)):
         field = pcal,
 #        calwt = False,
         parang = False,
-        gainfield = ['','',bpcal,pcal],
+        gainfield = ['','',bpcal_name,pcal],
         interp = ['nearest','linear','linear','linear'])
 
 
@@ -532,7 +535,7 @@ for i in range(0,len(targets)):
         field=target,
 #        calwt=False,
         parang=False,
-        gainfield=['',bpcal,bpcal,related_pcal],
+        gainfield=['',bpcal_name,bpcal_name,related_pcal],
         interp=['nearest','linear','linear','linear'])
 
 if SAVE_FLAGS:

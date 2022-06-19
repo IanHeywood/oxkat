@@ -33,6 +33,7 @@ if PRE_FIELDS != '':
 
 	user_targets = []
 	user_pcals = []
+	user_pcal_ids = []
 	user_cal_map = []
 
 	names = False
@@ -67,6 +68,10 @@ if PRE_FIELDS != '':
 	for src in user_targets:
 		idx = target_names.index(src)
 		user_cal_map.append(target_cal_map[idx])
+
+	for src in user_pcals:
+		idx = pcal_names.index(src)
+		user_pcal_ids.append(pcals[idx])
 
 
 

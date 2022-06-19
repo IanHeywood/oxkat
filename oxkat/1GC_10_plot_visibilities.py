@@ -32,7 +32,7 @@ def main():
 
     if cfg.PRE_FIELDS != '':
         from oxkat import user_field_handler as ufh
-        pcals = ufh.user_pcals
+        pcals = ufh.user_pcal_ids
 
     fields = [bpcal]
     for pcal in pcals:

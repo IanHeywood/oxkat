@@ -52,10 +52,14 @@ def main():
     with open('project_info.json') as f:
         project_info = json.load(f)
 
-    myms = project_info['master_ms']
+    myms = project_info['working_ms']
     pcal_names = project_info['secondary_names']
     pcal_ids = project_info['secondary_ids']
 
+    if cfg.PRE_FIELDS != '':
+        from oxkat import user_field_handler as ufh
+        pcal_names = ufh.user_pcals
+        pcal_ids = ufh.user_pcal_ids
 
     # ------------------------------------------------------------------------------
     #

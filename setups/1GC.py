@@ -19,12 +19,12 @@ def main():
 
     gen.preamble()
     print(gen.col()+'1GC (referenced calibration) setup')
+    gen.print_spacer()
 
     if cfg.PRE_FIELDS != '':
         print(gen.col('Field selection')+cfg.PRE_FIELDS)
     if cfg.PRE_SCANS != '':
         print(gen.col('Scan selection')+cfg.PRE_SCANS)
-
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

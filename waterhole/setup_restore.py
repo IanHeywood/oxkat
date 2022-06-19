@@ -29,7 +29,7 @@ def write_slurm(opfile,jobname,logfile,syscall):
 
 def main():
 
-    if len(sys.argv[1]) == 1:
+    if len(sys.argv) == 1:
         print('Please specify the full path to the model image')
         sys.exit()
     else:

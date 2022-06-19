@@ -69,9 +69,9 @@ if PRE_FIELDS != '':
 		idx = target_names.index(src)
 		user_cal_map.append(target_cal_map[idx])
 
-	for src in user_pcals:
-		idx = pcal_names.index(src)
-		user_pcal_ids.append(pcals[idx])
+	# for src in user_pcals:
+	# 	idx = pcal_names.index(src)
+	# 	user_pcal_ids.append(pcals[idx])
 
 
 

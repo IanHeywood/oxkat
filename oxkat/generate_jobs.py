@@ -774,7 +774,7 @@ def generate_syscall_ddfacet(mspattern,
     syscall += '--Facets-PSFOversize '+str(psfoversize)+' '
     syscall += '--Facets-Padding '+str(padding)+' '
     # [Weight]
-    syscall ++ '--Weight-Mode Briggs '
+    syscall += '--Weight-Mode Briggs '
     syscall += '--Weight-Robust '+str(robust)+' '
     # [CF]
     # syscall += '--CF-wmax 0 '

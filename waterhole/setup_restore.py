@@ -29,6 +29,12 @@ def write_slurm(opfile,jobname,logfile,syscall):
 
 def main():
 
+    if len(sys.argv[1]) == 1:
+        print('Please specify the full path to the model image')
+        sys.exit()
+    else:
+        model_fits = sys.argv[1]
+    if len(sys)
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(('','idia'))
     ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,True)
@@ -46,7 +52,7 @@ def main():
         os.chdir(mydir)
         code = os.getcwd().split('/')[-1].split('_')[-1].replace('scan','rstor')
         syscall = 'singularity exec '+ASTROPY_CONTAINER+' '
-        syscall += 'python3 '+rootdir+'/tools/restore_model.py'
+        syscall += 'python3 '+rootdir+'/tools/restore_model.py '+model_fits
 
         slurm_file = 'slurm_'+code+'.sh'
         log_file = 'slurm_'+code+'.log'
@@ -59,7 +65,7 @@ def main():
             'cd ../../\n'])
 
     f.close()
-    print('Wrote '+runfile+' script')
+    print('\nWrote '+runfile+' script')
 
 if __name__ == "__main__":
 

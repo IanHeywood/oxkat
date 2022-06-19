@@ -34,7 +34,6 @@ def main():
         sys.exit()
     else:
         model_fits = sys.argv[1]
-    if len(sys)
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(('','idia'))
     ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,True)

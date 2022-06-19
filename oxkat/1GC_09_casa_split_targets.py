@@ -6,13 +6,12 @@ execfile('oxkat/config.py')
 
 if PRE_FIELDS != '':
     targets = user_targets
-    pcals = user_pcals
-    target_cal_map = user_cal_map
 
-for i in range(0,len(targets)):
-    target = targets[i]
-    opms = target_ms[i]
+for target in targets:
 
+    for mm in target_ms:
+        if target in mm:
+            opms = mm
 
     mstransform(vis=myms,
         outputvis=opms,

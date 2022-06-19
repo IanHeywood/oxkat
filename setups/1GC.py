@@ -22,9 +22,9 @@ def main():
     gen.print_spacer()
 
     if cfg.PRE_FIELDS != '':
-        print(col('Field selection')+cfg.PRE_FIELDS)
+        print(gen.col('Field selection')+cfg.PRE_FIELDS)
     if cfg.PRE_SCANS != '':
-        print(col('Scan selection')+cfg.PRE_SCANS)
+        print(gen.col('Scan selection')+cfg.PRE_SCANS)
 
     # ------------------------------------------------------------------------------
     #

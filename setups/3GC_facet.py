@@ -216,6 +216,27 @@ def main():
             steps.append(step)
 
 
+            step = {}
+            step['step'] = 4
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 2GC DDFacet image'
+            step['dependency'] = 0
+            step['id'] = 'PBCOR'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' --freqaxis 4 '+ddf_img_prefix+'.app.restored.fits'
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 5
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 3GC DDFacet image'
+            step['dependency'] = 3
+            step['id'] = 'PBCOR'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' --freqaxis 4 '+kms_img_prefix+'.app.restored.fits'
+            step['syscall'] = syscall
+            steps.append(step)
+
             target_steps.append((steps,kill_file,targetname))
 
 

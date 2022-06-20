@@ -150,6 +150,17 @@ def main():
 
             step = {}
             step['step'] = 1
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 1GC image'
+            step['dependency'] = 0
+            step['id'] = 'PBCOR'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+data_img_prefix+'-MFS-image.fits'
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 2
             step['comment'] = 'Run CubiCal with f-slope solver'
             step['dependency'] = 0
             step['id'] = 'CL2GC'+code
@@ -164,9 +175,9 @@ def main():
 
 
             step = {}
-            step['step'] = 2
+            step['step'] = 3
             step['comment'] = 'Run wsclean, masked deconvolution of the CORRECTED_DATA column of '+myms
-            step['dependency'] = 1
+            step['dependency'] = 2
             step['id'] = 'WSCMA'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
@@ -183,15 +194,26 @@ def main():
 
 
             step = {}
-            step['step'] = 3
+            step['step'] = 4
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
-            step['dependency'] = 2
+            step['dependency'] = 3
             step['id'] = 'MASK1'+code
             syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
                                     outfile = corr_img_prefix+'-MFS-image.mask1.fits',
                                     thresh = 5.5,
                                     zoompix = cfg.DDF_NPIX)[0]
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 5
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 2GC image'
+            step['dependency'] = 3
+            step['id'] = 'PBCOR'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+corr_img_prefix+'-MFS-image.fits'
             step['syscall'] = syscall
             steps.append(step)
 

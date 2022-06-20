@@ -48,8 +48,8 @@ def main():
         CONTAINER_RUNNER=''
 
 
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY)
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
-    OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
@@ -59,6 +59,7 @@ def main():
     with open('project_info.json') as f:
         project_info = json.load(f)
 
+    band = project_info['band']
     target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']
     target_ms = project_info['target_ms']
@@ -155,7 +156,7 @@ def main():
             step['comment'] = 'Make initial cleaning mask for '+targetname
             step['dependency'] = 1
             step['id'] = 'MASK0'+code
-            syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
                         outfile = img_prefix+'-MFS-image.mask0.fits',
                         zoompix = '')[0]
@@ -163,9 +164,20 @@ def main():
             steps.append(step)
 
 
+            step = {}
+            step['step'] = 3
+            step['comment'] = 'Apply primary beam correction to '+targetname+' image'
+            step['dependency'] = 1
+            step['id'] = 'PBCOR'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+img_prefix+'-MFS-image.fits'
+            step['syscall'] = syscall
+            steps.append(step)
+
+
             if cfg.SAVE_FLAGS:
                 step = {}
-                step['step'] = 3
+                step['step'] = 4
                 step['comment'] = 'Backup flag table for '+myms
                 step['dependency'] = 1
                 step['id'] = 'SAVFG'+code

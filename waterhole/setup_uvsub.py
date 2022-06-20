@@ -1,5 +1,11 @@
 import sys
 import glob
+import os.path as o
+
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
+
+from oxkat import generate_jobs as gen
+from oxkat import config as cfg
 
 
 def write_slurm(opfile,jobname,logfile,syscall):
@@ -14,6 +20,7 @@ def write_slurm(opfile,jobname,logfile,syscall):
         '#SBATCH --nodes=1\n',
         '#SBATCH --cpus-per-task=4\n',
         '#SBATCH --mem=64GB\n',
+        '#SBATCH --account=b24-thunderkat-ag\n',
         '#SBATCH --output='+logfile+'\n',
         syscall+'\n',
         'sleep 10\n'])
@@ -22,8 +29,8 @@ def write_slurm(opfile,jobname,logfile,syscall):
 
 def main():
 
-
-    OWLCAT_CONTAINER = '/idia/software/containers/caracal/STIMELA_IMAGES_1.6.8/stimela_owlcat_1.6.6.sif'
+    INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(('','idia'))
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,True)
 
     pattern = sys.argv[1]
 
@@ -31,8 +38,8 @@ def main():
 
     for myms in mslist:
         code = myms.split('_')[-1].rstrip('.ms').replace('scan','uvsub')
-        syscall = 'singularity exec '+OWLCAT_CONTAINER+' '
-        syscall += 'python tools/sum_MS_columns.py --src=MODEL_DATA --dest=CORRECTED_DATA --subtract '+myms
+        syscall = 'singularity exec '+ASTROPY_CONTAINER+' '
+        syscall += 'python3 tools/sum_MS_columns.py --src=MODEL_DATA --dest=CORRECTED_DATA --subtract '+myms
 
         slurm_file = 'SCRIPTS/slurm_uvsub_'+myms+'.sh'
         log_file = 'LOGS/slurm_uvsub_'+myms+'.log'

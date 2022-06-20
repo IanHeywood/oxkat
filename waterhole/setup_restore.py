@@ -15,12 +15,12 @@ def write_slurm(opfile,jobname,logfile,syscall):
     f.writelines(['#!/bin/bash\n',
         '#file: '+opfile+':\n',
         '#SBATCH --job-name='+jobname+'\n',
-        '#SBATCH --time=02:00:00\n',
+        '#SBATCH --time=03:00:00\n',
         '#SBATCH --partition=Main\n'
         '#SBATCH --ntasks=1\n',
         '#SBATCH --nodes=1\n',
-        '#SBATCH --cpus-per-task=12\n',
-        '#SBATCH --mem=64GB\n',
+        '#SBATCH --cpus-per-task=8\n',
+        '#SBATCH --mem=60GB\n',
         '#SBATCH --account=b24-thunderkat-ag\n',
         '#SBATCH --output='+logfile+'\n',
         syscall+'\n'])

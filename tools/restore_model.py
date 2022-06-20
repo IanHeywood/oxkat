@@ -120,7 +120,7 @@ if __name__ == '__main__':
 
         model_fits = sys.argv[1]
 
-        j = 8 # Number of parallel convolutions
+        j = 3 # Number of parallel convolutions
         cropsize = 51 # Size of kernel thumbnail
         fits_list = sorted(glob.glob('*image.fits')) # List of residuals
         ids = numpy.arange(0,len(fits_list))

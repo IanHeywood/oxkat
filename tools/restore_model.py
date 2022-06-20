@@ -120,7 +120,7 @@ if __name__ == '__main__':
 
         model_fits = sys.argv[1]
 
-        j = 3 # Number of parallel convolutions
+        j = 1 # Number of parallel convolutions
         cropsize = 51 # Size of kernel thumbnail
         fits_list = sorted(glob.glob('*image.fits')) # List of residuals
         ids = numpy.arange(0,len(fits_list))
@@ -135,6 +135,9 @@ if __name__ == '__main__':
         os.system('fitstool.py -z '+str(nx)+' -o '+tmpmodel_fits+' '+model_fits)
         model_image = get_image(tmpmodel_fits)
 
-        pool = Pool(processes=j)
-        pool.starmap(convolve_fits,zip(fits_list,repeat(model_image),ids))
+        for i in range(0,len(fits_list)):
+                convolve_fits(fits_list[i],ids[i])
+
+        # pool = Pool(processes=j)
+        # pool.starmap(convolve_fits,zip(fits_list,repeat(model_image),ids))
 

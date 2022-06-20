@@ -15,7 +15,7 @@ from multiprocessing import Pool
 from PIL import Image,ImageDraw,ImageFont
 
 fontPath = '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf'
-sans18  =  ImageFont.truetype ( fontPath, 18 )
+sans30  =  ImageFont.truetype ( fontPath, 30 )
 
 
 def generate_temp(k=16):
@@ -41,15 +41,15 @@ def make_png(ff,i):
     pp = 'pic_'+str(i).zfill(4)+'.png'
 #   syscall = 'mViewer -ct 0 -gray '+ff+' -0.0004 0.0008 -out '+pp
     logging.info(' | File '+str(i)+' | PNG         '+pp)
-    syscall = 'mViewer -ct 0 -gray '+tmpfits+' -0.0004 0.0008 -out '+pp
+    syscall = 'mViewer -ct 0 -gray '+tmpfits+' -0.0008 0.0018 -out '+pp
     os.system(syscall)
     logging.info(' | File '+str(i)+' | Time        '+tt)
     img = Image.open(pp)
     xx,yy = img.size
     draw = ImageDraw.Draw(img)
-    draw.text((0.03*xx,0.90*yy),'Frame : '+str(i).zfill(len(str(nframes)))+' / '+str(nframes),fill=('white'),font=sans18)
-    draw.text((0.03*xx,0.93*yy),'Time  : '+tt,fill=('white'),font=sans18)
-    draw.text((0.03*xx,0.96*yy),'Image : '+ff,fill=('white'),font=sans18)
+    draw.text((0.03*xx,0.90*yy),'Frame : '+str(i).zfill(len(str(nframes)))+' / '+str(nframes),fill=('white'),font=sans30)
+    draw.text((0.03*xx,0.93*yy),'Time  : '+tt,fill=('white'),font=sans30)
+    draw.text((0.03*xx,0.96*yy),'Image : '+ff,fill=('white'),font=sans30)
     img.save(pp)
     os.system('rm '+tmpfits)
     logging.info(' | File '+str(i)+' | Done')

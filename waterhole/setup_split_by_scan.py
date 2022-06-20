@@ -41,14 +41,14 @@ def main():
     slurm_file = 'slurm_split_by_scan.sh'
     log_file = slurm_file.replace('.sh','.log')
 
-    f = open(casafile,'w')
-    f.writelines(['tb.open('+myms+')\n',
-        'scans = sorted(set(tb.getcol('SCAN_NUMBER')))\n',
+    f = open(casa_file,'w')
+    f.writelines(['tb.open("'+myms+'")\n',
+        'scans = sorted(set(tb.getcol("SCAN_NUMBER")))\n',
         'tb.done\n',
         'for scan in scans:\n',
         '    scan = str(scan)\n',
-        '    opms = '+myms+'.replace(.".ms","_scan"+scan+".ms)\n',
-        '    split(vis='+myms+',outputvis=opms,scan=scan,datacolumn="all")\n'])
+        '    opms = "'+myms+'".replace(".ms","_scan"+scan+".ms")\n',
+        '    split(vis="'+myms+'",outputvis=opms,scan=scan,datacolumn="all")\n'])
     f.close()
 
 
@@ -56,4 +56,9 @@ def main():
 
     write_slurm(opfile=slurm_file,jobname='split',logfile=log_file,syscall=syscall )
 
-    print('Wrote '+slurm_file)
+    print('Run "sbatch '+slurm_file+'" to submit')
+
+
+if __name__ == "__main__":
+
+    main()

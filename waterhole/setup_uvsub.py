@@ -33,8 +33,10 @@ def main():
     ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,True)
 
     pattern = sys.argv[1]
-
     mslist = glob.glob(pattern)
+    submit_file = 'submit_uvsub_jobs.sh'
+
+    f = open(submit_file,'w')
 
     for myms in mslist:
         code = myms.split('_')[-1].rstrip('.ms').replace('scan','uvsub')
@@ -45,8 +47,11 @@ def main():
         log_file = 'LOGS/slurm_uvsub_'+myms+'.log'
 
         write_slurm(opfile=slurm_file,jobname=code,logfile=log_file,syscall=syscall )
+        f.writelines(['sbatch '+slurm_file+'\n'])
 
-        print('sbatch '+slurm_file)
+    f.close()
+    gen.make_executable(submit_file)
+    print('Wrote '+submit_file)
 
 
 if __name__ == "__main__":

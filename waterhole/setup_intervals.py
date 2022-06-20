@@ -9,7 +9,6 @@ import pickle
 import sys
 import os.path as o
 
-
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
 from oxkat import generate_jobs as gen
@@ -103,6 +102,7 @@ def main():
                     f.writelines(['sbatch '+slurm_file+'\n'])
                     
     f.close()
+    gen.make_executable(runfile)
     print('Wrote '+runfile+' script')
 
 

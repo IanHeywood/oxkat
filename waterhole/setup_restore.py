@@ -64,6 +64,7 @@ def main():
             'cd ../../\n'])
 
     f.close()
+    gen.make_executable(runfile)
     print('\nWrote '+runfile+' script')
 
 if __name__ == "__main__":

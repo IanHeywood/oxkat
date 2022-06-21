@@ -475,7 +475,7 @@ DDF_ROBUST = 0.0
 # [Comp]
 DDF_SPARSIFICATION = '0' # [100,30,10] grids every 100th visibility on major cycle 1, every 30th on cycle 2, etc.
 # [Parallel]
-DDF_NCPU = 16
+DDF_NCPU = 8
 # [Cache]
 DDF_CACHERESET = 0
 DDF_CACHEDIR = '.'

@@ -125,7 +125,7 @@ def main():
 
             # Image prefixes
             ddf_img_prefix = IMAGES+'/img_'+myms+'_DDFpcal'
-            kms_img_prefix = IMAGES+'/img_'+myms+'_DDFkMSr-1p2'
+            kms_img_prefix = IMAGES+'/img_'+myms+'_DDFkMSr-0p7'
 
 
             step = {}

@@ -143,7 +143,7 @@ def main():
                         initdicomodel=ddf_img_prefix+'.DicoModel',
                         hogbom_maxmajoriter=0,
                         hogbom_maxminoriter=0,
-                        robust=-1.2,
+                        robust=-0.7,
                         mask=mask,
                         ddsols='killms-cohjones')
             step['syscall'] = syscall

@@ -136,7 +136,7 @@ if __name__ == '__main__':
         model_image = get_image(tmpmodel_fits)
 
         for i in range(0,len(fits_list)):
-                convolve_fits(fits_list[i],ids[i])
+                convolve_fits(fits_list[i],model_image,ids[i])
 
         # pool = Pool(processes=j)
         # pool.starmap(convolve_fits,zip(fits_list,repeat(model_image),ids))

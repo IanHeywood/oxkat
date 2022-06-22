@@ -59,6 +59,7 @@ def main():
     with open('project_info.json') as f:
         project_info = json.load(f)
 
+    band = project_info['band']
     target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']
     target_ms = project_info['target_ms']

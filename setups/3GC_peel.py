@@ -179,7 +179,7 @@ def main():
             step['dependency'] = 0
             step['id'] = 'IMSPL'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+OXKAT+'/3GC_split_model_images.py '
+            syscall += 'python3 '+OXKAT+'/3GC_split_model_images.py '
             syscall += '--region '+CAL_3GC_PEEL_REGION+' '
             syscall += '--prefix '+prepeel_img_prefix+' '
             step['syscall'] = syscall
@@ -206,7 +206,7 @@ def main():
             step['dependency'] = 2
             step['id'] = 'ADDIR'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+TOOLS+'/add_MS_column.py '
+            syscall += 'python3 '+TOOLS+'/add_MS_column.py '
             syscall += '--colname '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
             syscall += myms
             step['syscall'] = syscall
@@ -219,7 +219,7 @@ def main():
             step['dependency'] = 3
             step['id'] = 'CPMOD'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+TOOLS+'/copy_MS_column.py '
+            syscall += 'python3 '+TOOLS+'/copy_MS_column.py '
             syscall += '--fromcol MODEL_DATA '
             syscall += '--tocol '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' '
             syscall += myms
@@ -247,7 +247,7 @@ def main():
             step['dependency'] = 5
             step['id'] = 'CPCOR'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python '+TOOLS+'/copy_MS_column.py '
+            syscall += 'python3 '+TOOLS+'/copy_MS_column.py '
             syscall += '--fromcol CORRECTED_DATA '
             syscall += '--tocol DATA '
             syscall += myms

@@ -348,13 +348,13 @@ def target_cal_pairs(target_dirs,target_names,target_ids,
 
 
 
-def target_ms_list(master_ms,target_names):
+def target_ms_list(working_ms,target_names):
 
     """ Return a list of MS names derived from target_names """
 
     target_ms = []
     for target in target_names:
-        ms_name = master_ms.replace('.ms','_'+target.replace(' ','_')+'.ms')
+        ms_name = working_ms.replace('.ms','_'+target.replace(' ','_')+'.ms')
         target_ms.append(ms_name)
 
     return target_ms

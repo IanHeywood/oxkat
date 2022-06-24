@@ -56,7 +56,7 @@ def make_png(ff,i):
 
 if __name__ == '__main__':
 
-    logfile = 'restore_model.log'
+    logfile = 'make_movie.log'
     logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s |  %(message)s', datefmt='%d/%m/%Y %H:%M:%S ')
 
 

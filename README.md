@@ -125,7 +125,7 @@ String patterns for package-specific containers are specified in the [`config.py
 | [`ragavi`](https://github.com/ratt-ru/ragavi/) | 1GC, 2GC | Plotting gain solutions | - |
 | [`shadeMS`](https://github.com/ratt-ru/shadeMS/) | 1GC | Plotting visibilities | - |
 | [`Singularity`](https://github.com/hpcng/singularity) | 1GC, FLAG, 2GC, 3GC | Containerisation | [Kurtzer, Sochat & Bauer, 2017](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0177459) |
-| [`tricolour`](https://github.com/ska-sa/tricolour) | FLAG | Flagging | - |
+| [`tricolour`](https://github.com/ska-sa/tricolour) | FLAG | Flagging | [Hugo et al., 2022](https://ui.adsabs.harvard.edu/abs/2022arXiv220609179H/abstract) |
 | [`wsclean`](https://gitlab.com/aroffringa/wsclean) | FLAG, 2GC, 3GC | Imaging, model prediction | [Offringa et al., 2014](https://ui.adsabs.harvard.edu/abs/2014MNRAS.444..606O/abstract)|
 
 ---

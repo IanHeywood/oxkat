@@ -160,7 +160,7 @@ if __name__ == '__main__':
         if auto == 'wsclean':
             model_fits = restored_fits.replace('image','model')
         elif auto == 'ddfacet':
-            model_fits = restored_fits.reaplce('restored','model')
+            model_fits = restored_fits.repalce('restored','model')
 
 
     # Set up output image

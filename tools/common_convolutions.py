@@ -152,7 +152,7 @@ if __name__ == '__main__':
         if auto == 'wsclean':
             residual_fits = restored_fits.replace('image','residual')
         elif auto == 'ddfacet':
-            residual_fits = restored_fits.reaplce('restored','residual')
+            residual_fits = restored_fits.replace('restored','residual')
 
 
     # Set up model image

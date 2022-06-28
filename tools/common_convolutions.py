@@ -10,8 +10,9 @@ import scipy.signal
 import shutil
 import sys
 
-from astropy.io import fits
+from astropy import wcs
 from astropy.convolution import convolve,Gaussian2DKernel
+from astropy.io import fits
 from datetime import datetime
 from optparse import OptionParser
 
@@ -43,6 +44,16 @@ def flush_fits(newimage,fitsfile):
         f.flush()
 
 
+def drop_deg(fitsfile):
+    f = fits.open(fitsfile)
+    data = f[0].data.squeeze() 
+    hdr = f[0].header
+    inpwcs = wcs.WCS(hdr).celestial
+    hdr1 = inpwcs.to_header()
+    f1 = fits.PrimaryHDU(data = data, header = hdr1)
+    f1.writeto(fitsfile,overwrite = True)
+
+
 def deg2rad(xx):
     return numpy.pi*xx/180.0
 
@@ -71,7 +82,6 @@ def beam_header(fitsfile,bmaj,bmin,bpa):
 if __name__ == '__main__':
 
 
-
     parser = OptionParser(usage = '%prog [options]')
     parser.add_option('--restored', dest = 'restored_fits', help = 'Name of restored image')
     parser.add_option('--residual', dest = 'residual_fits', default = '', help = 'Name of residual image (default = detect based on restored)')
@@ -87,6 +97,7 @@ if __name__ == '__main__':
     parser.add_option('-l', dest = 'initlogfile', action = 'store_true', default = False, help = 'Initialise log file on each run (default = do not initialise)')
     parser.add_option('-c', dest = 'clearup', action = 'store_true', default = False, help = 'Remove intermediate products (default = do not remove)')
 
+
     (options,args) = parser.parse_args()
     restored_fits = options.restored_fits
     residual_fits = options.residual_fits
@@ -101,6 +112,7 @@ if __name__ == '__main__':
     overwrite = options.overwrite
     initlogfile = options.initlogfile
     clearup = options.clearup
+
 
     now = datetime.now()
     timestamp = now.strftime('%m-%d-%Y-%H-%M-%S')
@@ -195,6 +207,8 @@ if __name__ == '__main__':
         else:
             os.system('fitstool.py -z '+str(cropsize)+' -o '+target_beam_fits+' '+restored_fits)
             os.system('fitstool.py -z '+str(cropsize)+' -o '+restoring_beam_fits+' '+restored_fits)
+            drop_deg(target_beam_fits)
+            drop_deg(restoring_beam_fits)
 
     logging.info('INPUTS')
     logging.info('Restored              : '+restored_fits)

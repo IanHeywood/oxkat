@@ -179,6 +179,7 @@ if __name__ == '__main__':
     if restored_conv_fits == '':
         restored_conv_fits = restored_fits.replace('.fits','.conv.fits')
 
+
     # Intermediate product names
     residual_conv_fits = residual_fits.replace('.fits','.conv.fits')
     model_conv_fits = model_fits.replace('.fits','.conv.fits')
@@ -187,10 +188,9 @@ if __name__ == '__main__':
     kernel_fits = restored_fits.replace('.fits','.kernel.fits')
 
 
+    # Check for output files, create or steamroll them if overwrite = True
     outputs = [restored_conv_fits, residual_conv_fits, 
             model_conv_fits, target_beam_fits, restoring_beam_fits, kernel_fits]
-
-    # Check for output files, create or steamroll them if overwrite = True
     if all(list(map(os.path.isfile,outputs))) and not overwrite:
         logging.info("Found one or more existing output products and overwrite is set to False.")
         sys.exit()
@@ -209,6 +209,7 @@ if __name__ == '__main__':
             os.system('fitstool.py -z '+str(cropsize)+' -o '+restoring_beam_fits+' '+restored_fits)
             drop_deg(target_beam_fits)
             drop_deg(restoring_beam_fits)
+
 
     logging.info('INPUTS')
     logging.info('Restored              : '+restored_fits)
@@ -236,6 +237,7 @@ if __name__ == '__main__':
     logging.info('Target bpa            : '+str(target_bpa))
     logging.info('-----------------------')
 
+
     # Render restoring beam image
     logging.info('Rendering restoring beam image...')
     xstd = bmin/(2.3548*pixscale)
@@ -245,6 +247,7 @@ if __name__ == '__main__':
     restoring_beam_image = restoring.array
     restoring_beam_image = restoring_beam_image / numpy.max(restoring_beam_image)
     flush_fits(restoring_beam_image,restoring_beam_fits)
+
 
     # Render target beam image
     logging.info('Rendering target beam image...')
@@ -256,15 +259,18 @@ if __name__ == '__main__':
     target_beam_image = target_beam_image / numpy.max(target_beam_image)
     flush_fits(target_beam_image,target_beam_fits)
 
-    # Call pypher to generated homogenisation kernel
+
+    # Call pypher to generate homogenisation kernel
     logging.info('Calling pypher to generate homogenisation kernel...')
     os.system('pypher '+restoring_beam_fits+' '+target_beam_fits+' '+kernel_fits)
+
 
     # Open model image and convolve with target beam
     logging.info('Convolving model image with target beam...')
     model_image = get_image(model_fits)
     model_conv_image = scipy.signal.fftconvolve(model_image, target_beam_image, mode='same')
     flush_fits(model_conv_image,model_conv_fits)
+
 
     # Open residual image and convolve with homogenisation kernel
     logging.info('Convolving residual image with homogenisation kernel...')
@@ -273,15 +279,18 @@ if __name__ == '__main__':
     residual_conv_image = scipy.signal.fftconvolve(residual_image, homogenisation_beam, mode='same')
     flush_fits(residual_conv_image,residual_conv_fits)
 
+
     # Sum convolved model and residual
     logging.info('Summing convolved model and residual...')
     flush_fits(residual_conv_image+model_conv_image,restored_conv_fits)
+
 
     # Fix headers
     logging.info('Fixing headers...')
     beam_header(residual_conv_fits,target_bmaj,target_bmin,target_bpa)
     beam_header(model_conv_fits,target_bmaj,target_bmin,target_bpa)
     beam_header(restored_conv_fits,target_bmaj,target_bmin,target_bpa)
+
 
     # Clear up
     if clearup:
@@ -290,6 +299,7 @@ if __name__ == '__main__':
             model_conv_fits, target_beam_fits, restoring_beam_fits, kernel_fits]
         for ff in to_remove:
             os.remove(ff)
+
 
     logging.info('Done')
     logging.info('-----------------------')

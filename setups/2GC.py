@@ -155,7 +155,7 @@ def main():
             step['step'] = 1
             step['comment'] = 'Apply primary beam correction to '+targetname+' 1GC image'
             step['dependency'] = 0
-            step['id'] = 'PBCOR'+code
+            step['id'] = 'PBCO1'+code
             syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+data_img_prefix+'-MFS-image.fits'
             step['syscall'] = syscall
@@ -214,7 +214,7 @@ def main():
             step['step'] = 5
             step['comment'] = 'Apply primary beam correction to '+targetname+' 2GC image'
             step['dependency'] = 3
-            step['id'] = 'PBCOR'+code
+            step['id'] = 'PBCO2'+code
             syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+corr_img_prefix+'-MFS-image.fits'
             step['syscall'] = syscall

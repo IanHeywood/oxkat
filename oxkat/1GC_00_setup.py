@@ -522,7 +522,7 @@ def main():
     #
     # GENERATE LIST OF TARGET MS NAMES
 
-    target_ms = target_ms_list(master_ms,target_names)
+    target_ms = target_ms_list(working_ms,target_names)
 
 
     # ------------------------------------------------------------------------------

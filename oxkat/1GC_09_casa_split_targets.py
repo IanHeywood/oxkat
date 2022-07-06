@@ -5,7 +5,7 @@ execfile('oxkat/casa_read_project_info.py')
 execfile('oxkat/config.py')
 
 if PRE_FIELDS != '':
-    targets = user_targets
+    target_names = user_targets
 
 for target in target_names:
 

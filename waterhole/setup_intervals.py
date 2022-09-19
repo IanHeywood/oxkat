@@ -91,7 +91,7 @@ def main():
                     syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
                     syscall += 'wsclean -intervals-out '+str(intervals[i])+' -interval 0 '+str(intervals[i])+' '
                     syscall += '-log-time -field 0 -no-dirty -make-psf -size 4680 4680 -scale 1.1asec -baseline-averaging 10 -no-update-model-required '
-                    syscall += '-nwlayers-factor 3 -niter 0 -name '+imgname+' '
+                    syscall += '-use-wgridder -niter 0 -name '+imgname+' '
                     syscall += '-weight briggs -0.3 -data-column CORRECTED_DATA -padding 1.2 -absmem 110 '+myms
 
                     slurm_file = 'SCRIPTS/slurm_intervals_'+code+'.sh'

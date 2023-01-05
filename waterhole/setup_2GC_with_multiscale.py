@@ -19,7 +19,7 @@ def main():
     
     gen.preamble()
     print(gen.col()+'2GC (direction independent selfcal) setup')
-    print(gen.col()+'Multiscale deconvolution and robust -1.0')
+    print(gen.col()+'Multiscale and lower Briggs parameter')
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------
@@ -34,6 +34,7 @@ def main():
     GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
+    TOOLS = cfg.TOOLS
 
     gen.setup_dir(GAINTABLES)
     gen.setup_dir(IMAGES)
@@ -48,17 +49,18 @@ def main():
         CONTAINER_RUNNER=''
 
 
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY)
     CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN,USE_SINGULARITY)
-    MAKEMASK_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.MAKEMASK_PATTERN,USE_SINGULARITY)
-    RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
+    OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
-    # Get target information from project info json file
+    # Get target information from project json file
 
     with open('project_info.json') as f:
         project_info = json.load(f)
 
+    band = project_info['band']
     target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']
     target_ms = project_info['target_ms']
@@ -107,22 +109,25 @@ def main():
             mask0 = sorted(glob.glob(IMAGES+'/*'+filename_targetname+'*.mask0.fits'))
             if len(mask0) > 0:
                 mask = mask0[0]
+                automask = False
             else:
-                mask = 'auto'
+                mask = False
+                automask = cfg.WSC_AUTOMASK
 
             k_outdir = GAINTABLES+'/delaycal_'+filename_targetname+'_'+stamp+'.cc/'
             k_outname = 'delaycal_'+filename_targetname+'_'+stamp
+            k_saveto = 'delaycal_'+filename_targetname+'.parmdb'
           
             gen.print_spacer()
             print(gen.col('Target')+targetname)
             print(gen.col('Measurement Set')+myms)
             print(gen.col('Code')+code)
-            print(gen.col('Mask')+mask)
+            print(gen.col('FITS mask')+str(mask))
 
 
             # Image prefixes
-            data_img_prefix = IMAGES+'/img_'+myms+'_datamask'
-            corr_img_prefix = IMAGES+'/img_'+myms+'_pcalmask'
+            data_img_prefix = IMAGES+'/img_'+myms+'_datamask-multiscale'
+            corr_img_prefix = IMAGES+'/img_'+myms+'_pcalmask-multiscale'
 
             # Target-specific kill file
             kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
@@ -140,15 +145,12 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                         imgname = data_img_prefix,
                         datacol = 'DATA',
-                        bda = True,
-                        automask = False,
-                        autothreshold = False,
-                        localrms = False,
                         mask = mask,
+                        automask = automask,
                         multiscale = True,
                         scales = '0,3,9',
-                        niter = 120000,
-                        briggs = -1.0,
+                        niter = '130000',
+                        briggs = -0.7,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
@@ -156,14 +158,11 @@ def main():
 
             step = {}
             step['step'] = 1
-            step['comment'] = 'Predict model visibilities from imaging of the DATA column'
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 1GC image'
             step['dependency'] = 0
-            step['id'] = 'WSDPR'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = data_img_prefix,absmem = absmem)
+            step['id'] = 'PBCO1'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+data_img_prefix+'-MFS-image.fits'
             step['syscall'] = syscall
             steps.append(step)
 
@@ -171,14 +170,14 @@ def main():
             step = {}
             step['step'] = 2
             step['comment'] = 'Run CubiCal with f-slope solver'
-            step['dependency'] = 1
+            step['dependency'] = 0
             step['id'] = 'CL2GC'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_cubical(parset = cfg.CAL_2GC_DELAYCAL_PARSET,
                     myms = myms,
-                    extra_args = '--out-dir '+k_outdir+' --out-name '+k_outname)
+                    extra_args = '--out-dir '+k_outdir+' --out-name '+k_outname+' --k-save-to '+k_saveto)
             step['syscall'] = syscall
             steps.append(step)
 
@@ -195,15 +194,12 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname = corr_img_prefix,
                         datacol = 'CORRECTED_DATA',
-                        bda = True,
-                        automask = False,
-                        autothreshold = False,
-                        localrms = False,
                         mask = mask,
+                        automask = automask,
                         multiscale = True,
                         scales = '0,3,9',
-                        niter = 120000,
-                        briggs = -1.0,
+                        niter = '130000',
+                        briggs = -0.7,
                         absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
@@ -214,7 +210,7 @@ def main():
             step['comment'] = 'Refine the cleaning mask for '+targetname+', crop for use with DDFacet'
             step['dependency'] = 3
             step['id'] = 'MASK1'+code
-            syscall = CONTAINER_RUNNER+MAKEMASK_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_makemask(restoredimage = corr_img_prefix+'-MFS-image.fits',
                                     outfile = corr_img_prefix+'-MFS-image.mask1.fits',
                                     thresh = 5.5,
@@ -225,14 +221,11 @@ def main():
 
             step = {}
             step['step'] = 5
-            step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 2GC image'
             step['dependency'] = 3
-            step['id'] = 'WSCPR'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = corr_img_prefix,absmem = absmem)
+            step['id'] = 'PBCO2'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+corr_img_prefix+'-MFS-image.fits'
             step['syscall'] = syscall
             steps.append(step)
 

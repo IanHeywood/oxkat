@@ -60,18 +60,18 @@ HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = [HOME+'/containers/']
 
 
-ASTROPY_PATTERN = 'oxkat-0.4'
-CASA_PATTERN = 'oxkat-0.4'
-CLUSTERCAT_PATTERN = 'oxkat-0.4'
-CUBICAL_PATTERN = 'oxkat-0.4'
-DDFACET_PATTERN = 'oxkat-0.4'
-KILLMS_PATTERN = 'oxkat-0.4'
-OWLCAT_PATTERN = 'oxkat-0.4'
-PYBDSF_PATTERN = 'oxkat-0.4'
-RAGAVI_PATTERN = 'oxkat-0.4'
-SHADEMS_PATTERN = 'oxkat-0.4'
-TRICOLOUR_PATTERN = 'oxkat-0.4'
-WSCLEAN_PATTERN = 'oxkat-0.4'
+ASTROPY_PATTERN = 'oxkat-0.41'
+CASA_PATTERN = 'oxkat-0.41'
+CLUSTERCAT_PATTERN = 'oxkat-0.41'
+CUBICAL_PATTERN = 'oxkat-0.41'
+DDFACET_PATTERN = 'oxkat-0.41'
+KILLMS_PATTERN = 'oxkat-0.41'
+OWLCAT_PATTERN = 'oxkat-0.41'
+PYBDSF_PATTERN = 'oxkat-0.41'
+RAGAVI_PATTERN = 'oxkat-0.41'
+SHADEMS_PATTERN = 'oxkat-0.41'
+TRICOLOUR_PATTERN = 'oxkat-0.41'
+WSCLEAN_PATTERN = 'oxkat-0.41'
 
 
 # ------------------------------------------------------------------------

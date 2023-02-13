@@ -49,7 +49,13 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    myms = glob.glob('*.ms')[0]
+    myms = glob.glob('*.ms')
+    if len(myms) == 0:
+        print(gen.col()+'No MS found in current directory, please check')
+        gen.print_spacer()
+        sys.exit()
+
+    myms = myms[0]
     code = gen.get_code(myms)
 
     steps = []

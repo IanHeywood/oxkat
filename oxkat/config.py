@@ -270,7 +270,8 @@ elif BAND == 'S1':
     CAL_1GC_FREQRANGE = ''
     CAL_1GC_UVRANGE = '>150m'
     CAL_1GC_0408_MODEL = ([8.244,0.0,0.0,0.0],[-1.138],'2406MHz')   
-    CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BAD_FREQS = ['*:1967~2056MHz',    # Lower band edge 
+                        '*:2756~2845MHz']     # Upper band edge
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
 
@@ -279,7 +280,8 @@ elif BAND == 'S2':
     CAL_1GC_FREQRANGE = ''
     CAL_1GC_UVRANGE = '>150m'
     CAL_1GC_0408_MODEL = ([7.468,0.0,0.0,0.0],[-1.133],'2625MHz')   
-    CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BAD_FREQS = ['*:2187~2275MHz',    # Lower band edge 
+                        '*:2975~3063MHz']     # Upper band edge
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
 
@@ -288,7 +290,8 @@ elif BAND == 'S3':
     CAL_1GC_FREQRANGE = ''
     CAL_1GC_UVRANGE = '>150m'
     CAL_1GC_0408_MODEL = ([6.822,0.0,0.0,0.0],[-1.128],'2483MHz')   
-    CAL_1GC_BAD_FREQS = []
+    CAL_1GC_BAD_FREQS = ['*:2405~2493MHz',    # Lower band edge 
+                        '*:3194~3282MHz']     # Upper band edge
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
 

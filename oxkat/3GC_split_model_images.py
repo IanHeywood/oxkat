@@ -79,6 +79,7 @@ def process_region_file(region_file):
     line = f.readline()
     while line:
         if line[0:6] == 'circle':
+            line = line.replace(' ','')
             line = line.rstrip('\n').replace('(',' ').replace(')',' ')
             ra,dec,radius = line.split()[1].split(',')
             if ':' in  ra:

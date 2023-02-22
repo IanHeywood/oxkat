@@ -296,12 +296,8 @@ gaincal(vis = myms,
 
 
 # ------- Duplicate K1
-# ------- Duplicate G2 (to save repetition of above step)
-
 
 shutil.copytree(ktab1,ktab2)
-shutil.copytree(gtab2,gtab3)
-
 
 # ------- Looping over secondaries
 
@@ -342,14 +338,14 @@ for i in range(0,len(pcals)):
         field = pcal,
     #   uvrange = myuvrange,
     #   spw=myspw,
-        caltable = ktab1,
+        caltable = ktab2,
         refant = str(ref_ant),
         gaintype = 'K',
         solint = 'inf',
         parang = False,
         gaintable = [gtab1,bptab1,gtab2],
         gainfield = [bpcal_name,bpcal_name,pcal],
-        interp = ['nearest','linear','linear','linear'],
+        interp = ['nearest','linear','linear'],
         append = True)
 
 

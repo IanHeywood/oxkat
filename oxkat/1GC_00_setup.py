@@ -437,8 +437,8 @@ def main():
 
     if CAL_1GC_PRIMARY != 'auto':
         candidate_ids = [str(x) for x in CAL_1GC_PRIMARY.split(',')]
-        candidate_names = [field_names[i] for i in candidate_ids]
-        candidate_dirs = [field_dirs[i][0] for i in candidate_ids]
+        candidate_names = [field_names[int(i)] for i in candidate_ids]
+        candidate_dirs = [field_dirs[int(i)] for i in candidate_ids]
     else:
         candidate_dirs, candidate_names, candidate_ids = get_primary_candidates(master_ms,
                                                             primary_state,

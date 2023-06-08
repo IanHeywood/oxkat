@@ -40,8 +40,8 @@ mstransform(vis = master_ms,
 	realmodelcol = True,
 	usewtspectrum = True)
 
-
-flagmanager(vis = opms, mode = 'save', versionname = 'observatory')
+if SAVE_FLAGS:
+	flagmanager(vis = opms, mode = 'save', versionname = 'observatory')
 
 clearcal(vis = opms, addmodel = True)
 

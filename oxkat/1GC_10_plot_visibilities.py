@@ -26,7 +26,7 @@ def main():
 
 
     myms = project_info['working_ms']
-    bpcal = project_info['primary_id']
+    bpcal = project_info['primary_name']
     pcals = project_info['secondary_ids']
     targets = project_info['target_ids'] 
 

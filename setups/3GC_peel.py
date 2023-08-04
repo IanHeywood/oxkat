@@ -175,8 +175,19 @@ def main():
 
             step = {}
             step['step'] = 1
-            step['comment'] = 'Extract problem source defined by region into a separate set of model images'
+            step['comment'] = 'Fix any NaN values in blanked wsclean sub-band models'
             step['dependency'] = 0
+            step['id'] = 'FXNAN'+code
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/fix_nan_models.py '+prepeel_img_prefix+'-0'
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 2
+            step['comment'] = 'Extract problem source defined by region into a separate set of model images'
+            step['dependency'] = 1
             step['id'] = 'IMSPL'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+OXKAT+'/3GC_split_model_images.py '
@@ -187,9 +198,9 @@ def main():
 
 
             step = {}
-            step['step'] = 2
+            step['step'] = 3
             step['comment'] = 'Predict problem source visibilities into MODEL_DATA column of '+myms
-            step['dependency'] = 1
+            step['dependency'] = 2
             step['id'] = 'WS1PR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
@@ -201,9 +212,9 @@ def main():
 
 
             step = {}
-            step['step'] = 3
+            step['step'] = 4
             step['comment'] = 'Add '+cfg.CAL_3GC_PEEL_DIR1COLNAME+' column to '+myms
-            step['dependency'] = 2
+            step['dependency'] = 3
             step['id'] = 'ADDIR'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+TOOLS+'/add_MS_column.py '
@@ -214,9 +225,9 @@ def main():
 
 
             step = {}
-            step['step'] = 4
+            step['step'] = 5
             step['comment'] = 'Copy MODEL_DATA to '+cfg.CAL_3GC_PEEL_DIR1COLNAME
-            step['dependency'] = 3
+            step['dependency'] = 4
             step['id'] = 'CPMOD'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+TOOLS+'/copy_MS_column.py '
@@ -228,9 +239,9 @@ def main():
 
 
             step = {}
-            step['step'] = 5
+            step['step'] = 6
             step['comment'] = 'Predict full sky model visibilities into MODEL_DATA column of '+myms
-            step['dependency'] = 4
+            step['dependency'] = 5
             step['id'] = 'WS2PR'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
@@ -242,9 +253,9 @@ def main():
 
 
             step = {}
-            step['step'] = 6
+            step['step'] = 7
             step['comment'] = 'Copy CORRECTED_DATA to DATA'
-            step['dependency'] = 5
+            step['dependency'] = 6
             step['id'] = 'CPCOR'+code
             syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += 'python3 '+TOOLS+'/copy_MS_column.py '
@@ -256,9 +267,9 @@ def main():
 
 
             step = {}
-            step['step'] = 7
+            step['step'] = 8
             step['comment'] = 'Run CubiCal to solve for G (full model) and dE (problem source), peel out problem source'
-            step['dependency'] = 6
+            step['dependency'] = 7
             step['id'] = 'CL3GC'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN

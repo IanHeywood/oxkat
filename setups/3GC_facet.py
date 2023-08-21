@@ -199,6 +199,17 @@ def main():
 
             step = {}
             step['step'] = 3
+            step['comment'] = 'Plot killMS solutions'
+            step['dependency'] = 2
+            step['id'] = 'PLKMS'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+OXKAT+'/PLOT_killMS_sols.py '+myms+' killms-'+cfg.KMS_SOLVERTYPE
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 4
             step['comment'] = 'Run DDFacet on CORRECTED_DATA of '+myms+', applying killMS solutions'
             step['dependency'] = 2
             step['id'] = 'DDKMA'+code

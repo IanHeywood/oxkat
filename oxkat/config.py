@@ -1,11 +1,23 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 
+import json
 import os
+import sys
 
 
-BAND = 'L'
+# ------------------------------------------------------------------------
+#
+# Check for project_info file and get band
+#
+
+if os.path.isfile('project_info.json'):
+    with open('project_info.json') as f:
+        project_info = json.load(f)
+    BAND = project_info['band']
+else:
+    BAND = 'not yet determined'
 
 
 # ------------------------------------------------------------------------
@@ -42,24 +54,24 @@ USE_SINGULARITY = True
 BIND = ''
 BINDPATH = '$PWD,'+CWD+','+BIND
 
-IDIA_CONTAINER_PATH = ['/software/astro/caracal/STIMELA_IMAGES_1.6.9',HOME+'/containers/']
-CHPC_CONTAINER_PATH = ['/apps/chpc/astro/stimela_images/']
+IDIA_CONTAINER_PATH = ['/idia/software/containers/',HOME+'/containers/']
+CHPC_CONTAINER_PATH = [HOME+'/containers/']
 HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = [HOME+'/containers/']
 
-CASA_PATTERN = 'casa'
-CLUSTERCAT_PATTERN = 'ddfacet'
-CUBICAL_PATTERN = 'cubical'
-DDFACET_PATTERN = 'ddfacet'
-KILLMS_PATTERN = 'ddfacet'
-OWLCAT_PATTERN = 'owlcat'
-MEQTREES_PATTERN = 'meqtrees'
-PYBDSF_PATTERN = 'pybdsf'
-RAGAVI_PATTERN = 'ragavi'
-SHADEMS_PATTERN = 'shadems'
-TRICOLOUR_PATTERN = 'tricolour'
-WSCLEAN_PATTERN = 'wsclean'
-#WSCLEANIDG_PATTERN = 'wsclean*idg'
+
+ASTROPY_PATTERN = 'oxkat-0.41'
+CASA_PATTERN = 'oxkat-0.41'
+CLUSTERCAT_PATTERN = 'oxkat-0.41'
+CUBICAL_PATTERN = 'oxkat-0.41'
+DDFACET_PATTERN = 'oxkat-0.41'
+KILLMS_PATTERN = 'oxkat-0.41'
+OWLCAT_PATTERN = 'oxkat-0.41'
+PYBDSF_PATTERN = 'oxkat-0.41'
+RAGAVI_PATTERN = 'oxkat-0.41'
+SHADEMS_PATTERN = 'oxkat-0.41'
+TRICOLOUR_PATTERN = 'oxkat-0.41'
+WSCLEAN_PATTERN = 'oxkat-0.41'
 
 
 # ------------------------------------------------------------------------
@@ -167,16 +179,17 @@ PBS_EXTRALONG = {
 # 1GC settings
 #
 
-# Pre-processing
-PRE_FIELDS = ''                      # Comma-separated list of fields to select from raw MS
-PRE_SCANS = ''                       # Comma-separated list of scans to select from raw MS
-PRE_NCHANS = 1024                    # Integer number of channels in working MS
-PRE_TIMEBIN = '8s'                   # Integration time in working MS
-
-# Scan intents
+# Scan intents, for automatic identification of cals/targets
 CAL_1GC_TARGET_INTENT = 'TARGET'     # (partial) string to match for target intents
 CAL_1GC_PRIMARY_INTENT = 'BANDPASS'  # (partial) string to match for primary intents
 CAL_1GC_SECONDARY_INTENT = 'PHASE'   # (partial) string to match for secondary intents
+
+# Pre-processing, operations applied when master MS is split to working MS
+PRE_FIELDS = ''                      # Comma-separated list of fields to select from raw MS
+                                     # Names or IDs, do not mix, do not use spaces
+PRE_SCANS = ''                       # Comma-separated list of scans to select from raw MS
+PRE_NCHANS = 1024                    # Integer number of channels for working MS
+PRE_TIMEBIN = '8s'                   # Integration time for working MS
 
 # Reference antennas
 CAL_1GC_REF_ANT = 'auto'             # Comma-separated list to manually specify refant(s)
@@ -197,11 +210,101 @@ CAL_1GC_PRIMARY_MODEL = 'auto'       # setjy = use setjy component model only
                                      # or specify the location/of/wsclean-prefix for an arbitrary model cube
 
 # GBK settings
-CAL_1GC_UVRANGE = '>150m'            # Selection for baselines to include during 1GC B/G solving (K excluded)
-CAL_1GC_UHF_UVRANGE = '>150m'        #
-CAL_1GC_DELAYCUT = 2.5               # Jy at central freq. Do not solve for K on secondaries weaker than this
+CAL_1GC_DELAYCUT = 2.5               # [now defunct] Jy at central freq. Do not solve for K on secondaries weaker than this
 CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
-CAL_1GC_UHF_FREQRANGE = '850~900MHz' # Clean part of the band to use for generating UHF 1GC G-solutions
+
+# Band specific options
+
+if BAND == 'UHF':       
+
+    CAL_1GC_FREQRANGE = '*:850~900MHz'        # Clean part of the band to use for generating UHF 1GC G-solutions
+    CAL_1GC_UVRANGE = '>150m'               # Selection for baselines to include during 1GC B/G solving (K excluded)
+    CAL_1GC_0408_MODEL = ([27.907,0.0,0.0,0.0],[-1.205],'850MHz')
+
+    CAL_1GC_BAD_FREQS = ['*:540~570MHz',      # Lower band edge 
+                        '*:1010~1150MHz']     # Upper band edge
+
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'        # Baseline range for which BL_FREQS are flagged
+    CAL_1GC_BL_FREQS = []            
+
+elif BAND == 'L':
+
+    CAL_1GC_FREQRANGE = '*:1300~1400MHz'
+    CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
+
+    CAL_1GC_BAD_FREQS = ['*:850~900MHz',      # Lower band edge
+                        '*:1658~1800MHz',     # Upper bandpass edge
+                        '*:1419.8~1421.3MHz'] # Galactic HI
+
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = ['*:900MHz~915MHz',    # GSM and aviation
+                        '*:925MHz~960MHz',                
+                        '*:1080MHz~1095MHz',
+                        '*:1565MHz~1585MHz',  # GPS
+                        '*:1217MHz~1237MHz',
+                        '*:1375MHz~1387MHz',
+                        '*:1166MHz~1186MHz',
+                        '*:1592MHz~1610MHz',  # GLONASS
+                        '*:1242MHz~1249MHz',
+                        '*:1191MHz~1217MHz',  # Galileo
+                        '*:1260MHz~1300MHz',
+                        '*:1453MHz~1490MHz',  # Afristar
+                        '*:1616MHz~1626MHz',  # Iridium
+                        '*:1526MHz~1554MHz',  # Inmarsat
+                        '*:1600MHz']          # Alkantpan
+                                            # https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/L-band%20RFI%20frequency%20flagging.ipynb
+
+elif BAND == 'S0':
+
+    CAL_1GC_FREQRANGE = '*:2300~2400MHz'
+    CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([9.193,0.0,0.0,0.0],[-1.144],'2187MHz')   
+    CAL_1GC_BAD_FREQS = ['*:1700~1800MHz',    # Lower band edge 
+                        '*:2500~2650MHz']     # Upper band edge
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
+elif BAND == 'S1':
+
+    CAL_1GC_FREQRANGE = ''
+    CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([8.244,0.0,0.0,0.0],[-1.138],'2406MHz')   
+    CAL_1GC_BAD_FREQS = ['*:1967~2056MHz',    # Lower band edge 
+                        '*:2756~2845MHz']     # Upper band edge
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
+elif BAND == 'S2':
+
+    CAL_1GC_FREQRANGE = ''
+    CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([7.468,0.0,0.0,0.0],[-1.133],'2625MHz')   
+    CAL_1GC_BAD_FREQS = ['*:2187~2275MHz',    # Lower band edge 
+                        '*:2975~3063MHz']     # Upper band edge
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
+elif BAND == 'S3':
+
+    CAL_1GC_FREQRANGE = ''
+    CAL_1GC_UVRANGE = '>150m'
+    CAL_1GC_0408_MODEL = ([6.822,0.0,0.0,0.0],[-1.128],'2483MHz')   
+    CAL_1GC_BAD_FREQS = ['*:2405~2493MHz',    # Lower band edge 
+                        '*:3194~3282MHz']     # Upper band edge
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
+elif BAND == 'S4':
+
+    CAL_1GC_FREQRANGE = '*:2900~3000MHz'
+    CAL_1GC_UVRANGE = '>150m'     
+    CAL_1GC_0408_MODEL = ([6.423,0.0,0.0,0.0],[-1.124],'3000MHz')   
+    CAL_1GC_BAD_FREQS = ['*:2600~2690MHz',    # Lower band edge 
+                        '*:3420~3600MHz']     # Upper band edge
+    CAL_1GC_BL_FLAG_UVRANGE = '<600'
+    CAL_1GC_BL_FREQS = []
+
 
 # LINE modifiers
 CAL_1GC_LINE_FILLGAPS = 48
@@ -238,64 +341,93 @@ CAL_3GC_FACET_REGION = '' # Specify DS9 region to define tessel centres
                           # be used to e.g. peel the same source from a compact mosaic rather than
                           # having to provide multiple copies of the same region on a per-field basis
 
+
+# ------------------------------------------------------------------------
+#
+# Flag settings
+#
+
+SAVE_FLAGS = False
+
+
 # ------------------------------------------------------------------------
 #
 # wsclean defaults
 #
-
-
+# General
+WSC_MEM = 90
+WSC_ABSMEM = -1 # in GB; mem is used if absmem is negative, calculated automatically for HPC, see absmem_helper
 WSC_CONTINUE = False
-WSC_FIELD = 0
+WSC_PARALLELREORDERING = 8
+# Outputs
 WSC_MAKEPSF = False
 WSC_NODIRTY = False
+WSC_SOURCELIST = True
+# Data selection
+WSC_FIELD = 0
 WSC_STARTCHAN = -1
 WSC_ENDCHAN = -1
-WSC_EVEN = False
-WSC_ODD = False
 WSC_MINUVL = ''
 WSC_MAXUVL = ''
-WSC_CHANNELSOUT = 8
-WSC_JOINCHANNELS = True
+WSC_EVEN = False
+WSC_ODD = False
 WSC_INTERVAL0 = None
 WSC_INTERVAL1 = None
 WSC_INTERVALSOUT = None
+# Image dimensions
 WSC_IMSIZE = 10240
 WSC_CELLSIZE = '1.1asec'
+# Gridding / degridding
+WSC_USEWGRIDDER = True
+WSC_WGRIDDERACCURACY = 5e-5
+WSC_BDA = False
+WSC_BDAFACTOR = 10
+WSC_NOMODEL = False
+WSC_NWLAYERSFACTOR = 5
+WSC_PADDING = 1.2
+WSC_USEIDG = False # use image-domain gridder (not useable yet)
+WSC_IDGMODE = 'CPU'
+WSC_PREDICTCHANNELS = 64
+# Weighting
 WSC_BRIGGS = -0.3
 WSC_TAPERGAUSSIAN = ''
+# Deconvolution
+WSC_PARALLELDECONVOLUTION = 2560
+WSC_MULTISCALE = False
+WSC_SCALES = '0,3,9'
 WSC_NITER = 80000
 WSC_GAIN = 0.15
 WSC_MGAIN = 0.9
-WSC_MULTISCALE = False
-WSC_SCALES = '0,3,9'
+WSC_CHANNELSOUT = 8
+WSC_FITSPECTRALPOL = 4
+WSC_JOINCHANNELS = True
 WSC_NONEGATIVE = False
-WSC_SOURCELIST = True
-WSC_BDA = False
-WSC_BDAFACTOR = 10
-WSC_NWLAYERSFACTOR = 5
-WSC_PADDING = 1.2
-WSC_NOMODEL = False
+WSC_STOPNEGATIVE = False
+WSC_CIRCULARBEAM = True
+# Masking
 WSC_MASK = 'auto'
-WSC_THRESHOLD = 1e-5
+WSC_THRESHOLD = 1e-6
 WSC_AUTOMASK = 4.0
 WSC_AUTOTHRESHOLD = 1.0
 WSC_LOCALRMS = True
-WSC_STOPNEGATIVE = False
-WSC_FITSPECTRALPOL = 4
-WSC_PREDICTCHANNELS = 64
-WSC_CIRCULARBEAM = True
-WSC_ABSMEM = -1 # in GB; mem is used if absmem is negative, calculated automatically for HPC, see absmem_helper
-WSC_MEM = 90
-WSC_USEIDG = False # use image-domain gridder (not useable yet)
-WSC_IDGMODE = 'CPU'
-WSC_PARALLELDECONVOLUTION = 2560 # 
 
-# UHF modifiers
-if BAND[0].upper() == 'U':
+# Band modifiers
+if BAND == 'UHF':
     WSC_CELLSIZE = '1.7asec'
     WSC_BRIGGS = -0.5
     WSC_BDAFACTOR = 4
     WSC_NWLAYERSFACTOR = 5
+if BAND == 'S0':
+    WSC_CELLSIZE = '0.65asec'
+if BAND == 'S1':
+    WSC_CELLSIZE = '0.61asec'
+if BAND == 'S2':
+    WSC_CELLSIZE = '0.58asec'
+if BAND == 'S3':
+    WSC_CELLSIZE = '0.54asec'    
+if BAND == 'S4':
+    WSC_CELLSIZE = '0.5asec'
+
 
 # ------------------------------------------------------------------------
 #
@@ -345,7 +477,7 @@ DDF_ROBUST = 0.0
 # [Comp]
 DDF_SPARSIFICATION = '0' # [100,30,10] grids every 100th visibility on major cycle 1, every 30th on cycle 2, etc.
 # [Parallel]
-DDF_NCPU = 12
+DDF_NCPU = 8
 # [Cache]
 DDF_CACHERESET = 0
 DDF_CACHEDIR = '.'
@@ -366,7 +498,7 @@ DDF_DDSOLS = ''
 DDF_DDMODEGRID = 'AP'
 DDF_DDMODEDEGRID = 'AP'
 # [Deconv]
-DDF_GAIN = 0.12
+DDF_GAIN = 0.15
 DDF_FLUXTHRESHOLD = 3e-6
 DDF_CYCLEFACTOR = 0
 DDF_RMSFACTOR = 3.0	
@@ -375,7 +507,7 @@ DDF_SSD_DECONVPEAKFACTOR = 0.001
 DDF_SSD_MAXMAJORITER = 3
 DDF_SSD_MAXMINORITER = 120000
 DDF_SSD_ENLARGEDATA = 0
-DDF_HOGBOM_DECONVPEAKFACTOR = 0.15
+DDF_HOGBOM_DECONVPEAKFACTOR = 0.1
 DDF_HOGBOM_MAXMAJORITER = 5
 DDF_HOGBOM_MAXMINORITER = 100000
 DDF_HOGBOM_POLYFITORDER = 4
@@ -387,10 +519,21 @@ DDF_MASK = 'auto' # 'auto' enables automasking
 DDF_MASKSIGMA = 4.5
 DDF_CONSERVEMEMORY = 1
 
-# UHF modifiers
-if BAND[0].upper() == 'U':
+
+# Band modifiers
+if BAND == 'UHF':
     DDF_CELL = 1.7
     DDF_ROBUST = -0.5
+if BAND == 'S0':
+    DDF_CELL = 0.65
+if BAND == 'S1':
+    DDF_CELL = 0.61
+if BAND == 'S2':
+    DDF_CELL = 0.58
+if BAND == 'S3':
+    DDF_CELL = 0.54
+if BAND == 'S4':
+    DDF_CELL = 0.5
 
 
 # ------------------------------------------------------------------------
@@ -419,11 +562,11 @@ KMS_UVMINMAX = '0.15,8500.0'
 KMS_FIELDID = 0
 KMS_DDID = 0
 # [Actions]
-KMS_NCPU = 12
+KMS_NCPU = 16
 KMS_DOBAR = 0
 KMS_DEBUGPDB = 0
 # [Solvers]
-KMS_SOLVERTYPE = 'CohJones'
+KMS_SOLVERTYPE = 'kafca'
 KMS_DT = 5
 KMS_NCHANSOLS = 8
 # [KAFCA]

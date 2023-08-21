@@ -102,7 +102,7 @@ def main():
 
     # MeerKAT band
     band = options.band[0].lower()
-    if band not in ['l','u']:
+    if band not in ['l','u','s']:
         msg('Please check requested band')
         sys.exit()
 
@@ -170,6 +170,9 @@ def main():
     elif band == 'u':
         beam_model = 'MKAT-AA-UHF-JIM-2020'
         band = 'UHF'
+    elif band == 's':
+        beam_model = 'MKAT-AA-S-JIM-2020'
+        band = 'S-band' 
     msg('Band is '+band)
     msg('Beam model is '+beam_model)
     beam = JimBeam(beam_model)

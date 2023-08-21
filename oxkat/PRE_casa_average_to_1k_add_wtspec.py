@@ -1,9 +1,10 @@
-# ian.heywood@physics.ox.ac.uk
+ # ian.heywood@physics.ox.ac.uk
 
 import glob
 
 
 execfile('oxkat/config.py')
+execfile('oxkat/casa_read_project_info.py')
 
 myfields = PRE_FIELDS
 myscans = PRE_SCANS
@@ -11,11 +12,11 @@ myoutputchans = int(PRE_NCHANS)
 mytimebins = PRE_TIMEBIN
 
 
-myms = glob.glob('*.ms')[0]
-opms = myms.replace('.ms','_'+str(myoutputchans)+'ch.ms')
+master_ms = glob.glob('*.ms')[0]
+opms = master_ms.replace('.ms','_'+str(myoutputchans)+'ch.ms')
 
 
-tb.open(myms+'/SPECTRAL_WINDOW')
+tb.open(master_ms+'/SPECTRAL_WINDOW')
 nchan = tb.getcol('NUM_CHAN')[0]
 tb.done()
 
@@ -27,7 +28,7 @@ else:
 	mychanave = True
 
 
-mstransform(vis = myms,
+mstransform(vis = master_ms,
 	outputvis = opms,
 	field = myfields,
 	scan = myscans,
@@ -39,8 +40,8 @@ mstransform(vis = myms,
 	realmodelcol = True,
 	usewtspectrum = True)
 
-
-flagmanager(vis = opms, mode = 'save', versionname = 'observatory')
+if SAVE_FLAGS:
+	flagmanager(vis = opms, mode = 'save', versionname = 'observatory')
 
 clearcal(vis = opms, addmodel = True)
 

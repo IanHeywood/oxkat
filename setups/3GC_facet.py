@@ -3,8 +3,8 @@
 
 
 import glob
+import json
 import os.path as o
-import pickle
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
@@ -44,10 +44,8 @@ def main():
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
 
-    if INFRASTRUCTURE == 'idia':
-        myNCPU = 12  # Dial back the parallelism for IDIA nodes
-    elif INFRASTRUCTURE == 'chpc':
-        myNCPU = 23 # Kind of meaningless as this stuff probably won't ever run on CHPC
+    if INFRASTRUCTURE == 'chpc':
+        myNCPU = 8 # Kind of meaningless as this stuff probably won't ever run on CHPC
     else:
         myNCPU = 40 # Assumed NCPU for standalone nodes
     
@@ -57,14 +55,17 @@ def main():
         CONTAINER_RUNNER=''
 
 
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY) 
     DDFACET_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.DDFACET_PATTERN,USE_SINGULARITY) 
     KILLMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.KILLMS_PATTERN,USE_SINGULARITY)
 
 
-    # Get target information from project pickle
+    # Get target information from project json file
 
-    project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
+    with open('project_info.json') as f:
+        project_info = json.load(f)
 
+    band = project_info['band']
     target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']
     target_ms = project_info['target_ms']
@@ -185,12 +186,13 @@ def main():
             step['dependency'] = 1
             step['id'] = 'KILMS'+code
             step['slurm_config'] = cfg.SLURM_HIGHMEM
+            step['slurm_exclude'] = 'highmem-003' 
             step['pbs_config'] = cfg.PBS_WSCLEAN
             syscall = CONTAINER_RUNNER+KILLMS_CONTAINER+' ' if USE_SINGULARITY else ''
             syscall += gen.generate_syscall_killms(myms=myms,
                         baseimg=ddf_img_prefix,
                         ncpu=myNCPU,
-                        outsols='killms-cohjones',
+                        outsols='killms-'+cfg.KMS_SOLVERTYPE,
                         nodesfile=CAL_3GC_FACET_REGION+'.npy')
             step['syscall'] = syscall
             steps.append(step)
@@ -198,6 +200,17 @@ def main():
 
             step = {}
             step['step'] = 3
+            step['comment'] = 'Plot killMS solutions'
+            step['dependency'] = 2
+            step['id'] = 'PLKMS'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+OXKAT+'/PLOT_killMS_sols.py '+myms+' killms-'+cfg.KMS_SOLVERTYPE
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 4
             step['comment'] = 'Run DDFacet on CORRECTED_DATA of '+myms+', applying killMS solutions'
             step['dependency'] = 2
             step['id'] = 'DDKMA'+code
@@ -216,6 +229,27 @@ def main():
             step['syscall'] = syscall
             steps.append(step)
 
+
+            step = {}
+            step['step'] = 4
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 2GC DDFacet image'
+            step['dependency'] = 0
+            step['id'] = 'PBCO1'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' --freqaxis 4 '+ddf_img_prefix+'.app.restored.fits'
+            step['syscall'] = syscall
+            steps.append(step)
+
+
+            step = {}
+            step['step'] = 5
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 3GC DDFacet image'
+            step['dependency'] = 4
+            step['id'] = 'PBCO2'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' --freqaxis 4 '+kms_img_prefix+'.app.restored.fits'
+            step['syscall'] = syscall
+            steps.append(step)
 
             target_steps.append((steps,kill_file,targetname))
 

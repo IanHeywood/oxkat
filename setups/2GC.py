@@ -3,8 +3,8 @@
 
 
 import glob
+import json
 import os.path as o
-import pickle
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
@@ -33,6 +33,7 @@ def main():
     GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
+    TOOLS = cfg.TOOLS
 
     gen.setup_dir(GAINTABLES)
     gen.setup_dir(IMAGES)
@@ -47,15 +48,18 @@ def main():
         CONTAINER_RUNNER=''
 
 
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY)
     CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN,USE_SINGULARITY)
     OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
-    # Get target information from project pickle
+    # Get target information from project json file
 
-    project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
+    with open('project_info.json') as f:
+        project_info = json.load(f)
 
+    band = project_info['band']
     target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']
     target_ms = project_info['target_ms']
@@ -140,7 +144,6 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist = [myms],
                         imgname = data_img_prefix,
                         datacol = 'DATA',
-                        bda = True,
                         mask = mask,
                         automask = automask,
                         absmem = absmem)
@@ -150,14 +153,11 @@ def main():
 
             step = {}
             step['step'] = 1
-            step['comment'] = 'Predict model visibilities from imaging of the DATA column'
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 1GC image'
             step['dependency'] = 0
-            step['id'] = 'WSDPR'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = data_img_prefix,absmem = absmem)
+            step['id'] = 'PBCO1'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+data_img_prefix+'-MFS-image.fits'
             step['syscall'] = syscall
             steps.append(step)
 
@@ -165,7 +165,7 @@ def main():
             step = {}
             step['step'] = 2
             step['comment'] = 'Run CubiCal with f-slope solver'
-            step['dependency'] = 1
+            step['dependency'] = 0
             step['id'] = 'CL2GC'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
@@ -189,7 +189,6 @@ def main():
             syscall += gen.generate_syscall_wsclean(mslist=[myms],
                         imgname = corr_img_prefix,
                         datacol = 'CORRECTED_DATA',
-                        bda = True,
                         mask = mask,
                         automask = automask,
                         absmem = absmem)
@@ -213,14 +212,11 @@ def main():
 
             step = {}
             step['step'] = 5
-            step['comment'] = 'Predict model visibilities from imaging of the CORRECTED_DATA column'
+            step['comment'] = 'Apply primary beam correction to '+targetname+' 2GC image'
             step['dependency'] = 3
-            step['id'] = 'WSCPR'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_predict(msname = myms,imgbase = corr_img_prefix,absmem = absmem)
+            step['id'] = 'PBCO2'+code
+            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+corr_img_prefix+'-MFS-image.fits'
             step['syscall'] = syscall
             steps.append(step)
 

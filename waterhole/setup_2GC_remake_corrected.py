@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
+# If peeling goes wrong you can use this script to restore the CORRECTED_DATA column
 
 
 import glob
@@ -16,11 +17,10 @@ from oxkat import config as cfg
 def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
-
+    
     gen.preamble()
-    print(gen.col()+'FLAG (target flagging & initial mask-making) setup')
+    print(gen.col()+'Repredict and recalibrate (2GC)')
     gen.print_spacer()
-
 
     # ------------------------------------------------------------------------------
     #
@@ -31,11 +31,11 @@ def main():
 
     OXKAT = cfg.OXKAT
     DATA = cfg.DATA
+    GAINTABLES = cfg.GAINTABLES
     IMAGES = cfg.IMAGES
     SCRIPTS = cfg.SCRIPTS
-    TOOLS = cfg.TOOLS
 
-
+    gen.setup_dir(GAINTABLES)
     gen.setup_dir(IMAGES)
     gen.setup_dir(cfg.LOGS)
     gen.setup_dir(cfg.SCRIPTS)
@@ -48,18 +48,16 @@ def main():
         CONTAINER_RUNNER=''
 
 
-    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY)
-    CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
-    TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
+    CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN,USE_SINGULARITY)
+    OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
 
 
-    # Get target information from project json
+    # Get target information from project info json file
 
     with open('project_info.json') as f:
         project_info = json.load(f)
 
-    band = project_info['band']
     target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']
     target_ms = project_info['target_ms']
@@ -67,7 +65,7 @@ def main():
 
     # ------------------------------------------------------------------------------
     #
-    # FLAG recipe definition
+    # 2GC recipe definition
     #
     # ------------------------------------------------------------------------------
 
@@ -75,6 +73,8 @@ def main():
     target_steps = []
     codes = []
     ii = 1
+    stamp = gen.timenow()
+
 
     # Loop over targets
 
@@ -83,16 +83,24 @@ def main():
         targetname = target_names[tt]
         myms = target_ms[tt]
 
-        if not o.isdir(myms):
+        # Image prefixes
+        data_img_prefix = IMAGES+'/img_'+myms+'_datamask'
+        have_img = glob.glob(data_img_prefix+'*.fits')    
 
-            gen.print_spacer()
-            print(gen.col('Target')+targetname)
-            print(gen.col('MS')+'not found, skipping')
+        gen.print_spacer()
+        print(gen.col('Target')+targetname)
+
+        if not o.isdir(myms):
+            print(gen.col('Measurement Set')+'not found, skipping')
+
+        elif len(have_img) == 0:
+            print(gen.col('Model')+' not found, skipping')
 
         else:
 
             steps = []        
             filename_targetname = gen.scrub_target_name(targetname)
+
 
             code = gen.get_target_code(targetname)
             if code in codes:
@@ -100,95 +108,54 @@ def main():
                 ii += 1
             codes.append(code)
         
-            # Image prefix
-            img_prefix = IMAGES+'/img_'+myms+'_datablind'
+
+            k_outdir = GAINTABLES+'/delaycal_'+filename_targetname+'_'+stamp+'.cc/'
+            k_outname = 'delaycal_'+filename_targetname+'_'+stamp
+            k_saveto = 'delaycal_'+filename_targetname+'.parmdb'
+
 
             # Target-specific kill file
-            kill_file = SCRIPTS+'/kill_flag_jobs_'+filename_targetname+'.sh'
-
-            gen.print_spacer()
-            print(gen.col('Target')+targetname)
+            kill_file = SCRIPTS+'/kill_2GC_jobs_'+filename_targetname+'.sh'
+          
             print(gen.col('Measurement Set')+myms)
+            print(gen.col('Model')+data_img_prefix)
             print(gen.col('Code')+code)
 
 
             step = {}
             step['step'] = 0
-            step['comment'] = 'Run Tricolour on '+myms
+            step['comment'] = 'Predict model visibilities from imaging of the DATA column'
             step['dependency'] = None
-            step['id'] = 'TRIC0'+code
-            step['slurm_config'] = cfg.SLURM_TRICOLOUR
-            step['pbs_config'] = cfg.PBS_TRICOLOUR
-            syscall = CONTAINER_RUNNER+TRICOLOUR_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_tricolour(myms = myms,
-                        config = DATA+'/tricolour/target_flagging_1_narrow.yaml',
-                        datacol = 'DATA',
-                        fields = '0',
-                        strategy = 'polarisation')
+            step['id'] = 'WSDPR'+code
+            step['slurm_config'] = cfg.SLURM_WSCLEAN
+            step['pbs_config'] = cfg.PBS_WSCLEAN
+            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
+            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_predict(msname = myms,imgbase = data_img_prefix,absmem = absmem)
             step['syscall'] = syscall
             steps.append(step)
 
 
             step = {}
             step['step'] = 1
-            step['comment'] = 'Blind wsclean on DATA column of '+myms
+            step['comment'] = 'Run CubiCal with f-slope solver'
             step['dependency'] = 0
-            step['id'] = 'WSDBL'+code
+            step['id'] = 'CL2GC'+code
             step['slurm_config'] = cfg.SLURM_WSCLEAN
             step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_wsclean(mslist = [myms],
-                        imgname = img_prefix,
-                        datacol = 'DATA',
-                        nomodel = True,
-                        automask = False,
-                        autothreshold = False,
-                        localrms = False,
-                        mask = False,
-                        absmem = absmem)
+            syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
+            syscall += gen.generate_syscall_cubical(parset = cfg.CAL_2GC_DELAYCAL_PARSET,
+                    myms = myms,
+                    extra_args = '--out-dir '+k_outdir+' --out-name '+k_outname+' --k-save-to '+k_saveto)
             step['syscall'] = syscall
             steps.append(step)
 
 
-            step = {}
-            step['step'] = 2
-            step['comment'] = 'Make initial cleaning mask for '+targetname
-            step['dependency'] = 1
-            step['id'] = 'MASK0'+code
-            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += gen.generate_syscall_makemask(restoredimage = img_prefix+'-MFS-image.fits',
-                        outfile = img_prefix+'-MFS-image.mask0.fits',
-                        zoompix = '')[0]
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            step = {}
-            step['step'] = 3
-            step['comment'] = 'Apply primary beam correction to '+targetname+' image'
-            step['dependency'] = 1
-            step['id'] = 'PBCOR'+code
-            syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall += 'python3 '+TOOLS+'/pbcor_katbeam.py --band '+band[0]+' '+img_prefix+'-MFS-image.fits'
-            step['syscall'] = syscall
-            steps.append(step)
-
-
-            if cfg.SAVE_FLAGS:
-                step = {}
-                step['step'] = 4
-                step['comment'] = 'Backup flag table for '+myms
-                step['dependency'] = 1
-                step['id'] = 'SAVFG'+code
-                syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-                syscall += 'casa -c '+OXKAT+'/FLAG_casa_backup_flag_table.py --nologger --log2term --nogui '
-                syscall += 'versionname=tricolour1 mslist='+myms
-                step['syscall'] = syscall
-                steps.append(step)
 
 
             target_steps.append((steps,kill_file,targetname))
+
+
 
 
     # ------------------------------------------------------------------------------
@@ -198,7 +165,7 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_flag_jobs.sh'
+    submit_file = 'submit_2GC_jobs.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')

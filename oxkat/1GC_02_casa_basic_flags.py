@@ -5,6 +5,7 @@ import numpy
 
 
 execfile('oxkat/casa_read_project_info.py')
+execfile('oxkat/config.py')
 
 
 args = sys.argv
@@ -21,50 +22,36 @@ clearstat()
 # ------------------------------------------------------------------------
 # Frequency ranges to flag over all baselines
 
-badfreqs = ['850~900MHz', # Lower band edge
-	'1658~1800MHz', # Upper bandpass edge
-	'1419.8~1421.3MHz'] # Galactic HI
+if CAL_1GC_BAD_FREQS != []:
 
-myspw = ''
-for badfreq in badfreqs:
-	myspw += '*:'+badfreq+','
-myspw = myspw.rstrip(',')
+	myspw = ','.join(CAL_1GC_BAD_FREQS)
 
-flagdata(vis = myms, 
-	mode = 'manual', 
-	spw = myspw)
+	# myspw = ''
+	# for badfreq in CAL_1GC_BAD_FREQS:
+	# 	myspw += '*:'+badfreq+','
+	# myspw = myspw.rstrip(',')
+
+	flagdata(vis = myms, 
+		mode = 'manual', 
+		spw = myspw)
 
 
 # ------------------------------------------------------------------------
 # Frequency ranges to flag over a subset of baselines
-# From the MeerKAT Cookbook
-# https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/L-band%20RFI%20frequency%20flagging.ipynb
 
-badfreqs = ['900MHz~915MHz', # GSM and aviation
-	'925MHz~960MHz',				
-	'1080MHz~1095MHz',
-	'1565MHz~1585MHz', # GPS
-	'1217MHz~1237MHz',
-	'1375MHz~1387MHz',
-	'1166MHz~1186MHz',
-	'1592MHz~1610MHz', # GLONASS
-	'1242MHz~1249MHz',
-	'1191MHz~1217MHz', # Galileo
-	'1260MHz~1300MHz',
-	'1453MHz~1490MHz', # Afristar
-	'1616MHz~1626MHz', # Iridium
-	'1526MHz~1554MHz', # Inmarsat
-	'1600MHz'] # Alkantpan
+if CAL_1GC_BL_FREQS != []:
 
-myspw = ''
-for badfreq in badfreqs:
-	myspw += '*:'+badfreq+','
-myspw = myspw.rstrip(',')
+	myspw = ','.join(CAL_1GC_BL_FREQS)
 
-flagdata(vis = myms,
-	mode = 'manual',
-	spw = myspw,
-	uvrange = '<600')
+	# myspw = ''
+	# for badfreq in CAL_1GC_BL_FREQS:
+	# 	myspw += '*:'+badfreq+','
+	# myspw = myspw.rstrip(',')
+
+	flagdata(vis = myms,
+		mode = 'manual',
+		spw = myspw,
+		uvrange = CAL_1GC_BL_FLAG_UVRANGE)
 
 
 # ------------------------------------------------------------------------
@@ -91,9 +78,11 @@ flagdata(vis = myms,
 # ------------------------------------------------------------------------
 # Save the flags
 
-flagmanager(vis = myms,
-	mode = 'save',
-	versionname = 'basic')
+if SAVE_FLAGS:
+
+	flagmanager(vis = myms,
+		mode = 'save',
+		versionname = 'basic')
 
 
 clearstat()

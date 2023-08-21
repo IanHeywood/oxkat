@@ -3,8 +3,8 @@
 
 
 import glob
+import json
 import os.path as o
-import pickle
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
@@ -49,9 +49,10 @@ def main():
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
 
 
-    # Get target information from project pickle
+    # Get target information from project info json file
 
-    project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
+    with open('project_info.json') as f:
+        project_info = json.load(f)
 
     target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']

@@ -1,6 +1,12 @@
 import glob
 import os
+import os.path as o
 import sys
+sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
+
+
+from oxkat import generate_jobs as gen
+from oxkat import config as cfg
 
 
 def write_slurm(opfile,jobname,logfile,syscall):
@@ -24,7 +30,8 @@ def write_slurm(opfile,jobname,logfile,syscall):
 def main():
 
 
-    MOVIE_CONTAINER = '/idia/software/containers/ASTRO-PY3-2021-10-26.simg'
+    INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(('','idia'))
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,True)
 
     intervals = sorted(glob.glob('INTERVALS/*scan*'))
     rootdir = os.getcwd()
@@ -38,8 +45,8 @@ def main():
 
         os.chdir(mydir)
         code = os.getcwd().split('/')[-1].split('_')[-1].replace('scan','movie')
-        syscall = 'singularity exec '+MOVIE_CONTAINER+' '
-        syscall += 'python '+rootdir+'/tools/make_movie.py'
+        syscall = 'singularity exec '+ASTROPY_CONTAINER+' '
+        syscall += 'python3 '+rootdir+'/tools/make_movie.py'
 
         slurm_file = 'slurm_'+code+'.sh'
         log_file = 'slurm_'+code+'.log'
@@ -56,9 +63,9 @@ def main():
             'cd ../../\n'])
 
     f.close()
+    gen.make_executable(runfile)
     print('Wrote '+runfile+' script')
 
 if __name__ == "__main__":
-
 
     main()

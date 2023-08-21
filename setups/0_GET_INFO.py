@@ -1,11 +1,9 @@
-
 #!/usr/bin/env python
 # ian.heywood@physics.ox.ac.uk
 
 
 import glob
 import os.path as o
-import pickle
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
@@ -13,14 +11,13 @@ sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), ".."
 from oxkat import generate_jobs as gen
 from oxkat import config as cfg
 
-
 def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
-    
-    gen.preamble()
-    print(gen.now()+'High resolution images for the G4Jy sample')
 
+    gen.preamble()
+    print(gen.col()+'Setting up job to examine master MS')
+    gen.print_spacer()
 
     # ------------------------------------------------------------------------------
     #
@@ -28,16 +25,10 @@ def main():
     #
     # ------------------------------------------------------------------------------
 
-    mslist = sorted(glob.glob('/idia/projects/G4Jy/1*/*/*.ms'))
-    imgdir = '/idia/projects/G4Jy/1*/IMAGES/'
 
-    OXKAT = cfg.OXKAT
-    IMAGES = cfg.IMAGES
-    SCRIPTS = cfg.SCRIPTS
-
-    gen.setup_dir(IMAGES)
     gen.setup_dir(cfg.LOGS)
     gen.setup_dir(cfg.SCRIPTS)
+    gen.setup_dir(cfg.GAINTABLES)
 
 
     INFRASTRUCTURE, CONTAINER_PATH = gen.set_infrastructure(sys.argv)
@@ -47,75 +38,44 @@ def main():
         CONTAINER_RUNNER=''
 
 
-    WSCLEAN_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.WSCLEAN_PATTERN,USE_SINGULARITY)
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY)
+    OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
 
 
     # ------------------------------------------------------------------------------
     #
-    # Image big MS list -- recipe definition
+    # 1GC recipe definition
     #
     # ------------------------------------------------------------------------------
 
+
+    myms = glob.glob('*.ms')
+    if len(myms) == 0:
+        print(gen.col()+'No MS found in current directory, please check')
+        gen.print_spacer()
+        sys.exit()
+
+    myms = myms[0]
+    code = gen.get_code(myms)
 
     steps = []
-    codes = []
-    ii = 1
-
-    # Loop over Measurement Sets
 
 
-    for i in range(0,len(mslist)):
-
-        myms = mslist[i]
-        field = myms.split('_')[-1].rstrip('.ms')
-        code = gen.get_target_code(field)
-        if code in codes:
-            code += '_'+str(ii)
-            ii += 1
-        codes.append(code)
-        gen.print_spacer()
-        print(gen.now()+'MS        | '+myms)
-        print(gen.now()+'Field     | '+field)
-        print(gen.now()+'Code      | '+code)
-
-        fitsmask = glob.glob(imgdir+'*'+field+'*mask1.fits')
-
-        if len(fitsmask) == 0:
-
-            print(gen.now()+'Mask      | not found, skipping')
-
-        else:
-
-            fitsmask = fitsmask[0]
-            print(gen.now()+'Mask      | '+fitsmask)
-    
-            # Image prefix
-            img_prefix = IMAGES+'/img_'+myms.split('/')[-1]+'_'+field+'_2GCr-1p5'
-
-            step = {}
-            step['step'] = i
-            step['comment'] = 'Run wsclean, blind deconvolution of the CORRECTED_DATA for '+field
-            step['dependency'] = None
-            step['id'] = 'WG4JY'+code
-            step['slurm_config'] = cfg.SLURM_WSCLEAN
-            step['pbs_config'] = cfg.PBS_WSCLEAN
-            absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
-            syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-            syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
-            syscall += gen.generate_syscall_wsclean(mslist = [myms],
-                                    imgname = img_prefix,
-                                    datacol = 'CORRECTED_DATA',
-                                    niter = 60000,
-                                    briggs = -1.5,
-                                    bda = True,
-                                    mask = fitsmask,
-                                    automask = False,
-                                    autothreshold = False,
-                                    localrms = False,
-                                        threshold = 40e-6,
-                                    absmem = absmem)
-            step['syscall'] = syscall
-            steps.append(step)
+    step = {}
+    step['step'] = 0
+    step['comment'] = 'Run setup script to generate project_info json file'
+    step['dependency'] = None
+    step['id'] = 'INFO_'+code
+    syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += ' python3 '+cfg.TOOLS+'/ms_info.py '+myms+'\n'
+    syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += ' python3 '+cfg.TOOLS+'/scan_times.py '+myms+'\n'
+    syscall += CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += ' python3 '+cfg.TOOLS+'/find_sun.py '+myms+'\n'
+    syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += ' python3 '+cfg.OXKAT+'/1GC_00_setup.py '+myms
+    step['syscall'] = syscall
+    steps.append(step)
 
 
 
@@ -126,8 +86,8 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    submit_file = 'submit_imaging_jobs.sh'
-    kill_file = cfg.SCRIPTS+'/kill_imaging_jobs.sh'
+    submit_file = 'submit_info_job.sh'
+    kill_file = cfg.SCRIPTS+'/kill_info_job.sh'
 
     f = open(submit_file,'w')
     f.write('#!/usr/bin/env bash\n')
@@ -178,7 +138,7 @@ def main():
     gen.make_executable(submit_file)
 
     gen.print_spacer()
-    print(gen.now()+'Created '+submit_file)
+    print(gen.col('Run file')+submit_file)
     gen.print_spacer()
 
     # ------------------------------------------------------------------------------

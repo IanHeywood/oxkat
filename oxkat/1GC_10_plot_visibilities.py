@@ -2,8 +2,8 @@
 # ian.heywood@physics.ox.ac.uk
 
 
+import json
 import os.path as o
-import pickle
 import subprocess
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
@@ -13,6 +13,7 @@ from oxkat import generate_jobs as gen
 from oxkat import config as cfg
 
 
+
 def main():
 
 
@@ -20,11 +21,18 @@ def main():
     gen.setup_dir(VISPLOTS)
 
 
-    project_info = pickle.load(open('project_info.p','rb'), encoding = 'latin1')
-    myms = project_info['master_ms']
-    bpcal = project_info['primary_id']
+    with open('project_info.json') as f:
+        project_info = json.load(f)
+
+
+    myms = project_info['working_ms']
+    bpcal = project_info['primary_name']
     pcals = project_info['secondary_ids']
     targets = project_info['target_ids'] 
+
+    if cfg.PRE_FIELDS != '':
+        from oxkat import user_field_handler as ufh
+        pcals = ufh.user_pcals
 
     fields = [bpcal]
     for pcal in pcals:

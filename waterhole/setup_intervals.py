@@ -9,7 +9,6 @@ import pickle
 import sys
 import os.path as o
 
-
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
 from oxkat import generate_jobs as gen
@@ -87,12 +86,12 @@ def main():
                         os.mkdir(opdir)
 
                     imgname = opdir+'/img_'+myms+'_modelsub'
-                    code = 'WSscan'+str(scans[i])
+                    code = 'intrvl'+str(scans[i])
 
                     syscall = 'singularity exec '+WSCLEAN_CONTAINER+' '
                     syscall += 'wsclean -intervals-out '+str(intervals[i])+' -interval 0 '+str(intervals[i])+' '
-                    syscall += '-log-time -field 0 -no-dirty -make-psf -size 8192 8192 -scale 1.1asec -baseline-averaging 10 -no-update-model-required '
-                    syscall += '-nwlayers-factor 3 -niter 0 -name '+imgname+' '
+                    syscall += '-log-time -field 0 -no-dirty -make-psf -size 4680 4680 -scale 1.1asec -baseline-averaging 10 -no-update-model-required '
+                    syscall += '-nwlayers 1 -niter 0 -name '+imgname+' '
                     syscall += '-weight briggs -0.3 -data-column CORRECTED_DATA -padding 1.2 -absmem 110 '+myms
 
                     slurm_file = 'SCRIPTS/slurm_intervals_'+code+'.sh'
@@ -103,6 +102,7 @@ def main():
                     f.writelines(['sbatch '+slurm_file+'\n'])
                     
     f.close()
+    gen.make_executable(runfile)
     print('Wrote '+runfile+' script')
 
 

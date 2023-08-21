@@ -3,7 +3,6 @@
 
 
 import glob
-import pickle
 import shutil
 import time
 
@@ -188,9 +187,10 @@ flagdata(vis=myms,
     field=bpcal)
 
 
-flagmanager(vis=myms,
-    mode='save',
-    versionname='bpcal_residual_flags')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,
+        mode='save',
+        versionname='bpcal_residual_flags')
 
 
 # --------------------------------------------------------------- #
@@ -300,224 +300,6 @@ gaincal(vis = myms,
     append = False)
 
 
-# ------- Duplicate K1
-# ------- Duplicate G2 (to save repetition of above step)
-
-
-shutil.copytree(ktab1,ktab2)
-shutil.copytree(gtab2,gtab3)
-
-
-# ------- Looping over secondaries
-
-
-for i in range(0,len(pcals)):
-
-
-    # --- G2 (secondary)
-
-
-    gaincal(vis = myms,
-        field = pcal,
-        uvrange = myuvrange,
-        spw = myspw,
-        caltable = gtab2,     
-        refant = str(ref_ant),
-        minblperant = 4,
-        minsnr = 3,
-        solint = '16s',
-        solnorm = False,
-        gaintype = 'G',
-        combine = '',
-        calmode = 'ap',
-        parang = False,
-        gaintable=[ktab1,gtab1,bptab1],
-        gainfield=[bpcal,bpcal,bpcal],
-        interp=['nearest','linear','linear'],
-        append=True)
-
-
-    # --- K2 (secondary)
-
-
-    gaincal(vis= myms,
-        field = pcal,
-    #   uvrange = myuvrange,
-    #   spw=myspw,
-        caltable = ktab1,
-        refant = str(ref_ant),
-        gaintype = 'K',
-        solint = 'inf',
-        parang = False,
-        gaintable = [gtab1,bptab1,gtab2],
-        gainfield = [bpcal,bpcal,pcal],
-        interp = ['nearest','linear','linear','linear'],
-        append = True)
-
-
-    # --- F3 
-
-
-    fluxscale(vis=myms,
-        caltable = gtab2,
-        fluxtable = ftab2,
-        reference = bpcal,
-        append = False,
-        transfer = '')
-
-
-# ------- Looping over secondaries
-
-
-for i in range(0,len(pcals)):
-
-
-    pcal = pcals[i]
-
-
-    # --- Correct secondaries with K2, G1, B1, F2
-
-
-    applycal(vis = myms,
-        gaintable = [ktab2,gtab1,bptab1,ftab2],
-#        applymode='calonly',
-        field = pcal,
-#        calwt = False,
-        parang = False,
-        gainfield = ['','',bpcal,pcal],
-        interp = ['nearest','linear','linear','linear'])
-
-
-    # --- Flag secondaries on CORRECTED_DATA - MODEL_DATA
-
-
-    flagdata(vis = myms,
-        field = pcal,
-        mode = 'rflag',
-        datacolumn = 'residual')
-
-
-    flagdata(vis = myms,
-        field = pcal,
-        mode = 'tfcrop',
-        datacolumn = 'residual')
-
-
-flagmanager(vis=myms,mode='save',versionname='pcal_residual_flags')
-
-
-# --------------------------------------------------------------- #
-# --------------------------------------------------------------- #
-# --------------------------- STAGE 3 --------------------------- #
-# --------------------------------------------------------------- #
-# --------------------------------------------------------------- #
-
-
-gaincal(vis = myms,
-    field = bpcal,
-    uvrange = myuvrange,
-    spw = myspw,
-    caltable = gtab3,
-    refant = str(ref_ant),
-    solint = 'inf',
-    solnorm = False,
-    combine = '',
-    minsnr = 3,
-    calmode = 'ap',
-    parang = False,
-    gaintable = [ktab2,gtab1,bptab1],
-    gainfield = [bpcal,bpcal,bpcal],
-    interp = ['nearest','nearest','nearest'],
-    append = False)
-
-
-# ------- Duplicate K1 table
-
-
-shutil.copytree(ktab1,ktab3)
-
-
-# ------- Looping over secondaries
-
-
-for i in range(0,len(pcals)):
-
-
-    pcal = pcals[i]
-
-
-    # --- G3 (secondary)
-
-
-    gaincal(vis = myms,
-        field = pcal,
-        uvrange = myuvrange,
-        spw = myspw,
-        caltable = gtab3,     
-        refant = str(ref_ant),
-        minblperant = 4,
-        minsnr = 3,
-        solint = 'inf',
-        solnorm = False,
-        gaintype = 'G',
-        combine = '',
-        calmode = 'ap',
-        parang = False,
-        gaintable=[ktab2,gtab1,bptab1],
-        gainfield=[bpcal,bpcal,bpcal],
-        interp=['nearest','linear','linear'],
-        append=True)
-
-
-    # --- K3 secondary
-
-
-    gaincal(vis= myms,
-        field = pcal,
-    #   uvrange = myuvrange,
-        caltable = ktab3,
-        refant = str(ref_ant),
-        gaintype = 'K',
-        solint = 'inf',
-        parang = False,
-        gaintable = [gtab1,bptab1,gtab3],
-        gainfield = [bpcal,bpcal,bpcal,pcal],
-        interp = ['linear','linear','linear'],
-        append = True)
-
-
-    # --- F3 
-
-
-    fluxscale(vis=myms,
-        caltable = gtab3,
-        fluxtable = ftab3,
-        reference = bpcal,
-        append = False,
-        transfer = '')
-
-
-# ------- Apply final tables to secondaries
-
-
-for i in range(0,len(pcals)):
-
-
-    pcal = pcals[i]
-
-
-    # --- Correct secondaries with K3, G1, B1, F3
-
-
-    applycal(vis = myms,
-        gaintable = [ktab3,gtab1,bptab1,ftab3],
-#        applymode='calonly',
-        field = pcal,
-#        calwt = False,
-        parang = False,
-        gainfield = ['','',bpcal,pcal],
-        interp = ['nearest','linear','linear','linear'])
-
 
 # ------- Apply final tables to targets
 
@@ -529,17 +311,18 @@ for i in range(0,len(targets)):
     related_pcal = target_cal_map[i]
 
 
-    # --- Correct targets with K3, G1, B1, F3
+    # --- Correct targets with K1, G1, B1, G2
 
 
     applycal(vis=myms,
-        gaintable=[ktab3,gtab1,bptab1,ftab3],
+        gaintable=[ktab1,gtab1,bptab1,gtab2],
 #        applymode='calonly',
         field=target,
 #        calwt=False,
         parang=False,
-        gainfield=['',bpcal,bpcal,related_pcal],
+        gainfield=[bpcal,bpcal,bpcal,bpcal],
         interp=['nearest','linear','linear','linear'])
 
 
-flagmanager(vis=myms,mode='save',versionname='refcal-full')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,mode='save',versionname='refcal-full')

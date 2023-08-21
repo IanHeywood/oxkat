@@ -2,7 +2,6 @@
 
 
 import glob
-import pickle
 import shutil
 import time
 
@@ -10,7 +9,10 @@ import time
 execfile('oxkat/casa_read_project_info.py')
 execfile('oxkat/config.py')
 
-
+if PRE_FIELDS != '':
+    targets = user_targets
+    pcals = user_pcals
+    target_cal_map = user_cal_map
 
 def stamp():
     now = str(datetime.datetime.now()).replace(' ','-').replace(':','-').split('.')[0]
@@ -20,10 +22,9 @@ def stamp():
 # ------- Parameters
 
 
-myuvrange = CAL_1GC_UVRANGE
-delaycut = CAL_1GC_DELAYCUT
 gapfill = CAL_1GC_FILLGAPS
-
+myuvrange = CAL_1GC_UVRANGE 
+myspw = CAL_1GC_FREQRANGE
 
 
 # ------- Setup names
@@ -52,10 +53,47 @@ gtab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.G3'
 ftab3 = GAINTABLES+'/cal_1GC_'+myms+'_'+tt+'.flux3'
 
 
-secondary_pickle = pickle.load(open(glob.glob(GAINTABLES+'/secondary_models_final*.p')[0],'rb'))
-secondary_models = secondary_pickle[0]
-secondary_mapping = secondary_pickle[1]
 
+# ------- Set calibrator models
+
+
+
+if primary_tag == '1934':
+    setjy(vis=myms,
+        field=bpcal_name,
+        standard='Stevens-Reynolds 2016',
+        scalebychan=True,
+        usescratch=True)
+    
+    
+elif primary_tag == '0408':
+    bpcal_mod = CAL_1GC_0408_MODEL
+    setjy(vis=myms,
+        field=bpcal_name,
+        standard='manual',
+        fluxdensity=bpcal_mod[0],
+        spix=bpcal_mod[1],
+        reffreq=bpcal_mod[2],
+        scalebychan=True,
+        usescratch=True)
+
+
+elif primary_tag == 'other':
+    setjy(vis=myms,
+        field=bpcal_name,
+        standard='Perley-Butler 2013',
+        scalebychan=True,
+        usescratch=True)
+
+
+for i in range(0,len(pcals)):
+    pcal = pcals[i]
+    setjy(vis =myms,
+        field = pcal,
+        standard = 'manual',
+        fluxdensity = [1.0,0,0,0],
+        reffreq = '1000MHz',
+        usescratch = True)
 
 
 # --------------------------------------------------------------- #
@@ -65,44 +103,13 @@ secondary_mapping = secondary_pickle[1]
 # --------------------------------------------------------------- #
 
 
-
-# ------- Setup models
-# Now handled by separate scripts
-
-# if primary_tag == '1934':
-#     setjy(vis=myms,
-#         field=bpcal_name,
-#         standard='Stevens-Reynolds 2016',
-#         scalebychan=True,
-#         usescratch=True)
-    
-    
-# elif primary_tag == '0408':
-#     bpcal_mod = ([17.066,0.0,0.0,0.0],[-1.179],'1284MHz')
-#     setjy(vis=myms,
-#         field=bpcal_name,
-#         standard='manual',
-#         fluxdensity=bpcal_mod[0],
-#         spix=bpcal_mod[1],
-#         reffreq=bpcal_mod[2],
-#         scalebychan=True,
-#         usescratch=True)
-
-
-# elif primary_tag == 'other':
-#     setjy(vis=myms,
-#         field=bpcal_name,
-#         standard='Perley-Butler 2010',
-#         scalebychan=True,
-#         usescratch=True)
-
-
 # ------- K0 (primary)
 
 
 gaincal(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     #uvrange=myuvrange,
+    #spw=myspw,
     caltable=ktab0,
     refant = str(ref_ant),
     gaintype = 'K',
@@ -114,14 +121,14 @@ gaincal(vis=myms,
 
 
 gaincal(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     uvrange=myuvrange,
     caltable=gtab0,
     gaintype='G',
     solint='inf',
     calmode='p',
     minsnr=5,
-    gainfield=[bpcal],
+    gainfield=[bpcal_name],
     interp = ['nearest'],
     gaintable=[ktab0])
 
@@ -130,7 +137,7 @@ gaincal(vis=myms,
 
 
 bandpass(vis=myms,
-    field=bpcal, 
+    field=bpcal_name, 
     uvrange=myuvrange,
     caltable=bptab0,
     refant = str(ref_ant),
@@ -142,7 +149,7 @@ bandpass(vis=myms,
     bandtype='B',
     fillgaps=gapfill,
     parang=False,
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp = ['nearest','nearest'],
     gaintable=[ktab0,gtab0])
 
@@ -157,10 +164,10 @@ flagdata(vis=bptab0,mode='rflag',datacolumn='CPARAM')
 applycal(vis=myms,
     gaintable=[ktab0,gtab0,bptab0],
 #    applymode='calonly',
-    field=bpcal,
+    field=bpcal_name,
 #    calwt=False,
     parang=False,
-    gainfield=[bpcal,bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name,bpcal_name],
     interp = ['nearest','nearest','nearest'])
 
 
@@ -170,14 +177,13 @@ applycal(vis=myms,
 flagdata(vis=myms,
     mode='rflag',
     datacolumn='residual',
-    field=bpcal)
+    field=bpcal_name)
 
 
 flagdata(vis=myms,
     mode='tfcrop',
     datacolumn='residual',
-    field=bpcal)
-
+    field=bpcal_name)
 
 if SAVE_FLAGS:
     flagmanager(vis=myms,
@@ -196,15 +202,14 @@ if SAVE_FLAGS:
 
 
 gaincal(vis=myms,
-    field=bpcal,
-    #uvrange=myuvrange,
+    field=bpcal_name,
     caltable=ktab1,
     refant = str(ref_ant),
     gaintype = 'K',
     solint = 'inf',
     parang=False,
     gaintable=[bptab0,gtab0],
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp=['nearest','nearest'])
 
 
@@ -212,14 +217,14 @@ gaincal(vis=myms,
 
 
 gaincal(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     uvrange=myuvrange,
     caltable=gtab1,
     gaintype='G',
     solint='inf',
     calmode='p',
     minsnr=5,
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp = ['nearest','nearest'],
     gaintable=[ktab1,bptab0])
 
@@ -228,7 +233,7 @@ gaincal(vis=myms,
 
 
 bandpass(vis=myms,
-    field=bpcal,
+    field=bpcal_name,
     uvrange=myuvrange,
     caltable=bptab1,
     refant = str(ref_ant),
@@ -240,7 +245,7 @@ bandpass(vis=myms,
     bandtype='B',
     fillgaps=gapfill,
     parang=False,
-    gainfield=[bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name],
     interp = ['nearest','nearest'],
     gaintable=[ktab1,gtab1])
 
@@ -255,10 +260,10 @@ flagdata(vis=bptab1,mode='rflag',datacolumn='CPARAM')
 applycal(vis=myms,
     gaintable=[ktab1,gtab1,bptab1],
 #    applymode='calonly',
-    field=bpcal,
+    field=bpcal_name,
 #    calwt=False,
     parang=False,
-    gainfield=[bpcal,bpcal,bpcal],
+    gainfield=[bpcal_name,bpcal_name,bpcal_name],
     interp = ['nearest','nearest','nearest'])
 
 
@@ -273,8 +278,9 @@ applycal(vis=myms,
 
 
 gaincal(vis = myms,
-    field = bpcal,
+    field = bpcal_name,
     uvrange = myuvrange,
+    spw = myspw,
     caltable = gtab2,
     refant = str(ref_ant),
     solint = 'inf',
@@ -284,57 +290,22 @@ gaincal(vis = myms,
     calmode = 'ap',
     parang = False,
     gaintable = [ktab1,gtab1,bptab1],
-    gainfield = [bpcal,bpcal,bpcal],
+    gainfield = [bpcal_name,bpcal_name,bpcal_name],
     interp = ['nearest','nearest','nearest'],
     append = False)
 
 
 # ------- Duplicate K1
-# ------- Duplicate G2 (to save repetition of above step)
-
 
 shutil.copytree(ktab1,ktab2)
-shutil.copytree(gtab2,gtab3)
-
 
 # ------- Looping over secondaries
-
-
-solve_delays = []
 
 
 for i in range(0,len(pcals)):
 
 
     pcal = pcals[i]
-    pcal_name = pcal_names[i] # name
-
-
-    for item in secondary_mapping:
-        if item[0] == pcal_name:
-            mod_idx = str(item[1])
-
-
-    iflux = secondary_models[mod_idx]['fitFluxd']
-    spidx = secondary_models[mod_idx]['spidx']
-    if len(spidx) == 2:
-        myspix = spidx[1] 
-    elif len(spidx) == 3:
-        alpha = spidx[1]        
-        beta = spidx[2]
-        myspix = [alpha,beta]
-    # alpha = secondary_models[mod_idx]['spidx'][1]
-    # beta = secondary_models[mod_idx]['spidx'][2]
-    ref_freq = str(secondary_models[mod_idx]['fitRefFreq'])+'Hz'
-
-
-    setjy(vis =myms,
-        field = pcal,
-        standard = 'manual',
-        fluxdensity = [iflux,0,0,0],
-        spix = myspix,
-        reffreq = ref_freq,
-        usescratch = True)
 
 
     # --- G2 (secondary)
@@ -343,6 +314,7 @@ for i in range(0,len(pcals)):
     gaincal(vis = myms,
         field = pcal,
         uvrange = myuvrange,
+        spw = myspw,
         caltable = gtab2,     
         refant = str(ref_ant),
         minblperant = 4,
@@ -354,34 +326,38 @@ for i in range(0,len(pcals)):
         calmode = 'ap',
         parang = False,
         gaintable=[ktab1,gtab1,bptab1],
-        gainfield=[bpcal,bpcal,bpcal],
+        gainfield=[bpcal_name,bpcal_name,bpcal_name],
         interp=['nearest','linear','linear'],
         append=True)
 
 
     # --- K2 (secondary)
 
-    if iflux > delaycut: # Don't solve for delays on weak secondaries
 
-        gaincal(vis= myms,
-            field = pcal,
-        #   uvrange = myuvrange,
-            caltable = ktab1,
-            refant = str(ref_ant),
-        #   spw = delayspw,
-            gaintype = 'K',
-            solint = 'inf',
-            parang = False,
-            gaintable = [gtab1,bptab1,gtab2],
-            gainfield = [bpcal,bpcal,pcal],
-            interp = ['nearest','linear','linear','linear'],
-            append = True)
+    gaincal(vis= myms,
+        field = pcal,
+    #   uvrange = myuvrange,
+    #   spw=myspw,
+        caltable = ktab2,
+        refant = str(ref_ant),
+        gaintype = 'K',
+        solint = 'inf',
+        parang = False,
+        gaintable = [gtab1,bptab1,gtab2],
+        gainfield = [bpcal_name,bpcal_name,pcal],
+        interp = ['nearest','linear','linear'],
+        append = True)
 
-        solve_delays.append(True)
 
-    else:
+# --- F2 
 
-        solve_delays.append(False)
+
+fluxscale(vis=myms,
+    caltable = gtab2,
+    fluxtable = ftab2,
+    reference = bpcal_name,
+    append = False,
+    transfer = '')
 
 
 # ------- Looping over secondaries
@@ -393,16 +369,16 @@ for i in range(0,len(pcals)):
     pcal = pcals[i]
 
 
-    # --- Correct secondaries with K2, G1, B1, G2
+    # --- Correct secondaries with K2, G1, B1, F2
 
 
     applycal(vis = myms,
-        gaintable = [ktab2,gtab1,bptab1,gtab2],
+        gaintable = [ktab2,gtab1,bptab1,ftab2],
 #        applymode='calonly',
         field = pcal,
 #        calwt = False,
         parang = False,
-        gainfield = ['','',bpcal,pcal],
+        gainfield = ['','',bpcal_name,pcal],
         interp = ['nearest','linear','linear','linear'])
 
 
@@ -432,8 +408,9 @@ if SAVE_FLAGS:
 
 
 gaincal(vis = myms,
-    field = bpcal,
+    field = bpcal_name,
     uvrange = myuvrange,
+    spw = myspw,
     caltable = gtab3,
     refant = str(ref_ant),
     solint = 'inf',
@@ -443,7 +420,7 @@ gaincal(vis = myms,
     calmode = 'ap',
     parang = False,
     gaintable = [ktab2,gtab1,bptab1],
-    gainfield = [bpcal,bpcal,bpcal],
+    gainfield = [bpcal_name,bpcal_name,bpcal_name],
     interp = ['nearest','nearest','nearest'],
     append = False)
 
@@ -469,6 +446,7 @@ for i in range(0,len(pcals)):
     gaincal(vis = myms,
         field = pcal,
         uvrange = myuvrange,
+        spw = myspw,
         caltable = gtab3,     
         refant = str(ref_ant),
         minblperant = 4,
@@ -480,7 +458,7 @@ for i in range(0,len(pcals)):
         calmode = 'ap',
         parang = False,
         gaintable=[ktab2,gtab1,bptab1],
-        gainfield=[bpcal,bpcal,bpcal],
+        gainfield=[bpcal_name,bpcal_name,bpcal_name],
         interp=['nearest','linear','linear'],
         append=True)
 
@@ -488,22 +466,28 @@ for i in range(0,len(pcals)):
     # --- K3 secondary
 
 
-    if solve_delays[i]:
+    gaincal(vis= myms,
+        field = pcal,
+        caltable = ktab3,
+        refant = str(ref_ant),
+        gaintype = 'K',
+        solint = 'inf',
+        parang = False,
+        gaintable = [gtab1,bptab1,gtab3],
+        gainfield = [bpcal_name,bpcal_name,pcal],
+        interp = ['linear','linear','linear'],
+        append = True)
 
-        gaincal(vis= myms,
-            field = pcal,
-        #   uvrange = myuvrange,
-            caltable = ktab3,
-            refant = str(ref_ant),
-        #   spw = delayspw,
-            gaintype = 'K',
-            solint = 'inf',
-            parang = False,
-            gaintable = [gtab1,bptab1,gtab3],
-            gainfield = [bpcal,bpcal,pcal],
-            interp = ['linear','linear','linear'],
-            append = True)
 
+# --- F3 
+
+
+fluxscale(vis=myms,
+    caltable = gtab3,
+    fluxtable = ftab3,
+    reference = bpcal_name,
+    append = False,
+    transfer = pcals)
 
 
 # ------- Apply final tables to secondaries
@@ -515,16 +499,16 @@ for i in range(0,len(pcals)):
     pcal = pcals[i]
 
 
-    # --- Correct secondaries with K3, G1, B1, G3
+    # --- Correct secondaries with K3, G1, B1, F3
 
 
     applycal(vis = myms,
-        gaintable = [ktab3,gtab1,bptab1,gtab3],
+        gaintable = [ktab3,gtab1,bptab1,ftab3],
 #        applymode='calonly',
         field = pcal,
 #        calwt = False,
         parang = False,
-        gainfield = ['','',bpcal,pcal],
+        gainfield = ['','',bpcal_name,pcal],
         interp = ['nearest','linear','linear','linear'])
 
 
@@ -538,16 +522,16 @@ for i in range(0,len(targets)):
     related_pcal = target_cal_map[i]
 
 
-    # --- Correct targets with K3, G1, B1, G3
+    # --- Correct targets with K3, G1, B1, F3
 
 
     applycal(vis=myms,
-        gaintable=[ktab3,gtab1,bptab1,gtab3],
+        gaintable=[ktab3,gtab1,bptab1,ftab3],
 #        applymode='calonly',
         field=target,
 #        calwt=False,
         parang=False,
-        gainfield=['',bpcal,bpcal,related_pcal],
+        gainfield=['',bpcal_name,bpcal_name,related_pcal],
         interp=['nearest','linear','linear','linear'])
 
 if SAVE_FLAGS:

@@ -1,14 +1,11 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-import pickle
+import json
 
 
-# with open('project_info.p','rb') as f:
-#     project_info = pickle.load(f,encoding='latin1')
-
-
-project_info = pickle.load(open('project_info.p','rb'))
+with open('project_info.json') as f:
+    project_info = json.load(f)
 
 
 myms = project_info['master_ms']
@@ -25,7 +22,8 @@ for target in targets:
     flagdata(vis=myms,mode='extend',growtime=90.0,growfreq=90.0,growaround=True,flagneartime=True,flagnearfreq=True,field=target[1])
 
 
-flagmanager(vis=myms,mode='save',versionname='tfcrop_targets')
+if SAVE_FLAGS:
+    flagmanager(vis=myms,mode='save',versionname='tfcrop_targets')
 
 
 clearstat()

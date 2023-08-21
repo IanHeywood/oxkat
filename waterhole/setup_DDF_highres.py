@@ -3,8 +3,8 @@
 
 
 import glob
+import json
 import os.path as o
-import pickle
 import sys
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
@@ -61,9 +61,10 @@ def main():
     KILLMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.KILLMS_PATTERN,USE_SINGULARITY)
 
 
-    # Get target information from project pickle
+    # Get target information from project info json file
 
-    project_info = pickle.load(open('project_info.p','rb'),encoding='latin1')
+    with open('project_info.json') as f:
+        project_info = json.load(f)
 
     target_ids = project_info['target_ids'] 
     target_names = project_info['target_names']
@@ -124,7 +125,7 @@ def main():
 
             # Image prefixes
             ddf_img_prefix = IMAGES+'/img_'+myms+'_DDFpcal'
-            kms_img_prefix = IMAGES+'/img_'+myms+'_DDFkMSr-1p2'
+            kms_img_prefix = IMAGES+'/img_'+myms+'_DDFkMSr-0p7'
 
 
             step = {}
@@ -142,7 +143,7 @@ def main():
                         initdicomodel=ddf_img_prefix+'.DicoModel',
                         hogbom_maxmajoriter=0,
                         hogbom_maxminoriter=0,
-                        robust=-1.2,
+                        robust=-0.7,
                         mask=mask,
                         ddsols='killms-cohjones')
             step['syscall'] = syscall

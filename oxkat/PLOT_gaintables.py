@@ -41,7 +41,7 @@ def main():
                 syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+htmlname+' --plotname='+plotname
                 subprocess.run([syscall],shell=True)
             else:
-                print(opfile+' exists, skipping')
+                print(htmlname+' exists, skipping')
 
 if __name__ == "__main__":
 

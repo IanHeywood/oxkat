@@ -10,7 +10,6 @@
 
 
 import glob
-import pickle
 import shutil
 import time
 
@@ -220,5 +219,5 @@ applycal(vis=mymms,
     interp = ['nearest','nearest','nearest'])
 
 
-
-flagmanager(vis=mymms,mode='save',versionname='primary-refcal')
+if SAVE_FLAGS:
+    flagmanager(vis=mymms,mode='save',versionname='primary-refcal')

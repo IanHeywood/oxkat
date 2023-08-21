@@ -32,7 +32,7 @@ def main():
     kmstab = myms.rstrip('/')+'/killMS.'+solname+'.sols.npz'
 
     for plotarg in plotargs:
-        syscall = 'python3 '+TOOLS+' plot_killMS.py '+plotarg+' --outdir '+GAINPLOTS+' '+kmstab
+        syscall = 'python3 '+TOOLS+'/plot_killMS.py '+plotarg+' --outdir '+GAINPLOTS+' '+kmstab
         subprocess.run([syscall],shell=True)
 
 

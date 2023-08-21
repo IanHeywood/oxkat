@@ -19,7 +19,7 @@ _The Treachery of Images_, René Magritte, 1929
 * A set of `Python` scripts with the aim of (semi-)automatically processing [MeerKAT](https://www.sarao.ac.za/science-engineering/meerkat/) data. 
 
 
-* At the core is a set of functions that generate calls to [various pieces](README.md#software-package-roll-call) of radio astronomy software, a semi-modular bunch of CASA scripts for performing reference calibration, and a fairly sizeable list of default parameters. The default at present cater for full-band Stokes-I continuum imaging, including the correction of direction-dependent effects.
+* At the core is a set of functions that generate calls to [various pieces](README.md#software-package-roll-call) of radio astronomy software, a semi-modular bunch of CASA scripts for performing reference calibration, and a [fairly sizeable list](oxkat/config.py) of default parameters. The defaults at present cater for full-band Stokes-I continuum imaging, including the correction of direction-dependent effects.
 
 
 * Job script generation and dependency chains are automatically handled when running on the [ilifu/IDIA](https://www.idia.ac.za/) cluster, UKZN's [hippo](https://astro.ukzn.ac.za/~hippo/) cluster, or the [CHPC](https://www.chpc.ac.za/)'s [Lengau](https://www.chpc.ac.za/index.php/resources/lengau-cluster) cluster.
@@ -87,27 +87,15 @@ _The Treachery of Images_, René Magritte, 1929
 
 8. Once all the jobs have completed then you can examine the products, and move on to the setup for the next steps in the same fashion. 
 
-Please see the [setups README](setups/README.md) for more details. Most of the settings can be tuned via the [`config.py`](oxkat/config.py) file. Note that for use on a cluster you might have to load a `Python 3` module. On the ilifu/IDIA cluster this is achieved with:
-
-   ```
-   $ module load anaconda3
-   ```
-
-and on the CHPC's Lengau cluster:
-
-   ```
-   $ module load chpc/python/3.7.0
-   ```
-
-These can also be added to your `~/.bashrc` file for simplicity.
+Please see the [setups README](setups/README.md) for more details about the general workflow. Most of the settings can be tuned via the [`config.py`](oxkat/config.py) file.
 
 ---
 
 ## Containers
 
-There is a dedicated `Singularity` container (`oxkat-0.4.sif`) available that contains all the necessary packages and dependencies. This is available in the general container repository on the ilifu/IDIA cluster, and the default settings should pick it up automatically when that cluster is being used. For other systems the container will have to be downloaded (or copied over). The container can be downloaded [here](https://entangled.physics.ox.ac.uk/index.php/s/jmHRBQyyB6Zm2fj). 
+There is a dedicated `Singularity` container (`oxkat-0.41.sif`) available that contains all the necessary packages and dependencies. This is available in the general container repository on the ilifu/IDIA cluster, and the default settings should pick it up automatically when that cluster is being used. For other systems the container will have to be downloaded (or copied over). The container can be downloaded [here](https://entangled.physics.ox.ac.uk/index.php/s/jmHRBQyyB6Zm2fj). 
 
-String patterns for package-specific containers are specified in the [`config.py`](oxkat/config.py) file. The scripts will search for containers that match these patterns in the container paths, so it's simple to swap a particular package out for a different version.
+String patterns for package-specific containers are specified in the [`config.py`](oxkat/config.py) file. The scripts will search for containers that match these patterns in the container paths, so it's simple to swap a particular package out for a different version as long as you have it containerised.
 
 ---
 
@@ -120,10 +108,10 @@ String patterns for package-specific containers are specified in the [`config.py
 | [`CASA`](https://casa.nrao.edu/) | 1GC | Averaging, splitting, cross calibration, DI self-calibration, flagging | [McMullin et al., 2007](https://ui.adsabs.harvard.edu/abs/2007ASPC..376..127M/abstract)|
 | [`CubiCal`](https://github.com/ratt-ru/CubiCal) | 2GC, 3GC | DI / DD self-calibration | [Kenyon et al., 2018](https://ui.adsabs.harvard.edu/abs/2018MNRAS.478.2399K/abstract)|
 | [`DDFacet`](https://github.com/saopicc/DDFacet) | 3GC | Imaging with direction-dependent corrections | [Tasse et al., 2018](https://ui.adsabs.harvard.edu/abs/2018A%26A...611A..87T/abstract) | 
-| [`killMS`](https://github.com/saopicc/killMS) | 3GC | DD self-calibration| - |
+| [`killMS`](https://github.com/saopicc/killMS) | 3GC | DD self-calibration| [Tasse, 2014](https://ui.adsabs.harvard.edu/abs/2014A%26A...566A.127T/abstract), [Smirnov & Tasse, 2014](https://ui.adsabs.harvard.edu/abs/2015MNRAS.449.2668S/abstract) |
 | [`owlcat`](https://github.com/ska-sa/owlcat/) | 2GC, 3GC | FITS file manipulation | - |
 | [`ragavi`](https://github.com/ratt-ru/ragavi/) | 1GC, 2GC | Plotting gain solutions | - |
-| [`shadeMS`](https://github.com/ratt-ru/shadeMS/) | 1GC | Plotting visibilities | - |
+| [`shadeMS`](https://github.com/ratt-ru/shadeMS/) | 1GC | Plotting visibilities | [Smirnov et al., 2022](https://ui.adsabs.harvard.edu/abs/2022ASPC..532..385S/abstract) |
 | [`Singularity`](https://github.com/hpcng/singularity) | 1GC, FLAG, 2GC, 3GC | Containerisation | [Kurtzer, Sochat & Bauer, 2017](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0177459) |
 | [`tricolour`](https://github.com/ska-sa/tricolour) | FLAG | Flagging | [Hugo et al., 2022](https://ui.adsabs.harvard.edu/abs/2022arXiv220609179H/abstract) |
 | [`wsclean`](https://gitlab.com/aroffringa/wsclean) | FLAG, 2GC, 3GC | Imaging, model prediction | [Offringa et al., 2014](https://ui.adsabs.harvard.edu/abs/2014MNRAS.444..606O/abstract)|

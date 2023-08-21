@@ -20,10 +20,10 @@ def main():
     myms = sys.argv[1]
     solname = sys.argv[2]
 
-    plotargs = ['-corr0 0 --corr1 0 --iterfreq',
-                '-corr0 1 --corr1 1 --iterfreq',
-                '-corr0 0 --corr1 0 --iterdir',
-                '-corr0 1 --corr1 1 --iterdir',]
+    plotargs = ['--corr0 0 --corr1 0 --iterfreq',
+                '--corr0 1 --corr1 1 --iterfreq',
+                '--corr0 0 --corr1 0 --iterdir',
+                '--corr0 1 --corr1 1 --iterdir',]
 
     TOOLS = cfg.TOOLS
     GAINPLOTS = cfg.GAINPLOTS

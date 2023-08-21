@@ -191,7 +191,7 @@ def main():
             syscall += gen.generate_syscall_killms(myms=myms,
                         baseimg=ddf_img_prefix,
                         ncpu=myNCPU,
-                        outsols='killms-cohjones',
+                        outsols='killms-'+cfg.KMS_SOLVERTYPE,
                         nodesfile=CAL_3GC_FACET_REGION+'.npy')
             step['syscall'] = syscall
             steps.append(step)

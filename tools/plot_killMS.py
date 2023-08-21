@@ -206,10 +206,12 @@ def main():
     logging.info('')
     
     logging.info('    Frequency chunks:    ')
+    band = 0
     for ff in freqs:
         f0 = str(round(ff[0]/1e6,2))
         f1 = str(round(ff[1]/1e6,2))
-        logging.info('                       '+str(i).rjust(2)+' '+f0+' - '+f1+' MHz')
+        logging.info('                       '+str(band).rjust(2)+' '+f0+' - '+f1+' MHz')
+        band += 1
     logging.info('')
 
     logging.info('    Correlations:      '+str(corr_i)+'x'+str(corr_j))

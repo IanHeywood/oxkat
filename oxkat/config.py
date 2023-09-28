@@ -566,7 +566,7 @@ KMS_NCPU = 16
 KMS_DOBAR = 0
 KMS_DEBUGPDB = 0
 # [Solvers]
-KMS_SOLVERTYPE = 'KAFCA' # or 'CohJones', not case sensitivity
+KMS_SOLVERTYPE = 'KAFCA' # or 'CohJones', note case sensitivity
 KMS_DT = 5
 KMS_NCHANSOLS = 8
 # [KAFCA]

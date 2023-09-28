@@ -225,7 +225,7 @@ def main():
                         hogbom_maxmajoriter=0,
                         hogbom_maxminoriter=1000,
                         mask=mask,
-                        ddsols='killms-cohjones')
+                        ddsols='killms-'+cfg.KMS_SOLVERTYPE)
             step['syscall'] = syscall
             steps.append(step)
 

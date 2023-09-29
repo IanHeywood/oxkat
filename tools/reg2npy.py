@@ -62,14 +62,18 @@ def main():
         if line[0:6] == 'circle':
             coords = line.split('(')[-1].split(')')[0]
             x,y,rad = coords.split(',')
-            ra = hms2deg(x)
-            dec = dms2deg(y)
+            if ':' in line:
+                ra = hms2deg(x)
+                dec = dms2deg(y)
+            else:
+                ra = float(x)
+                dec = float(y)
             centres.append((ra,dec))
         line = f.readline()
     f.close()
 
 
-    ClusterCat=numpy.zeros((len(centres),),dtype=[('Name','|S200'),('ra',numpy.float),('dec',numpy.float),('SumI',numpy.float),("Cluster",int)])
+    ClusterCat=numpy.zeros((len(centres),),dtype=[('Name','|S200'),('ra',float),('dec',float),('SumI',float),("Cluster",int)])
 
 
     for i in range(0,len(centres)):

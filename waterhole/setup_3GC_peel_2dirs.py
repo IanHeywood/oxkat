@@ -273,7 +273,7 @@ def main():
         step['pbs_config'] = cfg.PBS_WSCLEAN
         absmem = gen.absmem_helper(step,INFRASTRUCTURE,cfg.WSC_ABSMEM)
         syscall = CONTAINER_RUNNER+WSCLEAN_CONTAINER+' ' if USE_SINGULARITY else ''
-        syscall += gen.generate_syscall_predict(msname = myms, imgbase = prepeel_img_prefix, chanout = cfg.CAL_3GC_PEEL_NCHAN, absmem = absmem)
+        syscall += gen.generate_syscall_predict(msname = myms, imgbase = prepeel_img_prefix, chanout = 16, absmem = absmem)
         step['syscall'] = syscall
         steps.append(step)
 

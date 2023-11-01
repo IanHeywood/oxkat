@@ -83,7 +83,7 @@ SLURM_ACCOUNT = '' # e.g. b09-mightee-ag, b24-thunderkat-ag
 SLURM_RESERVATION = '' # e.g. lsp-mightee
 
 SLURM_NODELIST = '' # Specify node(s) to use
-SLURM_EXCLUDE = '' # Specify node(s) to exclude
+SLURM_EXCLUDE = 'highmem-003' # Specify node(s) to exclude
 
 
 SLURM_DEFAULTS = {

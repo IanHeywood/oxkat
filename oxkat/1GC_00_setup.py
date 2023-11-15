@@ -334,18 +334,20 @@ def target_cal_pairs(target_dirs,target_names,target_ids,
         ra_target = target_dirs[i][0]
         dec_target = target_dirs[i][1]
         separations = []
+        index_delta = []
         for j in range(0,len(secondary_dirs)):
             ra_cal = secondary_dirs[j][0]
             dec_cal = secondary_dirs[j][1]
             separations.append(calcsep(ra_target,dec_target,ra_cal,dec_cal))
+            index_delta.append(int(target_ids[i]) - int(secondary_ids[j]))
         separations = numpy.array(separations)
-        secondary_index = numpy.where(separations == numpy.min(separations))[0][0]
+        index_delta = numpy.array(index_delta)
+        secondary_index = list(index_delta).index(min(index_delta[index_delta>0]))
 
         target_cal_map.append(str(secondary_names[secondary_index]))
         target_cal_separations.append(round(separations[secondary_index],3))
 
     return target_cal_map,target_cal_separations
-
 
 
 def target_ms_list(working_ms,target_names):

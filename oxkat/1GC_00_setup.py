@@ -343,7 +343,8 @@ def target_cal_pairs(target_dirs,target_names,target_ids,
         separations = numpy.array(separations)
         index_delta = numpy.array(index_delta)
         secondary_index = list(index_delta).index(min(index_delta[index_delta>0]))
-
+        #secondary_index = numpy.where(separations == numpy.min(separations))[0][0]
+        
         target_cal_map.append(str(secondary_names[secondary_index]))
         target_cal_separations.append(round(separations[secondary_index],3))
 

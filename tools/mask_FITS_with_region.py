@@ -56,6 +56,7 @@ def radius2deg(radius):
     String with arcsec or arcmin unit to decimal degrees
     """
 
+    radius = radius.replace(' ','')
     if radius[-1] == '"':
         radius = float(radius[:-1])/3600.0
     elif radius[-1] == "'":
@@ -79,8 +80,10 @@ def process_region_file(region_file):
     line = f.readline()
     while line:
         if line[0:6] == 'circle':
-            line = line.rstrip('\n').replace('(',' ').replace(')',' ')
-            ra,dec,radius = line.split()[1].split(',')
+            line = line.rstrip('\n').replace('(',' ').replace(')',' ').split('#')[0].replace('circle','')
+            print(line)
+#            ra,dec,radius = line.split()[1].split(',')
+            ra,dec,radius = line.split(',')
             if ':' in  ra:
                 ra = hms2deg(ra)
             else:
@@ -169,10 +172,12 @@ def main():
     parser.add_option('--region', dest = 'region_file', help = 'DS9 region file')
     parser.add_option('--fitsfile', dest = 'fits_file', help = 'FITS image')
     parser.add_option('--invert',dest = 'invert', help = 'Remove region instead of only keeping it', action = 'store_true', default = False)
+    parser.add_option('--writemask', dest = 'writemask', help = 'Write out the mask as a FITS file', action = 'store_true', default = False)
     (options,args) = parser.parse_args()
     region_file = options.region_file
     fits_file = options.fits_file
     invert = options.invert
+    writemask = options.writemask
 
     circles = process_region_file(region_file)
     suffix = region_file.split('/')[-1].split('.')[0]
@@ -187,9 +192,14 @@ def main():
     print('Reading       : '+fits_file)
 
     masked_fits = fits_file.replace('.fits','-'+suffix+'.fits')
+    mask_fits = masked_fits.replace('.fits','.mask.fits')
 
     img = get_image(fits_file)
+
     mask = img*0.0
+
+    if invert:
+        mask += 1
 
     hdulist = fits.open(fits_file)
     w = wcs.WCS(hdulist[0].header)
@@ -210,14 +220,21 @@ def main():
         print('              : pixel '+fmt(xpix)+' '+fmt(ypix)+' '+fmt(rpix))
         mask = apply_circle(mask,xpix,ypix,rpix,invert)
 
-    if invert:
-        masked_img = numpy.logical_and(img,mask)
-    else:
-        masked_img = numpy.logical_or(img,mask)
+    masked_img = img*mask
+
+    # if invert:
+    #     masked_img = numpy.logical_and(img,mask)
+    # else:
+    #     masked_img = numpy.logical_or(img,mask)
 
     print('Writing       : '+masked_fits)
     shutil.copyfile(fits_file,masked_fits)
     flush_fits(masked_img,masked_fits)
+
+    if writemask:
+        print('Writing       : '+mask_fits)
+        shutil.copyfile(fits_file,mask_fits)
+        flush_fits(mask,mask_fits)
 
 
     spacer()

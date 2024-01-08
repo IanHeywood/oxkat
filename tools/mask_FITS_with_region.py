@@ -81,8 +81,14 @@ def process_region_file(region_file):
         if line[0:6] == 'circle':
             line = line.rstrip('\n').replace('(',' ').replace(')',' ')
             ra,dec,radius = line.split()[1].split(',')
-            ra = hms2deg(ra)
-            dec = dms2deg(dec)
+            if ':' in  ra:
+                ra = hms2deg(ra)
+            else:
+                ra = float(ra)
+            if ':' in dec:
+                dec = dms2deg(dec)
+            else:
+                dec = float(dec)
             radius = radius2deg(radius)
             circles.append((ra,dec,radius))
         line = f.readline()

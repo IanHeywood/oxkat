@@ -339,9 +339,9 @@ def get_primary_tag(candidate_dirs,
                 polcal_tag = cal[0]
 
     if polcal_tag == '':
-        polcal_name = candidate_names[1]
-        polcal_id = str(candidate_ids[1])
-        polcal_tag = 'Unknown'
+        polcal_name = 'None'
+        polcal_id = 'None'
+        polcal_tag = 'None'
         polcal_sep = 0.0
 
 
@@ -481,9 +481,12 @@ def main():
         mylogger.info('                         '+str(round((primary_sep/3600.0),4))+'" from nominal position')
     mylogger.info('')
    
-    mylogger.info('Polarisation calibrator: '+str(polcal_id)+': '+polcal_name)
-    if polcal_sep != 0.0:
-        mylogger.info('                         '+str(round((polcal_sep/3600.0),4))+'" from nominal position')
+    if polcal_id == 'None':
+        mylogger.info('Could not find 3C286 or 3C138 in this MS, pol cal will not be possible.')
+    else:
+        mylogger.info('Polarisation calibrator: '+str(polcal_id)+': '+polcal_name)
+        if polcal_sep != 0.0:
+            mylogger.info('                         '+str(round((polcal_sep/3600.0),4))+'" from nominal position')
     mylogger.info('')
 
 

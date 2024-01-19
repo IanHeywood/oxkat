@@ -38,11 +38,14 @@ def get_dummy():
         'primary_name':'1934-638',
         'primary_id':'0',
         'primary_tag':'1934',
+        'polcal_name':'3C286',
+        'polcal_id':'1',
+        'polcal_tag':'3C286',
         'secondary_names':['mysecondary'],
-        'secondary_ids':['1'],
+        'secondary_ids':['2'],
         'secondary_dirs':[(180.5,-56.0)],
         'target_names':['mytarget'],
-        'target_ids':['2'],
+        'target_ids':['3'],
         'target_dirs':[(180.0,-56.8)],
         'target_cal_map':['0'],
         'target_ms':['mytarget.ms']}
@@ -67,7 +70,7 @@ def get_refant(master_ms,field_id):
     mylogger = logging.getLogger(__name__) 
 
     ant_names = get_antnames(master_ms)
-    main_tab = table(master_ms,ack='False')
+    main_tab = table(master_ms,ack=False)
     
     ref_pool = cfg.CAL_1GC_REF_POOL
     
@@ -295,8 +298,11 @@ def get_primary_tag(candidate_dirs,
     """
 
     # Tags and positions for the preferred primary calibrators
-    preferred_cals = [('1934',294.85427795833334,-63.71267375),
+    preferred_primary_cals = [('1934',294.85427795833334,-63.71267375),
         ('0408',62.084911833333344,-65.75252238888889)]
+
+    preferred_pol_cals = [('3C286',202.7845347943,30.342488),
+        ('3C138',80.2911915108,16.6394587628)]
 
     primary_tag = ''
 
@@ -305,7 +311,7 @@ def get_primary_tag(candidate_dirs,
         candidate_name = candidate_names[i]
         candidate_id = candidate_ids[i]
 
-        for cal in preferred_cals:
+        for cal in preferred_primary_cals:
             primary_sep = calcsep(candidate_dir[0],candidate_dir[1],cal[1],cal[2])
             if primary_sep < 3e-3:
                 primary_name = candidate_name
@@ -318,8 +324,28 @@ def get_primary_tag(candidate_dirs,
         primary_tag = 'other'
         primary_sep = 0.0
 
+    polcal_tag = ''
 
-    return primary_name,primary_id,primary_tag,primary_sep
+    for i in range(0,len(candidate_dirs)):
+        candidate_dir = candidate_dirs[i][0]
+        candidate_name = candidate_names[i]
+        candidate_id = candidate_ids[i]
+
+        for cal in preferred_pol_cals:
+            polcal_sep = calcsep(candidate_dir[0],candidate_dir[1],cal[1],cal[2])
+            if polcal_sep < 3e-3:
+                polcal_name = candidate_name
+                polcal_id = str(candidate_id)
+                polcal_tag = cal[0]
+
+    if polcal_tag == '':
+        polcal_name = candidate_names[1]
+        polcal_id = str(candidate_ids[1])
+        polcal_tag = 'Unknown'
+        polcal_sep = 0.0
+
+
+    return primary_name,primary_id,primary_tag,primary_sep,polcal_name,polcal_id,polcal_tag,polcal_sep
 
 
 def target_cal_pairs(target_dirs,target_names,target_ids,
@@ -447,11 +473,17 @@ def main():
                                                             field_names,
                                                             field_ids)
 
-    primary_name, primary_id, primary_tag, primary_sep = get_primary_tag(candidate_dirs, candidate_names, candidate_ids)
+    primary_name, primary_id, primary_tag, primary_sep, polcal_name, polcal_id, polcal_tag, polcal_sep = \
+            get_primary_tag(candidate_dirs, candidate_names, candidate_ids)
 
-    mylogger.info('Primary calibrator:    '+str(primary_id)+': '+primary_name)
+    mylogger.info('Primary calibrator:      '+str(primary_id)+': '+primary_name)
     if primary_sep != 0.0:
-        mylogger.info('                       '+str(round((primary_sep/3600.0),4))+'" from nominal position')
+        mylogger.info('                         '+str(round((primary_sep/3600.0),4))+'" from nominal position')
+    mylogger.info('')
+   
+    mylogger.info('Polarisation calibrator: '+str(polcal_id)+': '+polcal_name)
+    if polcal_sep != 0.0:
+        mylogger.info('                         '+str(round((polcal_sep/3600.0),4))+'" from nominal position')
     mylogger.info('')
 
 
@@ -569,6 +601,9 @@ def main():
     project_info['primary_name'] = primary_name
     project_info['primary_id'] = str(primary_id)
     project_info['primary_tag'] = primary_tag
+    project_info['polcal_name'] = polcal_name
+    project_info['polcal_id'] = str(polcal_id)
+    project_info['polcal_tag'] = polcal_tag
     project_info['secondary_names'] = secondary_names
     project_info['secondary_ids'] = secondary_ids
     project_info['secondary_dirs'] = secondary_dirs

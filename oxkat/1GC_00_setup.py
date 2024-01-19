@@ -401,7 +401,9 @@ def main():
     mylogger.setLevel(logging.DEBUG)
     mylogger.addHandler(stream)
 
+    mylogger.info('------------------------------------------------------------')
     mylogger.info('Examining '+master_ms)
+    mylogger.info('------------------------------------------------------------')
 
     outfile = 'project_info.json'
 
@@ -445,6 +447,7 @@ def main():
     mylogger.info('Central frequency is '+str(mid_freq/1e6)+' MHz')
     mylogger.info('Bandwidth is '+str(bw/1e6)+' MHz')
     mylogger.info('These are '+band+' band observations')
+    mylogger.info('------------------------------------------------------------')
 
 
     # ------------------------------------------------------------------------------
@@ -486,13 +489,14 @@ def main():
     else:
         mylogger.info('Polarisation calibrator: '+str(polcal_id)+': '+polcal_name)
         if polcal_sep != 0.0:
-            mylogger.info('                         '+str(round((polcal_sep/3600.0),4))+'" from nominal position')
-    mylogger.info('')
+            mylogger.info('                         '+str(round((polcal_sep/3600.0),4))+'" from nominal position')    
+    mylogger.info('------------------------------------------------------------')
 
 
     # ------------------------------------------------------------------------------
     #
     # REFERENCE ANTENNAS
+
 
     if CAL_1GC_REF_ANT == 'auto':
         ref_ant = get_refant(master_ms,primary_id)
@@ -500,6 +504,7 @@ def main():
     else:
         ref_ant = CAL_1GC_REF_ANT
         mylogger.info('User requested reference antenna ordering: '+str(ref_ant))
+    mylogger.info('------------------------------------------------------------')
 
 
     # ------------------------------------------------------------------------------
@@ -564,9 +569,6 @@ def main():
     #
     # PRINT FIELD SUMMARY
 
-
-    mylogger.info('')
-
     mylogger.info('Target                   Secondary                Separation')
     for i in range(0,len(target_dirs)):
         targ = str(target_ids[i])+': '+target_names[i]
@@ -576,7 +578,7 @@ def main():
 
         # Re-calculate separations in case of user-specified pairings that don't invoke 
         # the automatic calculation
-        ra_target = target_dirs[i][0]
+        ra_target = target_dirs[i][0]       
         dec_target = target_dirs[i][1]
         separations = []
         ra_cal = secondary_dirs[k][0]
@@ -592,8 +594,12 @@ def main():
     for i in range(0,len(target_dirs)):
         targ = str(target_ids[i])+': '+target_names[i]
         mylogger.info('%-24s %-50s' % (targ, target_ms[i]))
-    
-    mylogger.info('')
+    mylogger.info('------------------------------------------------------------')
+
+    # ------------------------------------------------------------------------------
+    #
+    # WRITE JSON FILE
+
     mylogger.info('Writing '+outfile)
 
     project_info['master_ms'] = master_ms
@@ -622,6 +628,7 @@ def main():
         f.write(json.dumps(project_info, indent=4, sort_keys=True))
 
     mylogger.info('Done')
+    mylogger.info('------------------------------------------------------------')
 
 
 if __name__ == "__main__":

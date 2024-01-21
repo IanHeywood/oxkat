@@ -65,6 +65,17 @@ def main():
     myms = project_info['master_ms']
     code = gen.get_code(myms)
 
+    dopol = cfg.CAL_1GC_DOPOL
+    if not dopol:
+        print(gen.col('Polarisation cal disabled as per config file'))
+    else:
+        polcal_tag = project_info['polcal_tag']
+        if polcal_tag == 'None':
+            print(gen.col('No polarisation calibrator found in this MS'))
+            dopol = False
+        else:
+            print(gen.col(f'Using polarisation calibrator {polcal_tag}'))
+
     steps = []
 
 
@@ -74,7 +85,7 @@ def main():
     step['dependency'] = None
     step['id'] = 'SPPRE'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py')
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/PRE_casa_average_ms.py')
     step['syscall'] = syscall
     steps.append(step)
 
@@ -144,6 +155,16 @@ def main():
     step['syscall'] = syscall
     steps.append(step)
 
+    if dopol:
+        step = {}
+        step['step'] = 7
+        step['comment'] = 'Perform basic polarisation calibration'
+        step['dependency'] = 6
+        step['id'] = 'POLAR'+code
+        syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += 'python3 '+cfg.OXKAT+'/1GC_11_casa_polcal.py'
+        step['syscall'] = syscall
+        steps.append(step)
 
     # ------------------------------------------------------------------------------
     #

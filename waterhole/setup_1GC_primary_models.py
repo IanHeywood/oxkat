@@ -74,7 +74,7 @@ def main():
     step['dependency'] = None
     step['id'] = 'SPPRE'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/PRE_casa_average_to_1k_add_wtspec.py')
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/PRE_casa_average_ms.py')
     step['syscall'] = syscall
     steps.append(step)
 

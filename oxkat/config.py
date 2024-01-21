@@ -213,6 +213,18 @@ CAL_1GC_PRIMARY_MODEL = 'auto'       # setjy = use setjy component model only
 CAL_1GC_DELAYCUT = 2.5               # [now defunct] Jy at central freq. Do not solve for K on secondaries weaker than this
 CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpolate bandpass solutions
 
+
+
+# Polarisation settings
+CAL_1GC_DOPOL = True                 # Set to False to not perform 1GC pol cal, even if a valid polarisation calibrator is present
+
+# Base models for polarisation calibrators
+# Band-specific modifiers can be implemented in their relevant sections below
+
+# fluxdensity, spix, reffreq, polindex, polangle
+CAL_1GC_3C138_MODEL = ([8.4012],[-0.54890527955337987, -0.069418066176041668, -0.0018858519926001926],'1.45GHz',[0.075],[-0.19199])
+CAL_1GC_3C286_MODEL = ([14.918703],[-0.50593909976893958,-0.070580431627712076,0.0067337240268301466],'1.45GHz',[0.095],[0.575959])
+
 # Band specific options
 
 if BAND == 'UHF':       
@@ -240,7 +252,7 @@ elif BAND == 'L':
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = ['*:900MHz~915MHz',    # GSM and aviation
                         '*:925MHz~960MHz',                
-                        '*:1080MHz~1095MHz',
+                        '*:1080MHz~1095MHz',  # Aircraft transponder response
                         '*:1565MHz~1585MHz',  # GPS
                         '*:1217MHz~1237MHz',
                         '*:1375MHz~1387MHz',
@@ -253,7 +265,7 @@ elif BAND == 'L':
                         '*:1616MHz~1626MHz',  # Iridium
                         '*:1526MHz~1554MHz',  # Inmarsat
                         '*:1600MHz']          # Alkantpan
-                                            # https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/L-band%20RFI%20frequency%20flagging.ipynb
+                                              # https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/L-band%20RFI%20frequency%20flagging.ipynb
 
 elif BAND == 'S0':
 
@@ -403,7 +415,7 @@ WSC_FITSPECTRALPOL = 4
 WSC_JOINCHANNELS = True
 WSC_NONEGATIVE = False
 WSC_STOPNEGATIVE = False
-WSC_CIRCULARBEAM = True
+WSC_CIRCULARBEAM = False
 # Masking
 WSC_MASK = 'auto'
 WSC_THRESHOLD = 1e-6

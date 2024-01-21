@@ -61,6 +61,7 @@ if SAVE_FLAGS:
 clearcal(vis = opms, addmodel = True)
 
 # write out subms map
+print('Writing sub-MS map')
 subms_map = opms+'/subms_map.txt'
 f = open(subms_map,'w')
 submss = sorted(glob.glob(opms+'/SUBMSS/*.ms'))
@@ -81,6 +82,16 @@ for subms in submss:
 	f.writelines(opstr)
 	tb.done()
 f.close()
+
+
+# Zero receptor angle in case polcal is happening
+print('Zeroing receptor angles in '+opms)
+tb.open(opms+'/FEED',nomodify=False)
+receptor_angles = tb.getcol('RECEPTOR_ANGLE')
+receptor_angles[...] = 0.0
+tb.putcol('RECEPTOR_ANGLE',receptor_angles)
+tb.flush()
+tb.done()
 
 
 clearstat()

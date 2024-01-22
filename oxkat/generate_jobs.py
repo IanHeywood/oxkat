@@ -391,7 +391,7 @@ def generate_target_subms_list(myms,master_scan_list,master_field_list,user_scan
     subms_ids = []
     master_scan_list = master_scan_list.split(',')
     master_field_list = master_field_list.split(',')
-    if len(user_scans) == '':
+    if len(user_scans) == 0:
         for i in range(0,len(master_scan_list)):
             if master_field_list[i] in target_ids:
                 subms_ids.append(master_scan_list[i])

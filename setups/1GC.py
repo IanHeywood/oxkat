@@ -67,7 +67,7 @@ def main():
     master_scan_list = project_info['master_scan_list']
     master_field_list = project_info['master_field_list']
     target_ids = project_info['target_ids']
-    user_scans = cfg.PRE_SCANS.split(',')
+    user_scans = cfg.PRE_SCANS
     code = gen.get_code(myms)
 
     target_subms_list = gen.generate_target_subms_list(myms,master_scan_list,master_field_list,user_scans,target_ids)

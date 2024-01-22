@@ -27,14 +27,7 @@ def preamble():
         print(col()+'Intermediate flag tables will be backed up')
     else:
         print(col()+'Intermediate flag tables will not be backed up')
-    if cfg.PRE_FIELDS != '':
-        print(col('Field selection')+cfg.PRE_FIELDS)
-    else:
-        print(col('Field selection')+'All')
-    if cfg.PRE_SCANS != '':
-        print(col('Scan selection')+cfg.PRE_SCANS)
-    else:
-        print(col('Scan selection')+'All')
+
 
 def now():
     # stamp = time.strftime('[%H:%M:%S] ')
@@ -341,6 +334,59 @@ def job_handler(syscall,
     run_command += '\n'
 
     return run_command
+
+
+def step_handler(steps,submit_file,kill_file,infrastructure):
+
+    f = open(submit_file,'w')
+    f.write('#!/usr/bin/env bash\n')
+    f.write('export SINGULARITY_BINDPATH='+cfg.BINDPATH+'\n')
+
+    id_list = []
+    
+    for step in steps:
+
+        step_id = step['id']
+        id_list.append(step_id)
+        step_dependency = step['dependency']
+        if step_dependency is not None:
+            if isinstance(step_dependency,list):
+                dependency = ':'.join(steps[ii]['id'] for ii in step_dependency)
+            else:
+                dependency = steps[step_dependency]['id']
+        else:
+            dependency = None
+        syscall = step['syscall']
+        if 'slurm_config' in step.keys():
+            slurm_config = step['slurm_config']
+        else:
+            slurm_config = cfg.SLURM_DEFAULTS
+        if 'pbs_config' in step.keys():
+            pbs_config = step['pbs_config']
+        else:
+            pbs_config = cfg.PBS_DEFAULTS
+        comment = step['comment']
+
+        run_command = job_handler(syscall = syscall,
+                        jobname = step_id,
+                        infrastructure = infrastructure,
+                        dependency = dependency,
+                        slurm_config = slurm_config,
+                        pbs_config = pbs_config)
+
+        f.write('\n# '+comment+'\n')
+        f.write(run_command)
+
+    if infrastructure == 'idia' or infrastructure == 'hippo':
+        kill = '\necho "scancel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        f.write(kill)
+    elif infrastructure == 'chpc':
+        kill = '\necho "qdel "$'+'" "$'.join(id_list)+' > '+kill_file+'\n'
+        f.write(kill)
+    
+    f.close()
+
+    make_executable(submit_file)
 
 
 def mem_string_to_gb(mem):

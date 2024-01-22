@@ -189,7 +189,7 @@ PRE_FIELDS = ''                      # Comma-separated list of fields to select 
                                      # Names or IDs, do not mix, do not use spaces
 PRE_SCANS = ''                       # Comma-separated list of scans to select from raw MS
 PRE_NCHANS = 1024                    # Integer number of channels for working MS
-PRE_TIMEBIN = '8s'                   # Integration time for working MS
+PRE_TIMEBIN = ''                     # Integration time for working MS, leave empty for no averaging
 
 # Reference antennas
 CAL_1GC_REF_ANT = 'auto'             # Comma-separated list to manually specify refant(s)

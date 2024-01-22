@@ -46,6 +46,7 @@ def main():
         CONTAINER_RUNNER=''
 
 
+    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY)
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
     OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
@@ -63,7 +64,15 @@ def main():
         project_info = json.load(f)
 
     myms = project_info['master_ms']
+    master_scan_list = project_info['master_scan_list']
+    master_field_list = project_info['master_field_list']
+    target_ids = project_info['target_ids']
+    user_scans = cfg.PRE_SCANS.split(',')
     code = gen.get_code(myms)
+
+    target_subms_list = gen.generate_target_subms_list(myms,master_scan_list,master_field_list,user_scans,target_ids)
+
+    print(target_subms_list)
 
     dopol = cfg.CAL_1GC_DOPOL
     if not dopol:
@@ -92,8 +101,19 @@ def main():
 
     step = {}
     step['step'] = 1
-    step['comment'] = 'Apply basic flagging steps to all fields'
+    step['comment'] = 'Correct parallactic angle of working MS'
     step['dependency'] = 0
+    step['id'] = 'PACOR'+code
+    syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/oxkat/PRE_correct_parang.py')
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 2
+    step['comment'] = 'Apply basic flagging steps to all fields'
+    step['dependency'] = 1
     step['id'] = 'FGBAS'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_02_casa_basic_flags.py')
@@ -102,9 +122,9 @@ def main():
 
 
     step = {}
-    step['step'] = 2
+    step['step'] = 3
     step['comment'] = 'Run auto-flaggers on calibrators'
-    step['dependency'] = 1
+    step['dependency'] = 2
     step['id'] = 'FGCAL'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_05_casa_autoflag_cals_DATA.py')
@@ -113,9 +133,9 @@ def main():
 
 
     step = {}
-    step['step'] = 3
+    step['step'] = 4
     step['comment'] = 'Generate reference calibration solutions and apply to target(s)'
-    step['dependency'] = 2
+    step['dependency'] = 3
     step['id'] = 'CL1GC'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_casa_refcal.py')
@@ -124,9 +144,9 @@ def main():
 
 
     step = {}
-    step['step'] = 4
+    step['step'] = 5
     step['comment'] = 'Plot the gain solutions'
-    step['dependency'] = 3
+    step['dependency'] = 4
     step['id'] = 'PLTAB'+code
     syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python3 '+cfg.OXKAT+'/PLOT_gaintables.py cal_1GC_*'
@@ -134,8 +154,10 @@ def main():
     steps.append(step)
 
 
+    # FLAG TARGET SUBMS
+
     step = {}
-    step['step'] = 5
+    step['step'] = 6
     step['comment'] = 'Split the corrected target data'
     step['dependency'] = 3
     step['id'] = 'SPTRG'+code
@@ -155,6 +177,7 @@ def main():
     step['syscall'] = syscall
     steps.append(step)
 
+
     if dopol:
         step = {}
         step['step'] = 7
@@ -165,6 +188,7 @@ def main():
         syscall += 'python3 '+cfg.OXKAT+'/1GC_11_casa_polcal.py'
         step['syscall'] = syscall
         steps.append(step)
+
 
     # ------------------------------------------------------------------------------
     #

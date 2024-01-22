@@ -386,25 +386,27 @@ def get_scan_times(scanpickle):
     return scan_times
 
 
-def generate_target_mms_list(myms,master_scan_list,master_field_list,user_scans,target_ids):
+def generate_target_subms_list(myms,master_scan_list,master_field_list,user_scans,target_ids):
     # 1704699392_sdp_l0_1024ch.ms/SUBMSS/1704699392_sdp_l0_1024ch.ms.0002.ms
     subms_ids = []
-    if user_scans == '':
+    master_scan_list = master_scan_list.split(',')
+    master_field_list = master_field_list.split(',')
+    if len(user_scans) == '':
         for i in range(0,len(master_scan_list)):
             if master_field_list[i] in target_ids:
-                subms_ids.append(i)
+                subms_ids.append(master_scan_list[i])
     else:
-        user_field_list = master_field_list[i] for i in user_scans
+        user_scans = user_scans.split(',')
+        user_field_list = [master_field_list[i] for i in user_scans]
         for i in range(0,len(user_scans)):
             if user_field_list[i] in target_ids:
                 subms_ids.append(i)
     subms_list = []
-    for i in range(0,subms_ids):
-        idx = str(i).zfill(4)
+    for i in range(0,len(subms_ids)):
+        idx = str(subms_ids[i]).zfill(4)
         subms = myms+'/SUBMSS/'+myms+'.'+idx+'.ms'
         subms_list.append(subms)
     return subms_list
-
 
 
 def generate_syscall_casa(casascript,casalogfile='',extra_args=''):

@@ -32,6 +32,7 @@ def get_dummy():
 
     project_info = {'working_ms':'master_ms_1024ch.ms',
         'master_ms':'master_ms.ms',
+        'master_scan_map':[(1,0),(2,1),(3,2)],
         'nchan':'4096',
         'band':'L',
         'ref_ant':['-1'],
@@ -386,6 +387,24 @@ def target_ms_list(working_ms,target_names):
     return target_ms
 
 
+def get_scan_map(master_ms):
+
+    """
+    Get a list of which source belongs to each scan in the MS
+    for parallelisation purposes via the MMS later on
+    """
+
+    master_scan_map = []
+    main_tab = table(master_ms, ack=False)
+    scans = numpy.unique(main_tab.getcol('SCAN_NUMBER'))
+    for scan in scans:
+        subtab = tt.query(query='SCAN_NUMBER=='+str(scan))
+        scan_field = (numpy.unique(subtab.getcol("FIELD_ID"))).item()
+        master_scan_map.append((scan,scan_field))
+
+    return master_scan_map
+
+
 def main():
 
     master_ms = sys.argv[1].rstrip('/')
@@ -567,6 +586,13 @@ def main():
 
     # ------------------------------------------------------------------------------
     #
+    # GET SCAN MAP FOR MASTER MS
+
+    master_scan_map = get_scan_map(master_ms)
+
+
+    # ------------------------------------------------------------------------------
+    #
     # PRINT FIELD SUMMARY
 
     mylogger.info('Target                   Secondary                Separation')
@@ -603,6 +629,7 @@ def main():
     mylogger.info('Writing '+outfile)
 
     project_info['master_ms'] = master_ms
+    project_info['master_scan_map'] = master_scan_map
     project_info['working_ms'] = working_ms
     project_info['band'] = band
     project_info['nchan'] = str(nchan)

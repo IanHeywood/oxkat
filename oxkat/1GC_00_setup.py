@@ -398,7 +398,7 @@ def get_scan_map(master_ms):
     main_tab = table(master_ms, ack=False)
     scans = numpy.unique(main_tab.getcol('SCAN_NUMBER'))
     for scan in scans:
-        subtab = tt.query(query='SCAN_NUMBER=='+str(scan))
+        subtab = main_tab.query(query='SCAN_NUMBER=='+str(scan))
         scan_field = (numpy.unique(subtab.getcol("FIELD_ID"))).item()
         master_scan_map.append((scan,scan_field))
 

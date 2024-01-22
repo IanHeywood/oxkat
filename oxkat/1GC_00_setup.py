@@ -34,6 +34,7 @@ def get_dummy():
         'master_ms':'master_ms.ms',
         'master_scan_list':'1,2,3,4,5',
         'master_field_list':'0,1,2,1,2',
+        'integration_time':'8',
         'nchan':'4096',
         'band':'L',
         'ref_ant':['-1'],
@@ -388,6 +389,12 @@ def target_ms_list(working_ms,target_names):
     return target_ms
 
 
+def get_integration_time(master_ms):
+    maintab = table(master_ms, ack=False)
+    meanexp = round(numpy.mean(maintab.getcol('EXPOSURE')),2)
+    maintab.close()
+    return meanexp
+
 def get_scan_map(master_ms):
 
     """
@@ -453,6 +460,12 @@ def main():
 
     field_dirs, field_names, field_ids = get_fields(master_ms)
 
+
+    # ------------------------------------------------------------------------------
+    #
+    # INTEGRATION TIME
+
+    meanexp = get_integration_time(master_ms)
 
     # ------------------------------------------------------------------------------
     #
@@ -638,6 +651,7 @@ def main():
     project_info['master_scan_list'] = master_scan_list
     project_info['master_field_list'] = master_field_list
     project_info['working_ms'] = working_ms
+    project_info['integration_time'] = str(meanexp),
     project_info['band'] = band
     project_info['nchan'] = str(nchan)
     project_info['ref_ant'] = ref_ant

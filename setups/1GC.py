@@ -17,16 +17,31 @@ def main():
 
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
+
     gen.preamble()
     print(gen.col()+'1GC (referenced calibration) setup')
     gen.print_spacer()
 
-    if cfg.PRE_FIELDS != '':
-        print(gen.col('Field selection')+cfg.PRE_FIELDS)
-    if cfg.PRE_SCANS != '':
-        print(gen.col('Scan selection')+cfg.PRE_SCANS)
-    gen.print_spacer()
 
+    with open('project_info.json') as f:
+        project_info = json.load(f)
+
+    if float(project_info['integration_time'][0]) < 3.0:
+        print(gen.col('Warning!')+'These are 2 sec data, check for removal of bugged scans')
+
+    dopol = cfg.CAL_1GC_DOPOL
+    if not dopol:
+        print(gen.col()+'Polarisation cal disabled as per config file')
+    else:
+        polcal_tag = project_info['polcal_tag']
+        if polcal_tag == 'None':
+            print(gen.col()+'No polarisation calibrator found in this MS')
+            dopol = False
+        else:
+            print(gen.col()+f'Using polarisation calibrator {polcal_tag}')
+
+    gen.print_space()
+    
     # ------------------------------------------------------------------------------
     #
     # Setup paths, required containers, infrastructure
@@ -60,9 +75,6 @@ def main():
     # ------------------------------------------------------------------------------
 
 
-    with open('project_info.json') as f:
-        project_info = json.load(f)
-
     myms = project_info['master_ms']
     master_scan_list = project_info['master_scan_list']
     master_field_list = project_info['master_field_list']
@@ -71,19 +83,6 @@ def main():
     code = gen.get_code(myms)
 
     target_subms_list = gen.generate_target_subms_list(myms,master_scan_list,master_field_list,user_scans,target_ids)
-
-    print(target_subms_list)
-
-    dopol = cfg.CAL_1GC_DOPOL
-    if not dopol:
-        print(gen.col('Polarisation cal disabled as per config file'))
-    else:
-        polcal_tag = project_info['polcal_tag']
-        if polcal_tag == 'None':
-            print(gen.col('No polarisation calibrator found in this MS'))
-            dopol = False
-        else:
-            print(gen.col(f'Using polarisation calibrator {polcal_tag}'))
 
     steps = []
 

@@ -27,7 +27,14 @@ def preamble():
         print(col()+'Intermediate flag tables will be backed up')
     else:
         print(col()+'Intermediate flag tables will not be backed up')
-
+    if cfg.PRE_FIELDS != '':
+        print(gen.col('Field selection')+cfg.PRE_FIELDS)
+    else:
+        print(gen.col('Field selection')+'All')
+    if cfg.PRE_SCANS != '':
+        print(gen.col('Scan selection')+cfg.PRE_SCANS)
+    else:
+        print(gen.col('Scan selection')+'All')
 
 def now():
     # stamp = time.strftime('[%H:%M:%S] ')

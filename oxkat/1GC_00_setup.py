@@ -32,7 +32,8 @@ def get_dummy():
 
     project_info = {'working_ms':'master_ms_1024ch.ms',
         'master_ms':'master_ms.ms',
-        'master_scan_map':[(1,0),(2,1),(3,2)],
+        'master_scan_list':'1,2,3,4,5',
+        'master_field_list':'0,1,2,1,2'
         'nchan':'4096',
         'band':'L',
         'ref_ant':['-1'],
@@ -394,15 +395,20 @@ def get_scan_map(master_ms):
     for parallelisation purposes via the MMS later on
     """
 
-    master_scan_map = []
+    master_scan_list = []
+    master_field_list = []
     main_tab = table(master_ms, ack=False)
     scans = numpy.unique(main_tab.getcol('SCAN_NUMBER'))
     for scan in scans:
         subtab = main_tab.query(query='SCAN_NUMBER=='+str(scan))
         scan_field = (numpy.unique(subtab.getcol("FIELD_ID"))).item()
-        master_scan_map.append((scan,scan_field))
+        master_scan_list.append(scan)
+        master_field_list.append(scan_field)
 
-    return master_scan_map
+    master_scan_list = ','.join(master_scan_list)
+    master_field_list = ','.join(master_field_list)
+
+    return master_scan_list,master_field_list
 
 
 def main():
@@ -629,7 +635,8 @@ def main():
     mylogger.info('Writing '+outfile)
 
     project_info['master_ms'] = master_ms
-    project_info['master_scan_map'] = master_scan_map
+    project_info['master_scan_list'] = master_scan_list
+    project_info['master_field_list'] = master_field_list
     project_info['working_ms'] = working_ms
     project_info['band'] = band
     project_info['nchan'] = str(nchan)

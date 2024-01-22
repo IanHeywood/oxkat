@@ -33,7 +33,7 @@ def get_dummy():
     project_info = {'working_ms':'master_ms_1024ch.ms',
         'master_ms':'master_ms.ms',
         'master_scan_list':'1,2,3,4,5',
-        'master_field_list':'0,1,2,1,2'
+        'master_field_list':'0,1,2,1,2',
         'nchan':'4096',
         'band':'L',
         'ref_ant':['-1'],
@@ -402,8 +402,8 @@ def get_scan_map(master_ms):
     for scan in scans:
         subtab = main_tab.query(query='SCAN_NUMBER=='+str(scan))
         scan_field = (numpy.unique(subtab.getcol("FIELD_ID"))).item()
-        master_scan_list.append(scan)
-        master_field_list.append(scan_field)
+        master_scan_list.append(str(scan))
+        master_field_list.append(str(scan_field))
 
     master_scan_list = ','.join(master_scan_list)
     master_field_list = ','.join(master_field_list)
@@ -594,7 +594,7 @@ def main():
     #
     # GET SCAN MAP FOR MASTER MS
 
-    master_scan_map = get_scan_map(master_ms)
+    master_scan_list,master_field_list = get_scan_map(master_ms)
 
 
     # ------------------------------------------------------------------------------

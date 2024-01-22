@@ -60,28 +60,30 @@ if SAVE_FLAGS:
 
 clearcal(vis = opms, addmodel = True)
 
+
+# *** THIS IS NOW HANDLED AT THE SETUP STAGE
 # write out subms map
-print('Writing sub-MS map')
-subms_map = opms+'/subms_map.txt'
-f = open(subms_map,'w')
-submss = sorted(glob.glob(opms+'/SUBMSS/*.ms'))
-for subms in submss:
-	tb.open(subms)
-	srcid = str(numpy.unique(tb.getcol('FIELD_ID')).item())
-	opstr = subms+' '+srcid+' '
-	if srcid in target:
-		opstr += 'TARGET'
-	elif srcid in pcals:
-		opstr += 'PCAL'
-	elif srcid == bpcal:
-		opstr += 'PRIMARY'
-	elif srcid == polcal:
-		opstr += 'POLCAL'
-	print(opstr)
-	opstr += '\n'
-	f.writelines(opstr)
-	tb.done()
-f.close()
+# print('Writing sub-MS map')
+# subms_map = opms+'/subms_map.txt'
+# f = open(subms_map,'w')
+# submss = sorted(glob.glob(opms+'/SUBMSS/*.ms'))
+# for subms in submss:
+# 	tb.open(subms)
+# 	srcid = str(numpy.unique(tb.getcol('FIELD_ID')).item())
+# 	opstr = subms+' '+srcid+' '
+# 	if srcid in target:
+# 		opstr += 'TARGET'
+# 	elif srcid in pcals:
+# 		opstr += 'PCAL'
+# 	elif srcid == bpcal:
+# 		opstr += 'PRIMARY'
+# 	elif srcid == polcal:
+# 		opstr += 'POLCAL'
+# 	print(opstr)
+# 	opstr += '\n'
+# 	f.writelines(opstr)
+# 	tb.done()
+# f.close()
 
 
 # Zero receptor angle in case polcal is happening

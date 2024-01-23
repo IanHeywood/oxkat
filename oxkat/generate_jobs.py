@@ -447,12 +447,12 @@ def generate_target_subms_list(myms,master_scan_list,master_field_list,user_scan
     if len(user_scans) == 0:
         for i in range(0,len(master_scan_list)):
             if master_field_list[i] in target_ids:
-                subms_ids.append(master_scan_list[i])
+                subms_ids.append(master_scan_list[i-1]) # -1 because sub-ms are zero indexed, scans are not
     else:
         user_scans = user_scans.split(',')
         user_field_list = [master_field_list[i] for i in user_scans]
         for i in range(0,len(user_scans)):
-            if user_field_list[i] in target_ids:
+            if user_field_list[i-1] in target_ids:
                 subms_ids.append(i)
     subms_list = []
     for i in range(0,len(subms_ids)):

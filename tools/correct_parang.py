@@ -1,3 +1,5 @@
+# This script was written by Ben Hugo (SARAO / RATT)
+
 #!/usr/bin/env python3
 import ephem
 import numpy as np

@@ -38,6 +38,9 @@ def main():
     else:
         print(gen.col()+'All scans selected')
 
+    primary_name = project_info['primary_name']
+    print(gen.col()+f'Using primary calibrator {primary_name}')
+
     dopol = cfg.CAL_1GC_DOPOL
     if not dopol:
         print(gen.col()+'Polarisation cal disabled as per config file')
@@ -55,8 +58,7 @@ def main():
 
     if float(project_info['integration_time'][0]) < 3.0:
         print(gen.col('Heads up!')+'These are 2 sec data, check for removal of bad scans')
-
-    gen.print_spacer()
+        gen.print_spacer()
 
 
     # ------------------------------------------------------------------------------
@@ -94,12 +96,13 @@ def main():
 
 
     myms = project_info['master_ms']
+    working_ms = project_info['working_ms']
     master_scan_list = project_info['master_scan_list']
     master_field_list = project_info['master_field_list']
     target_ids = project_info['target_ids']
     user_scans = cfg.PRE_SCANS
     code = gen.get_code(myms)
-    target_subms_list = gen.generate_target_subms_list(myms,master_scan_list,master_field_list,user_scans,target_ids)
+    target_subms_list = gen.generate_target_subms_list(working_ms,master_scan_list,master_field_list,user_scans,target_ids)
     steps = []
 
 

@@ -123,7 +123,7 @@ def main():
     step['dependency'] = 0
     step['id'] = 'PACOR'+code
     syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += 'python3 '+cfg.OXKAT+'/oxkat/PRE_correct_parang.py'
+    syscall += 'python3 '+cfg.OXKAT+'/PRE_correct_parang.py'
     step['syscall'] = syscall
     steps.append(step)
 

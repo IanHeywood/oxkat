@@ -26,6 +26,13 @@ gapfill = CAL_1GC_FILLGAPS
 myuvrange = CAL_1GC_UVRANGE 
 myspw = CAL_1GC_FREQRANGE
 
+if CAL_1GC_DOPOL and polarcal_tag != '':
+    print('Polarisation cal is on, enforcing refant mode = strict')
+    ref_ant = ref_ant[0]
+    ref_ant_mode = 'strict'
+else:
+    print('No polarisation cal is being performed, using refant pool')
+    ref_ant_mode = 'flex'
 
 # ------- Setup names
 
@@ -112,6 +119,7 @@ gaincal(vis=myms,
     #spw=myspw,
     caltable=ktab0,
     refant = str(ref_ant),
+    refantmode = ref_ant_mode,
     gaintype = 'K',
     solint = 'inf',
     parang=False)
@@ -141,6 +149,7 @@ bandpass(vis=myms,
     uvrange=myuvrange,
     caltable=bptab0,
     refant = str(ref_ant),
+    refantmode = ref_ant_mode,
     solint='inf',
     combine='',
     solnorm=False,
@@ -205,6 +214,7 @@ gaincal(vis=myms,
     field=bpcal_name,
     caltable=ktab1,
     refant = str(ref_ant),
+    refantmode = ref_ant_mode,
     gaintype = 'K',
     solint = 'inf',
     parang=False,
@@ -237,6 +247,7 @@ bandpass(vis=myms,
     uvrange=myuvrange,
     caltable=bptab1,
     refant = str(ref_ant),
+    refantmode = ref_ant_mode,
     solint='inf',
     combine='',
     solnorm=False,
@@ -283,6 +294,7 @@ gaincal(vis = myms,
     spw = myspw,
     caltable = gtab2,
     refant = str(ref_ant),
+    refantmode = ref_ant_mode,
     solint = 'inf',
     solnorm = False,
     gaintype = 'T',
@@ -318,6 +330,7 @@ for i in range(0,len(pcals)):
         spw = myspw,
         caltable = gtab2,     
         refant = str(ref_ant),
+        refantmode = ref_ant_mode,
         minblperant = 4,
         minsnr = 3,
         solint = 'inf',
@@ -341,6 +354,7 @@ for i in range(0,len(pcals)):
     #   spw=myspw,
         caltable = ktab2,
         refant = str(ref_ant),
+        refantmode = ref_ant_mode,
         gaintype = 'K',
         solint = 'inf',
         parang = False,
@@ -414,6 +428,7 @@ gaincal(vis = myms,
     spw = myspw,
     caltable = gtab3,
     refant = str(ref_ant),
+    refantmode = ref_ant_mode,
     solint = 'inf',
     solnorm = False,
     gaintype = 'T',
@@ -451,6 +466,7 @@ for i in range(0,len(pcals)):
         spw = myspw,
         caltable = gtab3,     
         refant = str(ref_ant),
+        refantmode = ref_ant_mode,
         minblperant = 4,
         minsnr = 3,
         solint = 'inf',
@@ -472,6 +488,7 @@ for i in range(0,len(pcals)):
         field = pcal,
         caltable = ktab3,
         refant = str(ref_ant),
+        refantmode = ref_ant_mode,
         gaintype = 'K',
         solint = 'inf',
         parang = False,

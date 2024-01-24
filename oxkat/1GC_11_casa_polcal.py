@@ -6,7 +6,7 @@ import numpy
 import os
 import sys
 import time
-import shutils
+import shutil
 from scipy.stats import zscore
 
 

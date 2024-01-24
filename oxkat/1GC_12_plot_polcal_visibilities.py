@@ -6,6 +6,7 @@ import json
 import os.path as o
 import subprocess
 import sys
+
 sys.path.append(o.abspath(o.join(o.dirname(sys.modules[__name__].__file__), "..")))
 
 
@@ -16,6 +17,8 @@ from oxkat import config as cfg
 
 def main():
 
+
+    suffix = sys.argv[1]
 
     VISPLOTS = cfg.VISPLOTS
     gen.setup_dir(VISPLOTS)
@@ -45,7 +48,7 @@ def main():
     shadems_base = 'shadems --dir '+VISPLOTS+' '
 
     for plot in plots:
-        syscall = shadems_base+' '+plot+' --colour-by ANTENNA1 --field '+str(polcal)+' '+myms
+        syscall = shadems_base+' '+plot+' --colour-by ANTENNA1 --field '+str(polcal)+' -suffix '+suffix+' '+myms
         subprocess.run([syscall],shell=True)
 
 

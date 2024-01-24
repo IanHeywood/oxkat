@@ -12,7 +12,7 @@ myoutputchans = int(PRE_NCHANS)
 mytimebin = PRE_TIMEBIN
 
 
-master_ms = glob.glob('*.ms')[0]
+#master_ms = glob.glob('*.ms')[0]
 opms = master_ms.replace('.ms','_'+str(myoutputchans)+'ch.ms')
 
 

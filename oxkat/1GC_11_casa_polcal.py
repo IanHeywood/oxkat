@@ -122,7 +122,6 @@ polcal(vis = myms,
     solint = 'inf',
     combine = '',
     refant = ref_ant,
-    refantmode = 'strict',
     poltype = 'Xf',
     gaintable = apply_list,
     gainfield = apply_fields,
@@ -141,7 +140,6 @@ polcal(vis = myms,
     solint = 'inf',
     combine = '',
     refant = ref_ant,
-    refantmode = 'strict',
     poltype = 'D',
     gaintable = apply_list,
     gainfield = apply_fields,
@@ -159,11 +157,14 @@ polcal(vis = myms,
     uvrange = myuvrange,
     solint = 'inf',
     refant = ref_ant,
-    refantmode = 'strict',
     poltype = 'Df',
     gaintable = apply_list,
     gainfield = apply_fields,
     interp = apply_interp)
+
+apply_list.append(dftab)
+apply_fields.append(bpcal)
+apply_interp.append('nearest')
 
 # Flag Df solutions based on amplitude
 
@@ -186,5 +187,14 @@ newflags = numpy.logical_or((zgains > 5.0),flags)
 tb.putcol('FLAG',newflags)
 tb.flush()
 tb.done()
+
+# Apply solutions
+
+applycal(vis = myms,
+    field = '',
+    parang = True,
+    gaintable = apply_list,
+    gainfield = apply_fields,
+    interp = apply_interp)
 
 

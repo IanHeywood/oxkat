@@ -21,27 +21,26 @@ def main():
     GAINTABLES = cfg.GAINTABLES
     gen.setup_dir(GAINPLOTS)
 
-
     include = sys.argv[1]
+    include = include.split(',')
     if len(sys.argv) > 2:
         exclude = sys.argv[2]
+        exclude = exclude.split(',')
     else:
-        exclude = ''
+        exclude = ['']
 
-    caltabs = sorted([item for item in glob.glob(GAINTABLES+'/'+include) if not os.path.basename(item).endswith('flagversions')])
-    if exclude != '':
-        exclude = glob.glob(GAINTABLES+'/'+exclude)
+    exclude.append('.flagversions')
 
-    for caltab in caltabs:
-        if caltab not in exclude:
-            gaintype = caltab.split('.')[-1][0].upper()
+    for suffix in include:
+        if suffix not in exclude:
+            caltabs = glob.glob(GAINTABLES+'/*.'+suffix)
+            for caltab in caltabs:
             htmlname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.html'
             plotname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.png'
-            if not os.path.isfile(htmlname):
-                syscall = 'ragavi-gains -g '+gaintype+' -t '+caltab+' --htmlname='+htmlname+' --plotname='+plotname
-                subprocess.run([syscall],shell=True)
-            else:
-                print(htmlname+' exists, skipping')
+            syscall = 'ragavi-gains -g '+gaintype+' --htmlname='+htmlname+' --plotname='+plotname
+            subprocess.run([syscall],shell=True)
+
+
 
 if __name__ == "__main__":
 

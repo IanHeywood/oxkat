@@ -234,6 +234,15 @@ def main():
         step['syscall'] = syscall
         steps.append(step)
 
+        step = {}
+        step['step'] = 9+d
+        step['comment'] = 'Plot the polarisation gain solutions'
+        step['dependency'] = 9+d
+        step['id'] = 'PLTAB'+code
+        syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
+        syscall += 'python3 '+cfg.OXKAT+'/PLOT_gaintables.py KX,Xf,D,Df,Df_preflag'
+        step['syscall'] = syscall
+        steps.append(step)
 
     # ------------------------------------------------------------------------------
     #

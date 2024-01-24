@@ -167,7 +167,7 @@ def main():
     step['dependency'] = 4
     step['id'] = 'PLTAB'+code
     syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += 'python3 '+cfg.OXKAT+'/PLOT_gaintables.py cal_1GC_*'
+    syscall += 'python3 '+cfg.OXKAT+'/PLOT_gaintables.py B0,B1,G0,G1,G2,K0,K1,K2,K3,flux2,flux3'
     step['syscall'] = syscall
     steps.append(step)
 
@@ -230,7 +230,7 @@ def main():
         step['dependency'] = 8+d
         step['id'] = 'POLAR'+code
         syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
-        syscall += 'python3 '+cfg.OXKAT+'/1GC_11_casa_polcal.py'
+        syscall += gen.generated_syscall_casa(casascript=cfg.OXKAT+'/1GC_11_casa_polcal.py')
         step['syscall'] = syscall
         steps.append(step)
 

@@ -35,10 +35,10 @@ def main():
         if suffix not in exclude:
             caltabs = glob.glob(GAINTABLES+'/*.'+suffix)
             for caltab in caltabs:
-            htmlname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.html'
-            plotname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.png'
-            syscall = 'ragavi-gains -g '+gaintype+' --htmlname='+htmlname+' --plotname='+plotname
-            subprocess.run([syscall],shell=True)
+                htmlname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.html'
+                plotname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.png'
+                syscall = 'ragavi-gains -g '+gaintype+' --htmlname='+htmlname+' --plotname='+plotname
+                subprocess.run([syscall],shell=True)
 
 
 

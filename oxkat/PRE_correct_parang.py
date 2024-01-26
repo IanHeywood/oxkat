@@ -31,7 +31,7 @@ if polcal_tag != 'None': fields += polcal
 fields = sorted(fields)
 
 for field in fields:
-	syscall = 'python3 '+cfg.TOOLS+'/correct_parang.py --noparang --applyantidiag --chunksize 100000 '
+	syscall = 'python3 '+cfg.TOOLS+'/correct_parang.py --noparang --applyantidiag --chunksize 500000 '
 	syscall += '--field '+field+' --rawcolumn DATA --storecolumn DATA ' 
 	syscall += myms
 	subprocess.run([syscall],shell=True)

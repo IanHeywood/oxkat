@@ -19,6 +19,10 @@ with open('project_info.json') as f:
     project_info = json.load(f)
 
 
+if not cfg.CAL_1GC_DOPOL:
+	print('Polcal disabled in the config, skipping PA correction')
+	sys.exit()
+
 myms = project_info['working_ms']
 bpcal = project_info['primary_id']
 targets = project_info['target_ids']
@@ -26,7 +30,10 @@ pcals = project_info['secondary_ids']
 polcal = project_info['polcal_id']
 polcal_tag = project_info['polcal_tag']
 fields = [bpcal]+targets+pcals
-if polcal_tag != 'None': fields += polcal
+if polcal_tag != 'None': 
+	fields += polcal
+else:
+	print('No primary polarisation calibrator present, skipping PA correction')
 
 fields = sorted(fields)
 

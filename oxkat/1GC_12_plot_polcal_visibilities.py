@@ -32,11 +32,6 @@ def main():
     polcal = project_info['polcal_id']
     
 
-    if cfg.PRE_FIELDS != '':
-        from oxkat import user_field_handler as ufh
-        pcals = ufh.user_pcals
-
-
     plots = ['--xaxis CORRECTED_DATA:real:XX,CORRECTED_DATA:real:YY --yaxis CORRECTED_DATA:imag:XX,CORRECTED_DATA:imag:YY',
         '--xaxis CORRECTED_DATA:real:XY,CORRECTED_DATA:real:XY --yaxis CORRECTED_DATA:imag:YX,CORRECTED_DATA:imag:YY',
         '--xaxis FREQ,FREQ,FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:XY,CORRECTED_DATA:amp:YX,CORRECTED_DATA:amp:YY',

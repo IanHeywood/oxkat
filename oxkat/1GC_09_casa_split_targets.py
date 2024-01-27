@@ -7,20 +7,28 @@ execfile('oxkat/config.py')
 if PRE_FIELDS != '':
     target_names = user_targets
 
-for target in target_names:
+for i in range(0,len(target_names)):
+
+    target_name = target_names[i]
+    target_id = targets[i]
+    nscans = str(master_field_list.count(target_id))
+    print('Target '+target_name+' has FIELD_ID '+target_id+' and '+nscans+' scans')
 
     opms = ''
 
     for mm in target_ms:
-        if target in mm:
+        if target_name in mm:
             opms = mm
 
     if opms != '':
 
         mstransform(vis=myms,
             outputvis=opms,
-            field=target,
+            field=target_id,
             usewtspectrum=True,
+            createmms=True,
+            separationaxis='scan',
+            numsubms=nscans,
             realmodelcol=True,
             datacolumn='corrected')
 

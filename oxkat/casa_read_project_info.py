@@ -18,6 +18,8 @@ with open('project_info.json') as f:
 	project_info = json.load(f)
 
 master_ms = str(project_info['master_ms'])
+master_field_list = str(project_info['master_field_list'])
+master_scan_list = str(project_info['master_scan_list'])
 myms = str(project_info['working_ms'])
 band = str(project_info['band'])
 nchan = int(project_info['nchan'])

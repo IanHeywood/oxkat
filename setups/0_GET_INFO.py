@@ -16,6 +16,7 @@ def main():
     USE_SINGULARITY = cfg.USE_SINGULARITY
 
     gen.preamble()
+    gen.print_spacer()
     print(gen.col()+'Setting up job to examine master MS')
     gen.print_spacer()
 
@@ -39,8 +40,7 @@ def main():
 
 
     ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY)
-    OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
-
+   
 
     # ------------------------------------------------------------------------------
     #
@@ -66,13 +66,13 @@ def main():
     step['comment'] = 'Run setup script to generate project_info json file'
     step['dependency'] = None
     step['id'] = 'INFO_'+code
-    syscall = CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += ' python3 '+cfg.TOOLS+'/ms_info.py '+myms+'\n'
-    syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += ' python3 '+cfg.TOOLS+'/scan_times.py '+myms+'\n'
     syscall += CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += ' python3 '+cfg.TOOLS+'/find_sun.py '+myms+'\n'
-    syscall += CONTAINER_RUNNER+OWLCAT_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += ' python3 '+cfg.OXKAT+'/1GC_00_setup.py '+myms
     step['syscall'] = syscall
     steps.append(step)

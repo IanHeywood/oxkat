@@ -118,7 +118,7 @@ def get_container(pathlist,pattern,use_singularity):
     if len(ll) > 1:
         opstr += ' (multiple matches)'
     if opstr not in container_list:
-        print(col('Found container')+opstr)
+        print(col('Using container')+opstr)
         container_list.append(opstr)
     return container
 

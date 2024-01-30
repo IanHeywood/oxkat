@@ -60,7 +60,7 @@ HIPPO_CONTAINER_PATH = None
 NODE_CONTAINER_PATH = [HOME+'/containers/']
 
 
-ASTROPY_PATTERN = 'oxkat-0.5_1GC'
+ASTROPY_PATTERN = 'oxkat-0.5_2GC'
 CASA_PATTERN = 'oxkat-0.5_1GC'
 CLUSTERCAT_PATTERN = 'oxkat-0.5_3GC'
 CUBICAL_PATTERN = 'oxkat-0.5_2GC'
@@ -217,6 +217,7 @@ CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpo
 
 # Polarisation settings
 CAL_1GC_DOPOL = True                 # Set to False to not perform 1GC pol cal, even if a valid polarisation calibrator is present
+CAL_1GC_PAWORKERS = 12               # Number of parallel instances of parallactic angle correction processes
 
 # Base models for polarisation calibrators
 # Band-specific modifiers can be implemented in their relevant sections below

@@ -1,7 +1,7 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-execfile('oxkat/casa_read_project_info.py')
+execfile('oxkat/casa_read_project_info.py',globals())
 
 
 args = sys.argv

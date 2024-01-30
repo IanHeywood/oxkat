@@ -1,7 +1,7 @@
 # ian.heywood@physics.ox.ac.uk
 # 
 # set versionname=... on command line call to CASA
-# can also specify csv mslist=...,... otherwise project_info.p will be
+# can also specify csv mslist=...,... otherwise project_info.json will be
 # used and the operation will proceed on all available target Measurement Sets.
 #
 # versionname must be supplied
@@ -11,7 +11,7 @@ import os
 import sys
 
 
-execfile('oxkat/casa_read_project_info.py')
+execfile('oxkat/casa_read_project_info.py',,globals())
 
 
 mslist = False

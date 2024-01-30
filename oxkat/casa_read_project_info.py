@@ -4,7 +4,7 @@
 
 import json
 import sys
-execfile('oxkat/config.py')
+execfile('oxkat/config.py',globals())
 
 
 def str_iterator(inlist):

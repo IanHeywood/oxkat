@@ -217,7 +217,7 @@ CAL_1GC_FILLGAPS = 24                # Maximum channel gap over which to interpo
 
 # Polarisation settings
 CAL_1GC_DOPOL = True                 # Set to False to not perform 1GC pol cal, even if a valid polarisation calibrator is present
-CAL_1GC_PAWORKERS = 12               # Number of parallel instances of parallactic angle correction processes
+CAL_1GC_PAWORKERS = 8                # Number of parallel instances of parallactic angle correction processes
 
 # Base models for polarisation calibrators
 # Band-specific modifiers can be implemented in their relevant sections below

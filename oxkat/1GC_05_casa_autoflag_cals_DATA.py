@@ -1,8 +1,8 @@
 # ian.heywood@physics.ox.ac.uk
 
 
-execfile('oxkat/casa_read_project_info.py')
-execfile('oxkat/config.py')
+execfile('oxkat/casa_read_project_info.py',globals())
+execfile('oxkat/config.py',globals())
 
 if PRE_FIELDS != '':
     pcals = user_pcals

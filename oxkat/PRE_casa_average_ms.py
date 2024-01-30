@@ -3,8 +3,8 @@
 import glob
 import numpy
 
-execfile('oxkat/config.py')
-execfile('oxkat/casa_read_project_info.py')
+execfile('oxkat/config.py',globals())
+execfile('oxkat/casa_read_project_info.py',globals())
 
 myfields = PRE_FIELDS
 myscans = PRE_SCANS

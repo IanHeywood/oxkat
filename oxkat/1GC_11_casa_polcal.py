@@ -10,8 +10,8 @@ import shutil
 from scipy.stats import zscore
 
 
-execfile('oxkat/casa_read_project_info.py')
-execfile('oxkat/config.py')
+execfile('oxkat/casa_read_project_info.py',globals())
+execfile('oxkat/config.py',globals())
 
 
 def get_table(suffix,ms):

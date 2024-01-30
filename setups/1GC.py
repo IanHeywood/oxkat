@@ -117,6 +117,8 @@ def main():
     steps.append(step)
 
 
+    # This can be parallelised with subMS
+
     step = {}
     step['step'] = 1
     step['comment'] = 'Correct parallactic angle of working MS'
@@ -235,6 +237,7 @@ def main():
 
 
     if dopol:
+
 
         step = {}
         step['step'] = 10+d

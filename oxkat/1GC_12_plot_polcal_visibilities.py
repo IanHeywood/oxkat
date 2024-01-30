@@ -33,14 +33,14 @@ def main():
     
 
     plots = ['--xaxis CORRECTED_DATA:real:XX,CORRECTED_DATA:real:YY --yaxis CORRECTED_DATA:imag:XX,CORRECTED_DATA:imag:YY',
-        '--xaxis CORRECTED_DATA:real:XY,CORRECTED_DATA:real:XY --yaxis CORRECTED_DATA:imag:YX,CORRECTED_DATA:imag:YY',
+        '--xaxis CORRECTED_DATA:real:XY,CORRECTED_DATA:real:YX --yaxis CORRECTED_DATA:imag:XY,CORRECTED_DATA:imag:YX',
         '--xaxis FREQ,FREQ,FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:XY,CORRECTED_DATA:amp:YX,CORRECTED_DATA:amp:YY',
         '--xaxis FREQ,FREQ,FREQ,FREQ --yaxis CORRECTED_DATA:phase:XX,CORRECTED_DATA:phase:XY,CORRECTED_DATA:phase:YX,CORRECTED_DATA:phase:YY']
 
     shadems_base = 'shadems --dir '+VISPLOTS+' '
 
     for plot in plots:
-        syscall = shadems_base+' '+plot+' --colour-by ANTENNA1 --field '+str(polcal)+' -suffix '+suffix+' '+myms
+        syscall = shadems_base+' '+plot+' --colour-by ANTENNA1 --field '+str(polcal)+' --suffix '+suffix+' '+myms
         subprocess.run([syscall],shell=True)
 
 

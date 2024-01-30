@@ -93,6 +93,25 @@ setjy(vis = myms,
     polangle = polangle,
     usescratch = True)
 
+
+# Flag based on residual data (since model is in place and polcal corr data is GKB calibrated)
+
+flagdata(vis=myms,
+    mode = 'rflag',
+    datacolumn = 'residual',
+    field = polarcal)
+
+flagdata(vis = myms,
+    mode = 'tfcrop',
+    datacolumn = 'residual',
+    field = polarcal)
+
+if SAVE_FLAGS:
+    flagmanager(vis = myms,
+        mode = 'save',
+        versionname = 'polcal_residual_flags')
+
+
 # Calibrate cross-hand delays
 
 gaincal(vis = myms,
@@ -113,6 +132,7 @@ apply_list.append(kxtab)
 apply_fields.append(polarcal)
 apply_interp.append('nearest')
 
+
 # Calibrate per-channel cross-hand phases
 
 polcal(vis = myms,
@@ -130,6 +150,7 @@ polcal(vis = myms,
 apply_list.append(xftab)
 apply_fields.append(polarcal)
 apply_interp.append('nearest')
+
 
 # Calibrate frequency independent bulk leakages
 
@@ -149,6 +170,7 @@ apply_list.append(dtab)
 apply_fields.append(bpcal)
 apply_interp.append('nearest')
 
+
 # Calibrate frequency dependent leakages
 
 polcal(vis = myms,
@@ -165,6 +187,7 @@ polcal(vis = myms,
 apply_list.append(dftab)
 apply_fields.append(bpcal)
 apply_interp.append('nearest')
+
 
 # Flag Df solutions based on amplitude
 
@@ -187,6 +210,7 @@ newflags = numpy.logical_or((zgains > 5.0),flags)
 tb.putcol('FLAG',newflags)
 tb.flush()
 tb.done()
+
 
 # Apply solutions
 

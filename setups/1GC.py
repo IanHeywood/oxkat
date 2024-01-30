@@ -217,7 +217,7 @@ def main():
     step['step'] = 8+d
     step['comment'] = 'Plot the corrected calibrator visibilities'
     step['dependency'] = 7+d
-    step['id'] = 'PLVIS'+code
+    step['id'] = 'PLCAL'+code
     syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python3 '+cfg.OXKAT+'/1GC_10_plot_visibilities.py'
     step['syscall'] = syscall
@@ -228,7 +228,7 @@ def main():
     step['step'] = 9+d
     step['comment'] = 'Plot the corrected polarisation calibrator visibilities (pre-polcal)'
     step['dependency'] = 8+d
-    step['id'] = 'PLVIS'+code
+    step['id'] = 'PLPXL'+code
     syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python3 '+cfg.OXKAT+'/1GC_12_plot_polcal_visibilities.py nopolcal'
     step['syscall'] = syscall
@@ -264,7 +264,7 @@ def main():
         step['step'] = 12+d
         step['comment'] = 'Plot the corrected polarisation calibrator visibilities (post-polcal)'
         step['dependency'] = 10+d
-        step['id'] = 'PLVIS'+code
+        step['id'] = 'PLPOL'+code
         syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall += 'python3 '+cfg.OXKAT+'/1GC_12_plot_polcal_visibilities.py polcal'
         step['syscall'] = syscall

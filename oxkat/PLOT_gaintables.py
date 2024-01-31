@@ -37,7 +37,7 @@ def main():
             for caltab in caltabs:
                 htmlname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.html'
                 plotname = GAINPLOTS+'/'+caltab.split('/')[-1]+'.png'
-                syscall = 'ragavi-gains -t '+caltab+' --htmlname='+htmlname+' --plotname='+plotname
+                syscall = 'ragavi-gains -t '+caltab+' --htmlname '+htmlname+' --plotname '+plotname
                 subprocess.run([syscall],shell=True)
 
 

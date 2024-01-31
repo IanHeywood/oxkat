@@ -107,6 +107,15 @@ flagdata(vis = myms,
     datacolumn = 'residual',
     field = polarcal)
 
+# Nuke the hot RFI regions entirely, no baseline cut 
+
+myspw = ','.join(CAL_1GC_BL_FREQS)
+
+flagdata(vis = myms,
+    mode = 'manual',
+    spw = myspw,
+    uvrange = '')
+
 if SAVE_FLAGS:
     flagmanager(vis = myms,
         mode = 'save',
@@ -199,18 +208,20 @@ if os.path.isdir(dfbackup):
 print('Backing up '+dftab)
 shutil.copytree(dftab,dfbackup)
 
-tb.open(dftab,nomodify=False)
-gains = tb.getcol('CPARAM')
-flags = tb.getcol('FLAG')
-masked_gains = numpy.ma.array(gains,mask=flags)
-npol = gains.shape[0]
-nchans = gains.shape[1]
-nant = gains.shape[2]
-zgains = zscore(numpy.absolute(masked_gains), axis = 1)
-newflags = numpy.logical_or((zgains > 5.0),flags)
-tb.putcol('FLAG',newflags)
-tb.flush()
-tb.done()
+flagdata(vis = dftab, mode = 'tfcrop', datacolumn = 'CPARAM')
+
+# tb.open(dftab,nomodify=False)
+# gains = tb.getcol('CPARAM')
+# flags = tb.getcol('FLAG')
+# masked_gains = numpy.ma.array(gains,mask=flags)
+# npol = gains.shape[0]
+# nchans = gains.shape[1]
+# nant = gains.shape[2]
+# zgains = zscore(numpy.absolute(masked_gains), axis = 1)
+# newflags = numpy.logical_or((zgains > 5.0),flags)
+# tb.putcol('FLAG',newflags)
+# tb.flush()
+# tb.done()
 
 
 # Apply solutions

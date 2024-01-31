@@ -224,24 +224,13 @@ def main():
     steps.append(step)
 
 
-    step = {}
-    step['step'] = 9+d
-    step['comment'] = 'Plot the corrected polarisation calibrator visibilities (pre-polcal)'
-    step['dependency'] = 8+d
-    step['id'] = 'PLPXL'+code
-    syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else ''
-    syscall += 'python3 '+cfg.OXKAT+'/1GC_12_plot_polcal_visibilities.py nopolcal'
-    step['syscall'] = syscall
-    steps.append(step)
-
-
     if dopol:
 
 
         step = {}
-        step['step'] = 10+d
+        step['step'] = 9+d
         step['comment'] = 'Perform basic polarisation calibration'
-        step['dependency'] = 9+d
+        step['dependency'] = 8+d
         step['id'] = 'POLAR'+code
         syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_11_casa_polcal.py')
@@ -250,10 +239,10 @@ def main():
 
 
         step = {}
-        step['step'] = 11+d
+        step['step'] = 10+d
         step['comment'] = 'Plot the polarisation gain solutions'
-        step['dependency'] = 10+d
-        step['id'] = 'PLTAB'+code
+        step['dependency'] = 9+d
+        step['id'] = 'PLTAP'+code
         syscall = CONTAINER_RUNNER+RAGAVI_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall += 'python3 '+cfg.OXKAT+'/PLOT_gaintables.py KX,Xf,D,Df,Df_preflag'
         step['syscall'] = syscall
@@ -261,9 +250,9 @@ def main():
 
 
         step = {}
-        step['step'] = 12+d
+        step['step'] = 11+d
         step['comment'] = 'Plot the corrected polarisation calibrator visibilities (post-polcal)'
-        step['dependency'] = 10+d
+        step['dependency'] = 9+d
         step['id'] = 'PLPOL'+code
         syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else ''
         syscall += 'python3 '+cfg.OXKAT+'/1GC_12_plot_polcal_visibilities.py polcal'

@@ -4,7 +4,7 @@
 import glob
 import shutil
 import time
-
+import datetime
 
 execfile('oxkat/casa_read_project_info.py',globals())
 execfile('oxkat/config.py',globals())

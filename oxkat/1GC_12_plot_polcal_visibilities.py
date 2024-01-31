@@ -34,8 +34,13 @@ def main():
 
     plots = ['--xaxis CORRECTED_DATA:real:XX,CORRECTED_DATA:real:YY --yaxis CORRECTED_DATA:imag:XX,CORRECTED_DATA:imag:YY',
         '--xaxis CORRECTED_DATA:real:XY,CORRECTED_DATA:real:YX --yaxis CORRECTED_DATA:imag:XY,CORRECTED_DATA:imag:YX',
-        '--xaxis FREQ,FREQ,FREQ,FREQ --yaxis CORRECTED_DATA:amp:I,CORRECTED_DATA:amp:Q,CORRECTED_DATA:amp:U,CORRECTED_DATA:amp:V',
-        '--xaxis FREQ,FREQ,FREQ,FREQ --yaxis CORRECTED_DATA:phase:I,CORRECTED_DATA:phase:Q,CORRECTED_DATA:phase:U,CORRECTED_DATA:phase:V']
+        '--xaxis FREQ,FREQ,FREQ,FREQ --yaxis CORRECTED_DATA:amp:XX,CORRECTED_DATA:amp:XY,CORRECTED_DATA:amp:YX,CORRECTED_DATA:amp:YY',
+        '--xaxis FREQ,FREQ,FREQ,FREQ --yaxis CORRECTED_DATA:phase:XX,CORRECTED_DATA:phase:XY,CORRECTED_DATA:phase:YX,CORRECTED_DATA:phase:YY']
+
+        # Awaiting shadems fix
+        # '--xaxis FREQ,FREQ,FREQ,FREQ --yaxis CORRECTED_DATA:amp:I,CORRECTED_DATA:amp:Q,CORRECTED_DATA:amp:U,CORRECTED_DATA:amp:V',
+        # '--xaxis FREQ,FREQ,FREQ,FREQ --yaxis CORRECTED_DATA:phase:I,CORRECTED_DATA:phase:Q,CORRECTED_DATA:phase:U,CORRECTED_DATA:phase:V']
+
 
     shadems_base = 'shadems --dir '+VISPLOTS+' '
 

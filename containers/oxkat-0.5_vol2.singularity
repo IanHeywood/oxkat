@@ -1,0 +1,52 @@
+Bootstrap: docker
+From: ubuntu:20.04
+%environment
+    export SRC=/usr/local/src
+    export LC_ALL=C
+
+%post
+    export TZ=UTC
+    export DEBIAN_FRONTEND=noninteractive
+    export J=6
+
+    apt-get -y update
+    apt-get install -y htop nano git wget rsync cmake
+    apt-get install -y python
+    apt-get install -y python3-pip
+    python3 -m pip install --upgrade pip setuptools wheel
+    apt-get install -y casacore-dev casacore-tools python3-casacore
+    apt-get install -y montage
+    apt-get install -y ffmpeg
+    apt-get install -y imagemagick
+
+    # wsclean dependencies
+    apt-get install -y libhdf5-dev libfftw3-dev python3-pyfftw libboost-all-dev libcfitsio-dev libgsl-dev liblapack-dev
+
+    pip3 install astropy
+    pip3 install ipython
+    pip3 install scipy
+    pip3 install cubical
+    pip3 install --ignore-installed quartical 
+#    pip3 install git+https://github.com/lofar-astron/PyBDSF.git
+    pip3 install git+https://github.com/ratt-ru/owlcat.git
+    pip3 install git+https://github.com/ska-sa/katbeam.git
+    pip3 install git+https://github.com/ratt-ru/breizorro.git
+    pip3 install git+https://github.com/ratt-ru/shadeMS.git
+    pip3 install git+https://github.com/Mulan-94/smops.git
+
+    pip3 install scikit-ued
+    pip3 install pypher
+
+    pip3 install Bottleneck==1.3.6
+    pip3 install numexpr==2.8.4
+  
+    cd $SRC
+    git clone https://gitlab.com/aroffringa/wsclean.git
+    cd wsclean
+    mkdir -p build
+    cd build
+    cmake ..
+    make -j $J
+    make install
+
+    bash -c "rm -rf /usr/local/src/wsclean/"

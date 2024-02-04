@@ -1,6 +1,6 @@
 # containers
 
-The radio astronomy packages that make `oxkat` work are provided in `Singularity` containers based on Ubuntu 20.02. Due to dependency conflicts between the underlying packages there are four of these. Three of these volumes loosely correspond to the 1GC, 2GC and 3GC stages, and there is a standalone container for `tricolour`, which at the moment doesn't seem to play nicely with anyone else. The principal contents of each container are provided below.
+The radio astronomy packages that make `oxkat` work are provided in `Singularity` containers based on Ubuntu 20.04. Due to dependency conflicts between the underlying packages there are four of these. Three of these volumes loosely correspond to the 1GC, 2GC and 3GC stages, and there is a standalone container for `tricolour`, which at the moment doesn't seem to play nicely with anyone else. The principal contents of each container are provided below.
 
 #### oxkat-0.5_vol1.sif
 

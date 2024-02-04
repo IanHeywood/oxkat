@@ -1,0 +1,61 @@
+Bootstrap: docker
+From: ubuntu:20.04
+%environment
+    export LC_ALL=C
+
+%post
+    echo "*        -   memlock     unlimited" > /etc/security/limits.conf
+    
+    export TZ=UTC
+    export DEBIAN_FRONTEND=noninteractive
+    export J=6
+
+    apt-get -y update
+    apt-get install -y htop nano git wget rsync cmake
+    apt-get install -y python
+    apt-get install -y python3-pip
+    python3 -m pip install --upgrade pip setuptools wheel
+    pip3 install ipython
+
+    pip3 install "nose>=1.3.7"
+    pip3 install "Cython>=0.25.2,<=0.29.30"
+
+    pip3 install "nose >= 1.3.7" 
+    pip3 install "Cython >= 0.25.2, <= 0.29.30" 
+    pip3 install "numpy >= 1.15.1, <= 1.19.5" 
+    pip3 install "sharedarray >= 3.2.0, <= 3.2.1" 
+    pip3 install "Polygon3 >= 3.0.8, <= 3.0.9.1" 
+    pip3 install "pyFFTW >= 0.10.4, <= 0.12.0" 
+    pip3 install "astropy >= 3.0, <= 5.1" 
+    pip3 install  "deap >= 1.0.1, <= 1.3.1" 
+    pip3 install "ptyprocess>=0.5, <= 0.7.0" 
+    pip3 install "ipdb >= 0.10.3, <=0.13.9" 
+    pip3 install "python-casacore >= 3.0.0, <=3.4.0" 
+    pip3 install "pyephem >= 3.7.6.0, <=9.99" 
+    pip3 install "numexpr >= 2.6.2,<=2.8.1" 
+    pip3 install "matplotlib >= 2.0.0,<=3.3.4" 
+    pip3 install "scipy >= 1.3.3,<=1.5.4" 
+    pip3 install "astLib >= 0.8.0,<=0.11.7" 
+    pip3 install "psutil >= 5.2.2,<=5.9.1" 
+    pip3 install "py-cpuinfo >= 3.2.0,<=8.0.0" 
+    pip3 install "tables >= 3.6.0,<=3.7.0" 
+    pip3 install "prettytable >= 0.7.2,<=2.5.0" 
+    pip3 install "pybind11 >= 2.2.2,<=2.9.2" 
+    pip3 install "configparser >= 3.7.1,<=5.2.0" 
+    pip3 install "pandas >=0.23.3,<=1.1.5" 
+    pip3 install "ruamel.yaml >= 0.15.92,<=0.17.21" 
+    pip3 install "pylru >= 1.1.0,<=1.2.1" 
+    pip3 install "six >= 1.12.0,<=1.16.0" 
+    pip3 install "dask[array] >= 1.1.0,<=2021.3.0" 
+    pip3 install "codex-africanus[dask] <= 0.2.10" 
+    pip3 install "regions <=0.5"
+    pip3 install "pywavelets <=1.1.1"
+    pip3 install "tqdm<=4.64.0"
+
+    pip install meqtrees-cattery
+    pip install bdsf[ishell]
+    
+    pip install -U DDFacet
+    pip install -U killMS
+ 
+

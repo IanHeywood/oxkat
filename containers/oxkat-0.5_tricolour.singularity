@@ -1,0 +1,25 @@
+Bootstrap: docker
+From: ubuntu:20.04
+%environment
+    export LC_ALL=C
+
+
+
+
+%post
+    
+    export TZ=UTC
+    export DEBIAN_FRONTEND=noninteractive
+    export J=6
+
+    apt-get -y update
+    apt-get install -y htop nano git wget rsync cmake
+    apt-get install -y python
+    apt-get install -y python3-pip
+    python3 -m pip install --upgrade pip setuptools wheel
+    pip3 install ipython
+
+    pip3 install tricolour
+
+ 
+

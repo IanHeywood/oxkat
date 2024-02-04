@@ -209,6 +209,7 @@ print('Backing up '+dftab)
 shutil.copytree(dftab,dfbackup)
 
 flagdata(vis = dftab, mode = 'tfcrop', datacolumn = 'CPARAM')
+flagdata(vis = dftab, mode = 'clip', clipminmax = [0.0,0.3])
 
 # tb.open(dftab,nomodify=False)
 # gains = tb.getcol('CPARAM')

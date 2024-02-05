@@ -95,6 +95,16 @@ setjy(vis = myms,
     usescratch = True)
 
 
+# Nuke the hot RFI regions entirely, no baseline cut 
+
+myspw = ','.join(CAL_1GC_BL_FREQS)
+
+flagdata(vis = myms,
+    field = polarcal,
+    mode = 'manual',
+    spw = myspw,
+    uvrange = '')
+
 # Flag based on residual data (since model is in place and polcal corr data is GKB calibrated)
 
 flagdata(vis=myms,
@@ -107,14 +117,6 @@ flagdata(vis = myms,
     datacolumn = 'residual',
     field = polarcal)
 
-# Nuke the hot RFI regions entirely, no baseline cut 
-
-myspw = ','.join(CAL_1GC_BL_FREQS)
-
-flagdata(vis = myms,
-    mode = 'manual',
-    spw = myspw,
-    uvrange = '')
 
 if SAVE_FLAGS:
     flagmanager(vis = myms,

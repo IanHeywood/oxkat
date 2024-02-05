@@ -45,6 +45,9 @@ def make_png(ff,i):
     os.system(syscall)
     logging.info(' | File '+str(i)+' | Time        '+tt)
     img = Image.open(pp)
+    # Fix for odd image sizes from Ben Hugo
+    # https://github.com/IanHeywood/oxkat/issues/54
+    img = img.crop((0,0,img.size[0] - (img.size[0] % 2), img.size[1] - (img.size[1] % 2)))
     xx,yy = img.size
     draw = ImageDraw.Draw(img)
     draw.text((0.03*xx,0.90*yy),'Frame : '+str(i).zfill(len(str(nframes)))+' / '+str(nframes),fill=('white'),font=sans30)

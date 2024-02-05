@@ -80,8 +80,8 @@ def main():
         CONTAINER_RUNNER=''
 
 
-    ASTROPY_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.ASTROPY_PATTERN,USE_SINGULARITY)
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
+    PACOR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.PACOR_PATTERN,USE_SINGULARITY)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
     SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN,USE_SINGULARITY)
     TRICOLOUR_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.TRICOLOUR_PATTERN,USE_SINGULARITY)
@@ -123,7 +123,7 @@ def main():
     step['comment'] = 'Correct parallactic angle of working MS'
     step['dependency'] = 0
     step['id'] = 'PACOR'+code
-    syscall = CONTAINER_RUNNER+ASTROPY_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall = CONTAINER_RUNNER+PACOR_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python3 '+cfg.OXKAT+'/PRE_correct_parang.py'
     step['syscall'] = syscall
     steps.append(step)

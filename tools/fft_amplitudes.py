@@ -47,6 +47,14 @@ def hist_eq(image,nbins):
     return image_eq
 
 
+def apply_hanning(data):
+    # Apply Hanning filter to reduce edge effects
+    window = numpy.outer(numpy.hanning(data.shape[0]), numpy.hanning(data.shape[1]))
+    windowed_data = data * window
+    return windowed_data
+
+
+
 def main():
 
     parser = ArgumentParser(description='FFT a FITS images and render the amplitudes to a PNG for inspection')
@@ -61,6 +69,9 @@ def main():
                       help = 'Number of bins for histogram equalisation (default = 1024)', default = 1024)
     parser.add_argument('--nofits', dest = 'nofits',
                       help = 'Do not save amplitudes as FITS image', default = False, action = 'store_true')
+    parser.add_argument('--nohanning', dest = 'nohanning',
+                      help = 'Do not apply Hanning filter', default = False, action = 'store_true')
+
 
     options = parser.parse_args()
     infits = options.infits
@@ -68,9 +79,11 @@ def main():
     noeq = options.noeq
     nbins = int(options.nbins)
     nofits = options.nofits
-
+    nohanning = options.nohanning
 
     img = get_image(infits)
+    if not nohanning:
+        img = apply_hanning(img)
     fftimg = fft_image(img)
 
     if not nofits:

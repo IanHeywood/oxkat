@@ -73,7 +73,7 @@ def main():
     img = get_image(infits)
     fftimg = fft_image(img)
 
-    if nofits:
+    if not nofits:
         fftfits = infits.replace('.fits','_FFT_amplitudes.fits')
         shutil.copyfile(infits,fftfits)
         flush_fits(fftimg,fftfits)

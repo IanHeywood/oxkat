@@ -188,7 +188,7 @@ def get_states(master_ms,
     state_tab.close()
 
     for i in range(0,len(modes)):
-        if modes[i] == target_intent:
+        if target_intent in modes[i]:
             target_state = i
         if primary_intent in modes[i]:
             primary_state = i

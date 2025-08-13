@@ -7,7 +7,7 @@
 # https://pypi.org/project/scikit-ued/
 
 
-import numpy
+import numpy as np
 import os
 import sys
 import time
@@ -51,11 +51,11 @@ def get_header(fitsfile,freqaxis):
 def get_image(fitsfile):
     input_hdu = fits.open(fitsfile)[0]
     if len(input_hdu.data.shape) == 2:
-            image = numpy.array(input_hdu.data[:,:])
+            image = np.array(input_hdu.data[:,:])
     elif len(input_hdu.data.shape) == 3:
-            image = numpy.array(input_hdu.data[0,:,:])
+            image = np.array(input_hdu.data[0,:,:])
     else:
-            image = numpy.array(input_hdu.data[0,0,:,:])
+            image = np.array(input_hdu.data[0,0,:,:])
     return image
 
 
@@ -192,24 +192,32 @@ def main():
         freq = float(freq)
 
     msg('Evaluating beam at '+str(round(freq,4))+' MHz')
-    interval = numpy.linspace(-extent/2.0,extent/2.0,nx)
-    xx,yy = numpy.meshgrid(interval,interval)
+    interval = np.linspace(-extent/2.0,extent/2.0,nx)
+    xx,yy = np.meshgrid(interval,interval)
     beam_image = beam.I(xx,yy,freq)
 
     msg('Masking beam beyond the '+str(pbcut)+' level')
     mask = beam_image < pbcut
-    beam_image[mask] = numpy.nan
+    beam_image[mask] = np.nan
 
     if azavg:
         msg('Azimuthally averaging the beam pattern')
-        x0 = int(nx/2)
-        y0 = int(ny/2)
-        radius,average = aa(beam_image,center=(x0,y0))
-        # This can probably be sped up...
-        for y in range(0,ny):
-            for x in range(0,nx):
-                val = (((float(y)-y0)**2.0)+((float(x)-x0)**2.0))**0.5
-                beam_image[y][x] = average[int(val)]
+        ny, nx = beam_image.shape
+        x0, y0 = nx // 2, ny // 2
+        radius, average = aa(beam_image, center=(x0, y0)) 
+        yy, xx = np.ogrid[:ny, :nx]
+        r = np.hypot(yy - y0, xx - x0)          
+        idx = np.clip(r.astype(np.int32), 0, len(average) - 1)
+        beam_image[...] = average[idx]      
+
+        # x0 = int(nx/2)
+        # y0 = int(ny/2)
+        # radius,average = aa(beam_image,center=(x0,y0))
+        # # This can probably be sped up...
+        # for y in range(0,ny):
+        #     for x in range(0,nx):
+        #         val = (((float(y)-y0)**2.0)+((float(x)-x0)**2.0))**0.5
+        #         beam_image[y][x] = average[int(val)]
 
     if savepbcor:
         msg('Correcting image')

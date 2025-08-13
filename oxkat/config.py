@@ -314,8 +314,8 @@ elif BAND == 'S4':
     CAL_1GC_FREQRANGE = '*:2900~3000MHz'
     CAL_1GC_UVRANGE = '>150m'     
     CAL_1GC_0408_MODEL = ([6.423,0.0,0.0,0.0],[-1.124],'3000MHz')   
-    CAL_1GC_BAD_FREQS = ['*:2600~2690MHz',    # Lower band edge 
-                        '*:3420~3600MHz']     # Upper band edge
+    CAL_1GC_BAD_FREQS = ['*:2600~2710MHz',    # Lower band edge 
+                        '*:3390~3600MHz']     # Upper band edge
     CAL_1GC_BL_FLAG_UVRANGE = '<600'
     CAL_1GC_BL_FREQS = []
 

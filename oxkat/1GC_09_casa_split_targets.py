@@ -17,7 +17,7 @@ for i in range(0,len(target_names)):
     opms = ''
 
     for mm in target_ms:
-        if target_name in mm:
+        if target_name.replace(' ','_') in mm:
             opms = mm
 
     if opms != '':

@@ -12,7 +12,7 @@ for target in target_names:
     opms = ''
 
     for mm in target_ms:
-        if target in mm:
+        if target.replace(' ','_') in mm:
             opms = mm
 
     if opms != '':

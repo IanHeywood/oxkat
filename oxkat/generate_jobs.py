@@ -162,8 +162,8 @@ def get_mms_code(myms):
 def get_target_code(targetname):
 
     # Last three digits of the target name
+    code = targetname.replace('-','_').replace('.','p').replace(' ','').replace('+','a')[-3:]
 
-    code = targetname.replace('-','_').replace('.','p').replace(' ','')[-3:]
     return code
 
 

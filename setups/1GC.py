@@ -47,6 +47,7 @@ def main():
 
 
     CASA_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CASA_PATTERN,USE_SINGULARITY)
+    CUBICAL_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.CUBICAL_PATTERN,USE_SINGULARITY)
     OWLCAT_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.OWLCAT_PATTERN,USE_SINGULARITY)
     RAGAVI_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.RAGAVI_PATTERN,USE_SINGULARITY)
     SHADEMS_CONTAINER = gen.get_container(CONTAINER_PATH,cfg.SHADEMS_PATTERN,USE_SINGULARITY)
@@ -114,6 +115,17 @@ def main():
 
     step = {}
     step['step'] = 4
+    step['comment'] = 'Calibrate the target weights per channel'
+    step['dependency'] = 3
+    step['id'] = 'WTCAL'+code
+    syscall = CONTAINER_RUNNER+CUBICAL_CONTAINER+' ' if USE_SINGULARITY else ''
+    syscall += 'python3 '+cfg.OXKAT+'/1GC_calibrate_weights.py'
+    step['syscall'] = syscall
+    steps.append(step)
+
+
+    step = {}
+    step['step'] = 5
     step['comment'] = 'Plot the gain solutions'
     step['dependency'] = 3
     step['id'] = 'PLTAB'+code
@@ -124,9 +136,9 @@ def main():
 
 
     step = {}
-    step['step'] = 5
+    step['step'] = 6
     step['comment'] = 'Split the corrected target data'
-    step['dependency'] = 3
+    step['dependency'] = 4
     step['id'] = 'SPTRG'+code
     syscall = CONTAINER_RUNNER+CASA_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += gen.generate_syscall_casa(casascript=cfg.OXKAT+'/1GC_09_casa_split_targets.py')
@@ -135,9 +147,9 @@ def main():
 
 
     step = {}
-    step['step'] = 6
+    step['step'] = 7
     step['comment'] = 'Plot the corrected calibrator visibilities'
-    step['dependency'] = 5
+    step['dependency'] = 6
     step['id'] = 'PLVIS'+code
     syscall = CONTAINER_RUNNER+SHADEMS_CONTAINER+' ' if USE_SINGULARITY else ''
     syscall += 'python3 '+cfg.OXKAT+'/1GC_10_plot_visibilities.py'
